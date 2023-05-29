@@ -6,10 +6,11 @@ import {
 } from '@nestjs/platform-fastify';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule);
-  app.setGlobalPrefix('/absproxy/3000');
-  //await app.listen(3000);
-  await app.get(NextModule).prepare().then(()=>{
-    app.listen(3000);
-  })
+  app.setGlobalPrefix(`/absproxy/5000`);
+  await app.listen(5000);
+ /* if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }*/
 }
 bootstrap();
