@@ -1,35 +1,36 @@
-import Link from 'next/link';
-import { FC } from 'react';
-import { useFeature } from 'src/client/hooks/useFeatures';
-import { buildServerSideProps } from 'src/client/ssr/buildServerSideProps';
-import { BlogPost } from 'src/shared/types/blog-post';
-import { fetch } from 'src/shared/utils/fetch';
+import { Welcome } from '../components/Welcome/Welcome';
+import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import AppShellNavBar from '../components/NavBar/NavBar';
+import Layout, { siteTitle } from '../components/layout';
+import { useState } from 'react';
+import {
+  AppShell,
+  Navbar,
+  Flex,
+  Header,
+  Footer,
+  Text,
+  MediaQuery,
+  Burger,
+  useMantineTheme,
+} from '@mantine/core';
+import Head from 'next/head';
 
-type THomeProps = {
-  blogPosts: BlogPost[];
-};
-export const getServerSideProps: GetServerSideProps<THomeProps> = async () => {
-  const blogPosts = await fetch('/absproxy/5000/api/blog-posts');
-  return { props: { blogPosts } };
-};
-const Home: FC<THomeProps> = ({ blogPosts }) => {
-  //const linkFeature = useFeature('blog_link');
-
+export default function HomePage() {
+  const theme = useMantineTheme();
+  const [opened, setOpened] = useState(false);
   return (
-    <div>
-      <h1>Home</h1>
-      {blogPosts.map(({ title, id }) => (
-        <div key={id}>
-          {
-            <>
-              {title}
-              <Link href={`/${id}`}> Link</Link>
-            </>
-          }
-        </div>
-      ))}
-    </div>
+    <Layout home>
+      <Head>
+        <title>Home Page</title>
+      </Head>
+      <Welcome />
+      <ColorSchemeToggle />
+      <Text>Resize app to see responsive navbar in action</Text>
+    </Layout>
   );
-};
+}
 
-export default Home;
+/*
+  
+*/
