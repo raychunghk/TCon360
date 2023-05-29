@@ -14,6 +14,7 @@ import { CatsService } from '../cats/cats.service';
 import { CatsModule } from '../cats/cats.module';
 //import { NODE_ENV } from 'src/shared/constants/env';
 //import { RenderModule } from 'nest-next';
+import { UserModule } from './user/user.module';
 //import Next from 'next';
 @Module({
   /* should pass a NEXT.js server instance
@@ -25,6 +26,7 @@ import { CatsModule } from '../cats/cats.module';
                 should look for pages in root dir */
       { viewsDir: null },
     ),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

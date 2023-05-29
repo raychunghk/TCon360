@@ -3,12 +3,12 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Render,
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ParamsInterceptor } from './params.interceptor';
- 
 
 @Controller()
 export class AppController {
@@ -26,6 +26,11 @@ export class AppController {
   @UseInterceptors(ParamsInterceptor)
   public blogPost() {
     return {};
+  }
+
+  @Post('/api/userold')
+  public CreateUser() {
+    return this.appService.getBlogPosts();
   }
 
   @Get('/api/blog-posts')
