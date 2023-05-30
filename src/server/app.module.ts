@@ -8,10 +8,7 @@ import { AppService } from './app.service';
 //import { DynamicModule, Module } from '@nestjs/common';
 //import { AppController } from './app.controller';
 //import { AppService } from './app.service';
-import { CatController } from '../cat/cat.controller';
-import { CatsController } from '../cats/cats.controller';
-import { CatsService } from '../cats/cats.service';
-import { CatsModule } from '../cats/cats.module';
+ 
 //import { NODE_ENV } from 'src/shared/constants/env';
 //import { RenderModule } from 'nest-next';
 import { UserModule } from './user/user.module';

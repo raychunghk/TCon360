@@ -4,10 +4,12 @@ import { UserInfo, Prisma } from '@prisma/client';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-  async createUser(data: Prisma.UserInfoCreateInput): Promise<UserInfo> {
-    console.log(data);
-    return this.prisma.userInfo.create({
-      data,
+  async createUser(uinfo: Prisma.UserInfoCreateInput): Promise<UserInfo> {
+    console.log(uinfo);
+    const rtn = await this.prisma.userInfo.create({
+      data:uinfo
     });
+    console.log(rtn);
+    return rtn;
   }
 }

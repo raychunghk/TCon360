@@ -13,17 +13,9 @@ import { Prisma, UserInfo } from '@prisma/client';
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Post()
-  async create(@Body() data: any) {
-    console.log(data);
-    const result = this.userService.createUser(data);
-    return { message: 'Data received and saved to database' };
-  }
-
-  @Get()
-  async createUser(
-    @Body() postData: Prisma.UserInfoCreateInput,
-  ): Promise<UserInfo> {
-    console.log(postData);
-    return this.userService.createUser(postData);
+  create(@Body() userInfo: Prisma.UserInfoCreateInput): Promise<UserInfo> {
+    const result = this.userService.createUser(userInfo).then();
+    console.log(result);
+    return result;
   }
 }

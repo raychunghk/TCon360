@@ -16,6 +16,7 @@ interface MainLinkProps {
   icon: React.ReactNode;
   color: string;
   label: string;
+  link: string;
 }
 const data = [
   { icon: <IconHome2 size="1rem" />, color: 'blue', label: 'Home', link: '/' },
@@ -31,8 +32,18 @@ const data = [
     label: 'Calendar',
     link: '/calendar',
   },
-  { icon: <IconSunset2 size="1rem" />, color: 'grape', label: 'Vacation', link: '/vacation' },
-  { icon: <IconUser size="1rem" />, color: 'gray', label: 'User Info', link: '/user' },
+  {
+    icon: <IconSunset2 size="1rem" />,
+    color: 'grape',
+    label: 'Vacation',
+    link: '/vacation',
+  },
+  {
+    icon: <IconUser size="1rem" />,
+    color: 'gray',
+    label: 'User Info',
+    link: '/user',
+  },
 ];
 import styles from './mainlinks.module.css';
 function MainLink({ icon, color, label, link }: MainLinkProps) {
@@ -44,11 +55,14 @@ function MainLink({ icon, color, label, link }: MainLinkProps) {
           width: '100%',
           padding: theme.spacing.xs,
           borderRadius: theme.radius.sm,
-          color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+          color:
+            theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
           '&:hover': {
             backgroundColor:
-              theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+              theme.colorScheme === 'dark'
+                ? theme.colors.dark[6]
+                : theme.colors.gray[0],
           },
         })}
       >

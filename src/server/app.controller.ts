@@ -21,12 +21,7 @@ export class AppController {
     return {};
   }
 
-  @Get(':id')
-  @Render('[id]')
-  @UseInterceptors(ParamsInterceptor)
-  public blogPost() {
-    return {};
-  }
+ 
 
   @Post('/api/userold')
   public CreateUser() {
