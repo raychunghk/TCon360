@@ -6,13 +6,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 //import { DynamicModule, Module } from '@nestjs/common';
-//import { AppController } from './app.controller';
-//import { AppService } from './app.service';
- 
-//import { NODE_ENV } from 'src/shared/constants/env';
-//import { RenderModule } from 'nest-next';
 import { UserModule } from './user/user.module';
-//import Next from 'next';
+import { TestModule } from './test/test.module';
+import { TimesheetModule } from './timesheet/timesheet.module';
+
 @Module({
   /* should pass a NEXT.js server instance
       as the argument to `forRootAsync` */
@@ -24,6 +21,8 @@ import { UserModule } from './user/user.module';
       { viewsDir: null },
     ),
     UserModule,
+    TestModule,
+    TimesheetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

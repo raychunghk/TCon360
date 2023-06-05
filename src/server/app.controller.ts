@@ -20,21 +20,16 @@ export class AppController {
   home() {
     return {};
   }
-
- 
-
-  @Post('/api/userold')
-  public CreateUser() {
-    return this.appService.getBlogPosts();
+  @Get('test')
+  @Render('test')
+  @UseInterceptors(ParamsInterceptor)
+  public test() {
+    return {};
   }
-
-  @Get('/api/blog-posts')
-  public listBlogPosts() {
-    return this.appService.getBlogPosts();
-  }
-
-  @Get('/api/blog-posts/:id')
-  public getBlogPostById(@Param('id', new ParseIntPipe()) id: number) {
-    return this.appService.getBlogPost(id);
+  @Get('timesheet')
+  @Render('timesheet')
+  @UseInterceptors(ParamsInterceptor)
+  public timesheet() {
+    return {};
   }
 }

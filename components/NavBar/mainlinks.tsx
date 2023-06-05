@@ -8,6 +8,7 @@ import {
   IconSettings,
   IconLogout,
   IconSunset2,
+  IconTree,
   IconSwitchHorizontal,
 } from '@tabler/icons-react';
 import { ThemeIcon, UnstyledButton, Group, Text, Anchor } from '@mantine/core';
@@ -43,6 +44,12 @@ const data = [
     color: 'gray',
     label: 'User Info',
     link: '/user',
+  },
+  {
+    icon: <IconTree size="1rem" />,
+    color: 'gray',
+    label: 'Test',
+    link: '/test',
   },
 ];
 import styles from './mainlinks.module.css';

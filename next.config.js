@@ -1,8 +1,12 @@
-const _basepath = `/absproxy/5000`
+const dotenv = require('dotenv');
+dotenv.config();
+//const _basepath = `/absproxy/5000`
+const _basepath = `${process.env.PROXYPATH}${process.env.PORT}`
+
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
-
+console.log(_basepath);
 const nextConfig = {
   basePath: _basepath,
   assetPrefix: _basepath,
@@ -12,7 +16,7 @@ const nextConfig = {
     }
   },
   reactStrictMode: false,
-  
+
   eslint: {
     ignoreDuringBuilds: true,
   },

@@ -1,12 +1,16 @@
-import { useForm as mUserForm } from '@mantine/form';
-import { TextInput, Checkbox, Code, Text, Input, Modal, Button, Grid, Center, Card, CardSection } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { basepath, basepath2 } from '/global';
+import { TextInput, Checkbox, Code, Text, Stack, Input, Modal, Button, Grid, Center, Card, CardSection } from '@mantine/core';
 import Layout from '../../components/layout';
 import Head from 'next/head';
 import { useState } from 'react';
 import UserStyle from '../../styles/User.module.css'
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import { useForm as uForm } from 'react-hook-form';
+require('dotenv').config();
+//import { basePath } from '/src/shared/constants/env'
 export default function User() {
+
     const userModel = {
         StaffName: '',
         AgentName: '',
@@ -19,9 +23,9 @@ export default function User() {
     }
     const [formValues, setFormValues] = useState(userModel);
     const [modalOpen, setModalOpen] = useState(false);
-    const { register, handleSubmit, reset } = useForm();
+    const { register, handleSubmit, reset } = uForm();
     const [submitting, setSubmitting] = useState(false);
-    const form = mUserForm({
+    const form = useForm({
         initialValues: {
 
             user: {
@@ -41,13 +45,19 @@ export default function User() {
     };
     const onSubmit = async (event) => {
         // event.preventDefault();
-        setSubmitting(true);
 
-        const response = await axios.post('/absproxy/5000/api/user', formValues);
+        console.log(basepath2)
+        console.log(basepath)
+        const port = process.env.PORT;
+        console.log(port)
+        setSubmitting(true);
+        //path = `${basePath}/api/user`;
+        const response = await axios.post(`${basepath}/api/user`, formValues);
         //console.log(response.data);
         setSubmitting(false);
         if ([200, 201].includes(response.status)) {
             setModalOpen(true);
+            reset();
             setFormValues(userModel);
         } else {
             console.error('Failed to create staff record:', response);
@@ -62,12 +72,12 @@ export default function User() {
                 <title>User Information</title>
             </Head>
 
-            <form action="/absproxy/5000/api/user" method="post" onSubmit={handleSubmit(onSubmit)}>
+            <form method="post" onSubmit={handleSubmit(onSubmit)}>
+                {basepath}{basepath2}
                 <Card shadow="sm" padding="lg" radius="md" maw={500} withBorder sx={(theme) => ({
                     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
                     padding: theme.spacing.xl,
                     borderRadius: theme.radius.md,
-                    cursor: 'pointer',
                     backgroundColor: theme.colors.gray[1],
                     '&:hover': {
                         backgroundColor:
@@ -81,6 +91,7 @@ export default function User() {
                         </Center>
 
                     </Card.Section>
+
                     <Grid pb={30}>
 
                         <Grid.Col span={6}>
@@ -93,7 +104,7 @@ export default function User() {
                                 onChange={handleInputChange}
                             /> */}
                             <TextInput placeholder="Staff name"
-                                mt="md" label="Staff Name" {...register('StaffName', { required: true })}
+                                mt="sm" label="Staff Name" {...register('StaffName', { required: true })}
                                 onChange={handleInputChange} />
                         </Grid.Col>
                         <Grid.Col span={6}>
@@ -101,7 +112,7 @@ export default function User() {
                                 label="Agent name"
                                 placeholder="Agentname"
                                 name="AgentName"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.AgentName}
                                 onChange={handleInputChange}
                             />
@@ -111,7 +122,7 @@ export default function User() {
                                 label="Staff category"
                                 placeholder="Staff category"
                                 name="StaffCategory"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.StaffCategory}
                                 onChange={handleInputChange}
                             />
@@ -121,7 +132,7 @@ export default function User() {
                                 label="Department"
                                 placeholder="Department"
                                 name="Department"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.Department}
                                 onChange={handleInputChange}
                             />
@@ -131,7 +142,7 @@ export default function User() {
                                 label="Post unit"
                                 placeholder="Post unit"
                                 name="PostUnit"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.PostUnit}
                                 onChange={handleInputChange}
                             />
@@ -141,7 +152,7 @@ export default function User() {
                                 label="Manager name"
                                 placeholder="Manager name"
                                 name="ManagerName"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.ManagerName}
                                 onChange={handleInputChange}
                             />
@@ -151,7 +162,7 @@ export default function User() {
                                 label="Manager title"
                                 placeholder="Manager title"
                                 name="ManagerTitle"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.ManagerTitle}
                                 onChange={handleInputChange}
                             />
@@ -161,36 +172,53 @@ export default function User() {
                                 label="Manager email"
                                 placeholder="Manager email"
                                 name="ManagerEmail"
-                                mt="md"
+                                mt="sm"
                                 value={formValues.ManagerEmail}
                                 onChange={handleInputChange}
                             />
                         </Grid.Col>
 
                     </Grid>
-                    <Card.Section bg="indigo.2" p={11}>
 
-                        <Center mt="xl">
 
-                            <Button type="submit" loading={submitting}>
-                                Submit
-                            </Button>
-                        </Center>
+                    <Card.Section bg="indigo.2" py="md" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+
+
+                        <Button type="submit" fullWidth loading={submitting}
+
+                            maw={250} radius="md">
+                            Submit
+                        </Button>
 
                     </Card.Section>
 
-                    <Text size="sm" weight={500} mt="xl">
-                        Form values:
-                    </Text>
-                    <Code block mt={3}>
-                        {JSON.stringify(form.values, null, 2)}
-                    </Code>
+
+
+
                 </Card>
             </form>
-            <Modal opened={modalOpen} onClose={handleModalClose} title="Success">
-                <Text>Staff record created successfully!</Text>
-                <Button onClick={handleModalClose}>Ok</Button>
-            </Modal>
+            <Text size="sm" weight={500} mt="xl">
+                Form values:
+            </Text>
+            <Code block mt={3}>
+                {JSON.stringify(formValues, null, 2)}
+            </Code>
+
+            <Modal.Root opened={modalOpen} onClose={handleModalClose} >
+                <Modal.Overlay />
+                <Modal.Content>
+                    <Modal.Header bg="indigo.4" c='white'  >
+                        <Modal.Title ><Text fw={700} fz="md">Success</Text></Modal.Title>
+                        <Modal.CloseButton bg="indigo.2" />
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Text mt="md">Staff record created successfully!</Text>
+                        <Center >
+                            <Button mt="md" onClick={handleModalClose}>Ok</Button>
+                        </Center>
+                    </Modal.Body>
+                </Modal.Content>
+            </Modal.Root>
             { /*</Box>*/}
         </Layout >
     );

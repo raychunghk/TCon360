@@ -43,7 +43,7 @@ model Holiday {
   Summary     String?
 }
 
-model UserInfo {
+model Staff {
   id            Int    @id @default(autoincrement())
   StaffName     String
   AgentName     String
