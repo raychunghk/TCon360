@@ -1,45 +1,31 @@
 import { useEffect, useState } from 'react';
+import TsTable from '../../components/TimesheetTable'
 import axios from 'axios';
-
-export default function ExcelPage() {
+import Layout from '../../components/layout';
+import Head from 'next/head';
+export default function ExcelPage({ data }) {
     const [excelData, setExcelData] = useState('');
 
-    useEffect(() => {
-        async function fetchData() {
-            const url = (process.env.URL || '') + '/api/timesheet/content'
-            console.log(url)
-            const response = await axios.get(url);
-            setExcelData(response.data);
-        }
-        fetchData();
-    }, []);
+
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                </tr>
-            </thead>
-            <tbody>
-                {excelData.map(row => (
-                    <tr key={row.id}>
-                        <td>{row.id}</td>
-                        <td>{row.name}</td>
-                        <td>{row.age}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <Layout home>
+            <Head>
+                <title>TimeSheet</title>
+            </Head>
+            <div>
+                <TsTable data={data} />
+            </div>
+        </Layout>
+
     );
 }
 export async function getStaticProps() {
-    const url = (process.env.URL || '') + '/api/timesheet/content'
+    const url = (process.env.URL || '') + '/absproxy/5000/api/timesheet/content'
     console.log(url)
     const response = await axios.get(url);
     const data = response.data;
+    console.log(data)
     return {
         props: { data },
     };
