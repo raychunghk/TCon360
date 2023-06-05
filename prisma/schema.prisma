@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean @default(false)
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
+
+model CalendarMaster {
+  CalendarDate DateTime @id
+  WeekDayName  String?
+  Year         Int
+  Month        Int
+}
+model UserVacation{
+  VacationDate DateTime @id
+  ChargeableDay Decimal
+}
+model Holiday {
+  StartDate   DateTime @id
+  EndDate     DateTime
+  Summary     String?
+}
+
+model Staff {
+  id            Int    @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName      String
+  ManagerTitle     String
+  ManagerEmail     String
+}
+
+model TimeSheet {
+  id                  Int                 @id @default(autoincrement())
+  StartDate           DateTime
+  EndDate             DateTime
+  calendar            TimeSheetCalendar[]
+  TSCalendarID        Int
+  TotalChargeableDay  Decimal
+  TotalChargeableHour Decimal             @default(0)
+  TotalOTHour         Decimal
+}
+
+model TimeSheetCalendar {
+  id             Int       @id @default(autoincrement())
+  DayID          Int
+  CalendarDate   DateTime
+  timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
+  TimeSheetID    Int
+  ChargeableDay  Decimal
+  ChargeableHour Decimal
+  Traing         Decimal   @default(0)
+  Vacation       Decimal   @default(0)
+  PublicHoliday  Decimal   @default(0)
+  WeekEnd        Decimal   @default(0)
+  Others         Decimal   @default(0)
+}
