@@ -14,7 +14,7 @@ export class TimesheetController {
   }
   @Get('create')
   async createTS(@Res() res) {
-    const result = await this.tsService.copyFile();
+    const result = await this.tsService.copyFileAndWriteToCell();
     const json = {success:true};
     return res.send(json);
   }

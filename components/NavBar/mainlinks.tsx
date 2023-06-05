@@ -70,7 +70,7 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
 }
 function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
 
-  const marginLeft = isChild ? 10 : 0;
+  const marginLeft = isChild ? 20 : 0;
  
   return (
     <div style={{ marginLeft }}>

@@ -6,34 +6,30 @@ import Layout from '../../components/layout';
 import Head from 'next/head';
 import UserStyle from '../../styles/User.module.css'
 import { useForm as uForm } from 'react-hook-form';
+import { basepath, basepath2 } from '/global';
+
 export default function create() {
     const handleModalClose = () => {
         setModalOpen(false);
     };
-
     const [modalOpen, setModalOpen] = useState(false);
     const { register, handleSubmit, reset } = uForm();
     const [submitting, setSubmitting] = useState(false);
-    const onSubmit = async (event) => {
-        // event.preventDefault();
 
- 
+    const onSubmit = async (event) => {
         const port = process.env.PORT;
         console.log(port)
         setSubmitting(true);
-        //path = `${basePath}/api/user`;
         const response = await axios.get(`${basepath}/api/timesheet/create`);
-        //console.log(response.data);
         setSubmitting(false);
         if ([200, 201].includes(response.status)) {
             setModalOpen(true);
             reset();
-            setFormValues(userModel);
         } else {
             console.error('Failed to create staff record:', response);
         }
-
     };
+
     return (
         <Layout home>
             <Head>
@@ -41,7 +37,6 @@ export default function create() {
             </Head>
             <div>
                 <form method="post" onSubmit={handleSubmit(onSubmit)} >
-
                     <Card shadow="sm" padding="lg" radius="md" maw={500} withBorder sx={(theme) => ({
                         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
                         padding: theme.spacing.xl,
@@ -52,37 +47,20 @@ export default function create() {
                                 theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
                         },
                     })}>
-                        <Card.Section className={UserStyle.mySection} >
-
-                            <Center>
-                                <h3>Create Timesheet</h3>
-                            </Center>
+                        <Card.Section className={UserStyle.mySection} mah={60} padding={15} ta="center" sx={{ padding: '10px', fontSize: '1rem' }}>
+                            <Text weight={500}>Create TimeSheet</Text>
 
                         </Card.Section>
-
                         <Grid pb={30}>
                             <Grid.Col span={12}>
-
                                 hello
                             </Grid.Col>
                         </Grid>
-
-
                         <Card.Section bg="indigo.2" py="md" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-
-
-
-                            <Button type="submit" fullWidth loading={submitting}
-
-                                maw={250} radius="md">
+                            <Button type="submit" fullWidth loading={submitting} maw={250} radius="md">
                                 Submit
                             </Button>
-
                         </Card.Section>
-
-
-
-
                     </Card>
                 </form>
             </div>
@@ -102,6 +80,5 @@ export default function create() {
                 </Modal.Content>
             </Modal.Root>
         </Layout>
-
     );
 }
