@@ -5,7 +5,7 @@ import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../../../prisma.service';
 import { Staff, Prisma } from '@prisma/client';
 //import * as XlsxPopulate from 'xlsx-populate';
-const XlsxPopulate = require('xlsx-populate');
+ 
 @Injectable()
 export class TimesheetService {
     private readonly xlsfilename = 'T26TimeSheet.xlsx';
@@ -38,26 +38,11 @@ export class TimesheetService {
         // Save the workbook to the destination path
         await workbook.xlsx.writeFile(destPath);
 
-        try {
-            const workbook = await XlsxPopulate.fromFileAsync(destPath);
-            const worksheet = workbook.sheet('Blank Form');
-            const html = worksheet.html();
-            console.log(html);
-            console.log('Data written to Excel file successfully!');
-        } catch (error) {
-            console.log(error);
-        }
-        XlsxPopulate.fromFileAsync(destPath)
-            .then(workbook => {
-                console.log('hihih')
-                const worksheet = workbook.sheet('Blank Form');
-                const html = worksheet.html();
-                console.log(html);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+
+        
+       
         console.log('Data written to Excel file successfully!');
+        return destPath;
     }
 
     async copyFileAndWriteToCell() {
@@ -78,7 +63,7 @@ export class TimesheetService {
             console.log('File copied successfully!');
 
             // Load the workbook
-            const stf = await this.prisma.staff.findUnique({ where: { id: 3 } });
+            const stf = await this.prisma.staff.findUnique({ where: { id: 4 } });
             console.log(stf);
 
             const fieldmap = {
@@ -94,7 +79,7 @@ export class TimesheetService {
 
             await this.writeJsonToExcel(stf, fieldmap, destPath);
             console.log('Data written to cell D5 successfully!');
-            return true;
+            return destPath;
         } catch (err) {
             console.error('Error copying file:', err);
             return false;

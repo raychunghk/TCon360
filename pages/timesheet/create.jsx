@@ -7,7 +7,7 @@ import Head from 'next/head';
 import UserStyle from '../../styles/User.module.css'
 import { useForm as uForm } from 'react-hook-form';
 import { basepath, basepath2 } from '/global';
-
+import { MonthPicker } from '@mantine/dates';
 export default function create() {
     const handleModalClose = () => {
         setModalOpen(false);
@@ -15,7 +15,7 @@ export default function create() {
     const [modalOpen, setModalOpen] = useState(false);
     const { register, handleSubmit, reset } = uForm();
     const [submitting, setSubmitting] = useState(false);
-
+   
     const onSubmit = async (event) => {
         const port = process.env.PORT;
         console.log(port)
@@ -53,7 +53,7 @@ export default function create() {
                         </Card.Section>
                         <Grid pb={30}>
                             <Grid.Col span={12}>
-                                hello
+                            <MonthPicker maxLevel="year" />
                             </Grid.Col>
                         </Grid>
                         <Card.Section bg="indigo.2" py="md" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
