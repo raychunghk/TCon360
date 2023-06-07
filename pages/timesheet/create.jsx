@@ -1,24 +1,19 @@
-import { useEffect, useState } from 'react';
-import TsTable from '../../components/TimesheetTable'
-import { TextInput, Checkbox, Code, Text, Stack, Input, Modal, Button, Grid, Center, Card, CardSection } from '@mantine/core';
+import { useState } from 'react';
 import axios from 'axios';
+import { useForm as useReactHookForm } from 'react-hook-form';
+import { MonthPicker } from '@mantine/dates';
+import { Button, Card, Grid, Modal, Text, Center, Group, Box } from '@mantine/core';
 import Layout from '../../components/layout';
 import Head from 'next/head';
-import UserStyle from '../../styles/User.module.css'
-import { useForm as uForm } from 'react-hook-form';
-import { basepath, basepath2 } from '/global';
-import { MonthPicker } from '@mantine/dates';
-export default function create() {
-    const handleModalClose = () => {
-        setModalOpen(false);
-    };
+import UserStyle from '../../styles/User.module.css';
+import { basepath } from '/global';
+
+export default function CreateTimesheet() {
     const [modalOpen, setModalOpen] = useState(false);
-    const { register, handleSubmit, reset } = uForm();
+    const { register, handleSubmit, reset } = useReactHookForm();
     const [submitting, setSubmitting] = useState(false);
-   
+    const [value, setValue] = useState(new Date());
     const onSubmit = async (event) => {
-        const port = process.env.PORT;
-        console.log(port)
         setSubmitting(true);
         const response = await axios.get(`${basepath}/api/timesheet/create`);
         setSubmitting(false);
@@ -26,45 +21,58 @@ export default function create() {
             setModalOpen(true);
             reset();
         } else {
-            console.error('Failed to create staff record:', response);
+            console.error('Failed to create timesheet record:', response);
         }
     };
 
+    const handleModalClose = () => {
+        setModalOpen(false);
+    };
+    const handleMonthChange = (date) => {
+        setValue(date);
+    };
     return (
         <Layout home>
             <Head>
-                <title>TimeSheet</title>
+                <title>Create Timesheet</title>
             </Head>
-            <div>
-                <form method="post" onSubmit={handleSubmit(onSubmit)} >
-                    <Card shadow="sm" padding="lg" radius="md" maw={500} withBorder sx={(theme) => ({
-                        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-                        padding: theme.spacing.xl,
+            <form method="post" onSubmit={handleSubmit(onSubmit)}>
+                <Card
+                    shadow="sm"
+                    padding="lg"
+                    radius="md"
+                    maw={500}
+                    withBorder
+                    sx={(theme) => ({
+                        backgroundColor:
+                            theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+
                         borderRadius: theme.radius.md,
                         backgroundColor: theme.colors.gray[1],
                         '&:hover': {
                             backgroundColor:
                                 theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
                         },
-                    })}>
-                        <Card.Section className={UserStyle.mySection} mah={60} padding={15} ta="center" sx={{ padding: '10px', fontSize: '1rem' }}>
-                            <Text weight={500}>Create TimeSheet</Text>
-
-                        </Card.Section>
-                        <Grid pb={30}>
-                            <Grid.Col span={12}>
-                            <MonthPicker maxLevel="year" />
-                            </Grid.Col>
-                        </Grid>
-                        <Card.Section bg="indigo.2" py="md" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                            <Button type="submit" fullWidth loading={submitting} maw={250} radius="md">
-                                Submit
-                            </Button>
-                        </Card.Section>
-                    </Card>
-                </form>
-            </div>
-            <Modal.Root opened={modalOpen} onClose={handleModalClose} >
+                    })}
+                >
+                    <Card.Section className={UserStyle.mySection} mah={60} padding={15} ta="center" sx={{ padding: '10px', fontSize: '1rem' }}>
+                        <Text weight={500}>Create TimeSheet</Text>
+                    </Card.Section>
+                    <Grid pb={30} ta="center">
+                        <Grid.Col span={12}>
+                            <Group position="center">
+                                <MonthPicker maxLevel="year" value={value} onChange={setValue} />
+                            </Group>
+                        </Grid.Col>
+                    </Grid>
+                    <Card.Section bg="indigo.2" py="md" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <Button type="submit" fullWidth loading={submitting} maw={250} radius="md">
+                            Submit
+                        </Button>
+                    </Card.Section>
+                </Card>
+            </form>
+            <Modal.Root opened={modalOpen} onClose={handleModalClose}>
                 <Modal.Overlay />
                 <Modal.Content>
                     <Modal.Header bg="indigo.4" c='white'  >

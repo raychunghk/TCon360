@@ -5,7 +5,7 @@ import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../../../prisma.service';
 import { Staff, Prisma } from '@prisma/client';
 //import * as XlsxPopulate from 'xlsx-populate';
- 
+
 @Injectable()
 export class TimesheetService {
     private readonly xlsfilename = 'T26TimeSheet.xlsx';
@@ -39,13 +39,13 @@ export class TimesheetService {
         await workbook.xlsx.writeFile(destPath);
 
 
-        
-       
+
+
         console.log('Data written to Excel file successfully!');
         return destPath;
     }
 
-    async copyFileAndWriteToCell() {
+    async copyFileAndWriteToCell(tsmonth: number) {
         const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         const sourcePath = this.getFilePath(this.xlsfilename);
         const destPath = this.getFilePath(`T26TimeSheet_${formattedDate}.xlsx`);
@@ -85,4 +85,38 @@ export class TimesheetService {
             return false;
         }
     }
+
+
+
+
+    async getCalendaryMonthByYearMonth(month, year) {
+        const currentcalendar = await this.prisma.calendarMaster.findMany({
+            where: {
+                Year: 2023
+                , Month: month
+            }
+        });
+
+        return currentcalendar;
+    }
+    async getCurrentMonthCalendar(tsmonth) {
+ 
+        const dt = new Date();
+        console.log(dt.getFullYear())
+        console.log(dt.getMonth() + 1);
+        const currentYear = dt.getFullYear();
+        const objCalendar = await this.prisma.calendarMaster.findMany({
+            where: {
+                Year: 2023
+                , Month: tsmonth
+            }
+        });
+        console.log('calendar returning?')
+        console.log(objCalendar);
+        return objCalendar;
+    }
+
+
+
+
 }

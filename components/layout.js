@@ -18,7 +18,7 @@ import {
 } from '@mantine/core';
 
 const name = 'Ray Chung';
-export const siteTitle = 'Next.js Sample WebsiteBBB';
+export const siteTitle = 'NxTimeT';
 export default function Layout({ children, home }) {
     const theme = useMantineTheme();
     const [opened, setOpened] = useState(false);

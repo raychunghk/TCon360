@@ -13,8 +13,8 @@ import {Prisma, Staff} from '@prisma/client';
 export class UserController {
     constructor(private readonly userService : UserService) {}
     @Post()
-    create(@Body()userInfo : Prisma.StaffCreateInput): Promise < Staff > {
-        const result = this.userService.createUser(userInfo).then();
+    create(@Body()stf : Prisma.StaffCreateInput): Promise < Staff > {
+        const result = this.userService.createUser(stf).then();
         console.log(result);
         return result;
     }

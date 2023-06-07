@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Body, Controller, Get, Res, Post } from '@nestjs/common';
 import * as fs from 'fs';
 import * as xlsx from 'xlsx';
 import { TimesheetService } from './service/timesheet.service';
@@ -13,9 +13,19 @@ export class TimesheetController {
     return res.send(json);
   }
   @Get('create')
-  async createTS(@Res() res) {
+  async createTS_old(@Res() res) {
     const result = await this.tsService.copyFileAndWriteToCell();
-    const json = {success:true};
+    const json = { success: true };
     return res.send(json);
+  }
+
+  
+
+  @Post('create')
+  async postFunction(@Body('tsmonth') tsmonth: number) {
+    const result = await this.tsService.copyFileAndWriteToCell(tsmonth);
+    return {
+      result: 'success'
+    };
   }
 }
