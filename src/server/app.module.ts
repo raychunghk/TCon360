@@ -9,6 +9,8 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TestModule } from './test/test.module';
 import { TimesheetModule } from './timesheet/timesheet.module';
+import { VacationsModule } from './vacations/vacations.module';
+import { LeaveRequestModule } from './leaverequest/leaverequest.module';
 
 @Module({
   /* should pass a NEXT.js server instance
@@ -23,8 +25,10 @@ import { TimesheetModule } from './timesheet/timesheet.module';
     UserModule,
     TestModule,
     TimesheetModule,
+    LeaveRequestModule,
+    VacationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -4,6 +4,7 @@ import { useForm as useReactHookForm } from 'react-hook-form';
 import { MonthPicker } from '@mantine/dates';
 import { Button, Card, Grid, Modal, Text, Center, Group, Box } from '@mantine/core';
 import Layout from '../../components/layout';
+import MyCard from '../../components/MyCard';
 import Head from 'next/head';
 import UserStyle from '../../styles/User.module.css';
 import { basepath } from '/global';
@@ -12,10 +13,13 @@ export default function CreateTimesheet() {
     const [modalOpen, setModalOpen] = useState(false);
     const { register, handleSubmit, reset } = useReactHookForm();
     const [submitting, setSubmitting] = useState(false);
-    const [value, setValue] = useState(new Date());
+    const [monthValue, setMonthValue] = useState(new Date());
     const onSubmit = async (event) => {
         setSubmitting(true);
-        const response = await axios.get(`${basepath}/api/timesheet/create`);
+        //const response = await axios.get(`${basepath}/api/timesheet/create`);
+        const year = monthValue.getFullYear();
+        const month = monthValue.getMonth() + 1;
+        const response = await axios.post(`${basepath}/api/timesheet/create`, { year, month });
         setSubmitting(false);
         if ([200, 201].includes(response.status)) {
             setModalOpen(true);
@@ -29,7 +33,7 @@ export default function CreateTimesheet() {
         setModalOpen(false);
     };
     const handleMonthChange = (date) => {
-        setValue(date);
+        setMonthValue(date);
     };
     return (
         <Layout home>
@@ -37,31 +41,12 @@ export default function CreateTimesheet() {
                 <title>Create Timesheet</title>
             </Head>
             <form method="post" onSubmit={handleSubmit(onSubmit)}>
-                <Card
-                    shadow="sm"
-                    padding="lg"
-                    radius="md"
-                    maw={500}
-                    withBorder
-                    sx={(theme) => ({
-                        backgroundColor:
-                            theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-
-                        borderRadius: theme.radius.md,
-                        backgroundColor: theme.colors.gray[1],
-                        '&:hover': {
-                            backgroundColor:
-                                theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-                        },
-                    })}
-                >
-                    <Card.Section className={UserStyle.mySection} mah={60} padding={15} ta="center" sx={{ padding: '10px', fontSize: '1rem' }}>
-                        <Text weight={500}>Create TimeSheet</Text>
-                    </Card.Section>
+                <MyCard title={"Create TimeSheet"}>
+                
                     <Grid pb={30} ta="center">
                         <Grid.Col span={12}>
                             <Group position="center">
-                                <MonthPicker maxLevel="year" value={value} onChange={setValue} />
+                                <MonthPicker maxLevel="year" value={monthValue} onChange={handleMonthChange} />
                             </Group>
                         </Grid.Col>
                     </Grid>
@@ -70,7 +55,7 @@ export default function CreateTimesheet() {
                             Submit
                         </Button>
                     </Card.Section>
-                </Card>
+                </MyCard>
             </form>
             <Modal.Root opened={modalOpen} onClose={handleModalClose}>
                 <Modal.Overlay />

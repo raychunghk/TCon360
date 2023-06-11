@@ -1,7 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -33,26 +32,16 @@ model CalendarMaster {
   Year         Int
   Month        Int
 }
-model UserVacation{
-  VacationDate DateTime @id
+
+model UserVacation {
+  VacationDate  DateTime @id
   ChargeableDay Decimal
 }
-model Holiday {
-  StartDate   DateTime @id
-  EndDate     DateTime
-  Summary     String?
-}
 
-model Staff {
-  id            Int    @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName      String
-  ManagerTitle     String
-  ManagerEmail     String
+model Holiday {
+  StartDate DateTime @id
+  EndDate   DateTime
+  Summary   String?
 }
 
 model TimeSheet {
@@ -64,6 +53,33 @@ model TimeSheet {
   TotalChargeableDay  Decimal
   TotalChargeableHour Decimal             @default(0)
   TotalOTHour         Decimal
+}
+
+model Staff {
+  id            Int            @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName   String
+  ManagerTitle  String
+  ManagerEmail  String
+  leaveRequests LeaveRequest[]
+}
+
+model LeaveRequest {
+  id               Int      @id @default(autoincrement())
+  leavePeriodStart DateTime
+  AMPMStart        String?
+  leavePeriodEnd   DateTime
+  AMPMEnd          String?
+  leaveDays        String
+  dateOfReturn     DateTime
+  staffSignDate    String
+
+  staffId Int
+  staff   Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)
 }
 
 model TimeSheetCalendar {

@@ -2,6 +2,7 @@ import { useForm } from '@mantine/form';
 import { basepath, basepath2 } from '/global';
 import { TextInput, Checkbox, Code, Text, Stack, Input, Modal, Button, Grid, Center, Card, CardSection } from '@mantine/core';
 import Layout from '../../components/layout';
+import MyCard from '../../components/MyCard';
 import Head from 'next/head';
 import { useState } from 'react';
 import UserStyle from '../../styles/User.module.css'
@@ -74,35 +75,12 @@ export default function User() {
 
             <form method="post" onSubmit={handleSubmit(onSubmit)}>
                 {basepath}{basepath2}
-                <Card shadow="sm" padding="lg" radius="md" maw={500} withBorder sx={(theme) => ({
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-                    padding: theme.spacing.xl,
-                    borderRadius: theme.radius.md,
-                    backgroundColor: theme.colors.gray[1],
-                    '&:hover': {
-                        backgroundColor:
-                            theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-                    },
-                })}>
-                    <Card.Section className={UserStyle.mySection}>
-
-                        <Center>
-                            <h2>User Information</h2>
-                        </Center>
-
-                    </Card.Section>
+                <MyCard title={"Create Staff Info"}>
 
                     <Grid pb={30}>
 
                         <Grid.Col span={6}>
-                            {/* <TextInput
-                                label="Staff name"
-                                placeholder="Staff name"
-                                name="StaffName"
-                                mt="md"
-                                value={formValues.StaffName}
-                                onChange={handleInputChange}
-                            /> */}
+                          
                             <TextInput placeholder="Staff name"
                                 mt="sm" label="Staff Name" {...register('StaffName', { required: true })}
                                 onChange={handleInputChange} />
@@ -195,7 +173,7 @@ export default function User() {
 
 
 
-                </Card>
+                </MyCard>
             </form>
             <Text size="sm" weight={500} mt="xl">
                 Form values:

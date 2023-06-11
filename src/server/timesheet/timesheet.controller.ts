@@ -12,18 +12,17 @@ export class TimesheetController {
     const json = await this.tsService.getContent();
     return res.send(json);
   }
-  @Get('create')
-  async createTS_old(@Res() res) {
-    const result = await this.tsService.copyFileAndWriteToCell();
-    const json = { success: true };
-    return res.send(json);
-  }
 
-  
+
+
 
   @Post('create')
-  async postFunction(@Body('tsmonth') tsmonth: number) {
-    const result = await this.tsService.copyFileAndWriteToCell(tsmonth);
+  async postFunction(@Body() data: {year:number, month: number }) {
+    console.log("server accepted param data:"+data.month+",year:"+data.year);
+    const xlsxPath  = await this.tsService.makeTimeSheet(data.year,data.month);
+    if(xlsxPath.length>0){
+      
+    }
     return {
       result: 'success'
     };

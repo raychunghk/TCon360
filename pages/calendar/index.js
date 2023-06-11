@@ -2,42 +2,46 @@
 import Script from 'next/script';
 import Layout, { siteTitle } from '../../components/layout';
 import Head from 'next/head'
-import timesheetx from '../../backend/timesheet.mjs'
+import timesheet from '../../backend/timesheet.mjs'
 import Link from 'next/link'
 import { format } from 'date-fns'
 
 export const getStaticProps = async () => {
-  const tsmonth = dt.getMonth()+1;
-  let objcalendar = await timesheetx(tsmonth);
-  console.log(objcalendar)
+  //const res = await fetch('https://jsonplaceholder.typicode.com/users');
+  // const res = await fetch('/api/calendar');
+  let currentmonth = await timesheet();
+
+
+
   return {
-    props: { calendar: JSON.parse(JSON.stringify(objcalendar)) }
+    props: { calendar: JSON.parse(JSON.stringify(currentmonth)) }
   }
 }
 
-const pageCalendar = ({ calendar }) => {
+const Ninjas = ({ calendar }) => {
   // console.log(ninjas)
   console.log('hihi')
   console.log(calendar);
 
   return (
-
+   
     <Layout home>
       <Head>
         <title>Calendar</title>
       </Head>
 
-      <h1>{calendar[0].Month}</h1>
-      <div>
+        <h1>{calendar[0].Month}</h1>
         {calendar.map(objday => (
-          <Link key={objday.id} href={'/day/' + objday.id}>
-            <h3 key={objday.id}>{format(new Date(objday.CalendarDate), 'dd/MM/yyyy')}</h3>
-            <div key={objday.id}> {objday.WeekDayName}</div>
+
+          <Link href={'/day/' + objday.id} key={objday.id}>
+
+            <h3>{format(new Date(objday.CalendarDate), 'dd/MM//yyyy')}</h3>
+            <div> {objday.WeekDayName}</div>
           </Link>
         ))}
-      </div>
+    
     </Layout>
   );
 }
 
-export default pageCalendar; 
+export default Ninjas;
