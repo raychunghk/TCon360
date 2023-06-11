@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 //import { DynamicModule, Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
+import { StaffModule } from './staff/staff.module';
 import { TestModule } from './test/test.module';
 import { TimesheetModule } from './timesheet/timesheet.module';
 import { VacationsModule } from './vacations/vacations.module';
@@ -22,7 +22,7 @@ import { LeaveRequestModule } from './leaverequest/leaverequest.module';
                 should look for pages in root dir */
       { viewsDir: null },
     ),
-    UserModule,
+    StaffModule,
     TestModule,
     TimesheetModule,
     LeaveRequestModule,

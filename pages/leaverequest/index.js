@@ -5,7 +5,7 @@ import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import MyCard from '../../components/MyCard';
 import Layout from '../../components/layout';
-
+import { format, parseISO } from 'date-fns'
 import Head from 'next/head';
 export default function LeaveRequestForm() {
     const theme = useMantineTheme();
@@ -73,14 +73,16 @@ export default function LeaveRequestForm() {
         const endDate = leavePeriodEnd ? new Date(leavePeriodEnd) : null;
         let days = 0;
         let returnDate = null;
-
+        let _ampmend = AMPMEnd;
         if (endDate) {
-            if (!AMPMEnd) {
+            if (!AMPMEnd || AMPMEnd === 'NA') {
                 alert('Please choose "AMPM", "AM", or "PM" for the end time');
-                return;
+                _ampmend = "AMPM"
+                // return;
             }
             if (AMPMStart === 'AM') {
                 alert('If leave period end is set, AMPM start can only be "AMPM" or "PM"');
+
                 return;
             }
             //const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
@@ -104,6 +106,7 @@ export default function LeaveRequestForm() {
                 returnDate = endDate;
             }
         } else {
+            _ampmend = 'NA'
             if (AMPMStart === 'AMPM') {
                 days = 1;
                 returnDate = getNextWorkingDate(startDate);
@@ -118,6 +121,7 @@ export default function LeaveRequestForm() {
 
         setLeaveRequest((prevRequest) => ({
             ...prevRequest,
+            AMPMEnd: _ampmend,
             leaveDays: days,
             dateOfReturn: returnDate,
         }));
@@ -213,8 +217,8 @@ export default function LeaveRequestForm() {
         { value: 'PM', label: 'PM' },
     ];
     const ampmOptionsEnd = [
+        { value: 'NA', label: 'N/A' },
         { value: 'AMPM', label: 'AM and PM' },
-        { value: '', label: '' },
         { value: 'AM', label: 'AM' },
         { value: 'PM', label: 'PM' },
     ];
@@ -251,7 +255,17 @@ export default function LeaveRequestForm() {
                             />
                         </Col>
                         <Col span={6} />
-
+                        <Grid.Col span={12}>
+                            {leaveRequest.leavePeriodStart &&
+                                leaveRequest.AMPMStart &&
+                                leaveRequest.leavePeriodEnd &&
+                                leaveRequest.AMPMEnd && (
+                                    <p>
+                                        <label >Leave Period</label><br />
+                                        {`${format((leaveRequest.leavePeriodStart), 'dd-MMM-yyyy')} ${leaveRequest.AMPMStart === "AMPM" ? "" : leaveRequest.AMPMStart} to ${format((leaveRequest.leavePeriodEnd), 'dd-MMM-yyyy')} ${leaveRequest.AMPMEnd == "AMPM" ? "" : leaveRequest.AMPMEnd}`}
+                                    </p>
+                                )}
+                        </Grid.Col>
                         <Grid.Col span={6}>
                             <DatePickerInput clearable
                                 label="Leave period start"
@@ -279,7 +293,7 @@ export default function LeaveRequestForm() {
                         <Grid.Col span={6}>
                             <Select
                                 label="AM/PM end"
-                                data={ampmOptions}
+                                data={ampmOptionsEnd}
                                 value={leaveRequest.AMPMEnd} defaultValue="AMPM"
                                 onChange={(value) =>
                                     setLeaveRequest({ ...leaveRequest, AMPMEnd: value, error: null, helper: null })
@@ -348,3 +362,8 @@ export default function LeaveRequestForm() {
         </Layout>
     );
 }
+export const getServerSideProps = async ({ params }) => {
+    const { id } = params;
+    const { data: staff } = await axios.get(`/api/staff/${id}`);
+    return { props: { staff } };
+  };
