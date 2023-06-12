@@ -4,13 +4,23 @@ import { LeaveRequest, Prisma } from '@prisma/client';
 
 @Injectable()
 export class LeaveRequestService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async create(data: LeaveRequest): Promise<LeaveRequest> {
-    
-    return this.prisma.leaveRequest.create({ data });
+  async create(staffId: number, data: Prisma.LeaveRequestCreateInput) {
+    const staff = await this.prisma.staff.findUnique({ where: { id: staffId } });
+    if (!staff) {
+      throw new Error(`Staff member with ID ${staffId} not found`);
+    }
+
+    const leaveRequest = await this.prisma.leaveRequest.create({
+      data: {
+        ...data,
+        staff: { connect: { id: staffId } },
+      },
+    });
+
+    return leaveRequest;
   }
-
   async findAll(): Promise<LeaveRequest[]> {
     return this.prisma.leaveRequest.findMany();
   }

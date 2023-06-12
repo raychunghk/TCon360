@@ -1,14 +1,17 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import type { LeaveRequest } from '@prisma/client';
+import type {Prisma, LeaveRequest  } from '@prisma/client';
 import { LeaveRequestService } from './service/leaverequest.service';
 
 @Controller('/api/leaverequest')
 export class LeaveRequestController {
-  constructor(private leaveRequestService: LeaveRequestService) {}
-
-  @Post()
-  async create(@Body() data: LeaveRequest): Promise<LeaveRequest> {
-    return this.leaveRequestService.create(data);
+  constructor(private leaveRequestService: LeaveRequestService) { }
+  @Post(':staffId')
+  async createLeaveRequest(
+    @Param('staffId') staffId: string,
+    @Body() leaveRequestData: Prisma.LeaveRequestCreateInput,
+  ) {
+    const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
+    return leaveRequest;
   }
 
   @Get()

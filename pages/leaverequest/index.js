@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, TextInput, Grid, Col, useMantineTheme, NumberInput, Modal, Card, Select } from '@mantine/core';
+import { Button, TextInput, Grid, Col, useMantineTheme, NumberInput, Modal, Card, Select, Text } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import MyCard from '../../components/MyCard';
 import Layout from '../../components/layout';
 import { format, parseISO } from 'date-fns'
 import Head from 'next/head';
-export default function LeaveRequestForm() {
+import { StaffService } from 'src/server/staff/service/staff.service';
+export default function LeaveRequestForm({ staff }) {
     const theme = useMantineTheme();
 
     const [submitting, setSubmitting] = useState(false);
@@ -18,7 +19,7 @@ export default function LeaveRequestForm() {
     const [staffSignDate, setStaffSignDate] = useState(null);
     const [AMPMStart, setAMPMStart] = useState(null);
     const [AMPMEnd, setAMPMEnd] = useState(null);
-    const { register, handleSubmit, errors } = useForm();
+    const { register, errors } = useForm();
     const [leaveRequest, setLeaveRequest] = useState({
         leavePeriodStart: null,
         leavePeriodEnd: null,
@@ -27,28 +28,14 @@ export default function LeaveRequestForm() {
         leaveDays: 0,
         dateOfReturn: null,
         staffSignDate: null,
+        staffId: staff.id,
     });
-    const onSubmit = async (data) => {
-        setSubmitting(true);
-        try {
-            const response = await axios.post('/api/leave', data);
-            if (response.status === 200) {
-                setModalOpen(true);
-            } else {
-                console.error('Failed to create leave request:', response);
-            }
-        } catch (error) {
-            console.error('Failed to create leave request:', error);
-        }
-        setSubmitting(false);
-    };
+
 
     const handleCloseModal = () => {
         setModalOpen(false);
     };
-    function isUndefinedOrEmpty(val) {
-        return typeof val === 'undefined' || (typeof val === 'string' && val === '');
-    }
+
     const validateLeaveRequest = () => {
         let isValid = true;
         if (leaveRequest.leavePeriodEnd && isUndefinedOrEmpty(leaveRequest.AMPMEnd)) {
@@ -135,82 +122,7 @@ export default function LeaveRequestForm() {
         nextWorkingDate.setHours(0, 0, 0, 0);
         return nextWorkingDate;
     }
-    // useEffect(() => {
-    //     if (!leaveRequest.leavePeriodStart) return;
 
-    //     const start = new Date(leaveRequest.leavePeriodStart);
-    //     let end = null;
-    //     let leavedays = 0;
-
-    //     if (leaveRequest.leavePeriodEnd) {
-    //         end = new Date(leaveRequest.leavePeriodEnd);
-
-    //         if (leaveRequest.AMPMStart === 'PM' && leaveRequest.AMPMEnd === 'AM') {
-    //             // Leave starts in the afternoon and ends in the morning of the next day
-    //             leavedays = 0.5 + Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-    //             console.log('leaveDays PMAM:', leavedays);
-    //             setLeaveRequest({
-    //                 ...leaveRequest,
-    //                 leaveDays: leavedays,
-    //                 dateOfReturn: end,
-    //             });
-    //             return;
-    //         } else {
-    //             // Calculate leave days based on start and end time
-    //             // const startTime = leaveRequest.AMPMStart === 'AM' ? 9 : 14;
-    //             // const endTime = leaveRequest.AMPMEnd === 'AM' ? 9 : 14;
-    //             // const startDateTime = new Date(leaveRequest.leavePeriodStart + ' ' + startTime + ':00:00');
-    //             // const endDateTime = new Date(leaveRequest.leavePeriodEnd + ' ' + endTime + ':00:00');
-    //             const startTime = leaveRequest.AMPMStart === 'AM' ? 9 : 14;
-    //             const endTime = leaveRequest.AMPMEnd === 'AM' ? 9 : 14;
-    //             const startDateTime = new Date(leaveRequest.leavePeriodStart);
-    //             startDateTime.setHours(startTime, 0, 0, 0);
-    //             const endDateTime = new Date(leaveRequest.leavePeriodEnd);
-    //             endDateTime.setHours(endTime, 0, 0, 0);
-    //             console.log(leaveRequest.leavePeriodEnd + ' ' + endTime + ':00:00')
-    //             console.log(leaveRequest.leavePeriodStart)
-    //             console.log(leaveRequest.leavePeriodEnd)
-    //             console.log(startDateTime)
-    //             console.log(endDateTime)
-    //             leavedays = Math.ceil((endDateTime - startDateTime) / (1000 * 60 * 60 * 24));
-    //         }
-    //     } else {
-    //         // Calculate leave days based on start time onlyDD-MM-YYYY
-    //         leavedays = leaveRequest.AMPMStart==='AMPM' ?   1:0.5;
-    //     }
-
-    //     let nextDay;
-
-    //     if (!isUndefinedOrEmpty(leaveRequest.leavePeriodEnd)) {
-
-    //     }
-    //     if (leaveRequest.AMPMStart==='AMPM' && !(leaveRequest.AMPMEnd)) {
-    //         // Whole day leave
-    //         nextDay = new Date(start.getTime() + (24 * 60 * 60 * 1000));
-    //     } else if (leaveRequest.AMPMStart === 'AM' && !(leaveRequest.leavePeriodEnd)) {
-    //         // Morning leave
-    //         nextDay = start;
-    //     } else if (leaveRequest.AMPMStart === 'PM' && !(leaveRequest.leavePeriodEnd)) {
-    //         // Afternoon leave
-    //         nextDay = new Date(start.getTime() + (12 * 60 * 60 * 1000));
-    //     } else if (leaveRequest.AMPMEnd === 'AM') {
-    //         // Return on the same day
-    //         nextDay = end;
-    //     } else if (leaveRequest.AMPMEnd === 'PM') {
-    //         // Return on the next working day
-    //         nextDay = new Date(end.getTime() + (48 * 60 * 60 * 1000));
-    //     }
-    //     // Skip weekends
-    //     while (nextDay.getDay() === 0 || nextDay.getDay() === 6) {
-    //         nextDay = new Date(nextDay.getTime() + (24 * 60 * 60 * 1000));
-    //     }
-    //     console.log('leaveDays PMAM:', leavedays);
-    //     setLeaveRequest({
-    //         ...leaveRequest,
-    //         leaveDays: leavedays,
-    //         dateOfReturn: nextDay,
-    //     });
-    // }, [leaveRequest.AMPMStart, leaveRequest.AMPMEnd, leaveRequest.leavePeriodStart, leaveRequest.leavePeriodEnd]);
     const ampmOptions = [
         { value: 'AMPM', label: 'AM and PM' },
         { value: 'AM', label: 'AM' },
@@ -222,37 +134,65 @@ export default function LeaveRequestForm() {
         { value: 'AM', label: 'AM' },
         { value: 'PM', label: 'PM' },
     ];
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        const newData = {
+            leavePeriodStart: new Date(`${leaveRequest.leavePeriodStart}`).toISOString(),
+            staffId: parseInt(leaveRequest.staffId),
+            leavePeriodStart: new Date(`${leaveRequest.leavePeriodStart}`).toISOString(),
+            leavePeriodEnd: new Date(`${leaveRequest.leavePeriodEnd}`).toISOString(),
+            AMPMEnd: leaveRequest.AMPMEnd,
+            AMPMStart: leaveRequest.AMPMStart,
+            leaveDays: leaveRequest.leaveDays,
+            dateOfReturn: new Date(leaveRequest.dateOfReturn).toISOString(),
+            staffSignDate: leaveRequest.staffSignDate,
+        };
+        console.log('newdata: '+newData)
+        try {
+            const response = await axios.post('/api/leaverequest', newData);
+            console.log(response.data);
+            // Do something with the response data
+        } catch (error) {
+            console.error(error);
+            // Handle error
+        }
+        setSubmitting(false);
+    };
+    const onSubmit = async (data) => {
+        setSubmitting(true);
+        try {
+            const response = await axios.post('/api/leave', data);
+            if (response.status === 200) {
+                setModalOpen(true);
+            } else {
+                console.error('Failed to create leave request:', response);
+            }
+        } catch (error) {
+            console.error('Failed to create leave request:', error);
+        }
+        setSubmitting(false);
+    };
     return (
         <Layout>
             <Head>
                 <title>User Information</title>
             </Head>
 
-            <form method="post" onSubmit={handleSubmit(onSubmit)}>
+            <form method="post" onSubmit={handleSubmit}>
                 <MyCard title="Create Staff Info">
                     <Grid gutter={theme.spacing.md} py={20}>
                         <Col span={6}>
-                            <TextInput
-                                placeholder="Staff name"
-                                label="Staff Name"
-                                {...register('staffName', { required: true })}
-                            />
+                            <Text weight={500}>Staff Name:</Text>{' '}
+                            <Text>{staff.StaffName}</Text>
                         </Col>
                         <Col span={6}>
-                            <TextInput
-                                label="Agent name"
-                                placeholder="Agentname"
-                                name="agentName"
-                                {...register('agentName', { required: true })}
-                            />
+                            <Text weight={500}>Agent Name:</Text>{' '}
+                            <Text>{staff.AgentName}</Text>
                         </Col>
                         <Col span={6}>
-                            <TextInput
-                                label="Staff category"
-                                placeholder="Staff category"
-                                name="staffCategory"
-                                {...register('staffCategory', { required: true })}
-                            />
+                            <Text weight={500}>Staff Category:</Text>{' '}
+                            <Text>{staff.StaffCategory}</Text>
                         </Col>
                         <Col span={6} />
                         <Grid.Col span={12}>
@@ -363,7 +303,8 @@ export default function LeaveRequestForm() {
     );
 }
 export const getServerSideProps = async ({ params }) => {
-    const { id } = params;
-    const { data: staff } = await axios.get(`/api/staff/${id}`);
+    //const { id } = params;
+    const staffService = new StaffService();
+    const staff = await staffService.getStaffById(4);
     return { props: { staff } };
-  };
+};
