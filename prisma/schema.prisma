@@ -74,9 +74,9 @@ model LeaveRequest {
   AMPMStart        String?
   leavePeriodEnd   DateTime
   AMPMEnd          String?
-  leaveDays        String
+  leaveDays        Float
   dateOfReturn     DateTime
-  staffSignDate    String
+  staffSignDate    DateTime
 
   staffId Int
   staff   Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)

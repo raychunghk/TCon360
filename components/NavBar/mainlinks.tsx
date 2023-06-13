@@ -14,7 +14,7 @@ import {
   IconTree,
   IconSwitchHorizontal,
 } from '@tabler/icons-react';
-import { ThemeIcon, UnstyledButton, Group, Text, Anchor, List } from '@mantine/core';
+import { ThemeIcon, UnstyledButton, Group, Text, Anchor,   NavLink } from '@mantine/core';
 import Link from 'next/link';
 import styles from './mainlinks.module.css';
 type LinkItemProps = {
