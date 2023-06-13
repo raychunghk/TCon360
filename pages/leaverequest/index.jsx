@@ -159,7 +159,7 @@ export default function LeaveRequestForm({ staff }) {
                 <title>User Information</title>
             </Head>
             <form method="post" onSubmit={handleSubmit(onSubmit)}>
-                <MyCard title="Create Staff Info">
+                <MyCard title="Create Vacation Request">
                     <Grid gutter={theme.spacing.md} py={20}>
                         <Col span={6}>
                             <Text weight={500}>Staff Name:</Text>{' '}
@@ -205,10 +205,7 @@ export default function LeaveRequestForm({ staff }) {
                                 label="Leave period end" valueFormat="DD-MM-YYYY"
                                 value={leaveRequest.leavePeriodEnd}
                             
-                                disableDates={[
-                                    new Date(2024, 6, 11), // Sunday, Jan 1 2022
-                                    new Date(2024, 6, 22)  // Monday, Jan 2 2022
-                                  ]}
+                                
                                 minDate={leaveRequest.leavePeriodStart}
                                 onChange={(value) => setLeaveRequest({ ...leaveRequest, leavePeriodEnd: value })}
                             />
