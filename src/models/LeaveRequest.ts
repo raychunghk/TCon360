@@ -1,7 +1,8 @@
-import { Field, ObjectType, Int, Float } from 'type-graphql';
+import { Field, ObjectType, Int, Float, InputType } from 'type-graphql';
 import { Staff } from './Staff';
 
 @ObjectType()
+@InputType()
 export class LeaveRequest {
   @Field((_type) => Int)
   id: number;
@@ -31,7 +32,7 @@ export class LeaveRequest {
   staffId: number;
 
   @Field((_type) => Staff)
-  staff: Staff;
+  staff?: Staff;
 
   // skip overwrite 👇
 }

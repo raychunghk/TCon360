@@ -11,7 +11,14 @@ import { TestModule } from './test/test.module';
 import { TimesheetModule } from './timesheet/timesheet.module';
 import { VacationsModule } from './vacations/vacations.module';
 import { LeaveRequestModule } from './leaverequest/leaverequest.module';
-
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { TypeGraphQLModule } from "typegraphql-nestjs";
+import RecipeModule from './recipe/module';
+import { AuthChecker } from 'type-graphql';
+import { PrismaService } from './prisma/prisma.service';
+import { UserResolver } from './user/user.resolver';
+import { JwtAuthGuard } from './guards/JwtAuthGuard';
 @Module({
   /* should pass a NEXT.js server instance
       as the argument to `forRootAsync` */
@@ -27,8 +34,21 @@ import { LeaveRequestModule } from './leaverequest/leaverequest.module';
     TimesheetModule,
     LeaveRequestModule,
     VacationsModule,
+    TypeGraphQLModule.forRoot({
+      driver: ApolloDriver,
+      emitSchemaFile: true,
+      validate: false,
+      path: '/absproxy/5000/graphql'
+      , authChecker: ({ context }, roles) => {
+        return true;
+      },
+  
+    }), RecipeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+
+  providers: [AppService, UserResolver, PrismaService],
 })
 export class AppModule { }
+
+

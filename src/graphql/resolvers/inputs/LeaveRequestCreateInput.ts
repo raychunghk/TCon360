@@ -3,8 +3,10 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { StaffCreateNestedOneWithoutLeaveRequestsInput } from './StaffCreateNestedOneWithoutLeaveRequestsInput';
+import { InputType } from '@nestjs/graphql';
 
 @TypeGraphQL.InputType('LeaveRequestCreateInput')
+@InputType()
 export class LeaveRequestCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

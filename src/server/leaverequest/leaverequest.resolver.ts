@@ -1,15 +1,30 @@
-import { Resolver, Args, Mutation } from '@nestjs/graphql';
-import { LeaveRequest } from 'src/graphql/models/LeaveRequest';
+import { Resolver, Args, Mutation, ObjectType, Field } from '@nestjs/graphql';
+import { LeaveRequest } from 'src/models/LeaveRequest';
+import { LeaveRequestCreateInput } from 'src/graphql/resolvers/inputs/LeaveRequestCreateInput';
 import { LeaveRequestService } from './service/leaverequest.service';
+import { PrismaService } from '../prisma/prisma.service';
 
-@Resolver(() => LeaveRequest)
+
+import { LeaveRequest as LeaveRequestInput} from 'src/models/LeaveRequest';
+
+
+@Resolver()
 export class LeaveRequestResolver {
-  constructor(private readonly leaveRequestService: LeaveRequestService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   @Mutation(() => LeaveRequest)
-  async createLeaveRequest(
-    @Args('leaveRequest') leaveRequest: LeaveRequest,
-  ): Promise<LeaveRequest> {
-    return this.leaveRequestService.createLeaveRequestforgql(leaveRequest);
+  async createLeaveRequest(@Args('leaveRequest') leaveRequest: LeaveRequestInput): Promise<LeaveRequest> {
+    return this.prisma.leaveRequest.create({
+      data: {
+        leavePeriodStart: leaveRequest.leavePeriodStart,
+        AMPMStart: leaveRequest.AMPMStart,
+        leavePeriodEnd: leaveRequest.leavePeriodEnd,
+        AMPMEnd: leaveRequest.AMPMEnd,
+        leaveDays: leaveRequest.leaveDays,
+        dateOfReturn: leaveRequest.dateOfReturn,
+        staffSignDate: leaveRequest.staffSignDate,
+        staff: { connect: { id: leaveRequest.staffId } },
+      },
+    });
   }
 }
