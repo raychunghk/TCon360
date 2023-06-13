@@ -4,6 +4,17 @@
 generator client {
   provider = "prisma-client-js"
 }
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  output   = "../src/server/graphql"
+  formatGeneratedCode = "prettier"
+}
+generator PrismaTypeGraphQLTypesGenerator {
+  provider     = "npx prisma-typegraphql-types-generator"
+  modelsOutput = "./src/models"
+  enumsOutput  = "./src/types/enums"
+  useYarn      = true
+}
 
 datasource db {
   provider = "sqlite"

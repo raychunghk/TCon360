@@ -1,0 +1,13 @@
+export { AggregateHolidayArgs } from './AggregateHolidayArgs';
+export { CreateOneHolidayArgs } from './CreateOneHolidayArgs';
+export { DeleteManyHolidayArgs } from './DeleteManyHolidayArgs';
+export { DeleteOneHolidayArgs } from './DeleteOneHolidayArgs';
+export { FindFirstHolidayArgs } from './FindFirstHolidayArgs';
+export { FindFirstHolidayOrThrowArgs } from './FindFirstHolidayOrThrowArgs';
+export { FindManyHolidayArgs } from './FindManyHolidayArgs';
+export { FindUniqueHolidayArgs } from './FindUniqueHolidayArgs';
+export { FindUniqueHolidayOrThrowArgs } from './FindUniqueHolidayOrThrowArgs';
+export { GroupByHolidayArgs } from './GroupByHolidayArgs';
+export { UpdateManyHolidayArgs } from './UpdateManyHolidayArgs';
+export { UpdateOneHolidayArgs } from './UpdateOneHolidayArgs';
+export { UpsertOneHolidayArgs } from './UpsertOneHolidayArgs';

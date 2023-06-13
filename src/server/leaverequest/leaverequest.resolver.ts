@@ -1,13 +1,15 @@
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
-import { Prisma, PrismaClient } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { LeaveRequest } from 'src/graphql/models/LeaveRequest';
+import { LeaveRequestService } from './service/leaverequest.service';
 
-@Resolver()
+@Resolver(() => LeaveRequest)
 export class LeaveRequestResolver {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly leaveRequestService: LeaveRequestService) { }
 
-  @Mutation(() =>PrismaService.prototype.leaveRequest)
-  async createLeaveRequest(@Args('data') data: Prisma.LeaveRequestCreateInput) {
-    return this.prisma.leaveRequest.create({ data });
+  @Mutation(() => LeaveRequest)
+  async createLeaveRequest(
+    @Args('leaveRequest') leaveRequest: LeaveRequest,
+  ): Promise<LeaveRequest> {
+    return this.leaveRequestService.createLeaveRequestforgql(leaveRequest);
   }
 }
