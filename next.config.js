@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
-//const _basepath = `/absproxy/5000`
-const _basepath = `${process.env.PROXYPATH}${process.env.PORT}`
+const _basepath = `/absproxy/5000`
+//const _basepath = `${process.env.BASEPATH}`
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',

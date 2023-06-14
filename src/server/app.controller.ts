@@ -14,7 +14,7 @@ import { ParamsInterceptor } from './params.interceptor';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('/')
+  @Get('')
   @Render('index')
   @UseInterceptors(ParamsInterceptor)
   home() {

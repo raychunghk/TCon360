@@ -7,4 +7,4 @@ console.log(proxypath) ;
 
 export const basepath = '/absproxy/5000';
 export const port = process.env.PORT;
-export const basepath2 = `${proxypath}/${port}`;
+
