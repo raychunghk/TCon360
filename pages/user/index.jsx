@@ -47,7 +47,7 @@ export default function User() {
     const onSubmit = async (event) => {
         // event.preventDefault();
 
-        console.log(basepath2)
+        
         console.log(basepath)
         const port = process.env.PORT;
         console.log(port)

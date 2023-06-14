@@ -9,7 +9,6 @@ import {
 } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
- 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
@@ -33,7 +32,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
-          <link rel="stylesheet" href="/styles/global.css" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
@@ -42,7 +40,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         toggleColorScheme={toggleColorScheme}
       >
         <MantineProvider
-          theme={{ colorScheme: 'light'}}
+          theme={{ colorScheme: 'light' }}
           withGlobalStyles
           withNormalizeCSS
         >

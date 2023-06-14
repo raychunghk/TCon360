@@ -39,10 +39,5 @@ export class AppController {
   public login() {
     return {};
   }
-  @Get('public')
-  @Render('public')
-  @UseInterceptors(ParamsInterceptor)
-  public public() {
-    return {};
-  }
+ 
 }

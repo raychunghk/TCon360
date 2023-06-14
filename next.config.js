@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
-const _basepath = `/absproxy/5000`
-//const _basepath = `${process.env.PROXYPATH}${process.env.PORT}`
+//const _basepath = `/absproxy/5000`
+const _basepath = `${process.env.PROXYPATH}${process.env.PORT}`
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -9,18 +9,12 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 console.log(_basepath);
 const nextConfig = {
   basePath: _basepath,
-//  assetPrefix: _basepath,
+  assetPrefix: _basepath,
   exportPathMap: function () {
     return {
       '/': { page: '/' }
     }
   },
-  middleware: [
-    {
-      name: 'logger',
-      path: './middleware/logger',
-    },
-  ],
   reactStrictMode: false,
 
   eslint: {
