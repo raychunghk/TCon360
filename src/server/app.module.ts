@@ -27,7 +27,8 @@ import { JwtAuthGuard } from './guards/JwtAuthGuard';
       Next({ dev: true }),
       /* null means that nest-next 
                 should look for pages in root dir */
-      { viewsDir: null },
+      { passthrough404: true, viewsDir: null },
+    
     ),
     StaffModule,
     TestModule,
