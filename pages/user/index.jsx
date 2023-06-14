@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { basepath, basepath2 } from '/global';
+import { basepath } from '/global';
 import { TextInput, Checkbox, Code, Text, Stack, Input, Modal, Button, Grid, Center, Card, CardSection } from '@mantine/core';
 import Layout from '../../components/layout';
 import MyCard from '../../components/MyCard';
@@ -74,7 +74,7 @@ export default function User() {
             </Head>
 
             <form method="post" onSubmit={handleSubmit(onSubmit)}>
-                {basepath}{basepath2}
+                {basepath} 
                 <MyCard title={"Create Staff Info"}>
 
                     <Grid pb={30}>

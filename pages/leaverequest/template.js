@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, TextInput, Grid, Col, useMantineTheme, Modal, Card ,Select} from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import { Button, TextInput, Grid, Col, useMantineTheme, Modal, Card} from '@mantine/core';
+ 
 import axios from 'axios';
 import MyCard from '../../components/MyCard';
 import Layout from '../../components/layout';
@@ -11,12 +11,7 @@ export default function LeaveRequestForm() {
     const { register, handleSubmit } = useForm();
     const [submitting, setSubmitting] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const [leavePeriodStart, setLeavePeriodStart] = useState(null);
-    const [leavePeriodEnd, setLeavePeriodEnd] = useState(null);
-    const [dateOfReturn, setDateOfReturn] = useState(null);
-    const [staffSignDate, setStaffSignDate] = useState(null);
-    const [AMPMStart, setAMPMStart] = useState(null);
-    const [AMPMEnd, setAMPMEnd] = useState(null);
+  
     const onSubmit = async (data) => {
         setSubmitting(true);
         try {

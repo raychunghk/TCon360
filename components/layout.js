@@ -1,22 +1,38 @@
 
 import styles from './layout.module.css';
 import Head from 'next/head';
-
+import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
-
+import Link from 'next/link';
 import { useState } from 'react';
 import {
     AppShell,
-    Navbar,
+    Navbar, ThemeIcon,
     Flex,
     Header,
     Footer,
-    Text,
+    Text, Group,
+    Logo, Box,
     MediaQuery,
-    Burger,
+    Burger, UnstyledButton,
     useMantineTheme,
 } from '@mantine/core';
-
+import {
+    IconHome2,
+    IconGauge,
+    IconFingerprint,
+    IconCalendarStats,
+    IconUser,
+    IconCalendarEvent,
+    IconCalendarPlus,
+    IconEyeglass,
+    IconClock,
+    IconLogout,
+    IconLogin,
+    IconSunset2,
+    IconTree,
+    IconSwitchHorizontal,
+} from '@tabler/icons-react';
 const name = 'Ray Chung';
 export const siteTitle = 'NxTimeT';
 export default function Layout({ children, home }) {
@@ -34,20 +50,60 @@ export default function Layout({ children, home }) {
             asideOffsetBreakpoint="sm"
 
             header={
-                <Header height={{ base: 35, md: 38 }} p="md">
-                    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-                        <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-                            <Burger
-                                opened={opened}
-                                onClick={() => setOpened((o) => !o)}
-                                size="sm"
-                                color={theme.colors.gray[6]}
-                                mr="xl"
-                            />
-                        </MediaQuery>
+                <Header height={{ base: 35, md: 45 }} p="sx">
+                    <Box
+                        sx={(theme) => ({
+                            paddingLeft: theme.spacing.xs,
+                            paddingRight: theme.spacing.xs,
+                            paddingBottom: theme.spacing.lg,
 
-                        <Text>TS Generator</Text>
-                    </div>
+                        })}
+                    > <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                                <Burger
+                                    opened={opened}
+                                    onClick={() => setOpened((o) => !o)}
+                                    size="sm"
+                                    color={theme.colors.gray[6]}
+                                    mr="xl"
+                                />
+                            </MediaQuery>
+
+
+                        </div>
+
+                        <Group position="apart">
+                            <Text>TS Generator</Text>
+                            <Link href='/login' className={linkstyle.links}>
+                                <UnstyledButton
+                                    sx={(theme) => ({
+                                        display: 'block',
+                                        width: '100%',
+                                        padding: theme.spacing.xs,
+                                        borderRadius: theme.radius.sm,
+                                        color:
+                                            theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+
+                                        '&:hover': {
+                                            backgroundColor:
+                                                theme.colorScheme === 'dark'
+                                                    ? theme.colors.dark[6]
+                                                    : theme.colors.gray[0],
+                                        },
+                                    })}
+                                >
+                                    <Group>
+                                        <ThemeIcon variant="light">
+                                     <IconLogin></IconLogin>
+                                        </ThemeIcon>
+
+                                        <Text size="sm">Login</Text>
+                                    </Group>
+                                </UnstyledButton>
+                            </Link>
+
+                        </Group>
+                    </Box>
                 </Header>
             }
 
@@ -64,7 +120,7 @@ export default function Layout({ children, home }) {
                     </Flex>
                 </Footer>
             }
-        
+
         >
             {children}
 
@@ -73,4 +129,3 @@ export default function Layout({ children, home }) {
     );
 }
 
- 

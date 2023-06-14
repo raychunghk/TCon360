@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import TsTable from '../../components/TimesheetTable'
 import axios from 'axios';
+import { basepath } from '/global';
 import Layout from '../../components/layout';
 import Head from 'next/head';
 export default function ExcelPage({ data }) {
@@ -21,7 +22,7 @@ export default function ExcelPage({ data }) {
     );
 }
 export async function getStaticProps() {
-    const url = (process.env.URL || '') + '/absproxy/5000/api/timesheet/content'
+    const url = (process.env.URL || '') + `${basepath}/api/timesheet/content`
     console.log(url)
     const response = await axios.get(url);
     const data = response.data;

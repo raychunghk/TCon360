@@ -5,7 +5,7 @@ import {
   IconFingerprint,
   IconCalendarStats,
   IconUser,
-   IconCalendarEvent,
+  IconCalendarEvent,
   IconCalendarPlus,
   IconEyeglass,
   IconClock,
@@ -14,7 +14,7 @@ import {
   IconTree,
   IconSwitchHorizontal,
 } from '@tabler/icons-react';
-import { ThemeIcon, UnstyledButton, Group, Text, Anchor,   NavLink } from '@mantine/core';
+import { ThemeIcon, UnstyledButton, Group, Text, Anchor, NavLink } from '@mantine/core';
 import Link from 'next/link';
 import styles from './mainlinks.module.css';
 type LinkItemProps = {
@@ -40,7 +40,7 @@ const data = [
   },
   { icon: <IconCalendarStats size="1rem" />, color: 'violet', label: 'Calendar', link: '/calendar' },
   { icon: <IconSunset2 size="1rem" />, color: 'grape', label: 'Leave Request', link: '/leaverequest' },
-  { icon: <IconUser size="1rem" />, color: 'gray', label: 'User Info', link: '/user' },
+  { icon: <IconUser size="1rem" />, color: 'gray', label: 'Staff Info', link: '/user' },
   { icon: <IconTree size="1rem" />, color: 'gray', label: 'Test', link: '/test' },
   { icon: <IconTree size="1rem" />, color: 'gray', label: 'bill', link: '/tbill' },
 ];
@@ -72,7 +72,7 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
 function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
 
   const marginLeft = isChild ? 20 : 0;
- 
+
   return (
     <div style={{ marginLeft }}>
       <CustomLink href={link}>

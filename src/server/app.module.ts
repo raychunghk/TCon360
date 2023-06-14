@@ -19,10 +19,18 @@ import { AuthChecker } from 'type-graphql';
 import { PrismaService } from './prisma/prisma.service';
 import { UserResolver } from './user/user.resolver';
 import { JwtAuthGuard } from './guards/JwtAuthGuard';
+import { AuthService } from './auth/auth.service';
+import { JwtStrategy } from './auth/jswstrategy';
+import { PassportModule } from '@nestjs/passport';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 @Module({
   /* should pass a NEXT.js server instance
       as the argument to `forRootAsync` */
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'public'), // <-- changed rootPath
+    }),
     RenderModule.forRootAsync(
       Next({ dev: true }),
       /* null means that nest-next 
@@ -42,12 +50,13 @@ import { JwtAuthGuard } from './guards/JwtAuthGuard';
       , authChecker: ({ context }, roles) => {
         return true;
       },
-  
-    }), RecipeModule,
+     // globalMiddlewares: [JwtAuthGuard],
+    }), RecipeModule,PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AppController],
-
-  providers: [AppService, UserResolver, PrismaService],
+  exports: [PassportModule, AuthService],
+  providers: [AppService, UserResolver, PrismaService, AuthService,
+    JwtStrategy],
 })
 export class AppModule { }
 

@@ -15,6 +15,7 @@ export class ParamsInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
+        console.log('intercepter data:'+data)
         return {
           ...request.query,
           ...request.params,

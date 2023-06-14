@@ -6,8 +6,8 @@ import axios from 'axios';
 import MyCard from '../../components/MyCard';
 import Layout from '../../components/layout';
 import MyModal from '../../components/MyModal';
-import { format, parseISO } from 'date-fns'
-import { basepath, basepath2 } from '/global';
+import { format, parseISO, isWeekend } from 'date-fns'
+import { basepath} from '/global';
 import Head from 'next/head';
 import { useForm as uForm } from 'react-hook-form';
 import { StaffService } from 'src/server/staff/service/staff.service';
@@ -148,11 +148,20 @@ export default function LeaveRequestForm({ staff }) {
         setSubmitting(false);
 
     };
-    
-  const disabledDates = {
-    
-    daysOfWeek: [0, 6] // 0 is Sunday, 6 is Saturday
-  };
+
+    const disabledDates = {
+
+        daysOfWeek: [0, 6] // 0 is Sunday, 6 is Saturday
+    };
+
+    const handleDateInputSelect = (date, stateobj) => {
+
+        if (!isWeekend(date)) {
+            //           setSelected((current) => [...current, date]);
+            setLeaveRequest(stateobj)
+        }
+    };
+
     return (
         <Layout>
             <Head>
@@ -190,7 +199,8 @@ export default function LeaveRequestForm({ staff }) {
                                 label="Leave period start"
                                 required valueFormat="DD-MM-YYYY"
                                 value={leaveRequest.leavePeriodStart}
-                                onChange={(value) => setLeaveRequest({ ...leaveRequest, leavePeriodStart: value })}
+                                onChange={(_date) => handleDateInputSelect(_date, { ...leaveRequest, leavePeriodStart: _date })}
+
                             />
                         </Grid.Col>
                         <Grid.Col span={6}>
@@ -204,10 +214,10 @@ export default function LeaveRequestForm({ staff }) {
                             <DatePickerInput clearable
                                 label="Leave period end" valueFormat="DD-MM-YYYY"
                                 value={leaveRequest.leavePeriodEnd}
-                            
-                                
+
+
                                 minDate={leaveRequest.leavePeriodStart}
-                                onChange={(value) => setLeaveRequest({ ...leaveRequest, leavePeriodEnd: value })}
+                                onChange={(_date) => handleDateInputSelect(_date, { ...leaveRequest, leavePeriodEnd: _date })}
                             />
                         </Grid.Col>
                         <Grid.Col span={6}>
@@ -234,8 +244,7 @@ export default function LeaveRequestForm({ staff }) {
                                 label="Staff sign date" clearable
                                 placeholder="Staff sign date"
                                 name="staffSignDate" valueFormat="DD-MM-YYYY"
-                                onChange={(value) =>
-                                    setLeaveRequest({ ...leaveRequest, staffSignDate: value, error: null, helper: null })
+                                onChange={(_date) => handleDateInputSelect(_date, { ...leaveRequest, staffSignDate: _date, error: null, helper: null })
                                 }
                                 value={leaveRequest.staffSignDate}
 

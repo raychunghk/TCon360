@@ -32,4 +32,17 @@ export class AppController {
   public timesheet() {
     return {};
   }
+
+  @Get('login')
+  @Render('login')
+  @UseInterceptors(ParamsInterceptor)
+  public login() {
+    return {};
+  }
+  @Get('public')
+  @Render('public')
+  @UseInterceptors(ParamsInterceptor)
+  public public() {
+    return {};
+  }
 }

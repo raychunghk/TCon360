@@ -1,10 +1,11 @@
 require('dotenv').config();
-const proxypath = process.env.PROXYPATH;
+const proxypath = process.env.PROXYPATH?process.env.PROXYPATH:'/absproxy';
 const myport = process.env.PORT;
 
 console.log(proxypath) ;
  
 
-export const basepath = '/absproxy/5000';
-export const port = process.env.PORT;
-export const basepath2 = `${proxypath}/${port}`;
+
+const port = process.env.PORT?process.env.PORT:'5000';
+export const basepath = `${proxypath}/${port}`;
+//module.exports= {port, basepath}

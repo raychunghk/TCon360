@@ -1,12 +1,13 @@
-import { Query, Resolver,   } from 'type-graphql';
+import { Query, Resolver, } from 'type-graphql';
 import { User } from './user.model';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/JwtAuthGuard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Resolver()
 export class UserResolver {
   @Query(() => [User])
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   async users() {
     // Implement your logic to fetch users from a database or other data source
     return [
