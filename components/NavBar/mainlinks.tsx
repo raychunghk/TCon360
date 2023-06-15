@@ -40,7 +40,7 @@ const data = [
   },
   { icon: <IconCalendarStats size="1rem" />, color: 'violet', label: 'Calendar', link: '/calendar' },
   { icon: <IconSunset2 size="1rem" />, color: 'grape', label: 'Leave Request', link: '/leaverequest' },
-  { icon: <IconUser size="1rem" />, color: 'gray', label: 'Staff Info', link: '/user' },
+  { icon: <IconUser size="1rem" />, color: 'gray', label: 'Staff Info', link: '/staff' },
   { icon: <IconTree size="1rem" />, color: 'gray', label: 'Test', link: '/test' },
   { icon: <IconTree size="1rem" />, color: 'gray', label: 'bill', link: '/tbill' },
 ];

@@ -34,7 +34,7 @@ export class AppController {
   }
 
   @Get('login')
-  @Render('login')
+  @Render('user/login')
   @UseInterceptors(ParamsInterceptor)
   public login() {
     return {};

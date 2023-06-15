@@ -5,26 +5,27 @@ import { LeaveRequestService } from './service/leaverequest.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 
-import { LeaveRequest as LeaveRequestInput} from 'src/models/LeaveRequest';
+import { LeaveRequest as LeaveRequestInput } from 'src/models/LeaveRequest';
 
 
 @Resolver()
 export class LeaveRequestResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   @Mutation(() => LeaveRequest)
-  async createLeaveRequest(@Args('leaveRequest') leaveRequest: LeaveRequestInput): Promise<LeaveRequest> {
-    return this.prisma.leaveRequest.create({
-      data: {
-        leavePeriodStart: leaveRequest.leavePeriodStart,
-        AMPMStart: leaveRequest.AMPMStart,
-        leavePeriodEnd: leaveRequest.leavePeriodEnd,
-        AMPMEnd: leaveRequest.AMPMEnd,
-        leaveDays: leaveRequest.leaveDays,
-        dateOfReturn: leaveRequest.dateOfReturn,
-        staffSignDate: leaveRequest.staffSignDate,
-        staff: { connect: { id: leaveRequest.staffId } },
-      },
-    });
+  //async createLeaveRequest(@Args('leaveRequest') leaveRequest: LeaveRequestInput): Promise<LeaveRequest> {
+  async createLeaveRequest(@Args('leaveRequest') leaveRequest: LeaveRequestInput) {
+    // return this.prisma.leaveRequest.create({
+    //   data: {
+    //     leavePeriodStart: leaveRequest.leavePeriodStart,
+    //     AMPMStart: leaveRequest.AMPMStart,
+    //     leavePeriodEnd: leaveRequest.leavePeriodEnd,
+    //     AMPMEnd: leaveRequest.AMPMEnd,
+    //     leaveDays: leaveRequest.leaveDays,
+    //     dateOfReturn: leaveRequest.dateOfReturn,
+    //     staffSignDate: leaveRequest.staffSignDate,
+    //     staff: { connect: { id: leaveRequest.staffId } },
+    //   },
+    // });
   }
 }

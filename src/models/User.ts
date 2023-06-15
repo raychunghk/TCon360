@@ -10,10 +10,10 @@ export class User {
   email: string;
 
   @Field({ nullable: true })
-  name?: string;
+  username?: string;
 
-  @Field((_type) => [Post])
-  posts: Post[];
+  @Field()
+  password: string;
 
   // skip overwrite 👇
 }

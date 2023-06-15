@@ -1,0 +1,150 @@
+[33mcommit 4e58acaf826bd22937daf4f4b3c700f6d8781b0f[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: raychung <mannchung@gmail.com>
+Date:   Wed Jun 14 13:29:25 2023 +0000
+
+    fixed static files
+
+[33mcommit bda618e511ff3256818c351a499467fcd560e565[m
+Author: raychung <mannchung@gmail.com>
+Date:   Wed Jun 14 13:09:43 2023 +0000
+
+    good state
+
+[33mcommit 52562da0c9974f65b0e35ddb88f3c90854610335[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: raychung <mannchung@gmail.com>
+Date:   Wed Jun 14 11:44:57 2023 +0000
+
+    fix home page 404
+
+[33mcommit 71b50562d2936660616708f8d273e7245915b07b[m[33m ([m[1;32mmain[m[33m)[m
+Author: raychung <mannchung@gmail.com>
+Date:   Wed Jun 14 09:40:26 2023 +0000
+
+    statick
+
+[33mcommit 528e6ef973e945eb54420396e9ce0a53a30b90e3[m
+Author: raychung <mannchung@gmail.com>
+Date:   Tue Jun 13 14:04:45 2023 +0000
+
+    before upgrade
+
+[33mcommit c3bf9f677637ecab640ae591a6ca8c019016ea39[m
+Author: raychung <mannchung@gmail.com>
+Date:   Tue Jun 13 07:10:10 2023 +0000
+
+    graphsqlbackup
+
+[33mcommit cec318b655ac8081faef168e0c89ee2415da7c53[m
+Author: raychung <mannchung@gmail.com>
+Date:   Tue Jun 13 03:33:41 2023 +0000
+
+    graphql
+
+[33mcommit 2b9825f22ec735af4eee431be5c5de9ebfaa52e3[m
+Author: raychung <mannchung@gmail.com>
+Date:   Tue Jun 13 03:25:44 2023 +0000
+
+    graphql
+
+[33mcommit 4721304f87737be4066412279847afe867a4db33[m
+Author: raychung <mannchung@gmail.com>
+Date:   Mon Jun 12 01:32:21 2023 +0000
+
+    12jun
+
+[33mcommit ceee21e903319c11f2effacf5a759ca4b4824b9a[m
+Author: raychung <mannchung@gmail.com>
+Date:   Sun Jun 11 10:18:24 2023 +0000
+
+    add to show staff in leaveform
+
+[33mcommit 632f1cde9ce7fef3af66ab3e447636538b253655[m
+Author: raychung <mannchung@gmail.com>
+Date:   Sun Jun 11 09:04:28 2023 +0000
+
+    Add vacation
+
+[33mcommit 811fa9504dce0860c303458d2482979cc79cd9f0[m
+Author: raychung <mannchung@gmail.com>
+Date:   Wed Jun 7 16:06:49 2023 +0000
+
+    8-jun
+
+[33mcommit c9e5a900bd3d82ff9506c155c4830110fc2c761f[m
+Author: raychung <mannchung@gmail.com>
+Date:   Tue Jun 6 14:47:42 2023 +0000
+
+    before clean
+
+[33mcommit 8da7666e7e772389e1a05a86718cb76193354a77[m
+Author: raychung <mannchung@gmail.com>
+Date:   Mon Jun 5 16:04:57 2023 +0000
+
+    write to excel
+
+[33mcommit 19f4a583efdd2c7e08649615bc9510ea2b10eca7[m
+Author: raychung <mannchung@gmail.com>
+Date:   Mon Jun 5 10:58:04 2023 +0000
+
+    5jun
+
+[33mcommit c9eee25733b64a53792091179ec89acb5eacee5d[m
+Merge: a094a51 8b638ad
+Author: = <=>
+Date:   Mon Jun 5 02:16:57 2023 +0000
+
+    Fixmerge
+
+[33mcommit a094a51b757fce8f2df7d8e87e15c15b3b388b30[m
+Author: = <=>
+Date:   Mon Jun 5 02:11:43 2023 +0000
+
+    test
+
+[33mcommit 8b638ad841217c7acf21e71d0adfeb83b3d6f11a[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: = <=>
+Date:   Mon Jun 5 01:46:19 2023 +0000
+
+    before commit to gitlab
+
+[33mcommit 96467727c26cdb2615016db2d7406a29512a8d96[m
+Author: raychung <mannchung@gmail.com>
+Date:   Sun Jun 4 15:42:05 2023 +0000
+
+    Initial commit
+
+[33mcommit 0a3ec0512d9879a82f35ea5a7bc1a485ba0825cd[m
+Author: = <=>
+Date:   Tue May 30 02:51:17 2023 +0000
+
+    submit success box done
+
+[33mcommit 7c2c12a30b724609ca4624b99133f9fa5d8536aa[m
+Author: = <=>
+Date:   Mon May 29 14:42:57 2023 +0000
+
+    before change to gpt
+
+[33mcommit 7d39e1a1b5441f281009b438d375d7b8806cc2f5[m
+Author: = <=>
+Date:   Mon May 29 09:50:16 2023 +0000
+
+    integrated with mantine
+
+[33mcommit d200186e0bd4028fba9181cdf374a83ab5adfafc[m
+Author: = <=>
+Date:   Mon May 29 09:27:45 2023 +0000
+
+    working version on 29may
+
+[33mcommit 4de81136642af307d32050a1500ab71a74806139[m
+Author: = <=>
+Date:   Thu May 25 06:50:23 2023 +0000
+
+    1st
+
+[33mcommit facb310b993ae62ed3476cfd4622e283d0a8d8ed[m
+Author: = <=>
+Date:   Wed May 24 02:46:12 2023 +0000
+
+    first
