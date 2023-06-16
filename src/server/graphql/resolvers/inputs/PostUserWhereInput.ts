@@ -7,7 +7,9 @@ import { PostListRelationFilter } from '../inputs/PostListRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('PostUserWhereInput')
+@TypeGraphQL.InputType('PostUserWhereInput', {
+  description: "",
+})
 export class PostUserWhereInput {
   @TypeGraphQL.Field((_type) => [PostUserWhereInput], {
     nullable: true,

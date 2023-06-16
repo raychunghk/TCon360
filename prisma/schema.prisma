@@ -4,11 +4,13 @@
 generator client {
   provider = "prisma-client-js"
 }
-generator typegraphql {
-  provider = "typegraphql-prisma"
-  output   = "../src/server/graphql"
-  formatGeneratedCode = "prettier"
-}
+
+// generator typegraphql {
+//   provider            = "typegraphql-prisma"
+//   output              = "../src/server/graphql"
+//   formatGeneratedCode = "prettier"
+// }
+
 generator PrismaTypeGraphQLTypesGenerator {
   provider     = "npx prisma-typegraphql-types-generator"
   modelsOutput = "./src/models"
@@ -27,21 +29,82 @@ model PostUser {
   name  String?
   posts Post[]
 }
-model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  username  String? @unique
-  password  String
+
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId])
 }
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  staff         Staff?
+}
+
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
+model Staff {
+  id            Int            @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName   String
+  ManagerTitle  String
+  ManagerEmail  String
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String         @unique
+  leaveRequests LeaveRequest[]
+}
+
 model Post {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String?
-  published Boolean @default(false)
-  author    PostUser    @relation(fields: [authorId], references: [id])
+  published Boolean  @default(false)
+  author    PostUser @relation(fields: [authorId], references: [id])
   authorId  Int
 }
- 
 
 model CalendarMaster {
   CalendarDate DateTime @id
@@ -70,19 +133,6 @@ model TimeSheet {
   TotalChargeableDay  Decimal
   TotalChargeableHour Decimal             @default(0)
   TotalOTHour         Decimal
-}
-
-model Staff {
-  id            Int            @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName   String
-  ManagerTitle  String
-  ManagerEmail  String
-  leaveRequests LeaveRequest[]
 }
 
 model LeaveRequest {

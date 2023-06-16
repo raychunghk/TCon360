@@ -30,6 +30,7 @@ export class GroupByStaffArgs {
     | 'ManagerName'
     | 'ManagerTitle'
     | 'ManagerEmail'
+    | 'userId'
   >;
 
   @TypeGraphQL.Field((_type) => StaffScalarWhereWithAggregatesInput, {

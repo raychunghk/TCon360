@@ -7,7 +7,9 @@ import { HolidayMaxOrderByAggregateInput } from '../inputs/HolidayMaxOrderByAggr
 import { HolidayMinOrderByAggregateInput } from '../inputs/HolidayMinOrderByAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('HolidayOrderByWithAggregationInput')
+@TypeGraphQL.InputType('HolidayOrderByWithAggregationInput', {
+  description: "",
+})
 export class HolidayOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

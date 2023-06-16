@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { PostUserWhereInput } from '../inputs/PostUserWhereInput';
 
-@TypeGraphQL.InputType('PostUserRelationFilter')
+@TypeGraphQL.InputType('PostUserRelationFilter', {
+  description: "",
+})
 export class PostUserRelationFilter {
   @TypeGraphQL.Field((_type) => PostUserWhereInput, {
     nullable: true,

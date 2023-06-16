@@ -6,7 +6,9 @@ import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { IntFilter } from '../inputs/IntFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('CalendarMasterWhereInput')
+@TypeGraphQL.InputType('CalendarMasterWhereInput', {
+  description: "",
+})
 export class CalendarMasterWhereInput {
   @TypeGraphQL.Field((_type) => [CalendarMasterWhereInput], {
     nullable: true,

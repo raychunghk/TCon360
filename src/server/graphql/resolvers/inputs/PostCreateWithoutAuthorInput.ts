@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('PostCreateWithoutAuthorInput')
+@TypeGraphQL.InputType('PostCreateWithoutAuthorInput', {
+  description: "",
+})
 export class PostCreateWithoutAuthorInput {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,

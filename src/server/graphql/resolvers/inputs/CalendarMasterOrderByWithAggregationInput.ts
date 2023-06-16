@@ -9,7 +9,9 @@ import { CalendarMasterMinOrderByAggregateInput } from '../inputs/CalendarMaster
 import { CalendarMasterSumOrderByAggregateInput } from '../inputs/CalendarMasterSumOrderByAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('CalendarMasterOrderByWithAggregationInput')
+@TypeGraphQL.InputType('CalendarMasterOrderByWithAggregationInput', {
+  description: "",
+})
 export class CalendarMasterOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

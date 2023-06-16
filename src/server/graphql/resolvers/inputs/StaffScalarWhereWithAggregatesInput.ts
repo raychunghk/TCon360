@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 import { StringWithAggregatesFilter } from '../inputs/StringWithAggregatesFilter';
 
-@TypeGraphQL.InputType('StaffScalarWhereWithAggregatesInput')
+@TypeGraphQL.InputType('StaffScalarWhereWithAggregatesInput', {
+  description: "",
+})
 export class StaffScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [StaffScalarWhereWithAggregatesInput], {
     nullable: true,
@@ -66,4 +68,9 @@ export class StaffScalarWhereWithAggregatesInput {
     nullable: true,
   })
   ManagerEmail?: StringWithAggregatesFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StringWithAggregatesFilter, {
+    nullable: true,
+  })
+  userId?: StringWithAggregatesFilter | undefined;
 }

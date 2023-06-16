@@ -101,7 +101,33 @@ export default function Layout({ children, home }) {
                                     </Group>
                                 </UnstyledButton>
                             </Link>
+                            <Link href='/signup' className={linkstyle.links}>
+                                <UnstyledButton
+                                    sx={(theme) => ({
+                                        display: 'block',
+                                        width: '100%',
+                                        padding: theme.spacing.xs,
+                                        borderRadius: theme.radius.sm,
+                                        color:
+                                            theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
+                                        '&:hover': {
+                                            backgroundColor:
+                                                theme.colorScheme === 'dark'
+                                                    ? theme.colors.dark[6]
+                                                    : theme.colors.gray[0],
+                                        },
+                                    })}
+                                >
+                                    <Group>
+                                        <ThemeIcon variant="light">
+                                     <IconLogin></IconLogin>
+                                        </ThemeIcon>
+
+                                        <Text size="sm">Signup</Text>
+                                    </Group>
+                                </UnstyledButton>
+                            </Link>
                         </Group>
                     </Box>
                 </Header>

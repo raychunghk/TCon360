@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('PostSumAggregate')
+@TypeGraphQL.ObjectType('PostSumAggregate', {
+  description: "",
+})
 export class PostSumAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,

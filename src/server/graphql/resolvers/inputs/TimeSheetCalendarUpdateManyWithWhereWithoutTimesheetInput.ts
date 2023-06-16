@@ -6,7 +6,10 @@ import { TimeSheetCalendarScalarWhereInput } from '../inputs/TimeSheetCalendarSc
 import { TimeSheetCalendarUpdateManyMutationInput } from '../inputs/TimeSheetCalendarUpdateManyMutationInput';
 
 @TypeGraphQL.InputType(
-  'TimeSheetCalendarUpdateManyWithWhereWithoutTimesheetInput'
+  'TimeSheetCalendarUpdateManyWithWhereWithoutTimesheetInput',
+  {
+    description: "",
+  },
 )
 export class TimeSheetCalendarUpdateManyWithWhereWithoutTimesheetInput {
   @TypeGraphQL.Field((_type) => TimeSheetCalendarScalarWhereInput, {

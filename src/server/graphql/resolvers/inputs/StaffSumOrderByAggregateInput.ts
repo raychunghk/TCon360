@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('StaffSumOrderByAggregateInput')
+@TypeGraphQL.InputType('StaffSumOrderByAggregateInput', {
+  description: "",
+})
 export class StaffSumOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

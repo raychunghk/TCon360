@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../scalars';
 import { PostUser } from '../models/PostUser';
 
-@TypeGraphQL.ObjectType('Post')
+@TypeGraphQL.ObjectType('Post', {
+  description: "",
+})
 export class Post {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

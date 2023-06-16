@@ -8,7 +8,9 @@ import { IntFilter } from '../inputs/IntFilter';
 import { StaffRelationFilter } from '../inputs/StaffRelationFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('LeaveRequestWhereInput')
+@TypeGraphQL.InputType('LeaveRequestWhereInput', {
+  description: "",
+})
 export class LeaveRequestWhereInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestWhereInput], {
     nullable: true,

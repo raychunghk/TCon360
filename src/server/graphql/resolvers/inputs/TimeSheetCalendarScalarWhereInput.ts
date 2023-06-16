@@ -6,7 +6,9 @@ import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { DecimalFilter } from '../inputs/DecimalFilter';
 import { IntFilter } from '../inputs/IntFilter';
 
-@TypeGraphQL.InputType('TimeSheetCalendarScalarWhereInput')
+@TypeGraphQL.InputType('TimeSheetCalendarScalarWhereInput', {
+  description: "",
+})
 export class TimeSheetCalendarScalarWhereInput {
   @TypeGraphQL.Field((_type) => [TimeSheetCalendarScalarWhereInput], {
     nullable: true,

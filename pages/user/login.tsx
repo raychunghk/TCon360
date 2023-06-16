@@ -47,7 +47,7 @@ const useStyles = createStyles((theme) => ({
 
 export default function LoginPage(props) {
   const { classes } = useStyles();
-  ;
+ 
   const router = useRouter();
 
   const handleSignupClick = () => {

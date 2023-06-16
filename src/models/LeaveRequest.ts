@@ -1,6 +1,6 @@
 import { Field, ObjectType, Int, Float, InputType } from 'type-graphql';
 import { Staff } from './Staff';
- 
+
 
 @ObjectType()
 @InputType()

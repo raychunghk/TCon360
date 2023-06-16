@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { useSession,SessionProvider  } from 'next-auth/react';
 import {
   Paper,
   createStyles,
@@ -13,10 +14,10 @@ import {
   Anchor,
 } from "@mantine/core";
 import bg from "public/images/loginbg1.webp";
-import { PrismaClient } from "@prisma/client";
+
 import Head from "next/head";
 
-const prisma = new PrismaClient();
+
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -50,19 +51,46 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function SignupPage() {
-  const { classes } = useStyles();
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const router = useRouter();
-
-  const handleSubmit = async (event) => {
+  const { classes } = useStyles();
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  //const [session, loading] = useSession();
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
+  const mainpage = '/'
+  async function handleSubmit(event) {
     event.preventDefault();
-    await prisma.user.create({ data: { email, username, password } });
-    router.push("/login");
-  };
+    const user = {
+      email: email,
+      username: username,
+      password: password,
+    };
+    const response = await fetch('/absproxy/5000/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify(user),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (response.ok) {
+      router.push(mainpage);
+    } else {
+      console.error('Error signing up:', response.statusText);
+    }
+  }
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (session) {
+    router.push(mainpage);
+  }
+
 
   return (
+
     <>
       <Head>
         <Title>Login - My Website</Title>

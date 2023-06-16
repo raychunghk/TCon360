@@ -3,8 +3,11 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
+import { UserUpdateOneRequiredWithoutStaffNestedInput } from '../inputs/UserUpdateOneRequiredWithoutStaffNestedInput';
 
-@TypeGraphQL.InputType('StaffUpdateWithoutLeaveRequestsInput')
+@TypeGraphQL.InputType('StaffUpdateWithoutLeaveRequestsInput', {
+  description: "",
+})
 export class StaffUpdateWithoutLeaveRequestsInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,
@@ -45,4 +48,9 @@ export class StaffUpdateWithoutLeaveRequestsInput {
     nullable: true,
   })
   ManagerEmail?: StringFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field((_type) => UserUpdateOneRequiredWithoutStaffNestedInput, {
+    nullable: true,
+  })
+  user?: UserUpdateOneRequiredWithoutStaffNestedInput | undefined;
 }

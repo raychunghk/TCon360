@@ -6,7 +6,9 @@ import { LeaveRequestCreateOrConnectWithoutStaffInput } from '../inputs/LeaveReq
 import { LeaveRequestCreateWithoutStaffInput } from '../inputs/LeaveRequestCreateWithoutStaffInput';
 import { LeaveRequestWhereUniqueInput } from '../inputs/LeaveRequestWhereUniqueInput';
 
-@TypeGraphQL.InputType('LeaveRequestCreateNestedManyWithoutStaffInput')
+@TypeGraphQL.InputType('LeaveRequestCreateNestedManyWithoutStaffInput', {
+  description: "",
+})
 export class LeaveRequestCreateNestedManyWithoutStaffInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestCreateWithoutStaffInput], {
     nullable: true,

@@ -46,6 +46,7 @@ export class FindManyStaffArgs {
         | 'ManagerName'
         | 'ManagerTitle'
         | 'ManagerEmail'
+        | 'userId'
       >
     | undefined;
 }

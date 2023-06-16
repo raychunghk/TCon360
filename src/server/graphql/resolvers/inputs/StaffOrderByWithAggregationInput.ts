@@ -9,7 +9,9 @@ import { StaffMinOrderByAggregateInput } from '../inputs/StaffMinOrderByAggregat
 import { StaffSumOrderByAggregateInput } from '../inputs/StaffSumOrderByAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('StaffOrderByWithAggregationInput')
+@TypeGraphQL.InputType('StaffOrderByWithAggregationInput', {
+  description: "",
+})
 export class StaffOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
@@ -55,6 +57,11 @@ export class StaffOrderByWithAggregationInput {
     nullable: true,
   })
   ManagerEmail?: 'asc' | 'desc' | undefined;
+
+  @TypeGraphQL.Field((_type) => SortOrder, {
+    nullable: true,
+  })
+  userId?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => StaffCountOrderByAggregateInput, {
     nullable: true,

@@ -9,7 +9,9 @@ import { LeaveRequestMinOrderByAggregateInput } from '../inputs/LeaveRequestMinO
 import { LeaveRequestSumOrderByAggregateInput } from '../inputs/LeaveRequestSumOrderByAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('LeaveRequestOrderByWithAggregationInput')
+@TypeGraphQL.InputType('LeaveRequestOrderByWithAggregationInput', {
+  description: "",
+})
 export class LeaveRequestOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

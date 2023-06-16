@@ -19,6 +19,7 @@ import { AuthChecker } from 'type-graphql';
 import { PrismaService } from './prisma/prisma.service';
 import { UserResolver } from './user/user.resolver';
 import { JwtAuthGuard } from './guards/JwtAuthGuard';
+import { AuthModule } from './auth/auth.module';
 @Module({
   /* should pass a NEXT.js server instance
       as the argument to `forRootAsync` */
@@ -35,6 +36,7 @@ import { JwtAuthGuard } from './guards/JwtAuthGuard';
     TimesheetModule,
     LeaveRequestModule,
     VacationsModule,
+    AuthModule,
     TypeGraphQLModule.forRoot({
       driver: ApolloDriver,
       emitSchemaFile: true,

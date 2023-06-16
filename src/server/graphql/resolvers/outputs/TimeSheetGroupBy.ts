@@ -8,7 +8,9 @@ import { TimeSheetMaxAggregate } from '../outputs/TimeSheetMaxAggregate';
 import { TimeSheetMinAggregate } from '../outputs/TimeSheetMinAggregate';
 import { TimeSheetSumAggregate } from '../outputs/TimeSheetSumAggregate';
 
-@TypeGraphQL.ObjectType('TimeSheetGroupBy')
+@TypeGraphQL.ObjectType('TimeSheetGroupBy', {
+  description: "",
+})
 export class TimeSheetGroupBy {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

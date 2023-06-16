@@ -10,6 +10,7 @@ export enum StaffScalarFieldEnum {
   ManagerName = 'ManagerName',
   ManagerTitle = 'ManagerTitle',
   ManagerEmail = 'ManagerEmail',
+  userId = 'userId',
 }
 TypeGraphQL.registerEnumType(StaffScalarFieldEnum, {
   name: 'StaffScalarFieldEnum',

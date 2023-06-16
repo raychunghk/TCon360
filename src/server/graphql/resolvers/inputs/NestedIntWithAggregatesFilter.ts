@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { NestedFloatFilter } from '../inputs/NestedFloatFilter';
 import { NestedIntFilter } from '../inputs/NestedIntFilter';
 
-@TypeGraphQL.InputType('NestedIntWithAggregatesFilter')
+@TypeGraphQL.InputType('NestedIntWithAggregatesFilter', {
+  description: "",
+})
 export class NestedIntWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,

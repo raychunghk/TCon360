@@ -3,25 +3,47 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('UserMinAggregate')
+@TypeGraphQL.ObjectType('UserMinAggregate', {
+  description: "",
+})
 export class UserMinAggregate {
-  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+  @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
-  id!: number | null;
+  id!: string | null;
+
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  name!: string | null;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
   email!: string | null;
 
+  @TypeGraphQL.Field((_type) => Date, {
+    nullable: true,
+  })
+  emailVerified!: Date | null;
+
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
-  username!: string | null;
+  image!: string | null;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
   password!: string | null;
+
+  @TypeGraphQL.Field((_type) => Date, {
+    nullable: true,
+  })
+  createdAt!: Date | null;
+
+  @TypeGraphQL.Field((_type) => Date, {
+    nullable: true,
+  })
+  updatedAt!: Date | null;
 }

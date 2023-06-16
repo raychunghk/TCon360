@@ -6,7 +6,9 @@ import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdat
 import { IntFieldUpdateOperationsInput } from '../inputs/IntFieldUpdateOperationsInput';
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('CalendarMasterUpdateManyMutationInput')
+@TypeGraphQL.InputType('CalendarMasterUpdateManyMutationInput', {
+  description: "",
+})
 export class CalendarMasterUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
     nullable: true,

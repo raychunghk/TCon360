@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from 'type-graphql';
 import { LeaveRequest } from './LeaveRequest';
+import { User } from './User';
 
 @ObjectType()
 export class Staff {
@@ -29,6 +30,12 @@ export class Staff {
 
   @Field()
   ManagerEmail: string;
+
+  @Field((_type) => User)
+  user: User;
+
+  @Field()
+  userId: string;
 
   @Field((_type) => [LeaveRequest])
   leaveRequests: LeaveRequest[];

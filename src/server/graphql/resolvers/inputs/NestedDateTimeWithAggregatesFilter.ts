@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { NestedDateTimeFilter } from '../inputs/NestedDateTimeFilter';
 import { NestedIntFilter } from '../inputs/NestedIntFilter';
 
-@TypeGraphQL.InputType('NestedDateTimeWithAggregatesFilter')
+@TypeGraphQL.InputType('NestedDateTimeWithAggregatesFilter', {
+  description: "",
+})
 export class NestedDateTimeWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: true,

@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { TimeSheetCalendarOrderByRelationAggregateInput } from '../inputs/TimeSheetCalendarOrderByRelationAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('TimeSheetOrderByWithRelationInput')
+@TypeGraphQL.InputType('TimeSheetOrderByWithRelationInput', {
+  description: "",
+})
 export class TimeSheetOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('UserVacationMaxAggregate')
+@TypeGraphQL.ObjectType('UserVacationMaxAggregate', {
+  description: "",
+})
 export class UserVacationMaxAggregate {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: true,

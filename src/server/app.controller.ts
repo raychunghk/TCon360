@@ -39,5 +39,10 @@ export class AppController {
   public login() {
     return {};
   }
- 
+  @Get('signup')
+  @Render('user/signup')
+  @UseInterceptors(ParamsInterceptor)
+  public signup() {
+    return {};
+  }
 }

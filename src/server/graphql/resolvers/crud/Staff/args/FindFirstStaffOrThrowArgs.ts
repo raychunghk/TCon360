@@ -46,6 +46,7 @@ export class FindFirstStaffOrThrowArgs {
         | 'ManagerName'
         | 'ManagerTitle'
         | 'ManagerEmail'
+        | 'userId'
       >
     | undefined;
 }

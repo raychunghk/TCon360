@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('PostWhereUniqueInput')
+@TypeGraphQL.InputType('PostWhereUniqueInput', {
+  description: "",
+})
 export class PostWhereUniqueInput {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,

@@ -3,20 +3,17 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('UserWhereUniqueInput')
+@TypeGraphQL.InputType('UserWhereUniqueInput', {
+  description: "",
+})
 export class UserWhereUniqueInput {
-  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+  @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
-  id?: number | undefined;
+  id?: string | undefined;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
   email?: string | undefined;
-
-  @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
-  })
-  username?: string | undefined;
 }
