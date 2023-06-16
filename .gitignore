@@ -26,6 +26,7 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+/.next/*
 .next/*
 /src/server/graphql/*
 # IDE - VSCode
