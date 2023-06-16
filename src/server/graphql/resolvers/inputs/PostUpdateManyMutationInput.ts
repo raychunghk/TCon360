@@ -6,9 +6,7 @@ import { BoolFieldUpdateOperationsInput } from '../inputs/BoolFieldUpdateOperati
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('PostUpdateManyMutationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostUpdateManyMutationInput')
 export class PostUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,

@@ -3,9 +3,7 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('CalendarMasterCountAggregate', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('CalendarMasterCountAggregate', {})
 export class CalendarMasterCountAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

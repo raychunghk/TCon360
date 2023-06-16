@@ -6,14 +6,17 @@ import { AccountCreateNestedManyWithoutUserInput } from '../inputs/AccountCreate
 import { SessionCreateNestedManyWithoutUserInput } from '../inputs/SessionCreateNestedManyWithoutUserInput';
 import { StaffCreateNestedOneWithoutUserInput } from '../inputs/StaffCreateNestedOneWithoutUserInput';
 
-@TypeGraphQL.InputType('UserCreateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserCreateInput')
 export class UserCreateInput {
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
   id?: string | undefined;
+
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  username?: string | undefined;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

@@ -8,9 +8,7 @@ import { PostUserUpdateWithoutPostsInput } from '../inputs/PostUserUpdateWithout
 import { PostUserUpsertWithoutPostsInput } from '../inputs/PostUserUpsertWithoutPostsInput';
 import { PostUserWhereUniqueInput } from '../inputs/PostUserWhereUniqueInput';
 
-@TypeGraphQL.InputType('PostUserUpdateOneRequiredWithoutPostsNestedInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostUserUpdateOneRequiredWithoutPostsNestedInput')
 export class PostUserUpdateOneRequiredWithoutPostsNestedInput {
   @TypeGraphQL.Field((_type) => PostUserCreateWithoutPostsInput, {
     nullable: true,

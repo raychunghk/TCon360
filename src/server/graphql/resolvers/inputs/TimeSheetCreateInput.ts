@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { TimeSheetCalendarCreateNestedManyWithoutTimesheetInput } from '../inputs/TimeSheetCalendarCreateNestedManyWithoutTimesheetInput';
 
-@TypeGraphQL.InputType('TimeSheetCreateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('TimeSheetCreateInput')
 export class TimeSheetCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

@@ -31,11 +31,11 @@ export class Staff {
   @Field()
   ManagerEmail: string;
 
-  @Field((_type) => User)
-  user: User;
+  @Field((_type) => User, { nullable: true })
+  user?: User;
 
-  @Field()
-  userId: string;
+  @Field({ nullable: true })
+  userId?: string;
 
   @Field((_type) => [LeaveRequest])
   leaveRequests: LeaveRequest[];

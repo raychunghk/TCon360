@@ -3,9 +3,7 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('HolidayWhereUniqueInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('HolidayWhereUniqueInput')
 export class HolidayWhereUniqueInput {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: true,

@@ -7,14 +7,17 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../inputs/NullableDa
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('UserUpdateManyMutationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserUpdateManyMutationInput')
 export class UserUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,
   })
   id?: StringFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  username?: NullableStringFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
     nullable: true,

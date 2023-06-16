@@ -1142,6 +1142,7 @@ const modelsInfo = {
   ],
   User: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1288,6 +1289,7 @@ const outputsInfo = {
   AggregateUser: ['_count', '_min', '_max'],
   UserGroupBy: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1492,6 +1494,7 @@ const outputsInfo = {
   UserCount: ['accounts', 'sessions'],
   UserCountAggregate: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1503,6 +1506,7 @@ const outputsInfo = {
   ],
   UserMinAggregate: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1513,6 +1517,7 @@ const outputsInfo = {
   ],
   UserMaxAggregate: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1935,6 +1940,7 @@ const inputsInfo = {
     'OR',
     'NOT',
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1948,6 +1954,7 @@ const inputsInfo = {
   ],
   UserOrderByWithRelationInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1962,6 +1969,7 @@ const inputsInfo = {
   UserWhereUniqueInput: ['id', 'email'],
   UserOrderByWithAggregationInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -1978,6 +1986,7 @@ const inputsInfo = {
     'OR',
     'NOT',
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -2448,6 +2457,7 @@ const inputsInfo = {
   ],
   UserCreateInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -2461,6 +2471,7 @@ const inputsInfo = {
   ],
   UserUpdateInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -2474,6 +2485,7 @@ const inputsInfo = {
   ],
   UserUpdateManyMutationInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -2840,6 +2852,7 @@ const inputsInfo = {
   SessionOrderByRelationAggregateInput: ['_count'],
   UserCountOrderByAggregateInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -2850,6 +2863,7 @@ const inputsInfo = {
   ],
   UserMaxOrderByAggregateInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -2860,6 +2874,7 @@ const inputsInfo = {
   ],
   UserMinOrderByAggregateInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -3274,10 +3289,12 @@ const inputsInfo = {
     'connectOrCreate',
     'connect',
   ],
-  UserUpdateOneRequiredWithoutStaffNestedInput: [
+  UserUpdateOneWithoutStaffNestedInput: [
     'create',
     'connectOrCreate',
     'upsert',
+    'disconnect',
+    'delete',
     'connect',
     'update',
   ],
@@ -3551,6 +3568,7 @@ const inputsInfo = {
   ],
   UserCreateWithoutAccountsInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -3565,6 +3583,7 @@ const inputsInfo = {
   UserUpsertWithoutAccountsInput: ['update', 'create'],
   UserUpdateWithoutAccountsInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -3577,6 +3596,7 @@ const inputsInfo = {
   ],
   UserCreateWithoutSessionsInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -3591,6 +3611,7 @@ const inputsInfo = {
   UserUpsertWithoutSessionsInput: ['update', 'create'],
   UserUpdateWithoutSessionsInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -3681,6 +3702,7 @@ const inputsInfo = {
   ],
   UserCreateWithoutStaffInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',
@@ -3705,6 +3727,7 @@ const inputsInfo = {
   UserUpsertWithoutStaffInput: ['update', 'create'],
   UserUpdateWithoutStaffInput: [
     'id',
+    'username',
     'name',
     'email',
     'emailVerified',

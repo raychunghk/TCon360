@@ -267,7 +267,7 @@ export { UserUpdateInput } from './UserUpdateInput';
 export { UserUpdateManyMutationInput } from './UserUpdateManyMutationInput';
 export { UserUpdateOneRequiredWithoutAccountsNestedInput } from './UserUpdateOneRequiredWithoutAccountsNestedInput';
 export { UserUpdateOneRequiredWithoutSessionsNestedInput } from './UserUpdateOneRequiredWithoutSessionsNestedInput';
-export { UserUpdateOneRequiredWithoutStaffNestedInput } from './UserUpdateOneRequiredWithoutStaffNestedInput';
+export { UserUpdateOneWithoutStaffNestedInput } from './UserUpdateOneWithoutStaffNestedInput';
 export { UserUpdateWithoutAccountsInput } from './UserUpdateWithoutAccountsInput';
 export { UserUpdateWithoutSessionsInput } from './UserUpdateWithoutSessionsInput';
 export { UserUpdateWithoutStaffInput } from './UserUpdateWithoutStaffInput';

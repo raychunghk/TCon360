@@ -3,9 +3,7 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('LeaveRequestCreateWithoutStaffInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('LeaveRequestCreateWithoutStaffInput')
 export class LeaveRequestCreateWithoutStaffInput {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

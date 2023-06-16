@@ -26,15 +26,15 @@ export class StaffService {
       return this.prisma;
     }
   }
-  async getStaffById(id: string): Promise<Staff> {
+  async getStaffById(_id: number): Promise<Staff> {
     console.log('prisma ?'+this.prisma)
     const staff = await this.getPrisma().staff.findUnique({
       where: {
-        id: 4,
+        id: _id,
       },
     });
     if (!staff) {
-      throw new Error(`Staff member with ID ${id} not found`);
+      throw new Error(`Staff member with ID ${_id} not found`);
     }
     return staff;
   }

@@ -8,9 +8,7 @@ import { PostUserRelationFilter } from '../inputs/PostUserRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('PostWhereInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostWhereInput')
 export class PostWhereInput {
   @TypeGraphQL.Field((_type) => [PostWhereInput], {
     nullable: true,

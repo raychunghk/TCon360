@@ -7,9 +7,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStri
 import { PostUserUpdateOneRequiredWithoutPostsNestedInput } from '../inputs/PostUserUpdateOneRequiredWithoutPostsNestedInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('PostUpdateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostUpdateInput')
 export class PostUpdateInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,

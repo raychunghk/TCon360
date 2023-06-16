@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdateOperationsInput';
 import { DecimalFieldUpdateOperationsInput } from '../inputs/DecimalFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('UserVacationUpdateManyMutationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserVacationUpdateManyMutationInput')
 export class UserVacationUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
     nullable: true,

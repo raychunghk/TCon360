@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('CalendarMasterCountOrderByAggregateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('CalendarMasterCountOrderByAggregateInput')
 export class CalendarMasterCountOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { StaffWhereInput } from '../inputs/StaffWhereInput';
 
-@TypeGraphQL.InputType('StaffRelationFilter', {
-  description: "",
-})
+@TypeGraphQL.InputType('StaffRelationFilter')
 export class StaffRelationFilter {
   @TypeGraphQL.Field((_type) => StaffWhereInput, {
     nullable: true,

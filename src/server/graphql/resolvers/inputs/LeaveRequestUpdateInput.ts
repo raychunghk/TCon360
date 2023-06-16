@@ -7,9 +7,7 @@ import { FloatFieldUpdateOperationsInput } from '../inputs/FloatFieldUpdateOpera
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput } from '../inputs/StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput';
 
-@TypeGraphQL.InputType('LeaveRequestUpdateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('LeaveRequestUpdateInput')
 export class LeaveRequestUpdateInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
     nullable: true,

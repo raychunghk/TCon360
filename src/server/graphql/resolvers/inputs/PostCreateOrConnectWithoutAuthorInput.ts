@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { PostCreateWithoutAuthorInput } from '../inputs/PostCreateWithoutAuthorInput';
 import { PostWhereUniqueInput } from '../inputs/PostWhereUniqueInput';
 
-@TypeGraphQL.InputType('PostCreateOrConnectWithoutAuthorInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostCreateOrConnectWithoutAuthorInput')
 export class PostCreateOrConnectWithoutAuthorInput {
   @TypeGraphQL.Field((_type) => PostWhereUniqueInput, {
     nullable: false,

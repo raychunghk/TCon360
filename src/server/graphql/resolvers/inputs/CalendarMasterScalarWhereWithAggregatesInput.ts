@@ -6,9 +6,7 @@ import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFi
 import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 
-@TypeGraphQL.InputType('CalendarMasterScalarWhereWithAggregatesInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('CalendarMasterScalarWhereWithAggregatesInput')
 export class CalendarMasterScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field(
     (_type) => [CalendarMasterScalarWhereWithAggregatesInput],

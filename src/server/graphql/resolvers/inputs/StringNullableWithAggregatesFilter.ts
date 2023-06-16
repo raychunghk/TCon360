@@ -6,9 +6,7 @@ import { NestedIntNullableFilter } from '../inputs/NestedIntNullableFilter';
 import { NestedStringNullableFilter } from '../inputs/NestedStringNullableFilter';
 import { NestedStringNullableWithAggregatesFilter } from '../inputs/NestedStringNullableWithAggregatesFilter';
 
-@TypeGraphQL.InputType('StringNullableWithAggregatesFilter', {
-  description: "",
-})
+@TypeGraphQL.InputType('StringNullableWithAggregatesFilter')
 export class StringNullableWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

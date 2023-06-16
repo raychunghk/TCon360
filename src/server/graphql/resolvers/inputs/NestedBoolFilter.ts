@@ -3,9 +3,7 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('NestedBoolFilter', {
-  description: "",
-})
+@TypeGraphQL.InputType('NestedBoolFilter')
 export class NestedBoolFilter {
   @TypeGraphQL.Field((_type) => Boolean, {
     nullable: true,

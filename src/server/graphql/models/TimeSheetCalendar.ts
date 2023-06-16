@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../scalars';
 import { TimeSheet } from '../models/TimeSheet';
 
-@TypeGraphQL.ObjectType('TimeSheetCalendar', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('TimeSheetCalendar', {})
 export class TimeSheetCalendar {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

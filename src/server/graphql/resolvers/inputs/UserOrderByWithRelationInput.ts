@@ -7,14 +7,17 @@ import { SessionOrderByRelationAggregateInput } from '../inputs/SessionOrderByRe
 import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelationInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('UserOrderByWithRelationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserOrderByWithRelationInput')
 export class UserOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
   id?: 'asc' | 'desc' | undefined;
+
+  @TypeGraphQL.Field((_type) => SortOrder, {
+    nullable: true,
+  })
+  username?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

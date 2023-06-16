@@ -7,9 +7,7 @@ import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFi
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 import { StringWithAggregatesFilter } from '../inputs/StringWithAggregatesFilter';
 
-@TypeGraphQL.InputType('UserScalarWhereWithAggregatesInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserScalarWhereWithAggregatesInput')
 export class UserScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [UserScalarWhereWithAggregatesInput], {
     nullable: true,
@@ -30,6 +28,11 @@ export class UserScalarWhereWithAggregatesInput {
     nullable: true,
   })
   id?: StringWithAggregatesFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
+    nullable: true,
+  })
+  username?: StringNullableWithAggregatesFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
     nullable: true,

@@ -10,9 +10,7 @@ import { StaffRelationFilter } from '../inputs/StaffRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('UserWhereInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserWhereInput')
 export class UserWhereInput {
   @TypeGraphQL.Field((_type) => [UserWhereInput], {
     nullable: true,
@@ -33,6 +31,11 @@ export class UserWhereInput {
     nullable: true,
   })
   id?: StringFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+    nullable: true,
+  })
+  username?: StringNullableFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StringNullableFilter, {
     nullable: true,

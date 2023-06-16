@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { PostOrderByRelationAggregateInput } from '../inputs/PostOrderByRelationAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('PostUserOrderByWithRelationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostUserOrderByWithRelationInput')
 export class PostUserOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

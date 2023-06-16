@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestCreateWithoutStaffInput } from '../inputs/LeaveRequestCreateWithoutStaffInput';
 import { LeaveRequestWhereUniqueInput } from '../inputs/LeaveRequestWhereUniqueInput';
 
-@TypeGraphQL.InputType('LeaveRequestCreateOrConnectWithoutStaffInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('LeaveRequestCreateOrConnectWithoutStaffInput')
 export class LeaveRequestCreateOrConnectWithoutStaffInput {
   @TypeGraphQL.Field((_type) => LeaveRequestWhereUniqueInput, {
     nullable: false,

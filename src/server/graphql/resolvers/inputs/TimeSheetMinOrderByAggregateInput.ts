@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('TimeSheetMinOrderByAggregateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('TimeSheetMinOrderByAggregateInput')
 export class TimeSheetMinOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('PostUserUpdateManyMutationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('PostUserUpdateManyMutationInput')
 export class PostUserUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,

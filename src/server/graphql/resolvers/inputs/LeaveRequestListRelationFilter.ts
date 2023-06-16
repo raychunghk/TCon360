@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestWhereInput } from '../inputs/LeaveRequestWhereInput';
 
-@TypeGraphQL.InputType('LeaveRequestListRelationFilter', {
-  description: "",
-})
+@TypeGraphQL.InputType('LeaveRequestListRelationFilter')
 export class LeaveRequestListRelationFilter {
   @TypeGraphQL.Field((_type) => LeaveRequestWhereInput, {
     nullable: true,

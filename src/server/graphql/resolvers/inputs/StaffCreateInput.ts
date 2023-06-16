@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestCreateNestedManyWithoutStaffInput } from '../inputs/LeaveRequestCreateNestedManyWithoutStaffInput';
 import { UserCreateNestedOneWithoutStaffInput } from '../inputs/UserCreateNestedOneWithoutStaffInput';
 
-@TypeGraphQL.InputType('StaffCreateInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('StaffCreateInput')
 export class StaffCreateInput {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,
@@ -50,9 +48,9 @@ export class StaffCreateInput {
   ManagerEmail!: string;
 
   @TypeGraphQL.Field((_type) => UserCreateNestedOneWithoutStaffInput, {
-    nullable: false,
+    nullable: true,
   })
-  user!: UserCreateNestedOneWithoutStaffInput;
+  user?: UserCreateNestedOneWithoutStaffInput | undefined;
 
   @TypeGraphQL.Field((_type) => LeaveRequestCreateNestedManyWithoutStaffInput, {
     nullable: true,

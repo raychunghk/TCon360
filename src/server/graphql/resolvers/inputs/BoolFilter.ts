@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { NestedBoolFilter } from '../inputs/NestedBoolFilter';
 
-@TypeGraphQL.InputType('BoolFilter', {
-  description: "",
-})
+@TypeGraphQL.InputType('BoolFilter')
 export class BoolFilter {
   @TypeGraphQL.Field((_type) => Boolean, {
     nullable: true,

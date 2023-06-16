@@ -1,5 +1,4 @@
 import { Post } from './Post';
-
 import { Account } from './Account';
 import { Session } from './Session';
 import { Staff } from './Staff';
@@ -12,6 +11,9 @@ export class User {
 
   @Field({ nullable: true })
   username?: string;
+
+  @Field({ nullable: true })
+  name?: string;
 
   @Field({ nullable: true })
   email?: string;

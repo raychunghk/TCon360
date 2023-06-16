@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestScalarWhereInput } from '../inputs/LeaveRequestScalarWhereInput';
 import { LeaveRequestUpdateManyMutationInput } from '../inputs/LeaveRequestUpdateManyMutationInput';
 
-@TypeGraphQL.InputType('LeaveRequestUpdateManyWithWhereWithoutStaffInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('LeaveRequestUpdateManyWithWhereWithoutStaffInput')
 export class LeaveRequestUpdateManyWithWhereWithoutStaffInput {
   @TypeGraphQL.Field((_type) => LeaveRequestScalarWhereInput, {
     nullable: false,

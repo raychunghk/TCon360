@@ -7,14 +7,17 @@ import { Session } from '../models/Session';
 import { Staff } from '../models/Staff';
 import { UserCount } from '../resolvers/outputs/UserCount';
 
-@TypeGraphQL.ObjectType('User', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('User', {})
 export class User {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,
   })
   id!: string;
+
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  username?: string | null;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

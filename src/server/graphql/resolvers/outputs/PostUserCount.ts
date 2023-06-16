@@ -3,9 +3,7 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('PostUserCount', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('PostUserCount', {})
 export class PostUserCount {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

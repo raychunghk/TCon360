@@ -1,6 +1,6 @@
 import { Resolver, Args, Mutation, ObjectType, Field } from '@nestjs/graphql';
 import { LeaveRequest } from 'src/models/LeaveRequest';
-import { LeaveRequestCreateInput } from 'src/graphql/resolvers/inputs/LeaveRequestCreateInput';
+//import { LeaveRequestCreateInput } from 'src/graphql/resolvers/inputs/LeaveRequestCreateInput';
 import { LeaveRequestService } from './service/leaverequest.service';
 import { PrismaService } from '../prisma/prisma.service';
 

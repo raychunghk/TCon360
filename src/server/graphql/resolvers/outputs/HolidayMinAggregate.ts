@@ -3,9 +3,7 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('HolidayMinAggregate', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('HolidayMinAggregate', {})
 export class HolidayMinAggregate {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: true,

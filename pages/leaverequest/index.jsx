@@ -289,6 +289,6 @@ export default function LeaveRequestForm({ staff }) {
 export const getServerSideProps = async ({ params }) => {
     //const { id } = params;
     const staffService = new StaffService();
-    const staff = await staffService.getStaffById(4);
+    const staff = await staffService.getStaffById(1);
     return { props: { staff } };
 };

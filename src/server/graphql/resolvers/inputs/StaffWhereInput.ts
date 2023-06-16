@@ -5,11 +5,10 @@ import { DecimalJSScalar } from '../../scalars';
 import { IntFilter } from '../inputs/IntFilter';
 import { LeaveRequestListRelationFilter } from '../inputs/LeaveRequestListRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
+import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { UserRelationFilter } from '../inputs/UserRelationFilter';
 
-@TypeGraphQL.InputType('StaffWhereInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('StaffWhereInput')
 export class StaffWhereInput {
   @TypeGraphQL.Field((_type) => [StaffWhereInput], {
     nullable: true,
@@ -71,10 +70,10 @@ export class StaffWhereInput {
   })
   ManagerEmail?: StringFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringFilter, {
+  @TypeGraphQL.Field((_type) => StringNullableFilter, {
     nullable: true,
   })
-  userId?: StringFilter | undefined;
+  userId?: StringNullableFilter | undefined;
 
   @TypeGraphQL.Field((_type) => UserRelationFilter, {
     nullable: true,

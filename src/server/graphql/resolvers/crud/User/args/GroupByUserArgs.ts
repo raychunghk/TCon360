@@ -22,6 +22,7 @@ export class GroupByUserArgs {
   })
   by!: Array<
     | 'id'
+    | 'username'
     | 'name'
     | 'email'
     | 'emailVerified'

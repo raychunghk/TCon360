@@ -7,9 +7,7 @@ import { FloatFilter } from '../inputs/FloatFilter';
 import { IntFilter } from '../inputs/IntFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('LeaveRequestScalarWhereInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('LeaveRequestScalarWhereInput')
 export class LeaveRequestScalarWhereInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestScalarWhereInput], {
     nullable: true,

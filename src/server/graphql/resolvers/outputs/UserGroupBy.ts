@@ -6,14 +6,17 @@ import { UserCountAggregate } from '../outputs/UserCountAggregate';
 import { UserMaxAggregate } from '../outputs/UserMaxAggregate';
 import { UserMinAggregate } from '../outputs/UserMinAggregate';
 
-@TypeGraphQL.ObjectType('UserGroupBy', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('UserGroupBy', {})
 export class UserGroupBy {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,
   })
   id!: string;
+
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  username!: string | null;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

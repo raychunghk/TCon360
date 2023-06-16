@@ -6,9 +6,7 @@ import { HolidayCountAggregate } from '../outputs/HolidayCountAggregate';
 import { HolidayMaxAggregate } from '../outputs/HolidayMaxAggregate';
 import { HolidayMinAggregate } from '../outputs/HolidayMinAggregate';
 
-@TypeGraphQL.ObjectType('AggregateHoliday', {
-  description: "",
-})
+@TypeGraphQL.ObjectType('AggregateHoliday', {})
 export class AggregateHoliday {
   @TypeGraphQL.Field((_type) => HolidayCountAggregate, {
     nullable: true,

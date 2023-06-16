@@ -38,6 +38,7 @@ export class FindFirstUserOrThrowArgs {
   distinct?:
     | Array<
         | 'id'
+        | 'username'
         | 'name'
         | 'email'
         | 'emailVerified'

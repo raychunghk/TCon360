@@ -38,6 +38,7 @@ export class FindManyUserArgs {
   distinct?:
     | Array<
         | 'id'
+        | 'username'
         | 'name'
         | 'email'
         | 'emailVerified'

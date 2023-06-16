@@ -13,13 +13,13 @@ import {
 @TypeGraphQL.Resolver((_of) => Staff)
 export class StaffRelationsResolver {
   @TypeGraphQL.FieldResolver((_type) => User, {
-    nullable: false,
+    nullable: true,
   })
   async user(
     @TypeGraphQL.Root() staff: Staff,
     @TypeGraphQL.Ctx() ctx: any,
     @TypeGraphQL.Info() info: GraphQLResolveInfo,
-  ): Promise<User> {
+  ): Promise<User | null> {
     const { _count } = transformInfoIntoPrismaArgs(info);
     return getPrismaFromContext(ctx)
       .staff.findUniqueOrThrow({

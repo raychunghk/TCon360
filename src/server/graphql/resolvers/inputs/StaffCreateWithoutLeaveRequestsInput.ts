@@ -4,9 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { UserCreateNestedOneWithoutStaffInput } from '../inputs/UserCreateNestedOneWithoutStaffInput';
 
-@TypeGraphQL.InputType('StaffCreateWithoutLeaveRequestsInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('StaffCreateWithoutLeaveRequestsInput')
 export class StaffCreateWithoutLeaveRequestsInput {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,
@@ -49,7 +47,7 @@ export class StaffCreateWithoutLeaveRequestsInput {
   ManagerEmail!: string;
 
   @TypeGraphQL.Field((_type) => UserCreateNestedOneWithoutStaffInput, {
-    nullable: false,
+    nullable: true,
   })
-  user!: UserCreateNestedOneWithoutStaffInput;
+  user?: UserCreateNestedOneWithoutStaffInput | undefined;
 }

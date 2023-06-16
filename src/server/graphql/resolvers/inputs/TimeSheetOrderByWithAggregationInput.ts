@@ -9,9 +9,7 @@ import { TimeSheetMinOrderByAggregateInput } from '../inputs/TimeSheetMinOrderBy
 import { TimeSheetSumOrderByAggregateInput } from '../inputs/TimeSheetSumOrderByAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('TimeSheetOrderByWithAggregationInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('TimeSheetOrderByWithAggregationInput')
 export class TimeSheetOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

@@ -1,9 +1,0 @@
-export { CalendarMasterCrudResolver } from './CalendarMaster/CalendarMasterCrudResolver';
-export { HolidayCrudResolver } from './Holiday/HolidayCrudResolver';
-export { LeaveRequestCrudResolver } from './LeaveRequest/LeaveRequestCrudResolver';
-export { PostCrudResolver } from './Post/PostCrudResolver';
-export { StaffCrudResolver } from './Staff/StaffCrudResolver';
-export { TimeSheetCrudResolver } from './TimeSheet/TimeSheetCrudResolver';
-export { TimeSheetCalendarCrudResolver } from './TimeSheetCalendar/TimeSheetCalendarCrudResolver';
-export { UserCrudResolver } from './User/UserCrudResolver';
-export { UserVacationCrudResolver } from './UserVacation/UserVacationCrudResolver';

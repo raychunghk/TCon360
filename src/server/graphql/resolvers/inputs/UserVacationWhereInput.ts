@@ -5,9 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { DecimalFilter } from '../inputs/DecimalFilter';
 
-@TypeGraphQL.InputType('UserVacationWhereInput', {
-  description: "",
-})
+@TypeGraphQL.InputType('UserVacationWhereInput')
 export class UserVacationWhereInput {
   @TypeGraphQL.Field((_type) => [UserVacationWhereInput], {
     nullable: true,
