@@ -10,7 +10,9 @@ import { SessionUpdateManyWithoutUserNestedInput } from '../inputs/SessionUpdate
 import { StaffUpdateOneWithoutUserNestedInput } from '../inputs/StaffUpdateOneWithoutUserNestedInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('UserUpdateInput')
+@TypeGraphQL.InputType('UserUpdateInput', {
+ description:"",
+})
 export class UserUpdateInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,

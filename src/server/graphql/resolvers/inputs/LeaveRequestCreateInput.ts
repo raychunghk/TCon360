@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { StaffCreateNestedOneWithoutLeaveRequestsInput } from '../inputs/StaffCreateNestedOneWithoutLeaveRequestsInput';
 
-@TypeGraphQL.InputType('LeaveRequestCreateInput')
+@TypeGraphQL.InputType('LeaveRequestCreateInput', {
+ description:"",
+})
 export class LeaveRequestCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestCreateNestedManyWithoutStaffInput } from '../inputs/LeaveRequestCreateNestedManyWithoutStaffInput';
 import { UserCreateNestedOneWithoutStaffInput } from '../inputs/UserCreateNestedOneWithoutStaffInput';
 
-@TypeGraphQL.InputType('StaffCreateInput')
+@TypeGraphQL.InputType('StaffCreateInput', {
+ description:"",
+})
 export class StaffCreateInput {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,

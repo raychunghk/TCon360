@@ -7,7 +7,9 @@ import { DecimalFieldUpdateOperationsInput } from '../inputs/DecimalFieldUpdateO
 import { IntFieldUpdateOperationsInput } from '../inputs/IntFieldUpdateOperationsInput';
 import { TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput } from '../inputs/TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput';
 
-@TypeGraphQL.InputType('TimeSheetUpdateInput')
+@TypeGraphQL.InputType('TimeSheetUpdateInput', {
+ description:"",
+})
 export class TimeSheetUpdateInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
     nullable: true,

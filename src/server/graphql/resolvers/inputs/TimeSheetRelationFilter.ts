@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { TimeSheetWhereInput } from '../inputs/TimeSheetWhereInput';
 
-@TypeGraphQL.InputType('TimeSheetRelationFilter')
+@TypeGraphQL.InputType('TimeSheetRelationFilter', {
+ description:"",
+})
 export class TimeSheetRelationFilter {
   @TypeGraphQL.Field((_type) => TimeSheetWhereInput, {
     nullable: true,

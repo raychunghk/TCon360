@@ -10,7 +10,9 @@ import {
   Anchor,
 } from "@mantine/core";
 import { useRouter } from "next/router";
+import { signIn } from 'next-auth/react';
 import bg from 'public/images/loginbg1.webp'
+import { useState } from "react";
 const useStyles = createStyles((theme) => ({
   wrapper: {
 
@@ -47,12 +49,35 @@ const useStyles = createStyles((theme) => ({
 
 export default function LoginPage(props) {
   const { classes } = useStyles();
- 
   const router = useRouter();
+  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState("");
+  const [loginStatus, setLoginStatus] = useState(null); // add login status state variable
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
+    const response = await fetch(
+      "/absproxy/5000/api/auth/login", // the URL of your Nest.js API endpoint
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier, password }), // send the identifier (username or email) and password in the request body
+      }
+    );
+
+    if (response.ok) {
+      router.push("/"); // redirect to the dashboard page on successful login
+    } else {
+      setLoginStatus("Login failed."); // set the login status to a failure message
+    }
+  };
+
 
   const handleSignupClick = () => {
     router.push("/user/signup");
   };
+
+
   return (
 
     <Container fluid className={classes.wrapper}  >
@@ -66,22 +91,29 @@ export default function LoginPage(props) {
         >
           Welcome to TS Generator!
         </Title>
+        {loginStatus && <Text color="red" fw={700} fz="md" align="center">{loginStatus}</Text>} {/* show the login status message if present */}
 
-        <TextInput
-          label="Email address"
-          placeholder="hello@gmail.com"
-          size="md"
-        />
-        <PasswordInput
-          label="Password"
-          placeholder="Your password"
-          mt="md"
-          size="md"
-        />
-        <Checkbox label="Keep me logged in" mt="xl" size="md" />
-        <Button fullWidth mt="xl" size="md">
-          Login
-        </Button>
+        <form onSubmit={handleLogin}>
+          <TextInput
+            label="Email address or username"
+            placeholder="hello@gmail.com"
+            size="md"
+            value={identifier}
+            onChange={(event) => setIdentifier(event.target.value)}
+          />
+          <PasswordInput
+            label="Password"
+            placeholder="Your password"
+            mt="md"
+            size="md"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          <Checkbox label="Keep me logged in" mt="xl" size="md" />
+          <Button type="submit" fullWidth mt="xl" size="md">
+            Login
+          </Button>
+        </form>
 
         <Text align="center" mt="md">
           Don&apos;t have an account?{" "}
@@ -94,6 +126,7 @@ export default function LoginPage(props) {
           </Anchor>
         </Text>
       </Paper>
+
     </Container>
   );
 }

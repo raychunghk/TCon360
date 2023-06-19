@@ -8,7 +8,9 @@ import { LeaveRequestMaxAggregate } from '../outputs/LeaveRequestMaxAggregate';
 import { LeaveRequestMinAggregate } from '../outputs/LeaveRequestMinAggregate';
 import { LeaveRequestSumAggregate } from '../outputs/LeaveRequestSumAggregate';
 
-@TypeGraphQL.ObjectType('LeaveRequestGroupBy', {})
+@TypeGraphQL.ObjectType('LeaveRequestGroupBy', {
+ description:"",
+})
 export class LeaveRequestGroupBy {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

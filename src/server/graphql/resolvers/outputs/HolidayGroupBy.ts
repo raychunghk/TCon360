@@ -6,7 +6,9 @@ import { HolidayCountAggregate } from '../outputs/HolidayCountAggregate';
 import { HolidayMaxAggregate } from '../outputs/HolidayMaxAggregate';
 import { HolidayMinAggregate } from '../outputs/HolidayMinAggregate';
 
-@TypeGraphQL.ObjectType('HolidayGroupBy', {})
+@TypeGraphQL.ObjectType('HolidayGroupBy', {
+ description:"",
+})
 export class HolidayGroupBy {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

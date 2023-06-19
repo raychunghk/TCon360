@@ -6,7 +6,9 @@ import { LeaveRequest } from '../models/LeaveRequest';
 import { User } from '../models/User';
 import { StaffCount } from '../resolvers/outputs/StaffCount';
 
-@TypeGraphQL.ObjectType('Staff', {})
+@TypeGraphQL.ObjectType('Staff', {
+ description:"",
+})
 export class Staff {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

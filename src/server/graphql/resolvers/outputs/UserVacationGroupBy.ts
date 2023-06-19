@@ -8,7 +8,9 @@ import { UserVacationMaxAggregate } from '../outputs/UserVacationMaxAggregate';
 import { UserVacationMinAggregate } from '../outputs/UserVacationMinAggregate';
 import { UserVacationSumAggregate } from '../outputs/UserVacationSumAggregate';
 
-@TypeGraphQL.ObjectType('UserVacationGroupBy', {})
+@TypeGraphQL.ObjectType('UserVacationGroupBy', {
+ description:"",
+})
 export class UserVacationGroupBy {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

@@ -8,7 +8,9 @@ import { StaffMaxAggregate } from '../outputs/StaffMaxAggregate';
 import { StaffMinAggregate } from '../outputs/StaffMinAggregate';
 import { StaffSumAggregate } from '../outputs/StaffSumAggregate';
 
-@TypeGraphQL.ObjectType('AggregateStaff', {})
+@TypeGraphQL.ObjectType('AggregateStaff', {
+ description:"",
+})
 export class AggregateStaff {
   @TypeGraphQL.Field((_type) => StaffCountAggregate, {
     nullable: true,

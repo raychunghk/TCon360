@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('LeaveRequestCountAggregate', {})
+@TypeGraphQL.ObjectType('LeaveRequestCountAggregate', {
+ description:"",
+})
 export class LeaveRequestCountAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { PostCreateNestedManyWithoutAuthorInput } from '../inputs/PostCreateNestedManyWithoutAuthorInput';
 
-@TypeGraphQL.InputType('PostUserCreateInput')
+@TypeGraphQL.InputType('PostUserCreateInput', {
+ description:"",
+})
 export class PostUserCreateInput {
   @TypeGraphQL.Field((_type) => String, {
     nullable: false,

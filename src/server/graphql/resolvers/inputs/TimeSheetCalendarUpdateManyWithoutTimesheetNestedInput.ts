@@ -10,7 +10,12 @@ import { TimeSheetCalendarUpdateWithWhereUniqueWithoutTimesheetInput } from '../
 import { TimeSheetCalendarUpsertWithWhereUniqueWithoutTimesheetInput } from '../inputs/TimeSheetCalendarUpsertWithWhereUniqueWithoutTimesheetInput';
 import { TimeSheetCalendarWhereUniqueInput } from '../inputs/TimeSheetCalendarWhereUniqueInput';
 
-@TypeGraphQL.InputType('TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput')
+@TypeGraphQL.InputType(
+  'TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput',
+  {
+   description:"",
+  },
+)
 export class TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput {
   @TypeGraphQL.Field(
     (_type) => [TimeSheetCalendarCreateWithoutTimesheetInput],

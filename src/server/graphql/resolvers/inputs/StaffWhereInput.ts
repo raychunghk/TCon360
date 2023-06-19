@@ -8,7 +8,9 @@ import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { UserRelationFilter } from '../inputs/UserRelationFilter';
 
-@TypeGraphQL.InputType('StaffWhereInput')
+@TypeGraphQL.InputType('StaffWhereInput', {
+ description:"",
+})
 export class StaffWhereInput {
   @TypeGraphQL.Field((_type) => [StaffWhereInput], {
     nullable: true,

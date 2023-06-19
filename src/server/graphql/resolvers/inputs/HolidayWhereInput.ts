@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
-@TypeGraphQL.InputType('HolidayWhereInput')
+@TypeGraphQL.InputType('HolidayWhereInput', {
+ description:"",
+})
 export class HolidayWhereInput {
   @TypeGraphQL.Field((_type) => [HolidayWhereInput], {
     nullable: true,

@@ -9,7 +9,9 @@ import { PostUserMinOrderByAggregateInput } from '../inputs/PostUserMinOrderByAg
 import { PostUserSumOrderByAggregateInput } from '../inputs/PostUserSumOrderByAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('PostUserOrderByWithAggregationInput')
+@TypeGraphQL.InputType('PostUserOrderByWithAggregationInput', {
+ description:"",
+})
 export class PostUserOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

@@ -7,7 +7,9 @@ import { DecimalFilter } from '../inputs/DecimalFilter';
 import { IntFilter } from '../inputs/IntFilter';
 import { TimeSheetCalendarListRelationFilter } from '../inputs/TimeSheetCalendarListRelationFilter';
 
-@TypeGraphQL.InputType('TimeSheetWhereInput')
+@TypeGraphQL.InputType('TimeSheetWhereInput', {
+ description:"",
+})
 export class TimeSheetWhereInput {
   @TypeGraphQL.Field((_type) => [TimeSheetWhereInput], {
     nullable: true,

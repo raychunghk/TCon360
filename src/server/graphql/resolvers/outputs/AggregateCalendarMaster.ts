@@ -8,7 +8,9 @@ import { CalendarMasterMaxAggregate } from '../outputs/CalendarMasterMaxAggregat
 import { CalendarMasterMinAggregate } from '../outputs/CalendarMasterMinAggregate';
 import { CalendarMasterSumAggregate } from '../outputs/CalendarMasterSumAggregate';
 
-@TypeGraphQL.ObjectType('AggregateCalendarMaster', {})
+@TypeGraphQL.ObjectType('AggregateCalendarMaster', {
+ description:"",
+})
 export class AggregateCalendarMaster {
   @TypeGraphQL.Field((_type) => CalendarMasterCountAggregate, {
     nullable: true,

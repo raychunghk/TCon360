@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('NestedStringFilter')
+@TypeGraphQL.InputType('NestedStringFilter', {
+ description:"",
+})
 export class NestedStringFilter {
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

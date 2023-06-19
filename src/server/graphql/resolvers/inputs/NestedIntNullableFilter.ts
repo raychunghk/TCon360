@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('NestedIntNullableFilter')
+@TypeGraphQL.InputType('NestedIntNullableFilter', {
+ description:"",
+})
 export class NestedIntNullableFilter {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,

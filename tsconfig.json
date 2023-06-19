@@ -32,7 +32,7 @@
     "**/*.ts",
     "**/*.tsx",
     "./.eslintrc.js"
-, "pages/timesheet/create.jsx", "src/server/leaverequest/leaverequest.resolver.ts", "pages/leaverequest/index.jsx", "pages/_document.jsx"  ],
+, "pages/timesheet/create.jsx", "src/server/leaverequest/leaverequest.resolver.ts", "pages/leaverequest/index.jsx", "pages/_document.jsx", "pages/api/auth/[...nextauth].js", "src/server/mocknext.js"  ],
   "exclude": [
     "node_modules"
   ]

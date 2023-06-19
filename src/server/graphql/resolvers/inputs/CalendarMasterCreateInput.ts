@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('CalendarMasterCreateInput')
+@TypeGraphQL.InputType('CalendarMasterCreateInput', {
+ description:"",
+})
 export class CalendarMasterCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
     nullable: false,

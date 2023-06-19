@@ -1966,7 +1966,7 @@ const inputsInfo = {
     'sessions',
     'staff',
   ],
-  UserWhereUniqueInput: ['id', 'email'],
+  UserWhereUniqueInput: ['id', 'username', 'email'],
   UserOrderByWithAggregationInput: [
     'id',
     'username',

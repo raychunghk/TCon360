@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from './users.service';
 import { User, Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private readonly prismaService: PrismaService,
+    private readonly prisma: PrismaService,
   ) { }
 
   async validateUser(username: string, password: string): Promise<any> {
@@ -18,24 +21,47 @@ export class AuthService {
     }
     return null;
   }
+  
   async signUp(user: Prisma.UserCreateInput): Promise<User> {
     console.log(user)
-    
-    return this.usersService.createUser(user);
-  }
-  async validateUserById(id: string): Promise<any> {
-    const user = await this.usersService.findById(id);
-    if (user) {
-      const { password, ...result } = user;
-      return result;
+    let  userReturn;
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    try {
+        const userReturn = await this.prisma.user.create({  data: {
+            ...user,
+            password: hashedPassword,
+          } });
+       
+    } catch (error) {
+        console.log(error)
     }
-    return null;
+    return userReturn;
+    //return this.usersService.createUser(user);
   }
 
-  async login(user: any) {
+  async login(identifier: string, password: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { username: identifier },
+        ],
+      },
+    });
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials');
+    }
+
     const payload = { sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    const token = this.jwtService.sign(payload);
+    return token;
   }
+
+
+
 }

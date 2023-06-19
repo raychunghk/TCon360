@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.ObjectType('UserVacationSumAggregate', {})
+@TypeGraphQL.ObjectType('UserVacationSumAggregate', {
+ description:"",
+})
 export class UserVacationSumAggregate {
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,

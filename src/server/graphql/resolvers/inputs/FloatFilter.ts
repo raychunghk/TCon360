@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { NestedFloatFilter } from '../inputs/NestedFloatFilter';
 
-@TypeGraphQL.InputType('FloatFilter')
+@TypeGraphQL.InputType('FloatFilter', {
+ description:"",
+})
 export class FloatFilter {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Float, {
     nullable: true,

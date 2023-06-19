@@ -5,7 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { NestedIntNullableFilter } from '../inputs/NestedIntNullableFilter';
 import { NestedStringNullableFilter } from '../inputs/NestedStringNullableFilter';
 
-@TypeGraphQL.InputType('NestedStringNullableWithAggregatesFilter')
+@TypeGraphQL.InputType('NestedStringNullableWithAggregatesFilter', {
+ description:"",
+})
 export class NestedStringNullableWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

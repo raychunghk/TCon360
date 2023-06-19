@@ -7,7 +7,9 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../inputs/NullableDa
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
-@TypeGraphQL.InputType('UserUpdateManyMutationInput')
+@TypeGraphQL.InputType('UserUpdateManyMutationInput', {
+ description:"",
+})
 export class UserUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,

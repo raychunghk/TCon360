@@ -3,7 +3,9 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
-@TypeGraphQL.InputType('TimeSheetCalendarCreateWithoutTimesheetInput')
+@TypeGraphQL.InputType('TimeSheetCalendarCreateWithoutTimesheetInput', {
+ description:"",
+})
 export class TimeSheetCalendarCreateWithoutTimesheetInput {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

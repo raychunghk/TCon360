@@ -41,6 +41,8 @@ function test() {
     const [content, setContent] = useState('')
 
     useEffect(() => {
+        console.log('basepath?')
+        console.log(basepath)
         fetch(`${basepath}/api/test`)
             .then(res => res.json())
             .then(data => setContent(data.content))

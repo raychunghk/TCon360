@@ -6,7 +6,9 @@ import { LeaveRequestUpdateManyWithoutStaffNestedInput } from '../inputs/LeaveRe
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 import { UserUpdateOneWithoutStaffNestedInput } from '../inputs/UserUpdateOneWithoutStaffNestedInput';
 
-@TypeGraphQL.InputType('StaffUpdateInput')
+@TypeGraphQL.InputType('StaffUpdateInput', {
+ description:"",
+})
 export class StaffUpdateInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,

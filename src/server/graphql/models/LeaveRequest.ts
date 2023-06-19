@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../scalars';
 import { Staff } from '../models/Staff';
 
-@TypeGraphQL.ObjectType('LeaveRequest', {})
+@TypeGraphQL.ObjectType('LeaveRequest', {
+ description:"",
+})
 export class LeaveRequest {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

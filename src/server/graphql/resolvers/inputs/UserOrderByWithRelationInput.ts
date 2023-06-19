@@ -7,7 +7,9 @@ import { SessionOrderByRelationAggregateInput } from '../inputs/SessionOrderByRe
 import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelationInput';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('UserOrderByWithRelationInput')
+@TypeGraphQL.InputType('UserOrderByWithRelationInput', {
+ description:"",
+})
 export class UserOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { NestedStringNullableFilter } from '../inputs/NestedStringNullableFilter';
 
-@TypeGraphQL.InputType('StringNullableFilter')
+@TypeGraphQL.InputType('StringNullableFilter', {
+ description:"",
+})
 export class StringNullableFilter {
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

@@ -1,16 +1,17 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials"
 //import Providers from "next-auth/providers"
-const options = {
+export const authOptions = {
 
   providers: [
     CredentialsProvider({
       type: 'credentials',
       credentials: {
         email: { label: "Email", type: "text" },
-        password: {  label: "Password", type: "password" }
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        console.log(credentials)
         const res = await fetch('/absproxy/5000/api/auth/login', {
           method: 'POST',
           body: JSON.stringify(credentials),
@@ -32,15 +33,23 @@ const options = {
       }
       return Promise.resolve(token);
     },
-    session: async (session, token) => {
+    /*session: async (session, token) => {
       // Add access_token to session
       if (token?.accessToken) {
         session.accessToken = token.accessToken;
       }
       return Promise.resolve(session);
-    }
+    }*/
+   
+    async session(session, user) {
+      // Add the basePath to the session object
+      session.basePath = '/absproxy/5000/api/auth';
+      session.user = user;
+      return session;
+    },
   },
-  basePath: '/absproxy/5000',
+ // basePath: '/absproxy/5000',
 }
 
-export default (req, res) => NextAuth(req, res, options)
+//export default (req, res) => NextAuth(req, res, options)
+export default NextAuth(authOptions)

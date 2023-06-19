@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
-@TypeGraphQL.InputType('UserMaxOrderByAggregateInput')
+@TypeGraphQL.InputType('UserMaxOrderByAggregateInput', {
+ description:"",
+})
 export class UserMaxOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

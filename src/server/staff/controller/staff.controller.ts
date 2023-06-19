@@ -19,7 +19,7 @@ export class StaffController {
         return result;
     }
     @Get(':id')
-    async getStaffById(@Param('id') id: string): Promise<Staff> {
+    async getStaffById(@Param('id') id: number): Promise<Staff> {
       return this.staffService.getStaffById(id);
     }
 }

@@ -6,7 +6,9 @@ import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 import { StringWithAggregatesFilter } from '../inputs/StringWithAggregatesFilter';
 
-@TypeGraphQL.InputType('StaffScalarWhereWithAggregatesInput')
+@TypeGraphQL.InputType('StaffScalarWhereWithAggregatesInput', {
+ description:"",
+})
 export class StaffScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [StaffScalarWhereWithAggregatesInput], {
     nullable: true,

@@ -5,7 +5,12 @@ import { DecimalJSScalar } from '../../scalars';
 import { TimeSheetCalendarCreateWithoutTimesheetInput } from '../inputs/TimeSheetCalendarCreateWithoutTimesheetInput';
 import { TimeSheetCalendarWhereUniqueInput } from '../inputs/TimeSheetCalendarWhereUniqueInput';
 
-@TypeGraphQL.InputType('TimeSheetCalendarCreateOrConnectWithoutTimesheetInput')
+@TypeGraphQL.InputType(
+  'TimeSheetCalendarCreateOrConnectWithoutTimesheetInput',
+  {
+   description:"",
+  },
+)
 export class TimeSheetCalendarCreateOrConnectWithoutTimesheetInput {
   @TypeGraphQL.Field((_type) => TimeSheetCalendarWhereUniqueInput, {
     nullable: false,

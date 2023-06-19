@@ -15,17 +15,16 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
   const title = pageProps.title;
   const basepath = pageProps.basePath;
-  const session  = pageProps.session;
+  const session = pageProps.session;
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
     props.colorScheme,
   );
 
-  console.log('props:');
-  console.log(props);
-  console.log('basepath?'+basePath);
+
   console.log('session?')
   console.log(session)
   const router = useRouter();
+  console.log(router.pathname)
   if (router.pathname === '/absproxy/5000/login') {
     router.replace('/absproxy/5000/user/login');
   }
@@ -43,7 +42,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   return (
     // <SessionProvider session={session} basePath='/absproxy/5000'>
-    <SessionProvider session={pageProps.session}  basePath='/absproxy/5000'>
+    <SessionProvider session={pageProps.session} basePath='/absproxy/5000/api/auth'>
 
       <Head>
         <title>{title ? title : "Mantine next example"}</title>

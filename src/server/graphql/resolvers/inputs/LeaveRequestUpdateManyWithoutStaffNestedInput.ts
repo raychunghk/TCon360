@@ -10,7 +10,9 @@ import { LeaveRequestUpdateWithWhereUniqueWithoutStaffInput } from '../inputs/Le
 import { LeaveRequestUpsertWithWhereUniqueWithoutStaffInput } from '../inputs/LeaveRequestUpsertWithWhereUniqueWithoutStaffInput';
 import { LeaveRequestWhereUniqueInput } from '../inputs/LeaveRequestWhereUniqueInput';
 
-@TypeGraphQL.InputType('LeaveRequestUpdateManyWithoutStaffNestedInput')
+@TypeGraphQL.InputType('LeaveRequestUpdateManyWithoutStaffNestedInput', {
+ description:"",
+})
 export class LeaveRequestUpdateManyWithoutStaffNestedInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestCreateWithoutStaffInput], {
     nullable: true,
