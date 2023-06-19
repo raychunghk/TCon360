@@ -1,54 +1,92 @@
+import jwt from "jsonwebtoken";
 import NextAuth from 'next-auth'
+import { parseCookies, setCookie } from "nookies";
 import CredentialsProvider from "next-auth/providers/credentials"
 //import Providers from "next-auth/providers"
 export const authOptions = {
 
   providers: [
-    CredentialsProvider({
-      type: 'credentials',
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
+    {
+      id: "custom-provider",
+      name: "Custom Provider",
+      // type: "oauth",
+      // version: "2.0",
+      // client_id:"123",
+      // clientid:"456",
+      // scope: "openid profile email",
+      // params: { grant_type: "authorization_code" },
+      // accessTokenUrl: "https://example.com/oauth2/token",
+      // authorizationUrl: "https://example.com/oauth2/auth",
+      // profileUrl: "https://example.com/api/user",
+      // profile: (profile) => {
+      //   return {
+      //     id: "test-user",
+      //     name: "Test User",
+      //     email: "testuser@example.com",
+      //     image: "https://example.com/testuser.jpg",
+      //   };
+      // },
+      type: "credentials",
+      authorize: async (credentials) => {
+        console.log('credentials?')
         console.log(credentials)
-        const res = await fetch('/absproxy/5000/api/auth/login', {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { 'Content-Type': 'application/json' }
-        })
-        const user = await res.json()
-        if (res.ok && user) {
-          return { ...user, email: credentials.email }
+        // get the token cookie using nookies
+        //  const cookies = parseCookies();
+        const token = credentials.token;
+        console.log('provider token')
+        console.log(token)
+        // decode the JWT token and extract the user's information
+        try {
+          console.log('jwt secret:'+process.env.JWT_SECRET);
+          const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+          console.log("Decoded token:", decodedToken); // log the decoded token
+          const { id, name, email, username } = decodedToken;
+          console.log('decodedToken')
+          console.log(decodedToken)
+          // check if the token matches the credentials
+          if (credentials.token === token) {
+            // return the user object with their information
+            return { id, name, email, username };
+          }
+        } catch (error) {
+          console.log('rror')
+          console.log(error)
+          // if the token is invalid, return null to indicate that the credentials are invalid
+          return null;
         }
-        return null
-      }
-    }),
+
+        // if the token does not match the credentials, return null to indicate that the credentials are invalid
+        return null;
+      },
+    },
   ],
   callbacks: {
-    jwt: async (token, user, account) => {
-      // Add access_token to jwt token
-      if (account?.access_token) {
-        token.accessToken = account.access_token;
+    async jwt(token, user, account, profile, isNewUser) {
+      // get the token cookie using nookies
+      const cookies = parseCookies();
+      const tokenCookie = cookies.token;
+
+      // if there's a token cookie, add it to the JWT token
+      if (tokenCookie) {
+        token.token = tokenCookie;
       }
-      return Promise.resolve(token);
+
+      return token;
     },
-    /*session: async (session, token) => {
-      // Add access_token to session
-      if (token?.accessToken) {
-        session.accessToken = token.accessToken;
-      }
-      return Promise.resolve(session);
-    }*/
-   
+
     async session(session, user) {
-      // Add the basePath to the session object
-      session.basePath = '/absproxy/5000/api/auth';
-      session.user = user;
+      // get the token cookie using nookies
+      const cookies = parseCookies();
+      const token = cookies.token;
+
+      // add the token to the session object
+      session.token = token;
+
       return session;
     },
   },
- // basePath: '/absproxy/5000',
+  // basePath: '/absproxy/5000',
 }
 
 //export default (req, res) => NextAuth(req, res, options)

@@ -115,6 +115,7 @@
     "next-auth": "^4.22.1",
     "node-unoconv": "^1.0.5",
     "nodemon": "^2.0.22",
+    "nookies": "^2.5.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

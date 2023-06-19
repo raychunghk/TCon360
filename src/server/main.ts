@@ -11,13 +11,9 @@ import secureSession from '@fastify/secure-session';
 import session from 'express-session';
 import Fastify from 'fastify'
 import Next from 'next';
+import { INestApplication } from '@nestjs/common';
 async function bootstrap() {
-
-
-
-
-
-
+  let app:INestApplication
   const usefastify = false;
   if (usefastify) {
     // const nextjs = Next({ dev: true, });
@@ -30,7 +26,7 @@ async function bootstrap() {
     //    };
     //    next();
     //  });
-    let app: NestFastifyApplication;
+    
     app = await NestFactory.create<NestFastifyApplication>(
       AppModule,
       new FastifyAdapter(),
@@ -38,15 +34,15 @@ async function bootstrap() {
 
     app.setGlobalPrefix(`/absproxy/5000`);
 
-    await app.register(secureSession, {
+    await app.use(secureSession, {
       secret: 'averylogphrasebiggerthanthirtytwochars',
       salt: 'mq9hDxBVDbspDR6n',
     });
 
-    await app.listen(5000);
+    
   }
   else {
-    const app = await NestFactory.create(AppModule);
+    app = await NestFactory.create(AppModule);
     app.setGlobalPrefix(`/absproxy/5000`);
 
     //const service = app.get(RenderService);
@@ -56,11 +52,12 @@ async function bootstrap() {
         secret: 'my-secret',
         resave: false,
         saveUninitialized: false,
+        cookie: { maxAge: 1800000 } ,
       }),
     );
-    await app.listen(5000);
+    
   }
-
+  await app.listen(5000);
   /* if (module.hot) {
      module.hot.accept();
      module.hot.dispose(() => app.close());

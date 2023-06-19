@@ -1,3 +1,4 @@
+import { parseCookies, setCookie } from "nookies";
 import {
   Paper,
   createStyles,
@@ -66,6 +67,25 @@ export default function LoginPage(props) {
     );
 
     if (response.ok) {
+      const data = await response.json();
+      const token = data.accessToken
+      // set the user's session token in localStorage
+      setCookie(null, "token", token, {
+        maxAge: 30 * 24 * 60 * 60, // cookie expiration time (in seconds)
+        path: "/", // cookie path
+      });
+  
+      console.log('token cookie')
+      const cookies = parseCookies();
+      const tokenCookie = cookies.token;
+      console.log(tokenCookie)
+      const signInResult  =await signIn("custom-provider", { token:tokenCookie,redirect: false, });
+     if (signInResult.error){
+        // Handle Error on client side
+        console.log('sign in result')
+        console.log(signInResult)
+        console.log(signInResult.error)
+    }
       router.push("/"); // redirect to the dashboard page on successful login
     } else {
       setLoginStatus("Login failed."); // set the login status to a failure message

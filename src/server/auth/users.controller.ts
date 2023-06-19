@@ -18,6 +18,8 @@ export class UsersController {
     console.log(loginDto);
     const { identifier, password } = loginDto;
     const accessToken = await this.authService.login(identifier, password);
+    console.log('accessToken')
+    console.log(accessToken);
     return { accessToken };
   }
   // async login(@Request() req) {
