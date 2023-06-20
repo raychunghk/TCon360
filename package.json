@@ -100,6 +100,7 @@
     "fs": "^0.0.1-security",
     "graphql": "^16.6.0",
     "graphql-fields": "^2.0.3",
+    "graphql-request": "^6.1.0",
     "gray-matter": "^4.0.3",
     "ical2json": "^3.1.2",
     "ics-to-json": "^1.0.0",

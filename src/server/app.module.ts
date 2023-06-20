@@ -25,7 +25,7 @@ import { AuthModule } from './auth/auth.module';
       as the argument to `forRootAsync` */
   imports: [
     RenderModule.forRootAsync(
-       Next({ dev: true }),
+       Next({ dev: true ,port:3000, hostname:'localhost'}),
       /* null means that nest-next 
                 should look for pages in root dir */
       { passthrough404: true, viewsDir: null },

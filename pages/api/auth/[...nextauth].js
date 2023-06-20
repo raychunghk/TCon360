@@ -37,7 +37,7 @@ export const authOptions = {
         console.log(token)
         // decode the JWT token and extract the user's information
         try {
-          console.log('jwt secret:'+process.env.JWT_SECRET);
+          console.log('jwt secret:' + process.env.JWT_SECRET);
           const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
           console.log("Decoded token:", decodedToken); // log the decoded token
@@ -86,6 +86,12 @@ export const authOptions = {
       return session;
     },
   },
+  session: {
+    jwt: true,
+  }
+  , jw: {
+    secret: process.env.JWT_SECRET,
+  }
   // basePath: '/absproxy/5000',
 }
 

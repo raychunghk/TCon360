@@ -15,6 +15,9 @@ const nextConfig = {
       '/': { page: '/' }
     }
   },
+  experimental: {
+    appDir: false,
+  },
   reactStrictMode: false,
 
   eslint: {
