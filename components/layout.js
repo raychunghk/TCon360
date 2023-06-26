@@ -50,13 +50,13 @@ export default function Layout({ children, home }) {
             asideOffsetBreakpoint="sm"
 
             header={
-                <Header height={{ base: 35, md: 45 }} p="sx">
+                <Header height={{ base: 45, md: 50 }} p="sx">
                     <Box
                         sx={(theme) => ({
                             paddingLeft: theme.spacing.xs,
                             paddingRight: theme.spacing.xs,
-                            paddingBottom: theme.spacing.lg,
-
+                            paddingBottom: theme.spacing.xs,
+                            
                         })}
                     > <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
                             <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
@@ -68,69 +68,69 @@ export default function Layout({ children, home }) {
                                     mr="xl"
                                 />
                             </MediaQuery>
+                            <Group position="apart" style={{width:'100%'}}>
+                                <Text>TS Generator</Text>
+                                <Group position="right">
+                                    <Link href='/login' className={linkstyle.links}>
+                                        <UnstyledButton
+                                            sx={(theme) => ({
+                                                display: 'block',
+                                                width: '100%',
+                                                padding: theme.spacing.xs,
+                                                borderRadius: theme.radius.sm,
+                                                color:
+                                                    theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
+                                                '&:hover': {
+                                                    backgroundColor:
+                                                        theme.colorScheme === 'dark'
+                                                            ? theme.colors.dark[6]
+                                                            : theme.colors.gray[0],
+                                                },
+                                            })}
+                                        >
+                                            <Group>
+                                                <ThemeIcon variant="light">
+                                                    <IconLogin></IconLogin>
+                                                </ThemeIcon>
+
+                                                <Text size="sm">Login</Text>
+                                            </Group>
+                                        </UnstyledButton>
+                                    </Link>
+                                    <Link href='/signup' className={linkstyle.links}>
+                                        <UnstyledButton
+                                            sx={(theme) => ({
+                                                display: 'block',
+                                                width: '100%',
+                                                padding: theme.spacing.xs,
+                                                borderRadius: theme.radius.sm,
+                                                color:
+                                                    theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+
+                                                '&:hover': {
+                                                    backgroundColor:
+                                                        theme.colorScheme === 'dark'
+                                                            ? theme.colors.dark[6]
+                                                            : theme.colors.gray[0],
+                                                },
+                                            })}
+                                        >
+                                            <Group>
+                                                <ThemeIcon variant="light">
+                                                    <IconLogin></IconLogin>
+                                                </ThemeIcon>
+
+                                                <Text size="sm">Signup</Text>
+                                            </Group>
+                                        </UnstyledButton>
+                                    </Link>
+                                </Group>
+                            </Group>
 
                         </div>
 
-                        <Group position="apart">
-                            <Text>TS Generator</Text>
-                            <Group position="right">
-                                <Link href='/login' className={linkstyle.links}>
-                                    <UnstyledButton
-                                        sx={(theme) => ({
-                                            display: 'block',
-                                            width: '100%',
-                                            padding: theme.spacing.xs,
-                                            borderRadius: theme.radius.sm,
-                                            color:
-                                                theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
-                                            '&:hover': {
-                                                backgroundColor:
-                                                    theme.colorScheme === 'dark'
-                                                        ? theme.colors.dark[6]
-                                                        : theme.colors.gray[0],
-                                            },
-                                        })}
-                                    >
-                                        <Group>
-                                            <ThemeIcon variant="light">
-                                                <IconLogin></IconLogin>
-                                            </ThemeIcon>
-
-                                            <Text size="sm">Login</Text>
-                                        </Group>
-                                    </UnstyledButton>
-                                </Link>
-                                <Link href='/signup' className={linkstyle.links}>
-                                    <UnstyledButton
-                                        sx={(theme) => ({
-                                            display: 'block',
-                                            width: '100%',
-                                            padding: theme.spacing.xs,
-                                            borderRadius: theme.radius.sm,
-                                            color:
-                                                theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-                                            '&:hover': {
-                                                backgroundColor:
-                                                    theme.colorScheme === 'dark'
-                                                        ? theme.colors.dark[6]
-                                                        : theme.colors.gray[0],
-                                            },
-                                        })}
-                                    >
-                                        <Group>
-                                            <ThemeIcon variant="light">
-                                                <IconLogin></IconLogin>
-                                            </ThemeIcon>
-
-                                            <Text size="sm">Signup</Text>
-                                        </Group>
-                                    </UnstyledButton>
-                                </Link>
-                            </Group>
-                        </Group>
                     </Box>
                 </Header>
             }

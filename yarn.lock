@@ -5822,10 +5822,10 @@
   dependencies:
     "esutils" "^2.0.2"
 
-"docxtemplater@^3.37.10":
-  "integrity" "sha512-Z6Ri57i1lfL+c0u4grg0lK8B2Kz/TfN4wT3aptpwfkFqgWGHM6mY1voCVljAfsZVggI51v52Hw49bxUycIvhuw=="
-  "resolved" "https://registry.npmjs.org/docxtemplater/-/docxtemplater-3.37.10.tgz"
-  "version" "3.37.10"
+"docxtemplater@^3.37.11":
+  "integrity" "sha512-nGrC0hVBLmBWiWVhczdjbP8bK9569Um3NlRanaum/o9Nib9Run9LvMvIYR/KWvvzrHjCa7X8dXwNYr0aB4KjbA=="
+  "resolved" "https://registry.npmjs.org/docxtemplater/-/docxtemplater-3.37.11.tgz"
+  "version" "3.37.11"
   dependencies:
     "@xmldom/xmldom" "^0.8.8"
 

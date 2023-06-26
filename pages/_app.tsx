@@ -32,13 +32,9 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   console.log('session?')
   console.log(session)
   const router = useRouter();
-  console.log(router.pathname)
-  if (router.pathname === '/absproxy/5000/login') {
-    router.replace('/absproxy/5000/user/login');
-  }
-  if (router.pathname === '/absproxy/5000/signup') {
-    router.replace('/absproxy/5000/user/signup');
-  }
+  console.log('router path name?'+router.pathname)
+  
+ 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme =
       value || (colorScheme === 'dark' ? 'light' : 'dark');
@@ -50,7 +46,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   return (
     // <SessionProvider session={session} basePath='/absproxy/5000'>
-    <SessionProvider session={pageProps.session}  basePath='/absproxy/5000/api/auth'  token={token} {...(null as CustomSessionProviderProps)}>
+    <SessionProvider session={pageProps.session}  basePath={`${basepath}/api/auth`}  token={token} {...(null as CustomSessionProviderProps)}>
 
       <Head>
         <title>{title ? title : "Mantine next example"}</title>
@@ -70,7 +66,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           withGlobalStyles
           withNormalizeCSS
         >
-          <Component {...pageProps} />
+          <Component {...pageProps} basepath={basepath} />
           <Notifications />
         </MantineProvider>
       </ColorSchemeProvider>
@@ -83,6 +79,7 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
   const basePath = `${process.env.basepath}` || '';
   const pageProps = appProps.pageProps || {}; // Extract pageProps object
+  console.log('basePath'+basePath)
   console.log("pageprops:" + { ...pageProps } + pageProps.title);
   return {
     ...appProps,

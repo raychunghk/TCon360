@@ -94,7 +94,7 @@ export default function LoginPage(props) {
 
 
   const handleSignupClick = () => {
-    router.push("/user/signup");
+    router.push("/signup");
   };
 
 

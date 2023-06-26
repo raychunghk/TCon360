@@ -1,21 +1,33 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button, TextInput, Grid, Col, useMantineTheme, Center, NumberInput, Modal, Card, Select, Text } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import {useState, useEffect} from 'react';
+import {useForm} from 'react-hook-form';
+import {
+    Button,
+    TextInput,
+    Grid,
+    Col,
+    useMantineTheme,
+    Center,
+    NumberInput,
+    Modal,
+    Card,
+    Select,
+    Text
+} from '@mantine/core';
+import {DatePickerInput} from '@mantine/dates';
 import axios from 'axios';
 import MyCard from '../../components/MyCard';
 import Layout from '../../components/layout';
 import MyModal from '../../components/MyModal';
-import { format, parseISO, isWeekend } from 'date-fns'
-import { basepath} from '/global';
+import {format, parseISO, isWeekend} from 'date-fns'
+import {basepath} from '/global';
 import Head from 'next/head';
-import { useForm as uForm } from 'react-hook-form';
-import { StaffService } from 'src/server/staff/service/staff.service';
-export default function LeaveRequestForm({ staff }) {
+import {useForm as uForm} from 'react-hook-form';
+import {StaffService} from 'src/server/staff/service/staff.service';
+export default function LeaveRequestForm({staff}) {
     const theme = useMantineTheme();
     const [submitting, setSubmitting] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const { register, errors, reset, handleSubmit } = useForm();
+    const {register, errors, reset, handleSubmit} = useForm();
     const [leaveRequest, setLeaveRequest] = useState({
         leavePeriodStart: null,
         leavePeriodEnd: null,
@@ -23,16 +35,16 @@ export default function LeaveRequestForm({ staff }) {
         AMPMEnd: '',
         leaveDays: 0,
         dateOfReturn: null,
-        staffSignDate: null,
-        staffId: staff.id,
+        staffSignDate: new Date(),
+        staffId: staff.id
     });
 
     const handleModalClose = () => {
         setModalOpen(false);
     };
-    //   const { register, handleSubmit, reset } = uForm();
+    // const { register, handleSubmit, reset } = uForm();
     useEffect(() => {
-        const { leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd } = leaveRequest;
+        const {leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd} = leaveRequest;
         const startDate = new Date(leavePeriodStart);
         const endDate = leavePeriodEnd ? new Date(leavePeriodEnd) : null;
         let days = 0;
@@ -45,14 +57,16 @@ export default function LeaveRequestForm({ staff }) {
                 // return;
             }
             if (AMPMStart === 'AM') {
-                alert('If leave period end is set, AMPM start can only be "AMPM" or "PM"'); return;
+                alert('If leave period end is set, AMPM start can only be "AMPM" or "PM"');
+                return;
             }
-            //const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
+            // const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
             const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
-            //const endIsAM = AMPMEnd === 'AM' || AMPMEnd === 'AMPM';
+            // const endIsAM = AMPMEnd === 'AM' || AMPMEnd === 'AMPM';
             const endIsAM = AMPMEnd === 'AM';
             const startIsPM = AMPMStart === 'PM';
-            const endIsPM = AMPMEnd === 'AMPM' || AMPMEnd === 'PM'; if (startIsAM && endIsAM) {
+            const endIsPM = AMPMEnd === 'AMPM' || AMPMEnd === 'PM';
+            if (startIsAM && endIsAM) {
                 days = (endDate - startDate) / (1000 * 60 * 60 * 24) + 0.5;
                 returnDate = endDate;
             } else if (startIsPM && endIsPM) {
@@ -77,11 +91,12 @@ export default function LeaveRequestForm({ staff }) {
                 days = 0.5;
                 returnDate = getNextWorkingDate(startDate);
             }
-        } setLeaveRequest((prevRequest) => ({
+        }
+        setLeaveRequest((prevRequest) => ({
             ...prevRequest,
             AMPMEnd: _ampmend,
             leaveDays: days,
-            dateOfReturn: returnDate,
+            dateOfReturn: returnDate
         }));
     }, [leaveRequest.AMPMStart, leaveRequest.AMPMEnd, leaveRequest.leavePeriodStart, leaveRequest.leavePeriodEnd]);
     function getNextWorkingDate(date) {
@@ -93,15 +108,31 @@ export default function LeaveRequestForm({ staff }) {
         return nextWorkingDate;
     };
     const ampmOptions = [
-        { value: 'AMPM', label: 'AM and PM' },
-        { value: 'AM', label: 'AM' },
-        { value: 'PM', label: 'PM' },
+        {
+            value: 'AMPM',
+            label: 'AM and PM'
+        }, {
+            value: 'AM',
+            label: 'AM'
+        }, {
+            value: 'PM',
+            label: 'PM'
+        },
     ];
     const ampmOptionsEnd = [
-        { value: 'NA', label: 'N/A' },
-        { value: 'AMPM', label: 'AM and PM' },
-        { value: 'AM', label: 'AM' },
-        { value: 'PM', label: 'PM' },
+        {
+            value: 'NA',
+            label: 'N/A'
+        }, {
+            value: 'AMPM',
+            label: 'AM and PM'
+        }, {
+            value: 'AM',
+            label: 'AM'
+        }, {
+            value: 'PM',
+            label: 'PM'
+        },
     ];
     const onSubmit = async (e) => {
         setSubmitting(true);
@@ -119,19 +150,27 @@ export default function LeaveRequestForm({ staff }) {
 }
         */
         const newData = {
-            leavePeriodStart: new Date(`${leaveRequest.leavePeriodStart}`).toISOString(),
+            leavePeriodStart: new Date(`${
+                leaveRequest.leavePeriodStart
+            }`).toISOString(),
             staffId: parseInt(leaveRequest.staffId),
-            leavePeriodStart: new Date(`${leaveRequest.leavePeriodStart}`).toISOString(),
-            leavePeriodEnd: new Date(`${leaveRequest.leavePeriodEnd}`).toISOString(),
+            leavePeriodStart: new Date(`${
+                leaveRequest.leavePeriodStart
+            }`).toISOString(),
+            leavePeriodEnd: new Date(`${
+                leaveRequest.leavePeriodEnd
+            }`).toISOString(),
             AMPMEnd: leaveRequest.AMPMEnd,
             AMPMStart: leaveRequest.AMPMStart,
             leaveDays: leaveRequest.leaveDays,
             dateOfReturn: new Date(leaveRequest.dateOfReturn).toISOString(),
-            staffSignDate: leaveRequest.staffSignDate,
+            staffSignDate: leaveRequest.staffSignDate
         };
         console.log('newdata: ' + newData)
         try {
-            const response = await axios.post(`${basepath}/api/leaverequest/${newData.staffId}`, newData);
+            const response = await axios.post(`${basepath}/api/leaverequest/${
+                newData.staffId
+            }`, newData);
             console.log(response.data);
             if ([200, 201].includes(response.status)) {
                 setModalOpen(true);
@@ -156,8 +195,7 @@ export default function LeaveRequestForm({ staff }) {
 
     const handleDateInputSelect = (date, stateobj) => {
 
-        if (!isWeekend(date)) {
-            //           setSelected((current) => [...current, date]);
+        if (!isWeekend(date)) { //           setSelected((current) => [...current, date]);
             setLeaveRequest(stateobj)
         }
     };
@@ -167,108 +205,176 @@ export default function LeaveRequestForm({ staff }) {
             <Head>
                 <title>User Information</title>
             </Head>
-            <form method="post" onSubmit={handleSubmit(onSubmit)}>
+            <form method="post"
+                onSubmit={
+                    handleSubmit(onSubmit)
+            }>
                 <MyCard title="Create Vacation Request">
-                    <Grid gutter={theme.spacing.md} py={20}>
+                    <Grid gutter={
+                            theme.spacing.md
+                        }
+                        py={20}>
                         <Col span={6}>
-                            <Text weight={500}>Staff Name:</Text>{' '}
-                            <Text>{staff.StaffName}</Text>
+                            <Text weight={500}>Staff Name:</Text>
+                            {' '}
+                            <Text>{
+                                staff.StaffName
+                            }</Text>
                         </Col>
                         <Col span={6}>
-                            <Text weight={500}>Agent Name:</Text>{' '}
-                            <Text>{staff.AgentName}</Text>
+                            <Text weight={500}>Agent Name:</Text>
+                            {' '}
+                            <Text>{
+                                staff.AgentName
+                            }</Text>
                         </Col>
                         <Col span={6}>
-                            <Text weight={500}>Staff Category:</Text>{' '}
-                            <Text>{staff.StaffCategory}</Text>
+                            <Text weight={500}>Staff Category:</Text>
+                            {' '}
+                            <Text>{
+                                staff.StaffCategory
+                            }</Text>
                         </Col>
-                        <Col span={6} />
+                        <Col span={6}/>
                         <Grid.Col span={12}>
-                            {leaveRequest.leavePeriodStart &&
-                                leaveRequest.AMPMStart &&
-                                leaveRequest.leavePeriodEnd &&
-                                leaveRequest.AMPMEnd && (
-                                    <p>
-                                        <label >Leave Period</label><br />
-                                        {`${format((leaveRequest.leavePeriodStart), 'dd-MMM-yyyy')} ${leaveRequest.AMPMStart === "AMPM" ? "" : leaveRequest.AMPMStart} to ${format((leaveRequest.leavePeriodEnd), 'dd-MMM-yyyy')} ${leaveRequest.AMPMEnd == "AMPM" ? "" : leaveRequest.AMPMEnd}`}
-                                    </p>
-                                )}
+                            {
+                            leaveRequest.leavePeriodStart && leaveRequest.AMPMStart && leaveRequest.leavePeriodEnd && leaveRequest.AMPMEnd && (
+                                <p>
+                                    <label>Leave Period</label><br/> {
+                                    `${
+                                        format((leaveRequest.leavePeriodStart), 'dd-MMM-yyyy')
+                                    } ${
+                                        leaveRequest.AMPMStart === "AMPM" ? "" : leaveRequest.AMPMStart
+                                    } to ${
+                                        format((leaveRequest.leavePeriodEnd), 'dd-MMM-yyyy')
+                                    } ${
+                                        leaveRequest.AMPMEnd == "AMPM" ? "" : leaveRequest.AMPMEnd
+                                    }`
+                                } </p>
+                            )
+                        } </Grid.Col>
+                        <Grid.Col span={6}>
+                            <DatePickerInput clearable label="Leave period start" required valueFormat="DD-MM-YYYY"
+                                value={
+                                    leaveRequest.leavePeriodStart
+                                }
+                                onChange={
+                                    (_date) => handleDateInputSelect(_date, {
+                                        ...leaveRequest,
+                                        leavePeriodStart: _date
+                                    })
+                                }/>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <DatePickerInput clearable
-                                label="Leave period start"
-                                required valueFormat="DD-MM-YYYY"
-                                value={leaveRequest.leavePeriodStart}
-                                onChange={(_date) => handleDateInputSelect(_date, { ...leaveRequest, leavePeriodStart: _date })}
-
-                            />
+                            <Select label="AM/PM start"
+                                data={ampmOptions}
+                                defaultValue="AMPM"
+                                value={
+                                    leaveRequest.AMPMStart
+                                }
+                                onChange={
+                                    (value) => setLeaveRequest({
+                                        ...leaveRequest,
+                                        AMPMStart: value
+                                    })
+                                }/>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <Select
-                                label="AM/PM start"
-                                data={ampmOptions} defaultValue="AMPM"
-                                value={leaveRequest.AMPMStart}
-                                onChange={(value) => setLeaveRequest({ ...leaveRequest, AMPMStart: value })}
-                            />
-                        </Grid.Col>                        <Grid.Col span={6}>
-                            <DatePickerInput clearable
-                                label="Leave period end" valueFormat="DD-MM-YYYY"
-                                value={leaveRequest.leavePeriodEnd}
+                            <DatePickerInput clearable label="Leave period end" valueFormat="DD-MM-YYYY"
+                                value={
+                                    leaveRequest.leavePeriodEnd
+                                }
 
 
-                                minDate={leaveRequest.leavePeriodStart}
-                                onChange={(_date) => handleDateInputSelect(_date, { ...leaveRequest, leavePeriodEnd: _date })}
-                            />
+                                minDate={
+                                    leaveRequest.leavePeriodStart
+                                }
+                                onChange={
+                                    (_date) => handleDateInputSelect(_date, {
+                                        ...leaveRequest,
+                                        leavePeriodEnd: _date
+                                    })
+                                }/>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <Select
-                                label="AM/PM end"
+                            <Select label="AM/PM end"
                                 data={ampmOptionsEnd}
-                                value={leaveRequest.AMPMEnd} defaultValue="AMPM"
-                                onChange={(value) =>
-                                    setLeaveRequest({ ...leaveRequest, AMPMEnd: value, error: null, helper: null })
+                                value={
+                                    leaveRequest.AMPMEnd
                                 }
-                                error={leaveRequest.error?.AMPMEnd}
-                                description={leaveRequest.helper?.AMPMEnd}
-                            />
+                                defaultValue="AMPM"
+                                onChange={
+                                    (value) => setLeaveRequest({
+                                        ...leaveRequest,
+                                        AMPMEnd: value,
+                                        error: null,
+                                        helper: null
+                                    })
+                                }
+                                error={
+                                    leaveRequest.error ?. AMPMEnd
+                                }
+                                description={
+                                    leaveRequest.helper ?. AMPMEnd
+                                }/>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <TextInput
-                                id="leaveDays"
-                                name="leaveDays"
-                                label="Leave Days"
-                                value={leaveRequest.leaveDays} readOnly
-                            />                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <DatePickerInput
-                                label="Staff sign date" clearable
-                                placeholder="Staff sign date"
-                                name="staffSignDate" valueFormat="DD-MM-YYYY"
-                                onChange={(_date) => handleDateInputSelect(_date, { ...leaveRequest, staffSignDate: _date, error: null, helper: null })
+                            <TextInput id="leaveDays" name="leaveDays" label="Leave Days"
+                                value={
+                                    leaveRequest.leaveDays
                                 }
-                                value={leaveRequest.staffSignDate}
-
-                            />
+                                readOnly/>
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <DatePickerInput label="Staff sign date" clearable placeholder="Staff sign date" name="staffSignDate" valueFormat="DD-MM-YYYY"
+                                onChange={
+                                    (_date) => handleDateInputSelect(_date, {
+                                        ...leaveRequest,
+                                        staffSignDate: _date,
+                                        error: null,
+                                        helper: null
+                                    })
+                                }
+                                value={
+                                    leaveRequest.staffSignDate
+                                }
+                                defaultDate ={
+                                    new Date()
+                                }
+                                defaultValue={
+                                    new Date()
+                                }
+                                />
 
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <DatePickerInput clearable name="dateOfReturn"
-                                label="Date of Return" valueFormat="DD-MM-YYYY"
-                                value={leaveRequest.dateOfReturn} />
+                            <DatePickerInput clearable name="dateOfReturn" label="Date of Return" valueFormat="DD-MM-YYYY"
+                                value={
+                                    leaveRequest.dateOfReturn
+                                }/>
                         </Grid.Col>
                     </Grid>
-                    <Card.Section bg="indigo.2" py="md" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>                        <Button type="submit" fullWidth loading={submitting} maw={250} radius="md">
-                        Submit
-                    </Button>
+                    <Card.Section bg="indigo.2" py="md"
+                        sx={
+                            {
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                height: '100%'
+                            }
+                    }>
+                        <Button type="submit" fullWidth
+                            loading={submitting}
+                            maw={250}
+                            radius="md">
+                            Submit
+                        </Button>
                     </Card.Section>
                 </MyCard>
             </form>
-            <MyModal
-                open={modalOpen}
+            <MyModal open={modalOpen}
                 onClose={handleModalClose}
-                msg={"Leave Record Created Successfully"}
-            />
-            {/* <Modal.Root opened={modalOpen} onClose={handleModalClose}>
+                msg={"Leave Record Created Successfully"}/> {/* <Modal.Root opened={modalOpen} onClose={handleModalClose}>
                 <Modal.Overlay />
                 <Modal.Content>
                     <Modal.Header bg="indigo.4" c='white'  >
@@ -282,13 +388,13 @@ export default function LeaveRequestForm({ staff }) {
                         </Center>
                     </Modal.Body>
                 </Modal.Content>
-            </Modal.Root> */}
-        </Layout>
+            </Modal.Root> */} </Layout>
     );
 }
-export const getServerSideProps = async ({ params }) => {
-    //const { id } = params;
+export const getServerSideProps = async ({params}) => { // const { id } = params;
     const staffService = new StaffService();
     const staff = await staffService.getStaffById(1);
-    return { props: { staff } };
+    return {props: {
+            staff
+        }};
 };

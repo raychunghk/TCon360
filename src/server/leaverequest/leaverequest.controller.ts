@@ -13,7 +13,8 @@ export class LeaveRequestController {
     Logger.verbose("hello")
     Logger.log("staffid", staffId);
     Logger.log("leaveRequestData", leaveRequestData);
-    const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
+    //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
+    const leaveRequest = await this.leaveRequestService.createword(parseInt(staffId), leaveRequestData);
     Logger.log("create result", leaveRequest)
     return leaveRequest;
   }

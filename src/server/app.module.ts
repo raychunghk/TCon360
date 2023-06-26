@@ -4,6 +4,7 @@ import { RenderModule } from 'nest-next';
 import { NODE_ENV } from 'src/shared/constants/env';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { basePath, PORT } from 'src/shared/constants/env';
 import mocknext from './mocknext';
 //import { DynamicModule, Module } from '@nestjs/common';
 import { StaffModule } from './staff/staff.module';
@@ -25,7 +26,7 @@ import { AuthModule } from './auth/auth.module';
       as the argument to `forRootAsync` */
   imports: [
     RenderModule.forRootAsync(
-       Next({ dev: true ,port:3000, hostname:'localhost'}),
+       Next({ dev: true ,port:5000, hostname:'localhost'}),
       /* null means that nest-next 
                 should look for pages in root dir */
       { passthrough404: true, viewsDir: null },

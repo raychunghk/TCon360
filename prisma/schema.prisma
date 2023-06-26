@@ -131,23 +131,24 @@ model TimeSheet {
   EndDate             DateTime
   calendar            TimeSheetCalendar[]
   TSCalendarID        Int
+  TimeSheetFileName   String?
   TotalChargeableDay  Decimal
   TotalChargeableHour Decimal             @default(0)
   TotalOTHour         Decimal
 }
 
 model LeaveRequest {
-  id               Int      @id @default(autoincrement())
-  leavePeriodStart DateTime
-  AMPMStart        String?
-  leavePeriodEnd   DateTime
-  AMPMEnd          String?
-  leaveDays        Float
-  dateOfReturn     DateTime
-  staffSignDate    DateTime
-
-  staffId Int
-  staff   Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  id                  Int      @id @default(autoincrement())
+  leavePeriodStart    DateTime
+  AMPMStart           String?
+  leavePeriodEnd      DateTime
+  AMPMEnd             String?
+  leaveDays           Float
+  dateOfReturn        DateTime
+  staffSignDate       DateTime
+  requestFormFileName String?
+  staffId             Int
+  staff               Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
 }
 
 model TimeSheetCalendar {

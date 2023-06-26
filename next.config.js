@@ -36,7 +36,7 @@ const nextConfig = {
   images: {
     path: `${_basepath}/_next/image`,
   },
-  webpack5: true,
+ /* webpack5: true,*/
   webpack: (config) => {
     config.resolve.fallback = { fs: false };
 

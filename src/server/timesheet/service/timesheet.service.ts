@@ -5,14 +5,15 @@ import * as ExcelJS from 'exceljs';
 import { spawn } from 'child_process';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Staff, Prisma } from '@prisma/client';
-import {format} from 'date-fns'
+import { format } from 'date-fns'
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as libre from 'libreoffice-convert';//import * as XlsxPopulate from 'xlsx-populate';
 import * as unoconv from 'node-unoconv';
 @Injectable()
 export class TimesheetService {
-    private readonly xlsfilename = 'T26TimeSheet.xlsx'; constructor(private prisma: PrismaService) { } getContent() {
+    private readonly xlsfilename = 'T26TimeSheet.xlsx';
+    constructor(private prisma: PrismaService) { } getContent() {
         const filePath = this.getFilePath(this.xlsfilename);
         const fileContent = fs.readFileSync(filePath);
         const workbook = XLSX.read(fileContent);
@@ -103,9 +104,9 @@ export class TimesheetService {
             const emptydateRowID = ['A', 'C', 'E', 'H', 'J', 'L', 'N'];
             const celltimesheetstart = "D9";
             const celltimesheetend = "L9";
-            
-            this.writeCellValue(worksheet,celltimesheetstart,  format(objCalendar[0].CalendarDate, 'dd-MMM-yyyy'))
-            this.writeCellValue(worksheet,celltimesheetend,  format(objCalendar.pop().CalendarDate, 'dd-MMM-yyyy'))
+
+            this.writeCellValue(worksheet, celltimesheetstart, format(objCalendar[0].CalendarDate, 'dd-MMM-yyyy'))
+            this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.pop().CalendarDate, 'dd-MMM-yyyy'))
 
             for (let i = 0; i < 31; i++) {
                 cellid = "C" + datecellpos;

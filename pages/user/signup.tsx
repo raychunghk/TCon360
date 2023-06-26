@@ -16,7 +16,7 @@ import {
 import bg from "public/images/loginbg1.webp";
 
 import Head from "next/head";
-
+import { basepath} from '/global';
 
 
 const useStyles = createStyles((theme) => ({
@@ -50,7 +50,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function SignupPage() {
+export default function SignupPage( ) {
   const router = useRouter();
   const { classes } = useStyles();
   const [email, setEmail] = useState('');
@@ -67,7 +67,7 @@ export default function SignupPage() {
       username: username,
       password: password,
     };
-    const response = await fetch('/absproxy/5000/api/auth/signup', {
+    const response = await fetch(`${basepath}/api/auth/signup`, {
       method: 'POST',
       body: JSON.stringify(user),
       headers: { 'Content-Type': 'application/json' },
@@ -93,7 +93,7 @@ export default function SignupPage() {
 
     <>
       <Head>
-        <Title>Login - My Website</Title>
+        <Title>Signup - Create an account!</Title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -142,7 +142,7 @@ export default function SignupPage() {
           <Text align="center" mt="md">
             Already have an account?{" "}
             <Anchor<"a">
-              href="/login"
+              href={`${basepath}/login`}
               weight={700}
             >
               Login
