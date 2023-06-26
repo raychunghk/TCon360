@@ -22,6 +22,11 @@ export class TimeSheetCreateWithoutCalendarInput {
   })
   TSCalendarID!: number;
 
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  TimeSheetFileName?: string | undefined;
+
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: false,
   })

@@ -67,6 +67,11 @@ export class LeaveRequestWhereInput {
   })
   staffSignDate?: DateTimeFilter | undefined;
 
+  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+    nullable: true,
+  })
+  requestFormFileName?: StringNullableFilter | undefined;
+
   @TypeGraphQL.Field((_type) => IntFilter, {
     nullable: true,
   })

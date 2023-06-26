@@ -7,7 +7,7 @@ import path from 'path'
 const prisma = new PrismaClient();
 async function main() {
   //genholiday();
-  //gencalendar();
+  gencalendar();
   genStaffInfo();
 }
 async function genholiday() {

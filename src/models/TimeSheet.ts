@@ -18,6 +18,9 @@ export class TimeSheet {
   @Field((_type) => Int)
   TSCalendarID: number;
 
+  @Field({ nullable: true })
+  TimeSheetFileName?: string;
+
   @Field()
   TotalChargeableDay: number;
 

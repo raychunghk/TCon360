@@ -5,6 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFilter';
 import { DecimalWithAggregatesFilter } from '../inputs/DecimalWithAggregatesFilter';
 import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
+import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 
 @TypeGraphQL.InputType('TimeSheetScalarWhereWithAggregatesInput', {
  description:"",
@@ -44,6 +45,11 @@ export class TimeSheetScalarWhereWithAggregatesInput {
     nullable: true,
   })
   TSCalendarID?: IntWithAggregatesFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
+    nullable: true,
+  })
+  TimeSheetFileName?: StringNullableWithAggregatesFilter | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalWithAggregatesFilter, {
     nullable: true,

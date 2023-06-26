@@ -48,6 +48,11 @@ export class LeaveRequest {
   })
   staffSignDate!: Date;
 
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  requestFormFileName?: string | null;
+
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })

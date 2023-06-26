@@ -27,6 +27,11 @@ export class TimeSheetMinAggregate {
   })
   TSCalendarID!: number | null;
 
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  TimeSheetFileName!: string | null;
+
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,
   })

@@ -46,6 +46,11 @@ export class LeaveRequestUpdateInput {
   })
   staffSignDate?: DateTimeFieldUpdateOperationsInput | undefined;
 
+  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  requestFormFileName?: NullableStringFieldUpdateOperationsInput | undefined;
+
   @TypeGraphQL.Field(
     (_type) => StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput,
     {

@@ -45,6 +45,7 @@ export class FindManyLeaveRequestArgs {
         | 'leaveDays'
         | 'dateOfReturn'
         | 'staffSignDate'
+        | 'requestFormFileName'
         | 'staffId'
       >
     | undefined;

@@ -41,6 +41,7 @@ export class FindManyTimeSheetArgs {
         | 'StartDate'
         | 'EndDate'
         | 'TSCalendarID'
+        | 'TimeSheetFileName'
         | 'TotalChargeableDay'
         | 'TotalChargeableHour'
         | 'TotalOTHour'

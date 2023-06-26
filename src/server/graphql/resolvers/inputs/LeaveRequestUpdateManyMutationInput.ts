@@ -44,4 +44,9 @@ export class LeaveRequestUpdateManyMutationInput {
     nullable: true,
   })
   staffSignDate?: DateTimeFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  requestFormFileName?: NullableStringFieldUpdateOperationsInput | undefined;
 }

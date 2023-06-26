@@ -25,6 +25,7 @@ export class GroupByTimeSheetArgs {
     | 'StartDate'
     | 'EndDate'
     | 'TSCalendarID'
+    | 'TimeSheetFileName'
     | 'TotalChargeableDay'
     | 'TotalChargeableHour'
     | 'TotalOTHour'

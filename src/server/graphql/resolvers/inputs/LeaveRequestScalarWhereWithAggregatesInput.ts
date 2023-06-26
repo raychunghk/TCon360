@@ -66,6 +66,11 @@ export class LeaveRequestScalarWhereWithAggregatesInput {
   })
   staffSignDate?: DateTimeWithAggregatesFilter | undefined;
 
+  @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
+    nullable: true,
+  })
+  requestFormFileName?: StringNullableWithAggregatesFilter | undefined;
+
   @TypeGraphQL.Field((_type) => IntWithAggregatesFilter, {
     nullable: true,
   })

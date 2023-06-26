@@ -43,6 +43,11 @@ export class LeaveRequestCreateInput {
   })
   staffSignDate!: Date;
 
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  requestFormFileName?: string | undefined;
+
   @TypeGraphQL.Field((_type) => StaffCreateNestedOneWithoutLeaveRequestsInput, {
     nullable: false,
   })

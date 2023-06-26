@@ -50,6 +50,11 @@ export class LeaveRequestCountAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })
+  requestFormFileName!: number;
+
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: false,
+  })
   staffId!: number;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

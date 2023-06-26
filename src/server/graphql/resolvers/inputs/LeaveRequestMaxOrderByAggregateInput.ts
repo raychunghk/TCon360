@@ -51,5 +51,10 @@ export class LeaveRequestMaxOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
+  requestFormFileName?: 'asc' | 'desc' | undefined;
+
+  @TypeGraphQL.Field((_type) => SortOrder, {
+    nullable: true,
+  })
   staffId?: 'asc' | 'desc' | undefined;
 }

@@ -30,6 +30,11 @@ export class TimeSheetCountAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })
+  TimeSheetFileName!: number;
+
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: false,
+  })
   TotalChargeableDay!: number;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

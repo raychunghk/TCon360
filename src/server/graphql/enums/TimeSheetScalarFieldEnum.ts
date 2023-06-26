@@ -5,6 +5,7 @@ export enum TimeSheetScalarFieldEnum {
   StartDate = 'StartDate',
   EndDate = 'EndDate',
   TSCalendarID = 'TSCalendarID',
+  TimeSheetFileName = 'TimeSheetFileName',
   TotalChargeableDay = 'TotalChargeableDay',
   TotalChargeableHour = 'TotalChargeableHour',
   TotalOTHour = 'TotalOTHour',

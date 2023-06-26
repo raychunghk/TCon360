@@ -41,4 +41,9 @@ export class LeaveRequestCreateWithoutStaffInput {
     nullable: false,
   })
   staffSignDate!: Date;
+
+  @TypeGraphQL.Field((_type) => String, {
+    nullable: true,
+  })
+  requestFormFileName?: string | undefined;
 }

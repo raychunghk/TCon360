@@ -5,6 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { DecimalFilter } from '../inputs/DecimalFilter';
 import { IntFilter } from '../inputs/IntFilter';
+import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { TimeSheetCalendarListRelationFilter } from '../inputs/TimeSheetCalendarListRelationFilter';
 
 @TypeGraphQL.InputType('TimeSheetWhereInput', {
@@ -45,6 +46,11 @@ export class TimeSheetWhereInput {
     nullable: true,
   })
   TSCalendarID?: IntFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+    nullable: true,
+  })
+  TimeSheetFileName?: StringNullableFilter | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalFilter, {
     nullable: true,

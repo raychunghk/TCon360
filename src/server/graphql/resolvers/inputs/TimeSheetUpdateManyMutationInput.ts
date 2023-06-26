@@ -5,6 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdateOperationsInput';
 import { DecimalFieldUpdateOperationsInput } from '../inputs/DecimalFieldUpdateOperationsInput';
 import { IntFieldUpdateOperationsInput } from '../inputs/IntFieldUpdateOperationsInput';
+import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('TimeSheetUpdateManyMutationInput', {
  description:"",
@@ -24,6 +25,11 @@ export class TimeSheetUpdateManyMutationInput {
     nullable: true,
   })
   TSCalendarID?: IntFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  TimeSheetFileName?: NullableStringFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalFieldUpdateOperationsInput, {
     nullable: true,

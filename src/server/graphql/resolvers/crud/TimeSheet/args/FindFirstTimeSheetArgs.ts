@@ -41,6 +41,7 @@ export class FindFirstTimeSheetArgs {
         | 'StartDate'
         | 'EndDate'
         | 'TSCalendarID'
+        | 'TimeSheetFileName'
         | 'TotalChargeableDay'
         | 'TotalChargeableHour'
         | 'TotalOTHour'
