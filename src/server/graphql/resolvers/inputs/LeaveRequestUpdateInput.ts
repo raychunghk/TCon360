@@ -5,10 +5,11 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdateOperationsInput';
 import { FloatFieldUpdateOperationsInput } from '../inputs/FloatFieldUpdateOperationsInput';
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
+import { StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput } from '../inputs/StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput';
 import { StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput } from '../inputs/StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestUpdateInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
@@ -46,10 +47,15 @@ export class LeaveRequestUpdateInput {
   })
   staffSignDate?: DateTimeFieldUpdateOperationsInput | undefined;
 
-  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
-    nullable: true,
-  })
-  requestFormFileName?: NullableStringFieldUpdateOperationsInput | undefined;
+  @TypeGraphQL.Field(
+    (_type) => StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput,
+    {
+      nullable: true,
+    },
+  )
+  staffFile?:
+    | StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput
+    | undefined;
 
   @TypeGraphQL.Field(
     (_type) => StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput,

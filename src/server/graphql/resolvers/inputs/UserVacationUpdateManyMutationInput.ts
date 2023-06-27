@@ -6,7 +6,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdat
 import { DecimalFieldUpdateOperationsInput } from '../inputs/DecimalFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('UserVacationUpdateManyMutationInput', {
- description:"",
+  description:"",
 })
 export class UserVacationUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {

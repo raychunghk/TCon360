@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../scalars';
 import { TimeSheet } from '../models/TimeSheet';
 
 @TypeGraphQL.ObjectType('TimeSheetCalendar', {
- description:"",
+  description:"",
 })
 export class TimeSheetCalendar {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

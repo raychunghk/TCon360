@@ -6,7 +6,7 @@ import { NestedFloatFilter } from '../inputs/NestedFloatFilter';
 import { NestedIntFilter } from '../inputs/NestedIntFilter';
 
 @TypeGraphQL.InputType('NestedIntWithAggregatesFilter', {
- description:"",
+  description:"",
 })
 export class NestedIntWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

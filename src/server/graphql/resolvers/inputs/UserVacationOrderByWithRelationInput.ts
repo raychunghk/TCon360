@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('UserVacationOrderByWithRelationInput', {
- description:"",
+  description:"",
 })
 export class UserVacationOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

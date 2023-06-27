@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('LeaveRequestMaxOrderByAggregateInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestMaxOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
@@ -51,7 +51,7 @@ export class LeaveRequestMaxOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
-  requestFormFileName?: 'asc' | 'desc' | undefined;
+  fileId?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

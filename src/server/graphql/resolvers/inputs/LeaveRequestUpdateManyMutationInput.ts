@@ -7,7 +7,7 @@ import { FloatFieldUpdateOperationsInput } from '../inputs/FloatFieldUpdateOpera
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateManyMutationInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
@@ -44,9 +44,4 @@ export class LeaveRequestUpdateManyMutationInput {
     nullable: true,
   })
   staffSignDate?: DateTimeFieldUpdateOperationsInput | undefined;
-
-  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
-    nullable: true,
-  })
-  requestFormFileName?: NullableStringFieldUpdateOperationsInput | undefined;
 }

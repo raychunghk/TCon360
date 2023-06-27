@@ -2,8 +2,10 @@ import * as TypeGraphQL from 'type-graphql';
 import type { GraphQLResolveInfo } from 'graphql';
 import { LeaveRequest } from '../../../models/LeaveRequest';
 import { Staff } from '../../../models/Staff';
+import { StaffFiles } from '../../../models/StaffFiles';
 import { User } from '../../../models/User';
 import { StaffLeaveRequestsArgs } from './args/StaffLeaveRequestsArgs';
+import { StaffStaffFilesArgs } from './args/StaffStaffFilesArgs';
 import {
   transformInfoIntoPrismaArgs,
   getPrismaFromContext,
@@ -49,6 +51,28 @@ export class StaffRelationsResolver {
         },
       })
       .leaveRequests({
+        ...args,
+        ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      });
+  }
+
+  @TypeGraphQL.FieldResolver((_type) => [StaffFiles], {
+    nullable: false,
+  })
+  async staffFiles(
+    @TypeGraphQL.Root() staff: Staff,
+    @TypeGraphQL.Ctx() ctx: any,
+    @TypeGraphQL.Info() info: GraphQLResolveInfo,
+    @TypeGraphQL.Args() args: StaffStaffFilesArgs,
+  ): Promise<StaffFiles[]> {
+    const { _count } = transformInfoIntoPrismaArgs(info);
+    return getPrismaFromContext(ctx)
+      .staff.findUniqueOrThrow({
+        where: {
+          id: staff.id,
+        },
+      })
+      .staffFiles({
         ...args,
         ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
       });

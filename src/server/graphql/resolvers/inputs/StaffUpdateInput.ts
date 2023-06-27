@@ -3,11 +3,12 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestUpdateManyWithoutStaffNestedInput } from '../inputs/LeaveRequestUpdateManyWithoutStaffNestedInput';
+import { StaffFilesUpdateManyWithoutStaffNestedInput } from '../inputs/StaffFilesUpdateManyWithoutStaffNestedInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 import { UserUpdateOneWithoutStaffNestedInput } from '../inputs/UserUpdateOneWithoutStaffNestedInput';
 
 @TypeGraphQL.InputType('StaffUpdateInput', {
- description:"",
+  description:"",
 })
 export class StaffUpdateInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
@@ -59,4 +60,9 @@ export class StaffUpdateInput {
     nullable: true,
   })
   leaveRequests?: LeaveRequestUpdateManyWithoutStaffNestedInput | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesUpdateManyWithoutStaffNestedInput, {
+    nullable: true,
+  })
+  staffFiles?: StaffFilesUpdateManyWithoutStaffNestedInput | undefined;
 }

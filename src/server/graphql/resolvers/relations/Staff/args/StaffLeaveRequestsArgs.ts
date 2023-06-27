@@ -45,7 +45,7 @@ export class StaffLeaveRequestsArgs {
         | 'leaveDays'
         | 'dateOfReturn'
         | 'staffSignDate'
-        | 'requestFormFileName'
+        | 'fileId'
         | 'staffId'
       >
     | undefined;

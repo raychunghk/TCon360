@@ -8,7 +8,7 @@ import { IntFilter } from '../inputs/IntFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('LeaveRequestScalarWhereInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestScalarWhereInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestScalarWhereInput], {
@@ -66,10 +66,10 @@ export class LeaveRequestScalarWhereInput {
   })
   staffSignDate?: DateTimeFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+  @TypeGraphQL.Field((_type) => IntFilter, {
     nullable: true,
   })
-  requestFormFileName?: StringNullableFilter | undefined;
+  fileId?: IntFilter | undefined;
 
   @TypeGraphQL.Field((_type) => IntFilter, {
     nullable: true,

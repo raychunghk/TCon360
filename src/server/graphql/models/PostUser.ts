@@ -6,7 +6,7 @@ import { Post } from '../models/Post';
 import { PostUserCount } from '../resolvers/outputs/PostUserCount';
 
 @TypeGraphQL.ObjectType('PostUser', {
- description:"",
+  description:"",
 })
 export class PostUser {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

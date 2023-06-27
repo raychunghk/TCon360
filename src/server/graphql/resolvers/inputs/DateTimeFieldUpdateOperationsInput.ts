@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.InputType('DateTimeFieldUpdateOperationsInput', {
- description:"",
+  description:"",
 })
 export class DateTimeFieldUpdateOperationsInput {
   @TypeGraphQL.Field((_type) => Date, {

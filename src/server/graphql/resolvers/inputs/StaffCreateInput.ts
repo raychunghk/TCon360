@@ -3,10 +3,11 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestCreateNestedManyWithoutStaffInput } from '../inputs/LeaveRequestCreateNestedManyWithoutStaffInput';
+import { StaffFilesCreateNestedManyWithoutStaffInput } from '../inputs/StaffFilesCreateNestedManyWithoutStaffInput';
 import { UserCreateNestedOneWithoutStaffInput } from '../inputs/UserCreateNestedOneWithoutStaffInput';
 
 @TypeGraphQL.InputType('StaffCreateInput', {
- description:"",
+  description:"",
 })
 export class StaffCreateInput {
   @TypeGraphQL.Field((_type) => String, {
@@ -58,4 +59,9 @@ export class StaffCreateInput {
     nullable: true,
   })
   leaveRequests?: LeaveRequestCreateNestedManyWithoutStaffInput | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesCreateNestedManyWithoutStaffInput, {
+    nullable: true,
+  })
+  staffFiles?: StaffFilesCreateNestedManyWithoutStaffInput | undefined;
 }

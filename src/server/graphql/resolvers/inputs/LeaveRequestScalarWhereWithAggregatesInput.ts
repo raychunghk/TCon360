@@ -8,7 +8,7 @@ import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 
 @TypeGraphQL.InputType('LeaveRequestScalarWhereWithAggregatesInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestScalarWhereWithAggregatesInput], {
@@ -66,10 +66,10 @@ export class LeaveRequestScalarWhereWithAggregatesInput {
   })
   staffSignDate?: DateTimeWithAggregatesFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
+  @TypeGraphQL.Field((_type) => IntWithAggregatesFilter, {
     nullable: true,
   })
-  requestFormFileName?: StringNullableWithAggregatesFilter | undefined;
+  fileId?: IntWithAggregatesFilter | undefined;
 
   @TypeGraphQL.Field((_type) => IntWithAggregatesFilter, {
     nullable: true,

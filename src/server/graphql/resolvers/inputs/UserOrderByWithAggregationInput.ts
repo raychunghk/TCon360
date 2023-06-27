@@ -8,7 +8,7 @@ import { UserMinOrderByAggregateInput } from '../inputs/UserMinOrderByAggregateI
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('UserOrderByWithAggregationInput', {
- description:"",
+  description:"",
 })
 export class UserOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

@@ -11,7 +11,7 @@ import { StaffWhereUniqueInput } from '../inputs/StaffWhereUniqueInput';
 @TypeGraphQL.InputType(
   'StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput',
   {
-   description:"",
+    description:"",
   },
 )
 export class StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput {

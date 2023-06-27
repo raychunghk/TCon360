@@ -11,7 +11,7 @@ import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('UserWhereInput', {
- description:"",
+  description:"",
 })
 export class UserWhereInput {
   @TypeGraphQL.Field((_type) => [UserWhereInput], {

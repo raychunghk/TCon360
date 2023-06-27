@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../scalars';
 
 @TypeGraphQL.ObjectType('CalendarMaster', {
- description:"",
+  description:"",
 })
 export class CalendarMaster {
   @TypeGraphQL.Field((_type) => Date, {

@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('LeaveRequestSumOrderByAggregateInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestSumOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
@@ -17,6 +17,11 @@ export class LeaveRequestSumOrderByAggregateInput {
     nullable: true,
   })
   leaveDays?: 'asc' | 'desc' | undefined;
+
+  @TypeGraphQL.Field((_type) => SortOrder, {
+    nullable: true,
+  })
+  fileId?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

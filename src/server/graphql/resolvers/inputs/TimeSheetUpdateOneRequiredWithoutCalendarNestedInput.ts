@@ -9,7 +9,7 @@ import { TimeSheetUpsertWithoutCalendarInput } from '../inputs/TimeSheetUpsertWi
 import { TimeSheetWhereUniqueInput } from '../inputs/TimeSheetWhereUniqueInput';
 
 @TypeGraphQL.InputType('TimeSheetUpdateOneRequiredWithoutCalendarNestedInput', {
- description:"",
+  description:"",
 })
 export class TimeSheetUpdateOneRequiredWithoutCalendarNestedInput {
   @TypeGraphQL.Field((_type) => TimeSheetCreateWithoutCalendarInput, {

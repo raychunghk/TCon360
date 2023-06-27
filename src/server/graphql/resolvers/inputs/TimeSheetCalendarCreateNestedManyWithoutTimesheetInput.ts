@@ -9,7 +9,7 @@ import { TimeSheetCalendarWhereUniqueInput } from '../inputs/TimeSheetCalendarWh
 @TypeGraphQL.InputType(
   'TimeSheetCalendarCreateNestedManyWithoutTimesheetInput',
   {
-   description:"",
+    description:"",
   },
 )
 export class TimeSheetCalendarCreateNestedManyWithoutTimesheetInput {

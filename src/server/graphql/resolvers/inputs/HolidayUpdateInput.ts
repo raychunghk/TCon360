@@ -6,7 +6,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdat
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('HolidayUpdateInput', {
- description:"",
+  description:"",
 })
 export class HolidayUpdateInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {

@@ -9,7 +9,7 @@ import { LeaveRequestMinAggregate } from '../outputs/LeaveRequestMinAggregate';
 import { LeaveRequestSumAggregate } from '../outputs/LeaveRequestSumAggregate';
 
 @TypeGraphQL.ObjectType('LeaveRequestGroupBy', {
- description:"",
+  description:"",
 })
 export class LeaveRequestGroupBy {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -52,10 +52,10 @@ export class LeaveRequestGroupBy {
   })
   staffSignDate!: Date;
 
-  @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: false,
   })
-  requestFormFileName!: string | null;
+  fileId!: number;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

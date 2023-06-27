@@ -6,7 +6,7 @@ import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFi
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 
 @TypeGraphQL.InputType('HolidayScalarWhereWithAggregatesInput', {
- description:"",
+  description:"",
 })
 export class HolidayScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [HolidayScalarWhereWithAggregatesInput], {

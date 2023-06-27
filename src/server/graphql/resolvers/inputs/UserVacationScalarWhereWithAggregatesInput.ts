@@ -6,7 +6,7 @@ import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFi
 import { DecimalWithAggregatesFilter } from '../inputs/DecimalWithAggregatesFilter';
 
 @TypeGraphQL.InputType('UserVacationScalarWhereWithAggregatesInput', {
- description:"",
+  description:"",
 })
 export class UserVacationScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [UserVacationScalarWhereWithAggregatesInput], {

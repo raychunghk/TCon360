@@ -6,6 +6,7 @@ export { PostScalarFieldEnum } from './PostScalarFieldEnum';
 export { PostUserScalarFieldEnum } from './PostUserScalarFieldEnum';
 export { SessionScalarFieldEnum } from './SessionScalarFieldEnum';
 export { SortOrder } from './SortOrder';
+export { StaffFilesScalarFieldEnum } from './StaffFilesScalarFieldEnum';
 export { StaffScalarFieldEnum } from './StaffScalarFieldEnum';
 export { TimeSheetCalendarScalarFieldEnum } from './TimeSheetCalendarScalarFieldEnum';
 export { TimeSheetScalarFieldEnum } from './TimeSheetScalarFieldEnum';

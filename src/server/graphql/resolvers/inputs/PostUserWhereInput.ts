@@ -8,7 +8,7 @@ import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('PostUserWhereInput', {
- description:"",
+  description:"",
 })
 export class PostUserWhereInput {
   @TypeGraphQL.Field((_type) => [PostUserWhereInput], {

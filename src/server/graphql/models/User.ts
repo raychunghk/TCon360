@@ -8,7 +8,7 @@ import { Staff } from '../models/Staff';
 import { UserCount } from '../resolvers/outputs/UserCount';
 
 @TypeGraphQL.ObjectType('User', {
- description:"",
+  description:"",
 })
 export class User {
   @TypeGraphQL.Field((_type) => String, {

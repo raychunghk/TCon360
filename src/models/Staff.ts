@@ -1,6 +1,7 @@
 import { Field, ObjectType, Int } from 'type-graphql';
 import { LeaveRequest } from './LeaveRequest';
 import { User } from './User';
+import { staffFiles } from './staffFiles';
 
 @ObjectType()
 export class Staff {
@@ -39,6 +40,9 @@ export class Staff {
 
   @Field((_type) => [LeaveRequest])
   leaveRequests: LeaveRequest[];
+
+  @Field((_type) => [staffFiles])
+  staffFiles: staffFiles[];
 
   // skip overwrite 👇
 }

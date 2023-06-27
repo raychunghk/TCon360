@@ -29,7 +29,7 @@ export class GroupByLeaveRequestArgs {
     | 'leaveDays'
     | 'dateOfReturn'
     | 'staffSignDate'
-    | 'requestFormFileName'
+    | 'fileId'
     | 'staffId'
   >;
 

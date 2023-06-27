@@ -4,6 +4,7 @@ export { PostRelationsResolver } from './Post/PostRelationsResolver';
 export { PostUserRelationsResolver } from './PostUser/PostUserRelationsResolver';
 export { SessionRelationsResolver } from './Session/SessionRelationsResolver';
 export { StaffRelationsResolver } from './Staff/StaffRelationsResolver';
+export { StaffFilesRelationsResolver } from './StaffFiles/StaffFilesRelationsResolver';
 export { TimeSheetRelationsResolver } from './TimeSheet/TimeSheetRelationsResolver';
 export { TimeSheetCalendarRelationsResolver } from './TimeSheetCalendar/TimeSheetCalendarRelationsResolver';
 export { UserRelationsResolver } from './User/UserRelationsResolver';

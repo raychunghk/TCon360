@@ -3,9 +3,10 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../scalars';
 import { Staff } from '../models/Staff';
+import { StaffFiles } from '../models/StaffFiles';
 
 @TypeGraphQL.ObjectType('LeaveRequest', {
- description:"",
+  description:"",
 })
 export class LeaveRequest {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -48,10 +49,12 @@ export class LeaveRequest {
   })
   staffSignDate!: Date;
 
-  @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: false,
   })
-  requestFormFileName?: string | null;
+  fileId!: number;
+
+  staffFile?: StaffFiles;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,

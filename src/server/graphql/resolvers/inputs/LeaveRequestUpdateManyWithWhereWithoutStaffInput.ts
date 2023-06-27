@@ -6,7 +6,7 @@ import { LeaveRequestScalarWhereInput } from '../inputs/LeaveRequestScalarWhereI
 import { LeaveRequestUpdateManyMutationInput } from '../inputs/LeaveRequestUpdateManyMutationInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateManyWithWhereWithoutStaffInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestUpdateManyWithWhereWithoutStaffInput {
   @TypeGraphQL.Field((_type) => LeaveRequestScalarWhereInput, {

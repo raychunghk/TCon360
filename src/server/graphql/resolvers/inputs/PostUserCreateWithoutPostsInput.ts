@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.InputType('PostUserCreateWithoutPostsInput', {
- description:"",
+  description:"",
 })
 export class PostUserCreateWithoutPostsInput {
   @TypeGraphQL.Field((_type) => String, {

@@ -8,7 +8,7 @@ import { TimeSheetCalendarUpdateManyMutationInput } from '../inputs/TimeSheetCal
 @TypeGraphQL.InputType(
   'TimeSheetCalendarUpdateManyWithWhereWithoutTimesheetInput',
   {
-   description:"",
+    description:"",
   },
 )
 export class TimeSheetCalendarUpdateManyWithWhereWithoutTimesheetInput {

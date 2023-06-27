@@ -11,7 +11,8 @@ import {
     Modal,
     Card,
     Select,
-    Text
+    Text,
+    Flex
 } from '@mantine/core';
 import {DatePickerInput} from '@mantine/dates';
 import axios from 'axios';
@@ -23,11 +24,14 @@ import {basepath} from '/global';
 import Head from 'next/head';
 import {useForm as uForm} from 'react-hook-form';
 import {StaffService} from 'src/server/staff/service/staff.service';
+import {responsePathAsArray} from 'graphql';
 export default function LeaveRequestForm({staff}) {
     const theme = useMantineTheme();
     const [submitting, setSubmitting] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const {register, errors, reset, handleSubmit} = useForm();
+    const {register, formState: {
+            errors
+        }, reset, handleSubmit} = useForm();
     const [leaveRequest, setLeaveRequest] = useState({
         leavePeriodStart: null,
         leavePeriodEnd: null,
@@ -36,7 +40,10 @@ export default function LeaveRequestForm({staff}) {
         leaveDays: 0,
         dateOfReturn: null,
         staffSignDate: new Date(),
-        staffId: staff.id
+        staffId: staff.id,
+        fileId: null,
+        error: null,
+        helper: null
     });
 
     const handleModalClose = () => {
@@ -60,9 +67,7 @@ export default function LeaveRequestForm({staff}) {
                 alert('If leave period end is set, AMPM start can only be "AMPM" or "PM"');
                 return;
             }
-            // const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
             const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
-            // const endIsAM = AMPMEnd === 'AM' || AMPMEnd === 'AMPM';
             const endIsAM = AMPMEnd === 'AM';
             const startIsPM = AMPMStart === 'PM';
             const endIsPM = AMPMEnd === 'AMPM' || AMPMEnd === 'PM';
@@ -107,6 +112,30 @@ export default function LeaveRequestForm({staff}) {
         nextWorkingDate.setHours(0, 0, 0, 0);
         return nextWorkingDate;
     };
+    function formatResponseDate(responseData) {
+        for (let key in responseData) {
+            let val = responseData[key]
+            console.log(key + ": " + val);
+            const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+            if (regex.test(val)) {
+                const date = new Date(val);
+                // const formattedDate = date.toLocaleDateString('en-GB');
+                const formattedDate = `${
+                    date.getUTCDate().toString().padStart(2, '0')
+                }-${
+                    (date.getUTCMonth() + 1).toString().padStart(2, '0')
+                }-${
+                    date.getUTCFullYear()
+                }`;
+                responseData[key] = new Date(val)
+
+
+            }
+        }
+        console.log(responseData)
+        return responseData
+
+    }
     const ampmOptions = [
         {
             value: 'AMPM',
@@ -153,7 +182,7 @@ export default function LeaveRequestForm({staff}) {
             leavePeriodStart: new Date(`${
                 leaveRequest.leavePeriodStart
             }`).toISOString(),
-            staffId: parseInt(leaveRequest.staffId),
+            // staffId: parseInt(leaveRequest.staffId),
             leavePeriodStart: new Date(`${
                 leaveRequest.leavePeriodStart
             }`).toISOString(),
@@ -169,13 +198,21 @@ export default function LeaveRequestForm({staff}) {
         console.log('newdata: ' + newData)
         try {
             const response = await axios.post(`${basepath}/api/leaverequest/${
-                newData.staffId
+                leaveRequest.staffId
             }`, newData);
-            console.log(response.data);
+       
             if ([200, 201].includes(response.status)) {
                 setModalOpen(true);
                 reset();
-                setFormValues(userModel);
+                console.log('response data?')
+                console.log(response.data)
+                let _data = formatResponseDate(response.data);
+                console.log('responsedata')
+                console.log(_data);
+                setLeaveRequest({
+                    ... _data
+                })
+                // setFormValues(userModel);
             } else {
                 console.error('Failed to create staff record:', response);
             }
@@ -263,8 +300,9 @@ export default function LeaveRequestForm({staff}) {
                                         ...leaveRequest,
                                         leavePeriodStart: _date
                                     })
-                                }/>
-                        </Grid.Col>
+                                }/> {
+                            errors.leavePeriodStart && <span className="error">Leave period start is required</span>
+                        } </Grid.Col>
                         <Grid.Col span={6}>
                             <Select label="AM/PM start"
                                 data={ampmOptions}
@@ -338,13 +376,13 @@ export default function LeaveRequestForm({staff}) {
                                 value={
                                     leaveRequest.staffSignDate
                                 }
-                                defaultDate ={
-                                    new Date()
-                                }
+                                defaultDate
+                                ={
+                                                                                                                                                                                                                                                                                                                                    new Date()
+                                                                                                                                                                                                                                                                                                                                }
                                 defaultValue={
                                     new Date()
-                                }
-                                />
+                                }/>
 
                         </Grid.Col>
                         <Grid.Col span={6}>
@@ -352,6 +390,31 @@ export default function LeaveRequestForm({staff}) {
                                 value={
                                     leaveRequest.dateOfReturn
                                 }/>
+                        </Grid.Col>
+                        <Grid.Col span={6}  display={Flex}>
+                        <Flex
+      mih={50}
+      
+     
+      justify="center"
+      align="flex-end"
+      direction="row"
+      wrap="wrap"
+    >
+
+                            {
+                            leaveRequest.fileId && (
+                                
+                                <Button
+                                component="a"
+                                target="_blank"
+                                href={  `/api/leaveRequest/download/${leaveRequest.fileId}`}
+                                >
+                                        Download Leave Form
+                                </Button>
+                            )
+                        }
+                        </Flex>
                         </Grid.Col>
                     </Grid>
                     <Card.Section bg="indigo.2" py="md"
@@ -374,21 +437,8 @@ export default function LeaveRequestForm({staff}) {
             </form>
             <MyModal open={modalOpen}
                 onClose={handleModalClose}
-                msg={"Leave Record Created Successfully"}/> {/* <Modal.Root opened={modalOpen} onClose={handleModalClose}>
-                <Modal.Overlay />
-                <Modal.Content>
-                    <Modal.Header bg="indigo.4" c='white'  >
-                        <Modal.Title ><Text fw={700} fz="md">Success</Text></Modal.Title>
-                        <Modal.CloseButton bg="indigo.2" />
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Text mt="md">LeaveRequest created successfully!</Text>
-                        <Center >
-                            <Button mt="md" onClick={handleModalClose}>Ok</Button>
-                        </Center>
-                    </Modal.Body>
-                </Modal.Content>
-            </Modal.Root> */} </Layout>
+                msg={"Leave Record Created Successfully"}/>
+        </Layout>
     );
 }
 export const getServerSideProps = async ({params}) => { // const { id } = params;

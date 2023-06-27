@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('StaffMinOrderByAggregateInput', {
- description:"",
+  description:"",
 })
 export class StaffMinOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

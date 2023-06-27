@@ -5,11 +5,12 @@ import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { FloatFilter } from '../inputs/FloatFilter';
 import { IntFilter } from '../inputs/IntFilter';
+import { StaffFilesRelationFilter } from '../inputs/StaffFilesRelationFilter';
 import { StaffRelationFilter } from '../inputs/StaffRelationFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('LeaveRequestWhereInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestWhereInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestWhereInput], {
@@ -67,15 +68,20 @@ export class LeaveRequestWhereInput {
   })
   staffSignDate?: DateTimeFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+  @TypeGraphQL.Field((_type) => IntFilter, {
     nullable: true,
   })
-  requestFormFileName?: StringNullableFilter | undefined;
+  fileId?: IntFilter | undefined;
 
   @TypeGraphQL.Field((_type) => IntFilter, {
     nullable: true,
   })
   staffId?: IntFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesRelationFilter, {
+    nullable: true,
+  })
+  staffFile?: StaffFilesRelationFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StaffRelationFilter, {
     nullable: true,

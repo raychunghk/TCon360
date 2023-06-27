@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.ObjectType('LeaveRequestSumAggregate', {
- description:"",
+  description:"",
 })
 export class LeaveRequestSumAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -16,6 +16,11 @@ export class LeaveRequestSumAggregate {
     nullable: true,
   })
   leaveDays!: number | null;
+
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: true,
+  })
+  fileId!: number | null;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,

@@ -96,6 +96,8 @@ model Staff {
   user          User?          @relation(fields: [userId], references: [id])
   userId        String?        @unique
   leaveRequests LeaveRequest[]
+
+  staffFiles staffFiles[]
 }
 
 model Post {
@@ -138,17 +140,28 @@ model TimeSheet {
 }
 
 model LeaveRequest {
-  id                  Int      @id @default(autoincrement())
-  leavePeriodStart    DateTime
-  AMPMStart           String?
-  leavePeriodEnd      DateTime
-  AMPMEnd             String?
-  leaveDays           Float
-  dateOfReturn        DateTime
-  staffSignDate       DateTime
-  requestFormFileName String?
-  staffId             Int
-  staff               Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  id               Int      @id @default(autoincrement())
+  leavePeriodStart DateTime
+  AMPMStart        String?
+  leavePeriodEnd   DateTime
+  AMPMEnd          String?
+  leaveDays        Float
+  dateOfReturn     DateTime
+  staffSignDate    DateTime
+
+  fileId    Int
+  staffFile staffFiles @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  staffId   Int
+  staff     Staff      @relation(fields: [staffId], references: [id])
+}
+
+model staffFiles {
+  id           Int            @id @default(autoincrement())
+  filePath     String
+  fileType     String
+  staff        Staff          @relation(fields: [staffId], references: [id])
+  staffId      Int
+  LeaveRequest LeaveRequest[]
 }
 
 model TimeSheetCalendar {

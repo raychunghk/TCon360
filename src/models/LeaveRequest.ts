@@ -1,9 +1,8 @@
-import { Field, ObjectType, Int, Float, InputType } from 'type-graphql';
 import { Staff } from './Staff';
 import { Field, ObjectType, Int, Float } from 'type-graphql';
+import { staffFiles } from './staffFiles';
 
 @ObjectType()
-@InputType()
 export class LeaveRequest {
   @Field((_type) => Int)
   id: number;
@@ -29,8 +28,11 @@ export class LeaveRequest {
   @Field()
   staffSignDate: Date;
 
-  @Field({ nullable: true })
-  requestFormFileName?: string;
+  @Field((_type) => Int)
+  fileId: number;
+
+  @Field((_type) => staffFiles)
+  staffFile: staffFiles;
 
   @Field((_type) => Int)
   staffId: number;

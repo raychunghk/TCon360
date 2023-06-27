@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.InputType('UserWhereUniqueInput', {
- description:"",
+  description:"",
 })
 export class UserWhereUniqueInput {
   @TypeGraphQL.Field((_type) => String, {

@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { NestedDecimalFilter } from '../inputs/NestedDecimalFilter';
 
 @TypeGraphQL.InputType('DecimalFilter', {
- description:"",
+  description:"",
 })
 export class DecimalFilter {
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {

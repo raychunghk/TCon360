@@ -6,7 +6,7 @@ import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { DecimalFilter } from '../inputs/DecimalFilter';
 
 @TypeGraphQL.InputType('UserVacationWhereInput', {
- description:"",
+  description:"",
 })
 export class UserVacationWhereInput {
   @TypeGraphQL.Field((_type) => [UserVacationWhereInput], {

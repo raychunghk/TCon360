@@ -2,11 +2,12 @@ import * as TypeGraphQL from 'type-graphql';
 import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
+import { StaffFilesOrderByWithRelationInput } from '../inputs/StaffFilesOrderByWithRelationInput';
 import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelationInput';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('LeaveRequestOrderByWithRelationInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
@@ -52,12 +53,17 @@ export class LeaveRequestOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
-  requestFormFileName?: 'asc' | 'desc' | undefined;
+  fileId?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
   staffId?: 'asc' | 'desc' | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesOrderByWithRelationInput, {
+    nullable: true,
+  })
+  staffFile?: StaffFilesOrderByWithRelationInput | undefined;
 
   @TypeGraphQL.Field((_type) => StaffOrderByWithRelationInput, {
     nullable: true,

@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.ObjectType('LeaveRequestMaxAggregate', {
- description:"",
+  description:"",
 })
 export class LeaveRequestMaxAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -47,10 +47,10 @@ export class LeaveRequestMaxAggregate {
   })
   staffSignDate!: Date | null;
 
-  @TypeGraphQL.Field((_type) => String, {
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,
   })
-  requestFormFileName!: string | null;
+  fileId!: number | null;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: true,

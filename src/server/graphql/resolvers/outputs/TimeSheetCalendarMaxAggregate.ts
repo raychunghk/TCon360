@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.ObjectType('TimeSheetCalendarMaxAggregate', {
- description:"",
+  description:"",
 })
 export class TimeSheetCalendarMaxAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

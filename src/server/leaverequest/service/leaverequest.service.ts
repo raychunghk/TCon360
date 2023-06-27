@@ -1,15 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from 'src/server/prisma/prisma.service';
 import { LeaveRequest, Prisma } from '@prisma/client';
-import { StaffService } from '../../staff/service/staff.service'
+import { StaffService } from 'src/server/staff/service/staff.service'
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { format } from 'date-fns'
+import { staffFiles } from 'src/models/staffFiles';
+import { StaffFiles } from 'src/server/graphql';
+import { file } from 'jszip';
+import { StaffFilesService } from 'src/server/shared/staffFiles.service';
 @Injectable()
 export class LeaveRequestService {
-  constructor(private prisma: PrismaService, private staffservice: StaffService) { }
+  constructor(private prisma: PrismaService, private staffservice: StaffService,private staffFileservice: StaffFilesService) { }
   async createLeaveRequestforgql(leaveRequestData) {
     const createdLeaveRequest = await this.prisma.leaveRequest.create({
       data: leaveRequestData
@@ -17,7 +21,7 @@ export class LeaveRequestService {
     return createdLeaveRequest;
   }
   getFilePath(filename: string) {
-    return `${__dirname}/../../../../timesheet/${filename}`;
+    return path.resolve(`${__dirname}/../../../../timesheet/${filename}`);
   }
   private formatdate(_date): String {
     return format(new Date(_date), 'dd/MM/yyyy')
@@ -52,7 +56,7 @@ export class LeaveRequestService {
       console.log('File copied successfully!');
     } catch (err) {
       console.error('Error copying file:', err);
-      return '';
+      throw err;
     }
 
     //render field values.
@@ -63,22 +67,17 @@ export class LeaveRequestService {
       const zip = new PizZip(content);
       const doc = new Docxtemplater(zip);
       const staff = await this.staffservice.getStaffById(1);
-      /*
-          doc.setData({
-            staffname: "hello",
-          });
-      
-          doc.render();
-      */
+
       const leaveperiodstart = this.formatdate(data.leavePeriodStart);
       const leaveperiodend = this.formatdate(data.leavePeriodEnd);
-      const dateofreturn = this.formatdate(data.dateOfReturn);
+
+      const _leaveperiod = `${leaveperiodstart} ${data.AMPMStart == "AMPM" ? "" : data.AMPMStart} to  ${leaveperiodend} ${data.AMPMEnd == "AMPM" ? "" : data.AMPMEnd}`;
 
       doc.render({
         staffname: staff.StaffName
         , staffcategory: staff.StaffCategory
         , agentname: staff.AgentName
-        , leaveperiod: `${leaveperiodstart} ${data.AMPMStart=="AMPM"?"":data.AMPMStart} to  ${leaveperiodend} ${data.AMPMEnd=="AMPM"?"":data.AMPMEnd}`
+        , leaveperiod: _leaveperiod
         , leavedays: `${data.leaveDays} Day(s)`
         , dateofreturn: this.formatdate(data.dateOfReturn)
         , staffsigndate: this.formatdate(data.staffSignDate)
@@ -86,15 +85,27 @@ export class LeaveRequestService {
       });
       const buffer = doc.getZip().generate({ type: 'nodebuffer' });
       fs.writeFileSync(destPath, buffer);
+
+      const _file = await this.prisma.staffFiles.create({
+        data: {
+          filePath: destPath,
+          fileType: 'leaverequstform',
+          staff: { connect: { id: staffId } },
+        },
+      });
+
+      let lreq = await this.create(staffId, _file.id, data);
+
+      return lreq;
     } catch (error) {
-      console.log('error filling docx template')
-      console.log(error);
+      Logger.log('error filling docx template')
+      Logger.log(error);
     }
 
 
-    await this.create(staffId, data);
+
   }
-  async create(staffId: number, data: Prisma.LeaveRequestCreateInput) {
+  async create(staffId: number, fileId: number, data: Prisma.LeaveRequestCreateInput) {
     const staff = await this.prisma.staff.findUnique({ where: { id: staffId } });
     if (!staff) {
       throw new Error(`Staff member with ID ${staffId} not found`);
@@ -102,13 +113,19 @@ export class LeaveRequestService {
     Logger.log("staff?", staff)
 
     try {
-      const leaveRequest = await this.prisma.leaveRequest.create({ data });
+      const leaveRequest = await this.prisma.leaveRequest.create({
+        data: {
+          ...data
+          , staffFile: { connect: { id: fileId } }
+          , staff: { connect: { id: staffId } },
+        }
+      });
       return leaveRequest;
     } catch (error) {
       Logger.error(`Failed to create leave request: ${error}`);
       throw error;
     }
-    return null;
+
   }
   async findAll(): Promise<LeaveRequest[]> {
     return this.prisma.leaveRequest.findMany();

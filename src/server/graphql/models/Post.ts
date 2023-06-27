@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../scalars';
 import { PostUser } from '../models/PostUser';
 
 @TypeGraphQL.ObjectType('Post', {
- description:"",
+  description:"",
 })
 export class Post {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

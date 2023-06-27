@@ -4,12 +4,13 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { IntFilter } from '../inputs/IntFilter';
 import { LeaveRequestListRelationFilter } from '../inputs/LeaveRequestListRelationFilter';
+import { StaffFilesListRelationFilter } from '../inputs/StaffFilesListRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { UserRelationFilter } from '../inputs/UserRelationFilter';
 
 @TypeGraphQL.InputType('StaffWhereInput', {
- description:"",
+  description:"",
 })
 export class StaffWhereInput {
   @TypeGraphQL.Field((_type) => [StaffWhereInput], {
@@ -86,4 +87,9 @@ export class StaffWhereInput {
     nullable: true,
   })
   leaveRequests?: LeaveRequestListRelationFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesListRelationFilter, {
+    nullable: true,
+  })
+  staffFiles?: StaffFilesListRelationFilter | undefined;
 }

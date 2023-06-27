@@ -9,7 +9,7 @@ export enum LeaveRequestScalarFieldEnum {
   leaveDays = 'leaveDays',
   dateOfReturn = 'dateOfReturn',
   staffSignDate = 'staffSignDate',
-  requestFormFileName = 'requestFormFileName',
+  fileId = 'fileId',
   staffId = 'staffId',
 }
 TypeGraphQL.registerEnumType(LeaveRequestScalarFieldEnum, {

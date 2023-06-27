@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('CalendarMasterOrderByWithRelationInput', {
- description:"",
+  description:"",
 })
 export class CalendarMasterOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

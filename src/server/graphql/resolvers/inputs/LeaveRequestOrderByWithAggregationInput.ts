@@ -10,7 +10,7 @@ import { LeaveRequestSumOrderByAggregateInput } from '../inputs/LeaveRequestSumO
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('LeaveRequestOrderByWithAggregationInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
@@ -56,7 +56,7 @@ export class LeaveRequestOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
-  requestFormFileName?: 'asc' | 'desc' | undefined;
+  fileId?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

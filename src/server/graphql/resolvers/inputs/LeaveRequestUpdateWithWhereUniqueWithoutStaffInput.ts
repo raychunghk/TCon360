@@ -6,7 +6,7 @@ import { LeaveRequestUpdateWithoutStaffInput } from '../inputs/LeaveRequestUpdat
 import { LeaveRequestWhereUniqueInput } from '../inputs/LeaveRequestWhereUniqueInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateWithWhereUniqueWithoutStaffInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestUpdateWithWhereUniqueWithoutStaffInput {
   @TypeGraphQL.Field((_type) => LeaveRequestWhereUniqueInput, {

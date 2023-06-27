@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.InputType('UserVacationCreateInput', {
- description:"",
+  description:"",
 })
 export class UserVacationCreateInput {
   @TypeGraphQL.Field((_type) => Date, {

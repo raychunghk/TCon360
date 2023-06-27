@@ -45,7 +45,7 @@ export class FindFirstLeaveRequestArgs {
         | 'leaveDays'
         | 'dateOfReturn'
         | 'staffSignDate'
-        | 'requestFormFileName'
+        | 'fileId'
         | 'staffId'
       >
     | undefined;

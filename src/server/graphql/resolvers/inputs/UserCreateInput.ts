@@ -7,7 +7,7 @@ import { SessionCreateNestedManyWithoutUserInput } from '../inputs/SessionCreate
 import { StaffCreateNestedOneWithoutUserInput } from '../inputs/StaffCreateNestedOneWithoutUserInput';
 
 @TypeGraphQL.InputType('UserCreateInput', {
- description:"",
+  description:"",
 })
 export class UserCreateInput {
   @TypeGraphQL.Field((_type) => String, {

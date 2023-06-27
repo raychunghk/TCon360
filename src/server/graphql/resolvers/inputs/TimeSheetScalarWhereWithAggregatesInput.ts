@@ -8,7 +8,7 @@ import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 
 @TypeGraphQL.InputType('TimeSheetScalarWhereWithAggregatesInput', {
- description:"",
+  description:"",
 })
 export class TimeSheetScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [TimeSheetScalarWhereWithAggregatesInput], {

@@ -3,11 +3,12 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../scalars';
 import { LeaveRequest } from '../models/LeaveRequest';
+import { StaffFiles } from '../models/StaffFiles';
 import { User } from '../models/User';
 import { StaffCount } from '../resolvers/outputs/StaffCount';
 
 @TypeGraphQL.ObjectType('Staff', {
- description:"",
+  description:"",
 })
 export class Staff {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -63,6 +64,8 @@ export class Staff {
   userId?: string | null;
 
   leaveRequests?: LeaveRequest[];
+
+  staffFiles?: StaffFiles[];
 
   @TypeGraphQL.Field((_type) => StaffCount, {
     nullable: true,

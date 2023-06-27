@@ -6,6 +6,7 @@ export { PostCrudResolver } from './Post/PostCrudResolver';
 export { PostUserCrudResolver } from './PostUser/PostUserCrudResolver';
 export { SessionCrudResolver } from './Session/SessionCrudResolver';
 export { StaffCrudResolver } from './Staff/StaffCrudResolver';
+export { StaffFilesCrudResolver } from './StaffFiles/StaffFilesCrudResolver';
 export { TimeSheetCrudResolver } from './TimeSheet/TimeSheetCrudResolver';
 export { TimeSheetCalendarCrudResolver } from './TimeSheetCalendar/TimeSheetCalendarCrudResolver';
 export { UserCrudResolver } from './User/UserCrudResolver';

@@ -3,9 +3,10 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { StaffCreateNestedOneWithoutLeaveRequestsInput } from '../inputs/StaffCreateNestedOneWithoutLeaveRequestsInput';
+import { StaffFilesCreateNestedOneWithoutLeaveRequestInput } from '../inputs/StaffFilesCreateNestedOneWithoutLeaveRequestInput';
 
 @TypeGraphQL.InputType('LeaveRequestCreateInput', {
- description:"",
+  description:"",
 })
 export class LeaveRequestCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
@@ -43,10 +44,13 @@ export class LeaveRequestCreateInput {
   })
   staffSignDate!: Date;
 
-  @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
-  })
-  requestFormFileName?: string | undefined;
+  @TypeGraphQL.Field(
+    (_type) => StaffFilesCreateNestedOneWithoutLeaveRequestInput,
+    {
+      nullable: false,
+    },
+  )
+  staffFile!: StaffFilesCreateNestedOneWithoutLeaveRequestInput;
 
   @TypeGraphQL.Field((_type) => StaffCreateNestedOneWithoutLeaveRequestsInput, {
     nullable: false,

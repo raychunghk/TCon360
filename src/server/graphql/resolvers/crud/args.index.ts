@@ -6,6 +6,7 @@ export * from './Post/args';
 export * from './PostUser/args';
 export * from './Session/args';
 export * from './Staff/args';
+export * from './StaffFiles/args';
 export * from './TimeSheet/args';
 export * from './TimeSheetCalendar/args';
 export * from './User/args';

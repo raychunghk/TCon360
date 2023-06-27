@@ -6,7 +6,7 @@ import { TimeSheetCalendar } from '../models/TimeSheetCalendar';
 import { TimeSheetCount } from '../resolvers/outputs/TimeSheetCount';
 
 @TypeGraphQL.ObjectType('TimeSheet', {
- description:"",
+  description:"",
 })
 export class TimeSheet {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
