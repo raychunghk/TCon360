@@ -58,8 +58,7 @@ export default function LeaveRequestForm({staff}) {
         let returnDate = null;
         let _ampmend = AMPMEnd;
         if (endDate) {
-            if (!AMPMEnd || AMPMEnd === 'NA') {
-                alert('Please choose "AMPM", "AM", or "PM" for the end time');
+            if (!AMPMEnd || AMPMEnd === 'NA') { // alert('Please choose "AMPM", "AM", or "PM" for the end time');
                 _ampmend = "AMPM"
                 // return;
             }
@@ -139,7 +138,7 @@ export default function LeaveRequestForm({staff}) {
     const ampmOptions = [
         {
             value: 'AMPM',
-            label: 'AM and PM'
+            label: 'Whole day'
         }, {
             value: 'AM',
             label: 'AM'
@@ -154,7 +153,7 @@ export default function LeaveRequestForm({staff}) {
             label: 'N/A'
         }, {
             value: 'AMPM',
-            label: 'AM and PM'
+            label: 'Whole day'
         }, {
             value: 'AM',
             label: 'AM'
@@ -163,44 +162,33 @@ export default function LeaveRequestForm({staff}) {
             label: 'PM'
         },
     ];
+    function adjustTimeZoneVal(dateval) {
+    
+        return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()
+    }
     const onSubmit = async (e) => {
         setSubmitting(true);
-        /*
 
-{
-    leavePeriodStart: string | Date;
-    AMPMStart?: string;
-    leavePeriodEnd: string | Date;
-    AMPMEnd?: string;
-    leaveDays: string;
-    dateOfReturn: string | Date;
-    staffSignDate: string;
-    staff: Prisma.StaffCreateNestedOneWithoutLeaveRequestsInput;
-}
-        */
         const newData = {
-            leavePeriodStart: new Date(`${
-                leaveRequest.leavePeriodStart
-            }`).toISOString(),
+
             // staffId: parseInt(leaveRequest.staffId),
-            leavePeriodStart: new Date(`${
-                leaveRequest.leavePeriodStart
-            }`).toISOString(),
-            leavePeriodEnd: new Date(`${
-                leaveRequest.leavePeriodEnd
-            }`).toISOString(),
+            leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
+            leavePeriodEnd: adjustTimeZoneVal(leaveRequest.leavePeriodEnd),
             AMPMEnd: leaveRequest.AMPMEnd,
             AMPMStart: leaveRequest.AMPMStart,
             leaveDays: leaveRequest.leaveDays,
-            dateOfReturn: new Date(leaveRequest.dateOfReturn).toISOString(),
-            staffSignDate: leaveRequest.staffSignDate
+            dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
+            staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
         };
-        console.log('newdata: ' + newData)
+        console.log('newdata: ')
+        console.log(newData)
+        console.log('original leave start')
+        console.log(leaveRequest.leavePeriodStart)
         try {
             const response = await axios.post(`${basepath}/api/leaverequest/${
                 leaveRequest.staffId
             }`, newData);
-       
+
             if ([200, 201].includes(response.status)) {
                 setModalOpen(true);
                 reset();
@@ -304,7 +292,7 @@ export default function LeaveRequestForm({staff}) {
                             errors.leavePeriodStart && <span className="error">Leave period start is required</span>
                         } </Grid.Col>
                         <Grid.Col span={6}>
-                            <Select label="AM/PM start"
+                            <Select label="Leave start: AM/PM/Whole day"
                                 data={ampmOptions}
                                 defaultValue="AMPM"
                                 value={
@@ -335,7 +323,7 @@ export default function LeaveRequestForm({staff}) {
                                 }/>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <Select label="AM/PM end"
+                            <Select label="Leave end: AM/PM/Whole day"
                                 data={ampmOptionsEnd}
                                 value={
                                     leaveRequest.AMPMEnd
@@ -378,8 +366,8 @@ export default function LeaveRequestForm({staff}) {
                                 }
                                 defaultDate
                                 ={
-                                                                                                                                                                                                                                                                                                                                    new Date()
-                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                            new Date()
+                                                                                                                                                                                                                                                                                                                                                                                                        }
                                 defaultValue={
                                     new Date()
                                 }/>
@@ -391,30 +379,27 @@ export default function LeaveRequestForm({staff}) {
                                     leaveRequest.dateOfReturn
                                 }/>
                         </Grid.Col>
-                        <Grid.Col span={6}  display={Flex}>
-                        <Flex
-      mih={50}
-      
-     
-      justify="center"
-      align="flex-end"
-      direction="row"
-      wrap="wrap"
-    >
+                        <Grid.Col span={6}
+                            display={Flex}>
+                            <Flex mih={50}
+                                justify="center"
+                                align="flex-end"
+                                direction="row"
+                                wrap="wrap">
 
-                            {
-                            leaveRequest.fileId && (
-                                
-                                <Button
-                                component="a"
-                                target="_blank"
-                                href={  `/api/leaveRequest/download/${leaveRequest.fileId}`}
-                                >
+                                {
+                                leaveRequest.fileId && (
+
+                                    <Button component="a" target="_blank"
+                                        href={
+                                            `${basepath}/api/leaveRequest/download/${
+                                                leaveRequest.fileId
+                                            }`
+                                    }>
                                         Download Leave Form
-                                </Button>
-                            )
-                        }
-                        </Flex>
+                                    </Button>
+                                )
+                            } </Flex>
                         </Grid.Col>
                     </Grid>
                     <Card.Section bg="indigo.2" py="md"

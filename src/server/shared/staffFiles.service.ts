@@ -4,7 +4,7 @@ import { staffFiles } from '@prisma/client';
 
 @Injectable()
 export class StaffFilesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(data: {
     filePath: string;
@@ -19,7 +19,8 @@ export class StaffFilesService {
   }
 
   async findOne(id: number): Promise<staffFiles> {
-    return this.prisma.staffFiles.findUnique({ where: { id } });
+
+    return this.prisma.staffFiles.findUnique({ where: { id: Number(id) } });
   }
 
   async update(id: number, data: {

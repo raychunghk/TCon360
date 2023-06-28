@@ -67,8 +67,12 @@ export class LeaveRequestService {
       const zip = new PizZip(content);
       const doc = new Docxtemplater(zip);
       const staff = await this.staffservice.getStaffById(1);
-
+      Logger.debug('before format date, leave start')
+      Logger.debug(data.leavePeriodStart)
       const leaveperiodstart = this.formatdate(data.leavePeriodStart);
+      Logger.debug('After format date, leave start')
+      Logger.debug(leaveperiodstart)
+
       const leaveperiodend = this.formatdate(data.leavePeriodEnd);
 
       const _leaveperiod = `${leaveperiodstart} ${data.AMPMStart == "AMPM" ? "" : data.AMPMStart} to  ${leaveperiodend} ${data.AMPMEnd == "AMPM" ? "" : data.AMPMEnd}`;

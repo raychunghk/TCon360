@@ -2,12 +2,13 @@ import {
   Logger, Body, Controller, Delete, Get, Param, Post, Put, Res,
   StreamableFile,
   UseInterceptors,
-  Response as NsResponse,
+
   NotFoundException,
   InternalServerErrorException,
   Header,
   HttpStatus,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import type { Prisma, LeaveRequest } from '@prisma/client';
 import { LeaveRequestService } from './service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
@@ -56,19 +57,25 @@ export class LeaveRequestController {
   }
 
   @Get('download/:id')
-  @Header('Content-Disposition', 'attachment; filename="package.json"')
-  async download(@Param('id') staffFileId: number, @Res() res: Response) {
+  async download(@Param('id') staffFileId: number,@Res() res: Response) {
     try {
-      const stfFilePath = (await this.staffFilesService.findOne(staffFileId)).filePath;
+      const stafffile = (await this.staffFilesService.findOne(staffFileId));
+      Logger.debug("staff file:")
+      Logger.debug(stafffile)
 
+      const stfFilePath = stafffile.filePath;
+      const downloadFileName =   stfFilePath.substring(stfFilePath.lastIndexOf('/') + 1);
+      
+      res.setHeader('Content-Disposition', `attachment; filename=${downloadFileName}`);
       if (!stfFilePath) {
         throw new NotFoundException(`File with ID ${staffFileId} not found`);
       }
       const _file = createReadStream(stfFilePath);
-      return new StreamableFile(_file);
+      _file.pipe(res);
+      
     } catch (err) {
       console.error(err);
-      InternalServerErrorException
+      
       throw new InternalServerErrorException(`Failed to download, error:${err}`);
     }
   }
