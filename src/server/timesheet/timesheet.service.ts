@@ -3,15 +3,19 @@ import { Catch, Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { spawn } from 'child_process';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Staff, Prisma } from '@prisma/client';
 import { format } from 'date-fns'
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as libre from 'libreoffice-convert';//import * as XlsxPopulate from 'xlsx-populate';
 import * as unoconv from 'node-unoconv';
+
+
+
 @Injectable()
 export class TimesheetService {
+    private projectRoot = process.cwd();
     private readonly xlsfilename = 'T26TimeSheet.xlsx';
     constructor(private prisma: PrismaService) { } getContent() {
         const filePath = this.getFilePath(this.xlsfilename);
@@ -21,7 +25,8 @@ export class TimesheetService {
         return XLSX.utils.sheet_to_json(sheet);
     }
     getFilePath(filename: string) {
-        return `${__dirname}/../../../../timesheet/${filename}`;
+        //return `${__dirname}/../../../../timesheet/${filename}`;
+        return path.join(this.projectRoot, 'timesheet', filename);
     }
     async writeStaffInfoJsonToExcel(jsonObj: any, fieldmap: Record<string, string>, destPath: string) {
         const workbook = new ExcelJS.Workbook();
@@ -49,7 +54,7 @@ export class TimesheetService {
         const cell = worksheet.getCell(cellId);
         cell.value = value;
     }
-    async makeTimeSheet(year: number, month: number): Promise<string> {
+    async makeTimeSheet(staffId:number,year: number, month: number): Promise<Number> {
         const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         const sourcePath = this.getFilePath(this.xlsfilename);
         const destPath = this.getFilePath(`T26TimeSheet_${formattedDate}.xlsx`);
@@ -70,7 +75,7 @@ export class TimesheetService {
             console.log('File copied successfully!');
 
             // Load the workbook
-            const stf = await this.prisma.staff.findUnique({ where: { id: 4 } });
+            const stf = await this.prisma.staff.findUnique({ where: { id: staffId } });
             console.log(stf);
             const fieldmap = {
                 StaffName: 'D5',
@@ -128,12 +133,19 @@ export class TimesheetService {
             }
 
             await workbook.xlsx.writeFile(destPath);
-            await this.convertToPdf(destPath, destPDF);
+           // await this.convertToPdf(destPath, destPDF);
             console.log('calendar written to cell successfully!');
-            return destPath;
+            const _file = await this.prisma.staffFiles.create({
+                data: {
+                    filePath: destPath,
+                    fileType: 'timesheet',
+                    staff: { connect: { id: staffId } },
+                },
+            });
+            return _file.id;
         } catch (err) {
             console.error('Error copying file:', err);
-            return '';
+            return 0;
         }
     }
 
@@ -151,7 +163,8 @@ export class TimesheetService {
                 }
             });
         });
-    } async getCalendaryMonthByYearMonth(month, year) {
+    } 
+    async getCalendaryMonthByYearMonth(month, year) {
         const currentcalendar = await this.prisma.calendarMaster.findMany({
             where: {
                 Year: 2023

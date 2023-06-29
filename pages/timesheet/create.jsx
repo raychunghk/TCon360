@@ -35,6 +35,9 @@ export default function CreateTimesheet() {
         const response = await axios.post(`${basepath}/api/timesheet/create`, {year, month});
         setSubmitting(false);
         if ([200, 201].includes(response.status)) {
+            console.log('create timesheet result')
+            console.log(response.data)
+            setfileid(response.data.fileid)
             setModalOpen(true);
             reset();
         } else {
@@ -79,15 +82,12 @@ export default function CreateTimesheet() {
                                     align="flex-end"
                                     direction="row"
                                     wrap="wrap">
-
                                     {
                                     fileid && (
 
                                         <Button component="a" target="_blank"
                                             href={
-                                                `${basepath}/api/timesheet/download/${
-                                                    leaveRequest.fileId
-                                                }`
+                                                `${basepath}/api/timesheet/download/${fileid}`
                                         }>
                                             Download TimeSheet
                                         </Button>

@@ -19,7 +19,7 @@ interface CustomSessionProviderProps extends SessionProviderProps {
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
   const title = pageProps.title;
-  const basepath = pageProps.basePath;
+  const basepath = props.basePath;
   const session = pageProps.session;
   const cookies = parseCookies();
   const token = cookies.token;
@@ -28,9 +28,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     props.colorScheme,
   );
 
-
+    console.log('props?')
+    console.log(props)
   console.log('session?')
   console.log(session)
+  console.log('base path?')
+  console.log(basepath)
   const router = useRouter();
   console.log('router path name?'+router.pathname)
   

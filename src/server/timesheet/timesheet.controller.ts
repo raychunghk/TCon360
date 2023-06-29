@@ -19,12 +19,10 @@ export class TimesheetController {
   @Post('create')
   async postFunction(@Body() data: {year:number, month: number }) {
     console.log("server accepted param data:"+data.month+",year:"+data.year);
-    const xlsxPath  = await this.tsService.makeTimeSheet(data.year,data.month);
-    if(xlsxPath.length>0){
-      
-    }
+    const _fileid  = await this.tsService.makeTimeSheet(1, data.year,data.month);
+    
     return {
-      result: 'success'
+      fileid: _fileid
     };
   }
 }

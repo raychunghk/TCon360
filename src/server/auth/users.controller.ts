@@ -12,7 +12,7 @@ export class UsersController {
 
   //@HttpCode(200)
   //@UseGuards(LocalAuthGuard)
-  @Post('auth/login')
+  @Post('user/login')
   async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
     console.log("login controller")
     console.log(loginDto);
@@ -29,7 +29,7 @@ export class UsersController {
   //   return this.authService.login(objuser);
   // }
 
-  @Post('auth/signup')
+  @Post('user/signup')
   //async signUp(@Request() req) {
   async signUp(@Body()user : Prisma.UserCreateInput) {
     //const user = req.body;
