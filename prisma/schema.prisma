@@ -116,12 +116,14 @@ model CalendarMaster {
   Month        Int
 }
 
-model UserVacation {
+model CalendarVacation {
   VacationDate  DateTime @id
   ChargeableDay Decimal
+  leaveRequest  LeaveRequest @relation(fields: [LeaveRequestId], references: [id])
+  LeaveRequestId Int
 }
 
-model Holiday {
+model PublicHoliday {
   StartDate DateTime @id
   EndDate   DateTime
   Summary   String?
@@ -142,13 +144,13 @@ model TimeSheet {
 model LeaveRequest {
   id               Int      @id @default(autoincrement())
   leavePeriodStart DateTime
-  AMPMStart        String?
-  leavePeriodEnd   DateTime
+  AMPMStart        String
+  leavePeriodEnd   DateTime?
   AMPMEnd          String?
   leaveDays        Float
   dateOfReturn     DateTime
   staffSignDate    DateTime
-
+  calendarVacation CalendarVacation[]
   fileId    Int
   staffFile staffFiles @relation(fields: [fileId], references: [id], onDelete: Cascade)
   staffId   Int
@@ -172,7 +174,7 @@ model TimeSheetCalendar {
   TimeSheetID    Int
   ChargeableDay  Decimal
   ChargeableHour Decimal
-  Traing         Decimal   @default(0)
+  Training         Decimal   @default(0)
   Vacation       Decimal   @default(0)
   PublicHoliday  Decimal   @default(0)
   WeekEnd        Decimal   @default(0)

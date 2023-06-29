@@ -41,7 +41,7 @@ export class TimeSheetCalendarCountOrderByAggregateInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,
   })
-  Traing?: 'asc' | 'desc' | undefined;
+  Training?: 'asc' | 'desc' | undefined;
 
   @TypeGraphQL.Field((_type) => SortOrder, {
     nullable: true,

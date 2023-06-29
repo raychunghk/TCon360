@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { Prisma, LeaveRequest } from '@prisma/client';
-import { LeaveRequestService } from './service/leaverequest.service';
+import LeaveRequestService from './service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
 import { createReadStream } from 'fs';
 

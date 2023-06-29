@@ -2,11 +2,14 @@ import * as TypeGraphQL from 'type-graphql';
 import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
+import { CalendarVacationListRelationFilter } from '../inputs/CalendarVacationListRelationFilter';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
+import { DateTimeNullableFilter } from '../inputs/DateTimeNullableFilter';
 import { FloatFilter } from '../inputs/FloatFilter';
 import { IntFilter } from '../inputs/IntFilter';
 import { StaffFilesRelationFilter } from '../inputs/StaffFilesRelationFilter';
 import { StaffRelationFilter } from '../inputs/StaffRelationFilter';
+import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('LeaveRequestWhereInput', {
@@ -38,15 +41,15 @@ export class LeaveRequestWhereInput {
   })
   leavePeriodStart?: DateTimeFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+  @TypeGraphQL.Field((_type) => StringFilter, {
     nullable: true,
   })
-  AMPMStart?: StringNullableFilter | undefined;
+  AMPMStart?: StringFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => DateTimeFilter, {
+  @TypeGraphQL.Field((_type) => DateTimeNullableFilter, {
     nullable: true,
   })
-  leavePeriodEnd?: DateTimeFilter | undefined;
+  leavePeriodEnd?: DateTimeNullableFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StringNullableFilter, {
     nullable: true,
@@ -77,6 +80,11 @@ export class LeaveRequestWhereInput {
     nullable: true,
   })
   staffId?: IntFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => CalendarVacationListRelationFilter, {
+    nullable: true,
+  })
+  calendarVacation?: CalendarVacationListRelationFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StaffFilesRelationFilter, {
     nullable: true,

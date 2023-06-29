@@ -43,7 +43,7 @@ export class TimeSheetCalendar {
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: false,
   })
-  Traing!: Prisma.Decimal;
+  Training!: Prisma.Decimal;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: false,

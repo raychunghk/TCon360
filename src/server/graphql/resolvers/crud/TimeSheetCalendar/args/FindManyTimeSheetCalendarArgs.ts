@@ -43,7 +43,7 @@ export class FindManyTimeSheetCalendarArgs {
         | 'TimeSheetID'
         | 'ChargeableDay'
         | 'ChargeableHour'
-        | 'Traing'
+        | 'Training'
         | 'Vacation'
         | 'PublicHoliday'
         | 'WeekEnd'

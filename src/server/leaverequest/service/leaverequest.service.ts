@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from 'src/server/prisma/prisma.service';
+
 import { LeaveRequest, Prisma } from '@prisma/client';
-import { StaffService } from 'src/server/staff/service/staff.service'
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Docxtemplater from 'docxtemplater';
@@ -10,10 +9,24 @@ import { format } from 'date-fns'
 import { staffFiles } from 'src/models/staffFiles';
 import { StaffFiles } from 'src/server/graphql';
 import { file } from 'jszip';
-import { StaffFilesService } from 'src/server/shared/staffFiles.service';
+import { StaffFilesService } from '../../shared/staffFiles.service';
+import { StaffService } from '../../staff/service/staff.service'
+import { PrismaService } from '../../prisma/prisma.service';
+//js/NxTime/src/server/leaverequest/service/leaverequest.service.ts
+
+
 @Injectable()
-export class LeaveRequestService {
-  constructor(private prisma: PrismaService, private staffservice: StaffService,private staffFileservice: StaffFilesService) { }
+export default class LeaveRequestService {
+  constructor(private prisma: PrismaService, private staffservice: StaffService, private staffFileservice: StaffFilesService) { }
+  async useStaffService(id: Number) {
+    try {
+      const staff = await this.staffservice.getStaffById(1);
+      return staff;
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
   async createLeaveRequestforgql(leaveRequestData) {
     const createdLeaveRequest = await this.prisma.leaveRequest.create({
       data: leaveRequestData
@@ -24,8 +37,21 @@ export class LeaveRequestService {
     return path.resolve(`${__dirname}/../../../../timesheet/${filename}`);
   }
   private formatdate(_date): String {
-    return format(new Date(_date), 'dd/MM/yyyy')
+    if (_date)
+      return format(new Date(_date), 'dd/MM/yyyy')
   }
+  public getDateArray(start, end) {
+    const dateArray = [];
+    let currentDate = new Date(start);
+    if (!end) dateArray.push(new Date(currentDate));
+    while (currentDate <= end) {
+      dateArray.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return dateArray;
+  }
+
   async createword(staffId: number, data: Prisma.LeaveRequestCreateInput) {
     const date = new Date(Date.now());
     const formattedDate = date.toLocaleString('en-US', {
@@ -75,7 +101,8 @@ export class LeaveRequestService {
 
       const leaveperiodend = this.formatdate(data.leavePeriodEnd);
 
-      const _leaveperiod = `${leaveperiodstart} ${data.AMPMStart == "AMPM" ? "" : data.AMPMStart} to  ${leaveperiodend} ${data.AMPMEnd == "AMPM" ? "" : data.AMPMEnd}`;
+      let _leaveperiod = `${leaveperiodstart} ${data.AMPMStart == "AMPM" ? "" : data.AMPMStart} `
+      _leaveperiod = leaveperiodend ? `${_leaveperiod} to  ${leaveperiodend} ${data.AMPMEnd == "AMPM" ? "" : data.AMPMEnd}` : `${_leaveperiod}`;
 
       doc.render({
         staffname: staff.StaffName
@@ -104,10 +131,34 @@ export class LeaveRequestService {
     } catch (error) {
       Logger.log('error filling docx template')
       Logger.log(error);
+      console.log(error)
     }
 
 
 
+  }
+
+  private getChargeableDayForDate(date: Date, AMPMStart: string, AMPMEnd: string, index: number, length: number): number {
+    // If the date is the first date in the range, use the AMPMStart value to determine the chargeable day
+    if (index === 0) {
+      if (AMPMStart === 'AMPM') {
+        return 1;
+      } else {
+        return 0.5;
+      }
+    }
+    // If the date is the last date in the range, use the AMPMEnd value to determine the chargeable day
+    else if (index === length - 1) {
+      if (AMPMEnd === 'AMPM') {
+        return 1;
+      } else {
+        return 0.5;
+      }
+    }
+    // For all other dates, the chargeable day is always 1
+    else {
+      return 1;
+    }
   }
   async create(staffId: number, fileId: number, data: Prisma.LeaveRequestCreateInput) {
     const staff = await this.prisma.staff.findUnique({ where: { id: staffId } });
@@ -117,6 +168,8 @@ export class LeaveRequestService {
     Logger.log("staff?", staff)
 
     try {
+
+
       const leaveRequest = await this.prisma.leaveRequest.create({
         data: {
           ...data
@@ -124,9 +177,48 @@ export class LeaveRequestService {
           , staff: { connect: { id: staffId } },
         }
       });
+
+      const dateArr = this.getDateArray(leaveRequest.leavePeriodStart, leaveRequest.leavePeriodEnd)
+
+      /*
+      model CalendarVacation {
+        VacationDate  DateTime @id
+        ChargeableDay Decimal
+        leaveRequest  LeaveRequest @relation(fields: [LeaveRequestId], references: [id])
+        LeaveRequestId Int
+      }
+      
+      */
+      try {
+        let vaca = []
+        for (const element of dateArr) {
+          const index = dateArr.indexOf(element);
+          const cday = this.getChargeableDayForDate(element, leaveRequest.AMPMStart, leaveRequest.AMPMEnd, index, dateArr.length);
+          console.log('chargable days:');
+          console.log(cday);
+          const rtn = await this.prisma.calendarVacation.create({
+            data: {
+              VacationDate: element,
+              ChargeableDay: cday,
+              leaveRequest: {
+                connect: {
+                  id: leaveRequest.id,
+                },
+              },
+            },
+          });
+          vaca.push(rtn);
+        }
+        console.log(vaca);
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+
       return leaveRequest;
     } catch (error) {
       Logger.error(`Failed to create leave request: ${error}`);
+      console.log(error)
       throw error;
     }
 

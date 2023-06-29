@@ -30,7 +30,7 @@ export class GroupByTimeSheetCalendarArgs {
     | 'TimeSheetID'
     | 'ChargeableDay'
     | 'ChargeableHour'
-    | 'Traing'
+    | 'Training'
     | 'Vacation'
     | 'PublicHoliday'
     | 'WeekEnd'

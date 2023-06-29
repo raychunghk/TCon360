@@ -2,6 +2,7 @@ import * as TypeGraphQL from 'type-graphql';
 import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
+import { CalendarVacationOrderByRelationAggregateInput } from '../inputs/CalendarVacationOrderByRelationAggregateInput';
 import { StaffFilesOrderByWithRelationInput } from '../inputs/StaffFilesOrderByWithRelationInput';
 import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelationInput';
 import { SortOrder } from '../../enums/SortOrder';
@@ -59,6 +60,11 @@ export class LeaveRequestOrderByWithRelationInput {
     nullable: true,
   })
   staffId?: 'asc' | 'desc' | undefined;
+
+  @TypeGraphQL.Field((_type) => CalendarVacationOrderByRelationAggregateInput, {
+    nullable: true,
+  })
+  calendarVacation?: CalendarVacationOrderByRelationAggregateInput | undefined;
 
   @TypeGraphQL.Field((_type) => StaffFilesOrderByWithRelationInput, {
     nullable: true,

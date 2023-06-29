@@ -2,10 +2,12 @@ import * as TypeGraphQL from 'type-graphql';
 import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
+import { DateTimeNullableWithAggregatesFilter } from '../inputs/DateTimeNullableWithAggregatesFilter';
 import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFilter';
 import { FloatWithAggregatesFilter } from '../inputs/FloatWithAggregatesFilter';
 import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
+import { StringWithAggregatesFilter } from '../inputs/StringWithAggregatesFilter';
 
 @TypeGraphQL.InputType('LeaveRequestScalarWhereWithAggregatesInput', {
   description:"",
@@ -36,15 +38,15 @@ export class LeaveRequestScalarWhereWithAggregatesInput {
   })
   leavePeriodStart?: DateTimeWithAggregatesFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
+  @TypeGraphQL.Field((_type) => StringWithAggregatesFilter, {
     nullable: true,
   })
-  AMPMStart?: StringNullableWithAggregatesFilter | undefined;
+  AMPMStart?: StringWithAggregatesFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => DateTimeWithAggregatesFilter, {
+  @TypeGraphQL.Field((_type) => DateTimeNullableWithAggregatesFilter, {
     nullable: true,
   })
-  leavePeriodEnd?: DateTimeWithAggregatesFilter | undefined;
+  leavePeriodEnd?: DateTimeNullableWithAggregatesFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StringNullableWithAggregatesFilter, {
     nullable: true,

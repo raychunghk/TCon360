@@ -3,8 +3,10 @@ import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
+import { DateTimeNullableFilter } from '../inputs/DateTimeNullableFilter';
 import { FloatFilter } from '../inputs/FloatFilter';
 import { IntFilter } from '../inputs/IntFilter';
+import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('LeaveRequestScalarWhereInput', {
@@ -36,15 +38,15 @@ export class LeaveRequestScalarWhereInput {
   })
   leavePeriodStart?: DateTimeFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+  @TypeGraphQL.Field((_type) => StringFilter, {
     nullable: true,
   })
-  AMPMStart?: StringNullableFilter | undefined;
+  AMPMStart?: StringFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => DateTimeFilter, {
+  @TypeGraphQL.Field((_type) => DateTimeNullableFilter, {
     nullable: true,
   })
-  leavePeriodEnd?: DateTimeFilter | undefined;
+  leavePeriodEnd?: DateTimeNullableFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StringNullableFilter, {
     nullable: true,

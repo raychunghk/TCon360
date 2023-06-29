@@ -7,7 +7,7 @@ export enum TimeSheetCalendarScalarFieldEnum {
   TimeSheetID = 'TimeSheetID',
   ChargeableDay = 'ChargeableDay',
   ChargeableHour = 'ChargeableHour',
-  Traing = 'Traing',
+  Training = 'Training',
   Vacation = 'Vacation',
   PublicHoliday = 'PublicHoliday',
   WeekEnd = 'WeekEnd',

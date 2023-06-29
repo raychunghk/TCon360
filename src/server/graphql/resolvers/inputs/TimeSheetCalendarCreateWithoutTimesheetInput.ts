@@ -30,7 +30,7 @@ export class TimeSheetCalendarCreateWithoutTimesheetInput {
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,
   })
-  Traing?: Prisma.Decimal | undefined;
+  Training?: Prisma.Decimal | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,

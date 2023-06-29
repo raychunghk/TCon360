@@ -163,8 +163,9 @@ export default function LeaveRequestForm({staff}) {
         },
     ];
     function adjustTimeZoneVal(dateval) {
-    
-        return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()
+        if (dateval) 
+            return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()
+        
     }
     const onSubmit = async (e) => {
         setSubmitting(true);
@@ -178,7 +179,7 @@ export default function LeaveRequestForm({staff}) {
             AMPMStart: leaveRequest.AMPMStart,
             leaveDays: leaveRequest.leaveDays,
             dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
-            staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
+            staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate)
         };
         console.log('newdata: ')
         console.log(newData)
@@ -217,7 +218,13 @@ export default function LeaveRequestForm({staff}) {
 
         daysOfWeek: [0, 6] // 0 is Sunday, 6 is Saturday
     };
-
+    
+    const handleLeaveStartSelect = (date, stateobj) => {
+        if(!stateobj.leavePeriodEnd){
+            stateobj.dateOfReturn = date;
+        }
+        handleDateInputSelect(date, stateobj)
+    }
     const handleDateInputSelect = (date, stateobj) => {
 
         if (!isWeekend(date)) { //           setSelected((current) => [...current, date]);
@@ -284,7 +291,7 @@ export default function LeaveRequestForm({staff}) {
                                     leaveRequest.leavePeriodStart
                                 }
                                 onChange={
-                                    (_date) => handleDateInputSelect(_date, {
+                                    (_date) => handleLeaveStartSelect(_date, {
                                         ...leaveRequest,
                                         leavePeriodStart: _date
                                     })
@@ -366,8 +373,8 @@ export default function LeaveRequestForm({staff}) {
                                 }
                                 defaultDate
                                 ={
-                                                                                                                                                                                                                                                                                                                                                                                                            new Date()
-                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                new Date()
+                                                                                                                                                                                                                                                                                                                                                                                                                                            }
                                 defaultValue={
                                     new Date()
                                 }/>

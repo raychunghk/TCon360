@@ -2,6 +2,7 @@ import * as TypeGraphQL from 'type-graphql';
 import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
+import { CalendarVacationCreateNestedManyWithoutLeaveRequestInput } from '../inputs/CalendarVacationCreateNestedManyWithoutLeaveRequestInput';
 import { StaffFilesCreateNestedOneWithoutLeaveRequestInput } from '../inputs/StaffFilesCreateNestedOneWithoutLeaveRequestInput';
 
 @TypeGraphQL.InputType('LeaveRequestCreateWithoutStaffInput', {
@@ -14,14 +15,14 @@ export class LeaveRequestCreateWithoutStaffInput {
   leavePeriodStart!: Date;
 
   @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
-  })
-  AMPMStart?: string | undefined;
-
-  @TypeGraphQL.Field((_type) => Date, {
     nullable: false,
   })
-  leavePeriodEnd!: Date;
+  AMPMStart!: string;
+
+  @TypeGraphQL.Field((_type) => Date, {
+    nullable: true,
+  })
+  leavePeriodEnd?: Date | undefined;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
@@ -42,6 +43,16 @@ export class LeaveRequestCreateWithoutStaffInput {
     nullable: false,
   })
   staffSignDate!: Date;
+
+  @TypeGraphQL.Field(
+    (_type) => CalendarVacationCreateNestedManyWithoutLeaveRequestInput,
+    {
+      nullable: true,
+    },
+  )
+  calendarVacation?:
+    | CalendarVacationCreateNestedManyWithoutLeaveRequestInput
+    | undefined;
 
   @TypeGraphQL.Field(
     (_type) => StaffFilesCreateNestedOneWithoutLeaveRequestInput,

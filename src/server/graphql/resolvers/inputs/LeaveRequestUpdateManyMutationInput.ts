@@ -4,7 +4,9 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdateOperationsInput';
 import { FloatFieldUpdateOperationsInput } from '../inputs/FloatFieldUpdateOperationsInput';
+import { NullableDateTimeFieldUpdateOperationsInput } from '../inputs/NullableDateTimeFieldUpdateOperationsInput';
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
+import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateManyMutationInput', {
   description:"",
@@ -15,15 +17,15 @@ export class LeaveRequestUpdateManyMutationInput {
   })
   leavePeriodStart?: DateTimeFieldUpdateOperationsInput | undefined;
 
-  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
+  @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,
   })
-  AMPMStart?: NullableStringFieldUpdateOperationsInput | undefined;
+  AMPMStart?: StringFieldUpdateOperationsInput | undefined;
 
-  @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
+  @TypeGraphQL.Field((_type) => NullableDateTimeFieldUpdateOperationsInput, {
     nullable: true,
   })
-  leavePeriodEnd?: DateTimeFieldUpdateOperationsInput | undefined;
+  leavePeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
     nullable: true,

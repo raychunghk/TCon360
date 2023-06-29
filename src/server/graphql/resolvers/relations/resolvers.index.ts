@@ -1,4 +1,5 @@
 export { AccountRelationsResolver } from './Account/AccountRelationsResolver';
+export { CalendarVacationRelationsResolver } from './CalendarVacation/CalendarVacationRelationsResolver';
 export { LeaveRequestRelationsResolver } from './LeaveRequest/LeaveRequestRelationsResolver';
 export { PostRelationsResolver } from './Post/PostRelationsResolver';
 export { PostUserRelationsResolver } from './PostUser/PostUserRelationsResolver';

@@ -33,7 +33,7 @@ export class TimeSheetCalendarUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => DecimalFieldUpdateOperationsInput, {
     nullable: true,
   })
-  Traing?: DecimalFieldUpdateOperationsInput | undefined;
+  Training?: DecimalFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalFieldUpdateOperationsInput, {
     nullable: true,

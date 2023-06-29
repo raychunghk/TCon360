@@ -25,7 +25,7 @@ export class TimeSheetCalendar {
   ChargeableHour: number;
 
   @Field()
-  Traing: number;
+  Training: number;
 
   @Field()
   Vacation: number;

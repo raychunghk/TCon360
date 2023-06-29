@@ -35,7 +35,7 @@ export class TimeSheetCalendarSumAggregate {
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,
   })
-  Traing!: Prisma.Decimal | null;
+  Training!: Prisma.Decimal | null;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,

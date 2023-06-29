@@ -23,14 +23,14 @@ export class LeaveRequestGroupBy {
   leavePeriodStart!: Date;
 
   @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
-  })
-  AMPMStart!: string | null;
-
-  @TypeGraphQL.Field((_type) => Date, {
     nullable: false,
   })
-  leavePeriodEnd!: Date;
+  AMPMStart!: string;
+
+  @TypeGraphQL.Field((_type) => Date, {
+    nullable: true,
+  })
+  leavePeriodEnd!: Date | null;
 
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,

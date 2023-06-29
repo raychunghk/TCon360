@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Res, Post } from '@nestjs/common';
 import * as fs from 'fs';
 import * as xlsx from 'xlsx';
-import { TimesheetService } from './service/timesheet.service';
+import { TimesheetService } from './timesheet.service';
 
 @Controller('api/timesheet')
 export class TimesheetController {

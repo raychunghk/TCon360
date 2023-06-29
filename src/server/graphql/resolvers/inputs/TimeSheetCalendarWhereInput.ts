@@ -59,7 +59,7 @@ export class TimeSheetCalendarWhereInput {
   @TypeGraphQL.Field((_type) => DecimalFilter, {
     nullable: true,
   })
-  Traing?: DecimalFilter | undefined;
+  Training?: DecimalFilter | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalFilter, {
     nullable: true,

@@ -1,6 +1,7 @@
 import { Staff } from './Staff';
 import { Field, ObjectType, Int, Float } from 'type-graphql';
 import { staffFiles } from './staffFiles';
+import { CalendarVacation } from './CalendarVacation';
 
 @ObjectType()
 export class LeaveRequest {
@@ -10,11 +11,11 @@ export class LeaveRequest {
   @Field()
   leavePeriodStart: Date;
 
-  @Field({ nullable: true })
-  AMPMStart?: string;
-
   @Field()
-  leavePeriodEnd: Date;
+  AMPMStart: string;
+
+  @Field({ nullable: true })
+  leavePeriodEnd?: Date;
 
   @Field({ nullable: true })
   AMPMEnd?: string;
@@ -27,6 +28,9 @@ export class LeaveRequest {
 
   @Field()
   staffSignDate: Date;
+
+  @Field((_type) => [CalendarVacation])
+  calendarVacation: CalendarVacation[];
 
   @Field((_type) => Int)
   fileId: number;

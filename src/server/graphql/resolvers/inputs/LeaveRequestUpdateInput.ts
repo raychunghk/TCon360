@@ -2,11 +2,14 @@ import * as TypeGraphQL from 'type-graphql';
 import * as GraphQLScalars from 'graphql-scalars';
 import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
+import { CalendarVacationUpdateManyWithoutLeaveRequestNestedInput } from '../inputs/CalendarVacationUpdateManyWithoutLeaveRequestNestedInput';
 import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdateOperationsInput';
 import { FloatFieldUpdateOperationsInput } from '../inputs/FloatFieldUpdateOperationsInput';
+import { NullableDateTimeFieldUpdateOperationsInput } from '../inputs/NullableDateTimeFieldUpdateOperationsInput';
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput } from '../inputs/StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput';
 import { StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput } from '../inputs/StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput';
+import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateInput', {
   description:"",
@@ -17,15 +20,15 @@ export class LeaveRequestUpdateInput {
   })
   leavePeriodStart?: DateTimeFieldUpdateOperationsInput | undefined;
 
-  @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
+  @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
     nullable: true,
   })
-  AMPMStart?: NullableStringFieldUpdateOperationsInput | undefined;
+  AMPMStart?: StringFieldUpdateOperationsInput | undefined;
 
-  @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
+  @TypeGraphQL.Field((_type) => NullableDateTimeFieldUpdateOperationsInput, {
     nullable: true,
   })
-  leavePeriodEnd?: DateTimeFieldUpdateOperationsInput | undefined;
+  leavePeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | undefined;
 
   @TypeGraphQL.Field((_type) => NullableStringFieldUpdateOperationsInput, {
     nullable: true,
@@ -46,6 +49,16 @@ export class LeaveRequestUpdateInput {
     nullable: true,
   })
   staffSignDate?: DateTimeFieldUpdateOperationsInput | undefined;
+
+  @TypeGraphQL.Field(
+    (_type) => CalendarVacationUpdateManyWithoutLeaveRequestNestedInput,
+    {
+      nullable: true,
+    },
+  )
+  calendarVacation?:
+    | CalendarVacationUpdateManyWithoutLeaveRequestNestedInput
+    | undefined;
 
   @TypeGraphQL.Field(
     (_type) => StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput,

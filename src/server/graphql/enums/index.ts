@@ -1,9 +1,10 @@
 export { AccountScalarFieldEnum } from './AccountScalarFieldEnum';
 export { CalendarMasterScalarFieldEnum } from './CalendarMasterScalarFieldEnum';
-export { HolidayScalarFieldEnum } from './HolidayScalarFieldEnum';
+export { CalendarVacationScalarFieldEnum } from './CalendarVacationScalarFieldEnum';
 export { LeaveRequestScalarFieldEnum } from './LeaveRequestScalarFieldEnum';
 export { PostScalarFieldEnum } from './PostScalarFieldEnum';
 export { PostUserScalarFieldEnum } from './PostUserScalarFieldEnum';
+export { PublicHolidayScalarFieldEnum } from './PublicHolidayScalarFieldEnum';
 export { SessionScalarFieldEnum } from './SessionScalarFieldEnum';
 export { SortOrder } from './SortOrder';
 export { StaffFilesScalarFieldEnum } from './StaffFilesScalarFieldEnum';
@@ -12,5 +13,4 @@ export { TimeSheetCalendarScalarFieldEnum } from './TimeSheetCalendarScalarField
 export { TimeSheetScalarFieldEnum } from './TimeSheetScalarFieldEnum';
 export { TransactionIsolationLevel } from './TransactionIsolationLevel';
 export { UserScalarFieldEnum } from './UserScalarFieldEnum';
-export { UserVacationScalarFieldEnum } from './UserVacationScalarFieldEnum';
 export { VerificationRequestScalarFieldEnum } from './VerificationRequestScalarFieldEnum';

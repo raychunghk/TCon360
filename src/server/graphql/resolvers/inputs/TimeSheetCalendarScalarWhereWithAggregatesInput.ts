@@ -67,7 +67,7 @@ export class TimeSheetCalendarScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => DecimalWithAggregatesFilter, {
     nullable: true,
   })
-  Traing?: DecimalWithAggregatesFilter | undefined;
+  Training?: DecimalWithAggregatesFilter | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalWithAggregatesFilter, {
     nullable: true,

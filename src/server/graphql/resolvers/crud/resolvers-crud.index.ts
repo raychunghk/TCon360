@@ -1,14 +1,14 @@
 export { AccountCrudResolver } from './Account/AccountCrudResolver';
 export { CalendarMasterCrudResolver } from './CalendarMaster/CalendarMasterCrudResolver';
-export { HolidayCrudResolver } from './Holiday/HolidayCrudResolver';
+export { CalendarVacationCrudResolver } from './CalendarVacation/CalendarVacationCrudResolver';
 export { LeaveRequestCrudResolver } from './LeaveRequest/LeaveRequestCrudResolver';
 export { PostCrudResolver } from './Post/PostCrudResolver';
 export { PostUserCrudResolver } from './PostUser/PostUserCrudResolver';
+export { PublicHolidayCrudResolver } from './PublicHoliday/PublicHolidayCrudResolver';
 export { SessionCrudResolver } from './Session/SessionCrudResolver';
 export { StaffCrudResolver } from './Staff/StaffCrudResolver';
 export { StaffFilesCrudResolver } from './StaffFiles/StaffFilesCrudResolver';
 export { TimeSheetCrudResolver } from './TimeSheet/TimeSheetCrudResolver';
 export { TimeSheetCalendarCrudResolver } from './TimeSheetCalendar/TimeSheetCalendarCrudResolver';
 export { UserCrudResolver } from './User/UserCrudResolver';
-export { UserVacationCrudResolver } from './UserVacation/UserVacationCrudResolver';
 export { VerificationRequestCrudResolver } from './VerificationRequest/VerificationRequestCrudResolver';

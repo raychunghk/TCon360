@@ -43,7 +43,7 @@ export class FindFirstTimeSheetCalendarOrThrowArgs {
         | 'TimeSheetID'
         | 'ChargeableDay'
         | 'ChargeableHour'
-        | 'Traing'
+        | 'Training'
         | 'Vacation'
         | 'PublicHoliday'
         | 'WeekEnd'

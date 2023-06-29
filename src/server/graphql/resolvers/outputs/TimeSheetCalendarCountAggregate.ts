@@ -40,7 +40,7 @@ export class TimeSheetCalendarCountAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })
-  Traing!: number;
+  Training!: number;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
