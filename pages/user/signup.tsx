@@ -17,6 +17,7 @@ import bg from "public/images/loginbg1.webp";
 
 import Head from "next/head";
 import { basepath} from '/global';
+import Link from "next/link";
 
 
 const useStyles = createStyles((theme) => ({
@@ -98,7 +99,7 @@ export default function SignupPage( ) {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
-        <link rel="shortcut icon" href="/favicon.svg" />
+        <Link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
       </Head>
       <Container fluid className={classes.wrapper}>
         <Paper className={classes.form} radius={0} p={30}>

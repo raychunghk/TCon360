@@ -29,11 +29,11 @@
   },
   "include": [
     "next-env.d.ts",
-    "middleware.ts",
+    "middleware.ts.backup",
     "**/*.ts",
     "**/*.tsx",
     "./.eslintrc.js"
-, "pages/timesheet/create.jsx", "src/server/leaverequest/leaverequest.resolver.ts", "pages/leaverequest/index.jsx", "pages/_document.jsx", "pages/api/auth/[...nextauth].js", "_middleware.ts.back"  ],
+, "pages/timesheet/create.jsx", "src/server/leaverequest/leaverequest.resolver.ts", "pages/leaverequest/index.jsx", "pages/_document.jsx", "pages/api/auth/[...nextauth].js"  ],
   "exclude": [
     "node_modules"
   ]

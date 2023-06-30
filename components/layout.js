@@ -51,14 +51,7 @@ export default function Layout({ children, home }) {
 
             header={
                 <Header height={{ base: 45, md: 50 }} p="sx">
-                    <Box
-                        sx={(theme) => ({
-                            paddingLeft: theme.spacing.xs,
-                            paddingRight: theme.spacing.xs,
-                            paddingBottom: theme.spacing.xs,
-                            
-                        })}
-                    > <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
                             <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
                                 <Burger
                                     opened={opened}
@@ -68,7 +61,7 @@ export default function Layout({ children, home }) {
                                     mr="xl"
                                 />
                             </MediaQuery>
-                            <Group position="apart" style={{width:'100%'}}>
+                            <Group position="apart" style={{width:'100%'}} p="10px">
                                 <Text>TS Generator</Text>
                                 <Group position="right">
                                     <Link href='/login' className={linkstyle.links}>
@@ -131,7 +124,7 @@ export default function Layout({ children, home }) {
                         </div>
 
 
-                    </Box>
+                  
                 </Header>
             }
 

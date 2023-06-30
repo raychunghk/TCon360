@@ -32,7 +32,7 @@ const data = [
     icon: <IconClock size="1rem" />,
     color: 'teal',
     label: 'Time Sheet',
-    link: '#',
+    link: '/#',
     child: [
       { icon: <IconEyeglass size="1rem" />, color: 'blue', label: 'View', link: '/timesheet' },
       { icon: <IconCalendarPlus size="1rem" />, color: 'blue', label: 'Create', link: '/timesheet/create' },

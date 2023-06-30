@@ -9,7 +9,7 @@ import {
 } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
-import { SessionProvider, SessionProviderProps } from "next-auth/react"
+import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 import { basePath } from 'src/shared/constants/env';
 import { parseCookies } from 'nookies';
 
@@ -19,7 +19,7 @@ interface CustomSessionProviderProps extends SessionProviderProps {
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
   const title = pageProps.title;
-  const basepath = props.basePath;
+  const basepath = props.basepath;
   const session = pageProps.session;
   const cookies = parseCookies();
   const token = cookies.token;
@@ -28,16 +28,15 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     props.colorScheme,
   );
 
-    console.log('props?')
-    console.log(props)
-  console.log('session?')
-  console.log(session)
-  console.log('base path?')
-  console.log(basepath)
+  console.log('props?');
+  console.log(props);
+  console.log('session?');
+  console.log(session);
+  console.log('base path?');
+  console.log(basepath);
   const router = useRouter();
-  console.log('router path name?'+router.pathname)
-  
- 
+  console.log('router path name?' + router.pathname);
+
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme =
       value || (colorScheme === 'dark' ? 'light' : 'dark');
@@ -49,15 +48,19 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   return (
     // <SessionProvider session={session} basePath='/absproxy/5000'>
-    <SessionProvider session={pageProps.session}  basePath={`${basepath}/api/auth`}  token={token} {...(null as CustomSessionProviderProps)}>
-
+    <SessionProvider
+      session={pageProps.session}
+      basePath={`${basepath}/api/auth`}
+      token={token}
+      {...(null as CustomSessionProviderProps)}
+    >
       <Head>
-        <title>{title ? title : "Mantine next example"}</title>
+        <title>{title ? title : 'Mantine next example'}</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
-        <link rel="shortcut icon" href={`${basePath}/favicon.svg`} />
+        <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
       </Head>
 
       <ColorSchemeProvider
@@ -73,21 +76,20 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           <Notifications />
         </MantineProvider>
       </ColorSchemeProvider>
-
     </SessionProvider>
   );
 }
 
 App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
-  const basePath = `${process.env.basepath}` || '';
+  const basepath = `${process.env.basepath}` || '';
   const pageProps = appProps.pageProps || {}; // Extract pageProps object
-  console.log('basePath'+basePath)
-  console.log("pageprops:" + { ...pageProps } + pageProps.title);
+  console.log('basePath' + basePath);
+  console.log('pageprops:' + { ...pageProps } + pageProps.title);
   return {
     ...appProps,
     colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
-    basePath,
+    basepath,
     title: pageProps.title,
   };
 };
