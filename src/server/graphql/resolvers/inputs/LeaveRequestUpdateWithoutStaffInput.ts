@@ -11,7 +11,7 @@ import { StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput } from '../in
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateWithoutStaffInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestUpdateWithoutStaffInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {

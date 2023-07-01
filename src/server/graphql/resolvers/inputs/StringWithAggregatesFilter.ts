@@ -7,7 +7,7 @@ import { NestedStringFilter } from '../inputs/NestedStringFilter';
 import { NestedStringWithAggregatesFilter } from '../inputs/NestedStringWithAggregatesFilter';
 
 @TypeGraphQL.InputType('StringWithAggregatesFilter', {
-  description:"",
+  description: '',
 })
 export class StringWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => String, {

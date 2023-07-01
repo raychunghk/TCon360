@@ -18,6 +18,7 @@
 // }
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
+
 export function middleware(request: NextRequest) {
     try {
         const pathname = request.nextUrl.pathname;
@@ -28,6 +29,24 @@ export function middleware(request: NextRequest) {
         console.log(error)
     }
 
-
     return NextResponse.next();
+}
+
+// Custom matcher function
+function customMatcher(route: string) {
+    // Check if the route does not end with 'api/auth'
+    return ! (route.indexOf ('api/auth')>=0);
+}
+
+export const config = {
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      ],
 }

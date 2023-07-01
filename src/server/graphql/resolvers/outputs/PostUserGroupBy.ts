@@ -9,7 +9,7 @@ import { PostUserMinAggregate } from '../outputs/PostUserMinAggregate';
 import { PostUserSumAggregate } from '../outputs/PostUserSumAggregate';
 
 @TypeGraphQL.ObjectType('PostUserGroupBy', {
-  description:"",
+  description: '',
 })
 export class PostUserGroupBy {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

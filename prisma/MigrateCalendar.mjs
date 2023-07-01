@@ -6,23 +6,83 @@ import path from 'path'
 
 const prisma = new PrismaClient();
 async function main() {
-  //genholiday();
-  gencalendar();
-  genStaffInfo();
+  //genholiday()
+  createViewIfNotExists();
+  //genStaffInfo();
+ // gencalendar();
+}
+
+
+async function createViewIfNotExists() {
+  try {
+    const viewExists = await prisma.$queryRaw(Prisma.sql`
+      SELECT name FROM sqlite_master WHERE type='view' AND name='ViewCalendarTimeSheet';
+    `);
+
+    if (viewExists.length === 0) {
+      await prisma.$queryRaw(Prisma.sql`
+      create view ViewCalendarTimeSheet as 
+      select
+      CalendarDate,
+      STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate/1000,'unixepoch')) AS CalendarDateStr,
+      WeekDayName,
+      Year,
+      Month,
+      CASE
+          WHEN V.ChargeableDay > 0 THEN ChargeableDay
+          ELSE 0
+      END AS VacationChargable,
+      CASE
+          WHEN WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN
+              1
+          ELSE
+              0
+      END AS PublicHolidayChargable,
+      CASE
+          WHEN WeekDayName LIKE 'S%' THEN
+              WeekDayName
+          WHEN PH.Summary IS NOT NULL THEN
+              PH.Summary
+          ELSE
+              null
+      END AS HolidaySummary
+      ,LeaveRequestId
+  FROM
+      CalendarMaster C
+      LEFT JOIN CalendarVacation V ON V.VacationDate = C.CalendarDate
+      LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate; 
+      `);
+      console.log('View created successfully!');
+    } else {
+      console.log('View already exists!');
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 async function genholiday() {
   const __dirname = path.resolve();
-  let _path = path.join(__dirname, '../tc.ics')
+  //let _path = path.join(__dirname, 'tc.ics')
+  let _path = path.join('/config/workspace/vm/js/NxTime/prisma/tc.ics')
   console.log(_path)
   const evt = getEvents(_path)
-  for (const e of evt) {
-    const calendar = await prisma.holiday.create({
-      data: {
-        StartDate: e.StartDate,
-        EndDate: e.EndDate,
-        Summary: e.Summary
-      },
-    });
+  //return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()
+  try {
+    for (const e of evt) {
+    const calendar = await prisma.publicHoliday.create({
+        data: {
+          StartDate: e.StartDate,
+          EndDate: e.EndDate,
+          Summary: e.Summary
+        },
+      });
+    //  console.log(e.StartDate)
+    }
+   
+  } catch (error) {
+    console.log(error)
   }
 
 }

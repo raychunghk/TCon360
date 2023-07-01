@@ -1,4 +1,6 @@
 import { Field, ObjectType, ID, Int } from 'type-graphql';
+import { PublicHoliday } from './PublicHoliday';
+import { CalendarVacation } from './CalendarVacation';
 
 @ObjectType()
 export class CalendarMaster {

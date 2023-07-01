@@ -56,29 +56,7 @@ export class LeaveRequestController {
     return this.leaveRequestService.findOne(+id);
   }
 
-  @Get('download/:id')
-  async download(@Param('id') staffFileId: number,@Res() res: Response) {
-    try {
-      const stafffile = (await this.staffFilesService.findOne(staffFileId));
-      Logger.debug("staff file:")
-      Logger.debug(stafffile)
-
-      const stfFilePath = stafffile.filePath;
-      const downloadFileName =   stfFilePath.substring(stfFilePath.lastIndexOf('/') + 1);
-      
-      res.setHeader('Content-Disposition', `attachment; filename=${downloadFileName}`);
-      if (!stfFilePath) {
-        throw new NotFoundException(`File with ID ${staffFileId} not found`);
-      }
-      const _file = createReadStream(stfFilePath);
-      _file.pipe(res);
-      
-    } catch (err) {
-      console.error(err);
-      
-      throw new InternalServerErrorException(`Failed to download, error:${err}`);
-    }
-  }
+ 
 
   @Put(':id')
   async update(

@@ -9,7 +9,7 @@ import { TimeSheetMinAggregate } from '../outputs/TimeSheetMinAggregate';
 import { TimeSheetSumAggregate } from '../outputs/TimeSheetSumAggregate';
 
 @TypeGraphQL.ObjectType('AggregateTimeSheet', {
-  description:"",
+  description: '',
 })
 export class AggregateTimeSheet {
   @TypeGraphQL.Field((_type) => TimeSheetCountAggregate, {

@@ -8,7 +8,7 @@ import { TimeSheetCalendarWhereUniqueInput } from '../inputs/TimeSheetCalendarWh
 @TypeGraphQL.InputType(
   'TimeSheetCalendarUpdateWithWhereUniqueWithoutTimesheetInput',
   {
-    description:"",
+    description: '',
   },
 )
 export class TimeSheetCalendarUpdateWithWhereUniqueWithoutTimesheetInput {

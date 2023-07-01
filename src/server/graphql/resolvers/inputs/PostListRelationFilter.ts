@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { PostWhereInput } from '../inputs/PostWhereInput';
 
 @TypeGraphQL.InputType('PostListRelationFilter', {
-  description:"",
+  description: '',
 })
 export class PostListRelationFilter {
   @TypeGraphQL.Field((_type) => PostWhereInput, {

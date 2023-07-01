@@ -79,9 +79,13 @@ export const authOptions = {
       // get the token cookie using nookies
       const cookies = parseCookies();
       const token = cookies.token;
+      session.user = user;
+      session.basePath = '/absproxy/5000'
       console.log('session is called');
       // add the token to the session object
       session.token = token;
+      console.log('session user?')
+      console.log(session.user)
       console.log('token?')
       console.log(session.token)
       return session;

@@ -6,7 +6,7 @@ import { TimeSheetOrderByWithRelationInput } from '../inputs/TimeSheetOrderByWit
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('TimeSheetCalendarOrderByWithRelationInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetCalendarOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.InputType('TimeSheetCreateWithoutCalendarInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetCreateWithoutCalendarInput {
   @TypeGraphQL.Field((_type) => Date, {
@@ -28,9 +28,9 @@ export class TimeSheetCreateWithoutCalendarInput {
   TimeSheetFileName?: string | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
-    nullable: false,
+    nullable: true,
   })
-  TotalChargeableDay!: Prisma.Decimal;
+  TotalChargeableDay?: Prisma.Decimal | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,

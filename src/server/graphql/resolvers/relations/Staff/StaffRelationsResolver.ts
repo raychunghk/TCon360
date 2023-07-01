@@ -14,26 +14,6 @@ import {
 
 @TypeGraphQL.Resolver((_of) => Staff)
 export class StaffRelationsResolver {
-  @TypeGraphQL.FieldResolver((_type) => User, {
-    nullable: true,
-  })
-  async user(
-    @TypeGraphQL.Root() staff: Staff,
-    @TypeGraphQL.Ctx() ctx: any,
-    @TypeGraphQL.Info() info: GraphQLResolveInfo,
-  ): Promise<User | null> {
-    const { _count } = transformInfoIntoPrismaArgs(info);
-    return getPrismaFromContext(ctx)
-      .staff.findUniqueOrThrow({
-        where: {
-          id: staff.id,
-        },
-      })
-      .user({
-        ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
-      });
-  }
-
   @TypeGraphQL.FieldResolver((_type) => [LeaveRequest], {
     nullable: false,
   })
@@ -52,6 +32,26 @@ export class StaffRelationsResolver {
       })
       .leaveRequests({
         ...args,
+        ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
+      });
+  }
+
+  @TypeGraphQL.FieldResolver((_type) => User, {
+    nullable: true,
+  })
+  async user(
+    @TypeGraphQL.Root() staff: Staff,
+    @TypeGraphQL.Ctx() ctx: any,
+    @TypeGraphQL.Info() info: GraphQLResolveInfo,
+  ): Promise<User | null> {
+    const { _count } = transformInfoIntoPrismaArgs(info);
+    return getPrismaFromContext(ctx)
+      .staff.findUniqueOrThrow({
+        where: {
+          id: staff.id,
+        },
+      })
+      .user({
         ...(_count && transformCountFieldIntoSelectRelationsCount(_count)),
       });
   }

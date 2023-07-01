@@ -8,7 +8,7 @@ import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOpe
 import { UserUpdateOneWithoutStaffNestedInput } from '../inputs/UserUpdateOneWithoutStaffNestedInput';
 
 @TypeGraphQL.InputType('StaffUpdateInput', {
-  description:"",
+  description: '',
 })
 export class StaffUpdateInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {
@@ -51,15 +51,15 @@ export class StaffUpdateInput {
   })
   ManagerEmail?: StringFieldUpdateOperationsInput | undefined;
 
-  @TypeGraphQL.Field((_type) => UserUpdateOneWithoutStaffNestedInput, {
-    nullable: true,
-  })
-  user?: UserUpdateOneWithoutStaffNestedInput | undefined;
-
   @TypeGraphQL.Field((_type) => LeaveRequestUpdateManyWithoutStaffNestedInput, {
     nullable: true,
   })
   leaveRequests?: LeaveRequestUpdateManyWithoutStaffNestedInput | undefined;
+
+  @TypeGraphQL.Field((_type) => UserUpdateOneWithoutStaffNestedInput, {
+    nullable: true,
+  })
+  user?: UserUpdateOneWithoutStaffNestedInput | undefined;
 
   @TypeGraphQL.Field((_type) => StaffFilesUpdateManyWithoutStaffNestedInput, {
     nullable: true,

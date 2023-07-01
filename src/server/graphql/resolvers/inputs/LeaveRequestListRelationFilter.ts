@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { LeaveRequestWhereInput } from '../inputs/LeaveRequestWhereInput';
 
 @TypeGraphQL.InputType('LeaveRequestListRelationFilter', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestListRelationFilter {
   @TypeGraphQL.Field((_type) => LeaveRequestWhereInput, {

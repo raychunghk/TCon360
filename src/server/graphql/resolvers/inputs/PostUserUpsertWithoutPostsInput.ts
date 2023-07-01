@@ -6,7 +6,7 @@ import { PostUserCreateWithoutPostsInput } from '../inputs/PostUserCreateWithout
 import { PostUserUpdateWithoutPostsInput } from '../inputs/PostUserUpdateWithoutPostsInput';
 
 @TypeGraphQL.InputType('PostUserUpsertWithoutPostsInput', {
-  description:"",
+  description: '',
 })
 export class PostUserUpsertWithoutPostsInput {
   @TypeGraphQL.Field((_type) => PostUserUpdateWithoutPostsInput, {

@@ -7,7 +7,7 @@ import { StaffFilesCreateNestedManyWithoutStaffInput } from '../inputs/StaffFile
 import { UserCreateNestedOneWithoutStaffInput } from '../inputs/UserCreateNestedOneWithoutStaffInput';
 
 @TypeGraphQL.InputType('StaffCreateInput', {
-  description:"",
+  description: '',
 })
 export class StaffCreateInput {
   @TypeGraphQL.Field((_type) => String, {
@@ -50,15 +50,15 @@ export class StaffCreateInput {
   })
   ManagerEmail!: string;
 
-  @TypeGraphQL.Field((_type) => UserCreateNestedOneWithoutStaffInput, {
-    nullable: true,
-  })
-  user?: UserCreateNestedOneWithoutStaffInput | undefined;
-
   @TypeGraphQL.Field((_type) => LeaveRequestCreateNestedManyWithoutStaffInput, {
     nullable: true,
   })
   leaveRequests?: LeaveRequestCreateNestedManyWithoutStaffInput | undefined;
+
+  @TypeGraphQL.Field((_type) => UserCreateNestedOneWithoutStaffInput, {
+    nullable: true,
+  })
+  user?: UserCreateNestedOneWithoutStaffInput | undefined;
 
   @TypeGraphQL.Field((_type) => StaffFilesCreateNestedManyWithoutStaffInput, {
     nullable: true,

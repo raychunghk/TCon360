@@ -54,7 +54,7 @@ export class TimesheetService {
         const cell = worksheet.getCell(cellId);
         cell.value = value;
     }
-    async makeTimeSheet(staffId:number,year: number, month: number): Promise<Number> {
+    async makeTimeSheet(staffId: number, year: number, month: number): Promise<Number> {
         const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         const sourcePath = this.getFilePath(this.xlsfilename);
         const destPath = this.getFilePath(`T26TimeSheet_${formattedDate}.xlsx`);
@@ -90,6 +90,7 @@ export class TimesheetService {
             await this.writeStaffInfoJsonToExcel(stf, fieldmap, destPath);
 
             const objCalendar = await this.prisma.calendarMaster.findMany({
+                
                 where: {
                     Year: year,
                     Month: month,
@@ -99,6 +100,7 @@ export class TimesheetService {
                         CalendarDate: 'asc',
                     }
                 ],
+               
             });
             let firstdatecell = 20;
             const workbook = new ExcelJS.Workbook();
@@ -111,13 +113,14 @@ export class TimesheetService {
             const celltimesheetend = "L9";
 
             this.writeCellValue(worksheet, celltimesheetstart, format(objCalendar[0].CalendarDate, 'dd-MMM-yyyy'))
-            this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.pop().CalendarDate, 'dd-MMM-yyyy'))
+            //this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.pop().CalendarDate, 'dd-MMM-yyyy'))
+            this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.slice(-1)[0].CalendarDate, 'dd-MMM-yyyy'))
 
             for (let i = 0; i < 31; i++) {
                 cellid = "C" + datecellpos;
                 const cell = worksheet.getCell(cellid);
 
-                if (datecellpos - firstdatecell < objCalendar.length) {
+                /*if (datecellpos - firstdatecell <= objCalendar.length) {
                     let dt = objCalendar[i];
                     cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
                 } else {
@@ -127,13 +130,29 @@ export class TimesheetService {
                         const _cell = worksheet.getCell(_hcellid);
                         _cell.value = "";
                     });
+                }*/
+                try {
+                    if (i < objCalendar.length) {
+                        let dt = objCalendar[i];
+                        cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
+                    } else {
+                        emptydateRowID.forEach(x => {
+                            let _hcellid = x + datecellpos;
+                            console.log(`last row post ${_hcellid}`)
+                            const _cell = worksheet.getCell(_hcellid);
+                            _cell.value = "";
+                        });
+                    }
+                } catch (error) {
+                    console.log(error)
                 }
+               
 
                 datecellpos++;
             }
 
             await workbook.xlsx.writeFile(destPath);
-           // await this.convertToPdf(destPath, destPDF);
+            // await this.convertToPdf(destPath, destPDF);
             console.log('calendar written to cell successfully!');
             const _file = await this.prisma.staffFiles.create({
                 data: {
@@ -163,7 +182,7 @@ export class TimesheetService {
                 }
             });
         });
-    } 
+    }
     async getCalendaryMonthByYearMonth(month, year) {
         const currentcalendar = await this.prisma.calendarMaster.findMany({
             where: {

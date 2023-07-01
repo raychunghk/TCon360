@@ -12,9 +12,6 @@ export class TimeSheetCalendar {
   @Field()
   CalendarDate: Date;
 
-  @Field((_type) => TimeSheet)
-  timesheet: TimeSheet;
-
   @Field((_type) => Int)
   TimeSheetID: number;
 
@@ -38,6 +35,9 @@ export class TimeSheetCalendar {
 
   @Field()
   Others: number;
+
+  @Field((_type) => TimeSheet)
+  timesheet: TimeSheet;
 
   // skip overwrite 👇
 }

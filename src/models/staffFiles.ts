@@ -13,14 +13,14 @@ export class staffFiles {
   @Field()
   fileType: string;
 
-  @Field((_type) => Staff)
-  staff: Staff;
-
   @Field((_type) => Int)
   staffId: number;
 
   @Field((_type) => [LeaveRequest])
   LeaveRequest: LeaveRequest[];
+
+  @Field((_type) => Staff)
+  staff: Staff;
 
   // skip overwrite 👇
 }

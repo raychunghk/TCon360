@@ -8,7 +8,7 @@ import { PostUserUpdateOneRequiredWithoutPostsNestedInput } from '../inputs/Post
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('PostUpdateInput', {
-  description:"",
+  description: '',
 })
 export class PostUpdateInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {

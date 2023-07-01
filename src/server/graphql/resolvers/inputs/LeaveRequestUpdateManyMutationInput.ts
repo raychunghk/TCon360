@@ -9,7 +9,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStri
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateManyMutationInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {

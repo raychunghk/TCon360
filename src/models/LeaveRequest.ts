@@ -29,20 +29,20 @@ export class LeaveRequest {
   @Field()
   staffSignDate: Date;
 
-  @Field((_type) => [CalendarVacation])
-  calendarVacation: CalendarVacation[];
-
   @Field((_type) => Int)
   fileId: number;
-
-  @Field((_type) => staffFiles)
-  staffFile: staffFiles;
 
   @Field((_type) => Int)
   staffId: number;
 
+  @Field((_type) => [CalendarVacation])
+  calendarVacation: CalendarVacation[];
+
   @Field((_type) => Staff)
   staff: Staff;
+
+  @Field((_type) => staffFiles)
+  staffFile: staffFiles;
 
   // skip overwrite 👇
 }

@@ -6,7 +6,7 @@ import { PostUserCreateWithoutPostsInput } from '../inputs/PostUserCreateWithout
 import { PostUserWhereUniqueInput } from '../inputs/PostUserWhereUniqueInput';
 
 @TypeGraphQL.InputType('PostUserCreateOrConnectWithoutPostsInput', {
-  description:"",
+  description: '',
 })
 export class PostUserCreateOrConnectWithoutPostsInput {
   @TypeGraphQL.Field((_type) => PostUserWhereUniqueInput, {

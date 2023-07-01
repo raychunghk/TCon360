@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID, Int } from 'type-graphql';
 import { LeaveRequest } from './LeaveRequest';
+import { CalendarMaster } from './CalendarMaster';
 
 @ObjectType()
 export class CalendarVacation {
@@ -9,11 +10,11 @@ export class CalendarVacation {
   @Field()
   ChargeableDay: number;
 
-  @Field((_type) => LeaveRequest)
-  leaveRequest: LeaveRequest;
-
   @Field((_type) => Int)
   LeaveRequestId: number;
+
+  @Field((_type) => LeaveRequest)
+  leaveRequest: LeaveRequest;
 
   // skip overwrite 👇
 }

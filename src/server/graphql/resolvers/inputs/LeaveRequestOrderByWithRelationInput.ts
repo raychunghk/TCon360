@@ -8,7 +8,7 @@ import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelatio
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('LeaveRequestOrderByWithRelationInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
@@ -66,13 +66,13 @@ export class LeaveRequestOrderByWithRelationInput {
   })
   calendarVacation?: CalendarVacationOrderByRelationAggregateInput | undefined;
 
-  @TypeGraphQL.Field((_type) => StaffFilesOrderByWithRelationInput, {
-    nullable: true,
-  })
-  staffFile?: StaffFilesOrderByWithRelationInput | undefined;
-
   @TypeGraphQL.Field((_type) => StaffOrderByWithRelationInput, {
     nullable: true,
   })
   staff?: StaffOrderByWithRelationInput | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesOrderByWithRelationInput, {
+    nullable: true,
+  })
+  staffFile?: StaffFilesOrderByWithRelationInput | undefined;
 }

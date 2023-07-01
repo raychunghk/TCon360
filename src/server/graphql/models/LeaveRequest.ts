@@ -8,7 +8,7 @@ import { StaffFiles } from '../models/StaffFiles';
 import { LeaveRequestCount } from '../resolvers/outputs/LeaveRequestCount';
 
 @TypeGraphQL.ObjectType('LeaveRequest', {
-  description:"",
+  description: '',
 })
 export class LeaveRequest {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -51,21 +51,21 @@ export class LeaveRequest {
   })
   staffSignDate!: Date;
 
-  calendarVacation?: CalendarVacation[];
-
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })
   fileId!: number;
-
-  staffFile?: StaffFiles;
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })
   staffId!: number;
 
+  calendarVacation?: CalendarVacation[];
+
   staff?: Staff;
+
+  staffFile?: StaffFiles;
 
   @TypeGraphQL.Field((_type) => LeaveRequestCount, {
     nullable: true,

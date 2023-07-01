@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.InputType('IntFieldUpdateOperationsInput', {
-  description:"",
+  description: '',
 })
 export class IntFieldUpdateOperationsInput {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {

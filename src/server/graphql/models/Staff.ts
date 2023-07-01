@@ -8,7 +8,7 @@ import { User } from '../models/User';
 import { StaffCount } from '../resolvers/outputs/StaffCount';
 
 @TypeGraphQL.ObjectType('Staff', {
-  description:"",
+  description: '',
 })
 export class Staff {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -56,14 +56,14 @@ export class Staff {
   })
   ManagerEmail!: string;
 
-  user?: User | null;
-
   @TypeGraphQL.Field((_type) => String, {
     nullable: true,
   })
   userId?: string | null;
 
   leaveRequests?: LeaveRequest[];
+
+  user?: User | null;
 
   staffFiles?: StaffFiles[];
 

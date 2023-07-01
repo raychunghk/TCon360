@@ -16,11 +16,11 @@ export class Post {
   @Field()
   published: boolean;
 
-  @Field((_type) => PostUser)
-  author: PostUser;
-
   @Field((_type) => Int)
   authorId: number;
+
+  @Field((_type) => PostUser)
+  author: PostUser;
 
   // skip overwrite 👇
 }

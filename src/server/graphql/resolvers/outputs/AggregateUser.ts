@@ -7,7 +7,7 @@ import { UserMaxAggregate } from '../outputs/UserMaxAggregate';
 import { UserMinAggregate } from '../outputs/UserMinAggregate';
 
 @TypeGraphQL.ObjectType('AggregateUser', {
-  description:"",
+  description: '',
 })
 export class AggregateUser {
   @TypeGraphQL.Field((_type) => UserCountAggregate, {

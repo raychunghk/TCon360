@@ -17,6 +17,7 @@ export { AggregateTimeSheet } from './AggregateTimeSheet';
 export { AggregateTimeSheetCalendar } from './AggregateTimeSheetCalendar';
 export { AggregateUser } from './AggregateUser';
 export { AggregateVerificationRequest } from './AggregateVerificationRequest';
+export { AggregateViewTimeSheetCalendar } from './AggregateViewTimeSheetCalendar';
 export { CalendarMasterAvgAggregate } from './CalendarMasterAvgAggregate';
 export { CalendarMasterCountAggregate } from './CalendarMasterCountAggregate';
 export { CalendarMasterGroupBy } from './CalendarMasterGroupBy';
@@ -93,3 +94,9 @@ export { VerificationRequestCountAggregate } from './VerificationRequestCountAgg
 export { VerificationRequestGroupBy } from './VerificationRequestGroupBy';
 export { VerificationRequestMaxAggregate } from './VerificationRequestMaxAggregate';
 export { VerificationRequestMinAggregate } from './VerificationRequestMinAggregate';
+export { ViewTimeSheetCalendarAvgAggregate } from './ViewTimeSheetCalendarAvgAggregate';
+export { ViewTimeSheetCalendarCountAggregate } from './ViewTimeSheetCalendarCountAggregate';
+export { ViewTimeSheetCalendarGroupBy } from './ViewTimeSheetCalendarGroupBy';
+export { ViewTimeSheetCalendarMaxAggregate } from './ViewTimeSheetCalendarMaxAggregate';
+export { ViewTimeSheetCalendarMinAggregate } from './ViewTimeSheetCalendarMinAggregate';
+export { ViewTimeSheetCalendarSumAggregate } from './ViewTimeSheetCalendarSumAggregate';

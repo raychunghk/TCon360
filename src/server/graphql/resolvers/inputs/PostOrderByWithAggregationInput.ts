@@ -10,7 +10,7 @@ import { PostSumOrderByAggregateInput } from '../inputs/PostSumOrderByAggregateI
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('PostOrderByWithAggregationInput', {
-  description:"",
+  description: '',
 })
 export class PostOrderByWithAggregationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

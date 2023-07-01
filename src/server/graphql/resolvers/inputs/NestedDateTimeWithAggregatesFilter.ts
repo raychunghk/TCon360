@@ -6,7 +6,7 @@ import { NestedDateTimeFilter } from '../inputs/NestedDateTimeFilter';
 import { NestedIntFilter } from '../inputs/NestedIntFilter';
 
 @TypeGraphQL.InputType('NestedDateTimeWithAggregatesFilter', {
-  description:"",
+  description: '',
 })
 export class NestedDateTimeWithAggregatesFilter {
   @TypeGraphQL.Field((_type) => Date, {

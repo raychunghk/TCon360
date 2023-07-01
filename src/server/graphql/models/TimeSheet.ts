@@ -6,7 +6,7 @@ import { TimeSheetCalendar } from '../models/TimeSheetCalendar';
 import { TimeSheetCount } from '../resolvers/outputs/TimeSheetCount';
 
 @TypeGraphQL.ObjectType('TimeSheet', {
-  description:"",
+  description: '',
 })
 export class TimeSheet {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -23,8 +23,6 @@ export class TimeSheet {
     nullable: false,
   })
   EndDate!: Date;
-
-  calendar?: TimeSheetCalendar[];
 
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
@@ -50,6 +48,8 @@ export class TimeSheet {
     nullable: false,
   })
   TotalOTHour!: Prisma.Decimal;
+
+  calendar?: TimeSheetCalendar[];
 
   @TypeGraphQL.Field((_type) => TimeSheetCount, {
     nullable: true,

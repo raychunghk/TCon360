@@ -8,7 +8,7 @@ import { IntFieldUpdateOperationsInput } from '../inputs/IntFieldUpdateOperation
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('TimeSheetUpdateWithoutCalendarInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetUpdateWithoutCalendarInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {

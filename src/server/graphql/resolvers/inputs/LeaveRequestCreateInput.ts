@@ -7,7 +7,7 @@ import { StaffCreateNestedOneWithoutLeaveRequestsInput } from '../inputs/StaffCr
 import { StaffFilesCreateNestedOneWithoutLeaveRequestInput } from '../inputs/StaffFilesCreateNestedOneWithoutLeaveRequestInput';
 
 @TypeGraphQL.InputType('LeaveRequestCreateInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
@@ -55,6 +55,11 @@ export class LeaveRequestCreateInput {
     | CalendarVacationCreateNestedManyWithoutLeaveRequestInput
     | undefined;
 
+  @TypeGraphQL.Field((_type) => StaffCreateNestedOneWithoutLeaveRequestsInput, {
+    nullable: false,
+  })
+  staff!: StaffCreateNestedOneWithoutLeaveRequestsInput;
+
   @TypeGraphQL.Field(
     (_type) => StaffFilesCreateNestedOneWithoutLeaveRequestInput,
     {
@@ -62,9 +67,4 @@ export class LeaveRequestCreateInput {
     },
   )
   staffFile!: StaffFilesCreateNestedOneWithoutLeaveRequestInput;
-
-  @TypeGraphQL.Field((_type) => StaffCreateNestedOneWithoutLeaveRequestsInput, {
-    nullable: false,
-  })
-  staff!: StaffCreateNestedOneWithoutLeaveRequestsInput;
 }

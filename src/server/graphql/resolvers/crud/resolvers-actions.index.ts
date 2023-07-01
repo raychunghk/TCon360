@@ -180,3 +180,16 @@ export { GroupByVerificationRequestResolver } from './VerificationRequest/GroupB
 export { UpdateManyVerificationRequestResolver } from './VerificationRequest/UpdateManyVerificationRequestResolver';
 export { UpdateOneVerificationRequestResolver } from './VerificationRequest/UpdateOneVerificationRequestResolver';
 export { UpsertOneVerificationRequestResolver } from './VerificationRequest/UpsertOneVerificationRequestResolver';
+export { AggregateViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/AggregateViewTimeSheetCalendarResolver';
+export { CreateOneViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/CreateOneViewTimeSheetCalendarResolver';
+export { DeleteManyViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/DeleteManyViewTimeSheetCalendarResolver';
+export { DeleteOneViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/DeleteOneViewTimeSheetCalendarResolver';
+export { FindFirstViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/FindFirstViewTimeSheetCalendarResolver';
+export { FindFirstViewTimeSheetCalendarOrThrowResolver } from './ViewTimeSheetCalendar/FindFirstViewTimeSheetCalendarOrThrowResolver';
+export { FindManyViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/FindManyViewTimeSheetCalendarResolver';
+export { FindUniqueViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/FindUniqueViewTimeSheetCalendarResolver';
+export { FindUniqueViewTimeSheetCalendarOrThrowResolver } from './ViewTimeSheetCalendar/FindUniqueViewTimeSheetCalendarOrThrowResolver';
+export { GroupByViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/GroupByViewTimeSheetCalendarResolver';
+export { UpdateManyViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/UpdateManyViewTimeSheetCalendarResolver';
+export { UpdateOneViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/UpdateOneViewTimeSheetCalendarResolver';
+export { UpsertOneViewTimeSheetCalendarResolver } from './ViewTimeSheetCalendar/UpsertOneViewTimeSheetCalendarResolver';

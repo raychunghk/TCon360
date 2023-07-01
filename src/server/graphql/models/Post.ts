@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../scalars';
 import { PostUser } from '../models/PostUser';
 
 @TypeGraphQL.ObjectType('Post', {
-  description:"",
+  description: '',
 })
 export class Post {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
@@ -28,10 +28,10 @@ export class Post {
   })
   published!: boolean;
 
-  author?: PostUser;
-
   @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
     nullable: false,
   })
   authorId!: number;
+
+  author?: PostUser;
 }

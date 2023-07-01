@@ -6,7 +6,7 @@ import { CalendarVacationCreateNestedManyWithoutLeaveRequestInput } from '../inp
 import { StaffFilesCreateNestedOneWithoutLeaveRequestInput } from '../inputs/StaffFilesCreateNestedOneWithoutLeaveRequestInput';
 
 @TypeGraphQL.InputType('LeaveRequestCreateWithoutStaffInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestCreateWithoutStaffInput {
   @TypeGraphQL.Field((_type) => Date, {

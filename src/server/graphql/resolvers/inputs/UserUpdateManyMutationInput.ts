@@ -8,7 +8,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStri
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('UserUpdateManyMutationInput', {
-  description:"",
+  description: '',
 })
 export class UserUpdateManyMutationInput {
   @TypeGraphQL.Field((_type) => StringFieldUpdateOperationsInput, {

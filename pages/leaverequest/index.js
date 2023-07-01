@@ -399,7 +399,7 @@ export default function LeaveRequestForm({staff}) {
 
                                     <Button component="a" target="_blank"
                                         href={
-                                            `${basepath}/api/leaveRequest/download/${
+                                            `${basepath}/api/staff/download/${
                                                 leaveRequest.fileId
                                             }`
                                     }>

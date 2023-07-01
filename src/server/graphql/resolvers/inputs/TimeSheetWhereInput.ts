@@ -9,7 +9,7 @@ import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { TimeSheetCalendarListRelationFilter } from '../inputs/TimeSheetCalendarListRelationFilter';
 
 @TypeGraphQL.InputType('TimeSheetWhereInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetWhereInput {
   @TypeGraphQL.Field((_type) => [TimeSheetWhereInput], {

@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 
 @TypeGraphQL.ObjectType('StaffAvgAggregate', {
-  description:"",
+  description: '',
 })
 export class StaffAvgAggregate {
   @TypeGraphQL.Field((_type) => TypeGraphQL.Float, {

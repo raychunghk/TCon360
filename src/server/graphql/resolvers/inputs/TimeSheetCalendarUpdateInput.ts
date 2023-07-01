@@ -8,7 +8,7 @@ import { IntFieldUpdateOperationsInput } from '../inputs/IntFieldUpdateOperation
 import { TimeSheetUpdateOneRequiredWithoutCalendarNestedInput } from '../inputs/TimeSheetUpdateOneRequiredWithoutCalendarNestedInput';
 
 @TypeGraphQL.InputType('TimeSheetCalendarUpdateInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetCalendarUpdateInput {
   @TypeGraphQL.Field((_type) => IntFieldUpdateOperationsInput, {

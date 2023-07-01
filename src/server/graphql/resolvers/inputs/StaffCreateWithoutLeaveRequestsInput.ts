@@ -6,7 +6,7 @@ import { StaffFilesCreateNestedManyWithoutStaffInput } from '../inputs/StaffFile
 import { UserCreateNestedOneWithoutStaffInput } from '../inputs/UserCreateNestedOneWithoutStaffInput';
 
 @TypeGraphQL.InputType('StaffCreateWithoutLeaveRequestsInput', {
-  description:"",
+  description: '',
 })
 export class StaffCreateWithoutLeaveRequestsInput {
   @TypeGraphQL.Field((_type) => String, {

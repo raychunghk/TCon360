@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 generator typegraphql {
@@ -13,9 +11,9 @@ generator typegraphql {
 
 generator PrismaTypeGraphQLTypesGenerator {
   provider     = "npx prisma-typegraphql-types-generator"
-  modelsOutput = "./src/models"
   enumsOutput  = "./src/types/enums"
-  useYarn      = true
+  modelsOutput = "./src/models"
+  useYarn      = "true"
 }
 
 datasource db {
@@ -93,11 +91,10 @@ model Staff {
   ManagerName   String
   ManagerTitle  String
   ManagerEmail  String
-  user          User?          @relation(fields: [userId], references: [id])
   userId        String?        @unique
   leaveRequests LeaveRequest[]
-
-  staffFiles staffFiles[]
+  user          User?          @relation(fields: [userId], references: [id])
+  staffFiles    staffFiles[]
 }
 
 model Post {
@@ -105,44 +102,47 @@ model Post {
   title     String
   content   String?
   published Boolean  @default(false)
-  author    PostUser @relation(fields: [authorId], references: [id])
   authorId  Int
+  author    PostUser @relation(fields: [authorId], references: [id])
 }
 
 model CalendarMaster {
-  CalendarDate DateTime @id
-  WeekDayName  String?
-  Year         Int
-  Month        Int
-}
-
-model CalendarVacation {
-  VacationDate  DateTime @id
-  ChargeableDay Decimal
-  leaveRequest  LeaveRequest @relation(fields: [LeaveRequestId], references: [id])
-  LeaveRequestId Int
+  CalendarDate  DateTime         @id
+  WeekDayName   String?
+  Year          Int
+  Month         Int
+ 
 }
 
 model PublicHoliday {
-  StartDate DateTime @id
-  EndDate   DateTime
-  Summary   String?
+  StartDate      DateTime        @id
+  EndDate        DateTime
+  Summary        String?
+ 
+}
+
+model CalendarVacation {
+  VacationDate   DateTime        @id
+  ChargeableDay  Decimal
+  LeaveRequestId Int
+ 
+  leaveRequest   LeaveRequest    @relation(fields: [LeaveRequestId], references: [id])
 }
 
 model TimeSheet {
-  id                  Int                 @id @default(autoincrement())
+  id                  Int        @id @default(autoincrement()) @unique
   StartDate           DateTime
   EndDate             DateTime
-  calendar            TimeSheetCalendar[]
   TSCalendarID        Int
   TimeSheetFileName   String?
-  TotalChargeableDay  Decimal
+  TotalChargeableDay  Decimal @default(0)
   TotalChargeableHour Decimal             @default(0)
   TotalOTHour         Decimal
+  calendar            TimeSheetCalendar[]
 }
 
 model LeaveRequest {
-  id               Int      @id @default(autoincrement())
+  id               Int                @id @default(autoincrement())
   leavePeriodStart DateTime
   AMPMStart        String
   leavePeriodEnd   DateTime?
@@ -150,33 +150,47 @@ model LeaveRequest {
   leaveDays        Float
   dateOfReturn     DateTime
   staffSignDate    DateTime
+  fileId           Int
+  staffId          Int
   calendarVacation CalendarVacation[]
-  fileId    Int
-  staffFile staffFiles @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  staffId   Int
-  staff     Staff      @relation(fields: [staffId], references: [id])
+  staff            Staff              @relation(fields: [staffId], references: [id])
+  staffFile        staffFiles         @relation(fields: [fileId], references: [id], onDelete: Cascade)
 }
 
 model staffFiles {
   id           Int            @id @default(autoincrement())
   filePath     String
   fileType     String
-  staff        Staff          @relation(fields: [staffId], references: [id])
   staffId      Int
   LeaveRequest LeaveRequest[]
+  staff        Staff          @relation(fields: [staffId], references: [id])
 }
 
 model TimeSheetCalendar {
   id             Int       @id @default(autoincrement())
   DayID          Int
   CalendarDate   DateTime
-  timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
   TimeSheetID    Int
   ChargeableDay  Decimal
   ChargeableHour Decimal
-  Training         Decimal   @default(0)
+  Training       Decimal   @default(0)
   Vacation       Decimal   @default(0)
   PublicHoliday  Decimal   @default(0)
   WeekEnd        Decimal   @default(0)
   Others         Decimal   @default(0)
+  timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view viewTimeSheetCalendar {
+  CalendarDate           DateTime   @id 
+  CalendarDateStr       String?
+  WeekDayName            String?
+  Year                   Int?
+  Month                  Int?
+  VacationChargable      Decimal?
+  PublicHolidayChargable Decimal?
+  HolidaySummary         String?
+  LeaveRequestId         Int?
+ 
 }

@@ -12,9 +12,6 @@ export class TimeSheet {
   @Field()
   EndDate: Date;
 
-  @Field((_type) => [TimeSheetCalendar])
-  calendar: TimeSheetCalendar[];
-
   @Field((_type) => Int)
   TSCalendarID: number;
 
@@ -29,6 +26,9 @@ export class TimeSheet {
 
   @Field()
   TotalOTHour: number;
+
+  @Field((_type) => [TimeSheetCalendar])
+  calendar: TimeSheetCalendar[];
 
   // skip overwrite 👇
 }

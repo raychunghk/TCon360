@@ -12,3 +12,4 @@ export { TimeSheet } from './TimeSheet';
 export { TimeSheetCalendar } from './TimeSheetCalendar';
 export { User } from './User';
 export { VerificationRequest } from './VerificationRequest';
+export { ViewTimeSheetCalendar } from './ViewTimeSheetCalendar';

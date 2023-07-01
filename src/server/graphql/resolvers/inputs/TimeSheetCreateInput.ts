@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { TimeSheetCalendarCreateNestedManyWithoutTimesheetInput } from '../inputs/TimeSheetCalendarCreateNestedManyWithoutTimesheetInput';
 
 @TypeGraphQL.InputType('TimeSheetCreateInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetCreateInput {
   @TypeGraphQL.Field((_type) => Date, {
@@ -29,9 +29,9 @@ export class TimeSheetCreateInput {
   TimeSheetFileName?: string | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
-    nullable: false,
+    nullable: true,
   })
-  TotalChargeableDay!: Prisma.Decimal;
+  TotalChargeableDay?: Prisma.Decimal | undefined;
 
   @TypeGraphQL.Field((_type) => DecimalJSScalar, {
     nullable: true,

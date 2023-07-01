@@ -6,7 +6,7 @@ import { StaffCreateWithoutLeaveRequestsInput } from '../inputs/StaffCreateWitho
 import { StaffUpdateWithoutLeaveRequestsInput } from '../inputs/StaffUpdateWithoutLeaveRequestsInput';
 
 @TypeGraphQL.InputType('StaffUpsertWithoutLeaveRequestsInput', {
-  description:"",
+  description: '',
 })
 export class StaffUpsertWithoutLeaveRequestsInput {
   @TypeGraphQL.Field((_type) => StaffUpdateWithoutLeaveRequestsInput, {

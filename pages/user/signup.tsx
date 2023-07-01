@@ -68,7 +68,7 @@ export default function SignupPage( ) {
       username: username,
       password: password,
     };
-    const response = await fetch(`${basepath}/api/auth/signup`, {
+    const response = await fetch(`${basepath}/api/user/signup`, {
       method: 'POST',
       body: JSON.stringify(user),
       headers: { 'Content-Type': 'application/json' },
@@ -85,10 +85,7 @@ export default function SignupPage( ) {
     return <p>Loading...</p>;
   }
 
-  if (session) {
-    router.push(mainpage);
-  }
-
+ 
 
   return (
 

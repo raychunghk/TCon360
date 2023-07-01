@@ -7,7 +7,7 @@ import { DecimalWithAggregatesFilter } from '../inputs/DecimalWithAggregatesFilt
 import { IntWithAggregatesFilter } from '../inputs/IntWithAggregatesFilter';
 
 @TypeGraphQL.InputType('TimeSheetCalendarScalarWhereWithAggregatesInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetCalendarScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field(

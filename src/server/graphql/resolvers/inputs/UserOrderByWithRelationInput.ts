@@ -8,7 +8,7 @@ import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelatio
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('UserOrderByWithRelationInput', {
-  description:"",
+  description: '',
 })
 export class UserOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

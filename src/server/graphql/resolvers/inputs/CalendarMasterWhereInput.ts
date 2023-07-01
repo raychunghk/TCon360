@@ -7,7 +7,7 @@ import { IntFilter } from '../inputs/IntFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('CalendarMasterWhereInput', {
-  description:"",
+  description: '',
 })
 export class CalendarMasterWhereInput {
   @TypeGraphQL.Field((_type) => [CalendarMasterWhereInput], {

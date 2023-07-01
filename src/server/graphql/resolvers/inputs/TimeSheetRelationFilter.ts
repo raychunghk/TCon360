@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { TimeSheetWhereInput } from '../inputs/TimeSheetWhereInput';
 
 @TypeGraphQL.InputType('TimeSheetRelationFilter', {
-  description:"",
+  description: '',
 })
 export class TimeSheetRelationFilter {
   @TypeGraphQL.Field((_type) => TimeSheetWhereInput, {

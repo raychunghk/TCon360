@@ -8,7 +8,7 @@ import { UserOrderByWithRelationInput } from '../inputs/UserOrderByWithRelationI
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('StaffOrderByWithRelationInput', {
-  description:"",
+  description: '',
 })
 export class StaffOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {
@@ -61,15 +61,15 @@ export class StaffOrderByWithRelationInput {
   })
   userId?: 'asc' | 'desc' | undefined;
 
-  @TypeGraphQL.Field((_type) => UserOrderByWithRelationInput, {
-    nullable: true,
-  })
-  user?: UserOrderByWithRelationInput | undefined;
-
   @TypeGraphQL.Field((_type) => LeaveRequestOrderByRelationAggregateInput, {
     nullable: true,
   })
   leaveRequests?: LeaveRequestOrderByRelationAggregateInput | undefined;
+
+  @TypeGraphQL.Field((_type) => UserOrderByWithRelationInput, {
+    nullable: true,
+  })
+  user?: UserOrderByWithRelationInput | undefined;
 
   @TypeGraphQL.Field((_type) => StaffFilesOrderByRelationAggregateInput, {
     nullable: true,

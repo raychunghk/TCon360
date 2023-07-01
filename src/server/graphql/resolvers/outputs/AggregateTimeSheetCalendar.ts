@@ -9,7 +9,7 @@ import { TimeSheetCalendarMinAggregate } from '../outputs/TimeSheetCalendarMinAg
 import { TimeSheetCalendarSumAggregate } from '../outputs/TimeSheetCalendarSumAggregate';
 
 @TypeGraphQL.ObjectType('AggregateTimeSheetCalendar', {
-  description:"",
+  description: '',
 })
 export class AggregateTimeSheetCalendar {
   @TypeGraphQL.Field((_type) => TimeSheetCalendarCountAggregate, {

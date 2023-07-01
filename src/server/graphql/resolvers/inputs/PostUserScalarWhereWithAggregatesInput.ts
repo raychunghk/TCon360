@@ -7,7 +7,7 @@ import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWith
 import { StringWithAggregatesFilter } from '../inputs/StringWithAggregatesFilter';
 
 @TypeGraphQL.InputType('PostUserScalarWhereWithAggregatesInput', {
-  description:"",
+  description: '',
 })
 export class PostUserScalarWhereWithAggregatesInput {
   @TypeGraphQL.Field((_type) => [PostUserScalarWhereWithAggregatesInput], {

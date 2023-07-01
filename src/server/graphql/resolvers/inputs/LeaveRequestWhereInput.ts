@@ -13,7 +13,7 @@ import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('LeaveRequestWhereInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestWhereInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestWhereInput], {
@@ -86,13 +86,13 @@ export class LeaveRequestWhereInput {
   })
   calendarVacation?: CalendarVacationListRelationFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StaffFilesRelationFilter, {
-    nullable: true,
-  })
-  staffFile?: StaffFilesRelationFilter | undefined;
-
   @TypeGraphQL.Field((_type) => StaffRelationFilter, {
     nullable: true,
   })
   staff?: StaffRelationFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => StaffFilesRelationFilter, {
+    nullable: true,
+  })
+  staffFile?: StaffFilesRelationFilter | undefined;
 }

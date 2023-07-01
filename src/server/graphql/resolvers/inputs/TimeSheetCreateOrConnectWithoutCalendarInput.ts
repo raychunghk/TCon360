@@ -6,7 +6,7 @@ import { TimeSheetCreateWithoutCalendarInput } from '../inputs/TimeSheetCreateWi
 import { TimeSheetWhereUniqueInput } from '../inputs/TimeSheetWhereUniqueInput';
 
 @TypeGraphQL.InputType('TimeSheetCreateOrConnectWithoutCalendarInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetCreateOrConnectWithoutCalendarInput {
   @TypeGraphQL.Field((_type) => TimeSheetWhereUniqueInput, {

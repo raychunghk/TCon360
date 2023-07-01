@@ -7,7 +7,7 @@ import { PostUserCreateWithoutPostsInput } from '../inputs/PostUserCreateWithout
 import { PostUserWhereUniqueInput } from '../inputs/PostUserWhereUniqueInput';
 
 @TypeGraphQL.InputType('PostUserCreateNestedOneWithoutPostsInput', {
-  description:"",
+  description: '',
 })
 export class PostUserCreateNestedOneWithoutPostsInput {
   @TypeGraphQL.Field((_type) => PostUserCreateWithoutPostsInput, {

@@ -5,7 +5,7 @@ import { DecimalJSScalar } from '../../scalars';
 import { StaffWhereInput } from '../inputs/StaffWhereInput';
 
 @TypeGraphQL.InputType('StaffRelationFilter', {
-  description:"",
+  description: '',
 })
 export class StaffRelationFilter {
   @TypeGraphQL.Field((_type) => StaffWhereInput, {

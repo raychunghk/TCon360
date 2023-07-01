@@ -10,7 +10,7 @@ import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
 @TypeGraphQL.InputType('LeaveRequestScalarWhereInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestScalarWhereInput {
   @TypeGraphQL.Field((_type) => [LeaveRequestScalarWhereInput], {

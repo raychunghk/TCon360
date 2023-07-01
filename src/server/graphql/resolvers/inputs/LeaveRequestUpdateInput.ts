@@ -12,7 +12,7 @@ import { StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput } from '../inputs
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('LeaveRequestUpdateInput', {
-  description:"",
+  description: '',
 })
 export class LeaveRequestUpdateInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {
@@ -61,6 +61,14 @@ export class LeaveRequestUpdateInput {
     | undefined;
 
   @TypeGraphQL.Field(
+    (_type) => StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput,
+    {
+      nullable: true,
+    },
+  )
+  staff?: StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput | undefined;
+
+  @TypeGraphQL.Field(
     (_type) => StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput,
     {
       nullable: true,
@@ -69,12 +77,4 @@ export class LeaveRequestUpdateInput {
   staffFile?:
     | StaffFilesUpdateOneRequiredWithoutLeaveRequestNestedInput
     | undefined;
-
-  @TypeGraphQL.Field(
-    (_type) => StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput,
-    {
-      nullable: true,
-    },
-  )
-  staff?: StaffUpdateOneRequiredWithoutLeaveRequestsNestedInput | undefined;
 }

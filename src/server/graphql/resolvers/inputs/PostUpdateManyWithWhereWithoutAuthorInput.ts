@@ -6,7 +6,7 @@ import { PostScalarWhereInput } from '../inputs/PostScalarWhereInput';
 import { PostUpdateManyMutationInput } from '../inputs/PostUpdateManyMutationInput';
 
 @TypeGraphQL.InputType('PostUpdateManyWithWhereWithoutAuthorInput', {
-  description:"",
+  description: '',
 })
 export class PostUpdateManyWithWhereWithoutAuthorInput {
   @TypeGraphQL.Field((_type) => PostScalarWhereInput, {

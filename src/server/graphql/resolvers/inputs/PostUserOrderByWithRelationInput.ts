@@ -6,7 +6,7 @@ import { PostOrderByRelationAggregateInput } from '../inputs/PostOrderByRelation
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('PostUserOrderByWithRelationInput', {
-  description:"",
+  description: '',
 })
 export class PostUserOrderByWithRelationInput {
   @TypeGraphQL.Field((_type) => SortOrder, {

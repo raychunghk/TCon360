@@ -10,7 +10,7 @@ import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { UserRelationFilter } from '../inputs/UserRelationFilter';
 
 @TypeGraphQL.InputType('StaffWhereInput', {
-  description:"",
+  description: '',
 })
 export class StaffWhereInput {
   @TypeGraphQL.Field((_type) => [StaffWhereInput], {
@@ -78,15 +78,15 @@ export class StaffWhereInput {
   })
   userId?: StringNullableFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => UserRelationFilter, {
-    nullable: true,
-  })
-  user?: UserRelationFilter | undefined;
-
   @TypeGraphQL.Field((_type) => LeaveRequestListRelationFilter, {
     nullable: true,
   })
   leaveRequests?: LeaveRequestListRelationFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => UserRelationFilter, {
+    nullable: true,
+  })
+  user?: UserRelationFilter | undefined;
 
   @TypeGraphQL.Field((_type) => StaffFilesListRelationFilter, {
     nullable: true,

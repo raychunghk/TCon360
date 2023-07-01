@@ -9,7 +9,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStri
 import { TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput } from '../inputs/TimeSheetCalendarUpdateManyWithoutTimesheetNestedInput';
 
 @TypeGraphQL.InputType('TimeSheetUpdateInput', {
-  description:"",
+  description: '',
 })
 export class TimeSheetUpdateInput {
   @TypeGraphQL.Field((_type) => DateTimeFieldUpdateOperationsInput, {

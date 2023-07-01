@@ -53,7 +53,7 @@ export default function User() {
         console.log(port)
         setSubmitting(true);
         //path = `${basePath}/api/user`;
-        const response = await axios.post(`${basepath}/api/user`, formValues);
+        const response = await axios.post(`${basepath}/api/staff`, formValues);
         //console.log(response.data);
         setSubmitting(false);
         if ([200, 201].includes(response.status)) {
