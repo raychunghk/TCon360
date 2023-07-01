@@ -12,6 +12,8 @@ import * as libre from 'libreoffice-convert';//import * as XlsxPopulate from 'xl
 import * as unoconv from 'node-unoconv';
 
 
+import { Decimal } from 'decimal.js';
+
 
 @Injectable()
 export class TimesheetService {
@@ -54,10 +56,20 @@ export class TimesheetService {
         const cell = worksheet.getCell(cellId);
         cell.value = value;
     }
+    formatMonth(month, year) {
+
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const monthName = months[month - 1]; // month index starts at 0
+        return `${monthName}${year}`;
+
+    }
     async makeTimeSheet(staffId: number, year: number, month: number): Promise<Number> {
         const formattedDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const timesheetFileDate = this.formatMonth(month, year);
         const sourcePath = this.getFilePath(this.xlsfilename);
-        const destPath = this.getFilePath(`T26TimeSheet_${formattedDate}.xlsx`);
+        const stf = await this.prisma.staff.findUnique({ where: { id: staffId } });
+        const stfname = stf.StaffName.replace(/[_\s]/g, '')
+        const destPath = this.getFilePath(`T26TimeSheet_${stfname}_${timesheetFileDate}.xlsx`);
         const destPDF = this.getFilePath(`T26TimeSheet_${formattedDate}.pdf`);
 
         console.log(destPath);
@@ -75,7 +87,7 @@ export class TimesheetService {
             console.log('File copied successfully!');
 
             // Load the workbook
-            const stf = await this.prisma.staff.findUnique({ where: { id: staffId } });
+           
             console.log(stf);
             const fieldmap = {
                 StaffName: 'D5',
@@ -89,8 +101,8 @@ export class TimesheetService {
             };
             await this.writeStaffInfoJsonToExcel(stf, fieldmap, destPath);
 
-            const objCalendar = await this.prisma.calendarMaster.findMany({
-                
+            const objCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
+
                 where: {
                     Year: year,
                     Month: month,
@@ -100,7 +112,7 @@ export class TimesheetService {
                         CalendarDate: 'asc',
                     }
                 ],
-               
+
             });
             let firstdatecell = 20;
             const workbook = new ExcelJS.Workbook();
@@ -115,26 +127,28 @@ export class TimesheetService {
             this.writeCellValue(worksheet, celltimesheetstart, format(objCalendar[0].CalendarDate, 'dd-MMM-yyyy'))
             //this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.pop().CalendarDate, 'dd-MMM-yyyy'))
             this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.slice(-1)[0].CalendarDate, 'dd-MMM-yyyy'))
-
+            let total = 0;
             for (let i = 0; i < 31; i++) {
                 cellid = "C" + datecellpos;
                 const cell = worksheet.getCell(cellid);
 
-                /*if (datecellpos - firstdatecell <= objCalendar.length) {
-                    let dt = objCalendar[i];
-                    cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
-                } else {
-                    emptydateRowID.forEach(x => {
-                        let _hcellid = x + datecellpos;
-                        console.log(`last row post ${_hcellid}`)
-                        const _cell = worksheet.getCell(_hcellid);
-                        _cell.value = "";
-                    });
-                }*/
+
                 try {
                     if (i < objCalendar.length) {
                         let dt = objCalendar[i];
-                        cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
+                        //cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
+                        const holidayCell = worksheet.getCell("L" + datecellpos);
+
+                        if (new Decimal(dt.PublicHolidayChargable).greaterThan(0)) {
+                            cell.value = "0.0"
+                            holidayCell.value = "1.0"
+                        }
+                        else {
+                            cell.value = "1.0";
+                            total += 1;
+                            holidayCell.value = "0.0"
+                        }
+
                     } else {
                         emptydateRowID.forEach(x => {
                             let _hcellid = x + datecellpos;
@@ -146,13 +160,13 @@ export class TimesheetService {
                 } catch (error) {
                     console.log(error)
                 }
-               
-
                 datecellpos++;
             }
-
+            const totalcell = worksheet.getCell("C51");
+            totalcell.value = total;
+           
+            worksheet.name = `Timesheet_${timesheetFileDate}`;
             await workbook.xlsx.writeFile(destPath);
-            // await this.convertToPdf(destPath, destPDF);
             console.log('calendar written to cell successfully!');
             const _file = await this.prisma.staffFiles.create({
                 data: {

@@ -27,7 +27,7 @@ const crudResolversMap = {
   LeaveRequest: crudResolvers.LeaveRequestCrudResolver,
   StaffFiles: crudResolvers.StaffFilesCrudResolver,
   TimeSheetCalendar: crudResolvers.TimeSheetCalendarCrudResolver,
-  ViewTimeSheetCalendar: crudResolvers.ViewTimeSheetCalendarCrudResolver,
+  ViewCalendarTimeSheet: crudResolvers.ViewCalendarTimeSheetCrudResolver,
 };
 const actionResolversMap = {
   PostUser: {
@@ -277,33 +277,33 @@ const actionResolversMap = {
     upsertOneTimeSheetCalendar:
       actionResolvers.UpsertOneTimeSheetCalendarResolver,
   },
-  ViewTimeSheetCalendar: {
-    aggregateViewTimeSheetCalendar:
-      actionResolvers.AggregateViewTimeSheetCalendarResolver,
-    createOneViewTimeSheetCalendar:
-      actionResolvers.CreateOneViewTimeSheetCalendarResolver,
-    deleteManyViewTimeSheetCalendar:
-      actionResolvers.DeleteManyViewTimeSheetCalendarResolver,
-    deleteOneViewTimeSheetCalendar:
-      actionResolvers.DeleteOneViewTimeSheetCalendarResolver,
-    findFirstViewTimeSheetCalendar:
-      actionResolvers.FindFirstViewTimeSheetCalendarResolver,
-    findFirstViewTimeSheetCalendarOrThrow:
-      actionResolvers.FindFirstViewTimeSheetCalendarOrThrowResolver,
-    viewTimeSheetCalendars:
-      actionResolvers.FindManyViewTimeSheetCalendarResolver,
-    viewTimeSheetCalendar:
-      actionResolvers.FindUniqueViewTimeSheetCalendarResolver,
-    getViewTimeSheetCalendar:
-      actionResolvers.FindUniqueViewTimeSheetCalendarOrThrowResolver,
-    groupByViewTimeSheetCalendar:
-      actionResolvers.GroupByViewTimeSheetCalendarResolver,
-    updateManyViewTimeSheetCalendar:
-      actionResolvers.UpdateManyViewTimeSheetCalendarResolver,
-    updateOneViewTimeSheetCalendar:
-      actionResolvers.UpdateOneViewTimeSheetCalendarResolver,
-    upsertOneViewTimeSheetCalendar:
-      actionResolvers.UpsertOneViewTimeSheetCalendarResolver,
+  ViewCalendarTimeSheet: {
+    aggregateViewCalendarTimeSheet:
+      actionResolvers.AggregateViewCalendarTimeSheetResolver,
+    createOneViewCalendarTimeSheet:
+      actionResolvers.CreateOneViewCalendarTimeSheetResolver,
+    deleteManyViewCalendarTimeSheet:
+      actionResolvers.DeleteManyViewCalendarTimeSheetResolver,
+    deleteOneViewCalendarTimeSheet:
+      actionResolvers.DeleteOneViewCalendarTimeSheetResolver,
+    findFirstViewCalendarTimeSheet:
+      actionResolvers.FindFirstViewCalendarTimeSheetResolver,
+    findFirstViewCalendarTimeSheetOrThrow:
+      actionResolvers.FindFirstViewCalendarTimeSheetOrThrowResolver,
+    viewCalendarTimeSheets:
+      actionResolvers.FindManyViewCalendarTimeSheetResolver,
+    viewCalendarTimeSheet:
+      actionResolvers.FindUniqueViewCalendarTimeSheetResolver,
+    getViewCalendarTimeSheet:
+      actionResolvers.FindUniqueViewCalendarTimeSheetOrThrowResolver,
+    groupByViewCalendarTimeSheet:
+      actionResolvers.GroupByViewCalendarTimeSheetResolver,
+    updateManyViewCalendarTimeSheet:
+      actionResolvers.UpdateManyViewCalendarTimeSheetResolver,
+    updateOneViewCalendarTimeSheet:
+      actionResolvers.UpdateOneViewCalendarTimeSheetResolver,
+    upsertOneViewCalendarTimeSheet:
+      actionResolvers.UpsertOneViewCalendarTimeSheetResolver,
   },
 };
 const crudResolversInfo = {
@@ -517,20 +517,20 @@ const crudResolversInfo = {
     'updateOneTimeSheetCalendar',
     'upsertOneTimeSheetCalendar',
   ],
-  ViewTimeSheetCalendar: [
-    'aggregateViewTimeSheetCalendar',
-    'createOneViewTimeSheetCalendar',
-    'deleteManyViewTimeSheetCalendar',
-    'deleteOneViewTimeSheetCalendar',
-    'findFirstViewTimeSheetCalendar',
-    'findFirstViewTimeSheetCalendarOrThrow',
-    'viewTimeSheetCalendars',
-    'viewTimeSheetCalendar',
-    'getViewTimeSheetCalendar',
-    'groupByViewTimeSheetCalendar',
-    'updateManyViewTimeSheetCalendar',
-    'updateOneViewTimeSheetCalendar',
-    'upsertOneViewTimeSheetCalendar',
+  ViewCalendarTimeSheet: [
+    'aggregateViewCalendarTimeSheet',
+    'createOneViewCalendarTimeSheet',
+    'deleteManyViewCalendarTimeSheet',
+    'deleteOneViewCalendarTimeSheet',
+    'findFirstViewCalendarTimeSheet',
+    'findFirstViewCalendarTimeSheetOrThrow',
+    'viewCalendarTimeSheets',
+    'viewCalendarTimeSheet',
+    'getViewCalendarTimeSheet',
+    'groupByViewCalendarTimeSheet',
+    'updateManyViewCalendarTimeSheet',
+    'updateOneViewCalendarTimeSheet',
+    'upsertOneViewCalendarTimeSheet',
   ],
 };
 const argsInfo = {
@@ -1022,25 +1022,17 @@ const argsInfo = {
   UpdateManyTimeSheetCalendarArgs: ['data', 'where'],
   UpdateOneTimeSheetCalendarArgs: ['data', 'where'],
   UpsertOneTimeSheetCalendarArgs: ['where', 'create', 'update'],
-  AggregateViewTimeSheetCalendarArgs: [
+  AggregateViewCalendarTimeSheetArgs: [
     'where',
     'orderBy',
     'cursor',
     'take',
     'skip',
   ],
-  CreateOneViewTimeSheetCalendarArgs: ['data'],
-  DeleteManyViewTimeSheetCalendarArgs: ['where'],
-  DeleteOneViewTimeSheetCalendarArgs: ['where'],
-  FindFirstViewTimeSheetCalendarArgs: [
-    'where',
-    'orderBy',
-    'cursor',
-    'take',
-    'skip',
-    'distinct',
-  ],
-  FindFirstViewTimeSheetCalendarOrThrowArgs: [
+  CreateOneViewCalendarTimeSheetArgs: ['data'],
+  DeleteManyViewCalendarTimeSheetArgs: ['where'],
+  DeleteOneViewCalendarTimeSheetArgs: ['where'],
+  FindFirstViewCalendarTimeSheetArgs: [
     'where',
     'orderBy',
     'cursor',
@@ -1048,7 +1040,7 @@ const argsInfo = {
     'skip',
     'distinct',
   ],
-  FindManyViewTimeSheetCalendarArgs: [
+  FindFirstViewCalendarTimeSheetOrThrowArgs: [
     'where',
     'orderBy',
     'cursor',
@@ -1056,9 +1048,17 @@ const argsInfo = {
     'skip',
     'distinct',
   ],
-  FindUniqueViewTimeSheetCalendarArgs: ['where'],
-  FindUniqueViewTimeSheetCalendarOrThrowArgs: ['where'],
-  GroupByViewTimeSheetCalendarArgs: [
+  FindManyViewCalendarTimeSheetArgs: [
+    'where',
+    'orderBy',
+    'cursor',
+    'take',
+    'skip',
+    'distinct',
+  ],
+  FindUniqueViewCalendarTimeSheetArgs: ['where'],
+  FindUniqueViewCalendarTimeSheetOrThrowArgs: ['where'],
+  GroupByViewCalendarTimeSheetArgs: [
     'where',
     'orderBy',
     'by',
@@ -1066,9 +1066,9 @@ const argsInfo = {
     'take',
     'skip',
   ],
-  UpdateManyViewTimeSheetCalendarArgs: ['data', 'where'],
-  UpdateOneViewTimeSheetCalendarArgs: ['data', 'where'],
-  UpsertOneViewTimeSheetCalendarArgs: ['where', 'create', 'update'],
+  UpdateManyViewCalendarTimeSheetArgs: ['data', 'where'],
+  UpdateOneViewCalendarTimeSheetArgs: ['data', 'where'],
+  UpsertOneViewCalendarTimeSheetArgs: ['where', 'create', 'update'],
 };
 
 type ResolverModelNames = keyof typeof crudResolversMap;
@@ -1397,7 +1397,7 @@ const modelsInfo = {
     'WeekEnd',
     'Others',
   ],
-  ViewTimeSheetCalendar: [
+  ViewCalendarTimeSheet: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -1641,8 +1641,8 @@ const outputsInfo = {
     '_min',
     '_max',
   ],
-  AggregateViewTimeSheetCalendar: ['_count', '_avg', '_sum', '_min', '_max'],
-  ViewTimeSheetCalendarGroupBy: [
+  AggregateViewCalendarTimeSheet: ['_count', '_avg', '_sum', '_min', '_max'],
+  ViewCalendarTimeSheetGroupBy: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -2030,7 +2030,7 @@ const outputsInfo = {
     'WeekEnd',
     'Others',
   ],
-  ViewTimeSheetCalendarCountAggregate: [
+  ViewCalendarTimeSheetCountAggregate: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -2042,21 +2042,21 @@ const outputsInfo = {
     'LeaveRequestId',
     '_all',
   ],
-  ViewTimeSheetCalendarAvgAggregate: [
+  ViewCalendarTimeSheetAvgAggregate: [
     'Year',
     'Month',
     'VacationChargable',
     'PublicHolidayChargable',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarSumAggregate: [
+  ViewCalendarTimeSheetSumAggregate: [
     'Year',
     'Month',
     'VacationChargable',
     'PublicHolidayChargable',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarMinAggregate: [
+  ViewCalendarTimeSheetMinAggregate: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -2067,7 +2067,7 @@ const outputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarMaxAggregate: [
+  ViewCalendarTimeSheetMaxAggregate: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -2780,7 +2780,7 @@ const inputsInfo = {
     'WeekEnd',
     'Others',
   ],
-  ViewTimeSheetCalendarWhereInput: [
+  ViewCalendarTimeSheetWhereInput: [
     'AND',
     'OR',
     'NOT',
@@ -2794,7 +2794,7 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarOrderByWithRelationInput: [
+  ViewCalendarTimeSheetOrderByWithRelationInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -2805,8 +2805,8 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarWhereUniqueInput: ['CalendarDate'],
-  ViewTimeSheetCalendarOrderByWithAggregationInput: [
+  ViewCalendarTimeSheetWhereUniqueInput: ['CalendarDate'],
+  ViewCalendarTimeSheetOrderByWithAggregationInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -2822,7 +2822,7 @@ const inputsInfo = {
     '_min',
     '_sum',
   ],
-  ViewTimeSheetCalendarScalarWhereWithAggregatesInput: [
+  ViewCalendarTimeSheetScalarWhereWithAggregatesInput: [
     'AND',
     'OR',
     'NOT',
@@ -3124,7 +3124,7 @@ const inputsInfo = {
     'WeekEnd',
     'Others',
   ],
-  ViewTimeSheetCalendarCreateInput: [
+  ViewCalendarTimeSheetCreateInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -3135,7 +3135,7 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarUpdateInput: [
+  ViewCalendarTimeSheetUpdateInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -3146,7 +3146,7 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarUpdateManyMutationInput: [
+  ViewCalendarTimeSheetUpdateManyMutationInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -3732,7 +3732,7 @@ const inputsInfo = {
     'gte',
     'not',
   ],
-  ViewTimeSheetCalendarCountOrderByAggregateInput: [
+  ViewCalendarTimeSheetCountOrderByAggregateInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -3743,14 +3743,14 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarAvgOrderByAggregateInput: [
+  ViewCalendarTimeSheetAvgOrderByAggregateInput: [
     'Year',
     'Month',
     'VacationChargable',
     'PublicHolidayChargable',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarMaxOrderByAggregateInput: [
+  ViewCalendarTimeSheetMaxOrderByAggregateInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -3761,7 +3761,7 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarMinOrderByAggregateInput: [
+  ViewCalendarTimeSheetMinOrderByAggregateInput: [
     'CalendarDate',
     'CalendarDateStr',
     'WeekDayName',
@@ -3772,7 +3772,7 @@ const inputsInfo = {
     'HolidaySummary',
     'LeaveRequestId',
   ],
-  ViewTimeSheetCalendarSumOrderByAggregateInput: [
+  ViewCalendarTimeSheetSumOrderByAggregateInput: [
     'Year',
     'Month',
     'VacationChargable',

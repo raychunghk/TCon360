@@ -15,13 +15,14 @@ async function main() {
 
 async function createViewIfNotExists() {
   try {
+    const viewname = "viewCalendarTimeSheet"
     const viewExists = await prisma.$queryRaw(Prisma.sql`
-      SELECT name FROM sqlite_master WHERE type='view' AND name='ViewCalendarTimeSheet';
+      SELECT name FROM sqlite_master WHERE type='view' AND name='viewCalendarTimeSheet';
     `);
 
     if (viewExists.length === 0) {
       await prisma.$queryRaw(Prisma.sql`
-      create view ViewCalendarTimeSheet as 
+      create view viewCalendarTimeSheet as 
       select
       CalendarDate,
       STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate/1000,'unixepoch')) AS CalendarDateStr,

@@ -12,4 +12,4 @@ export { TimeSheetCrudResolver } from './TimeSheet/TimeSheetCrudResolver';
 export { TimeSheetCalendarCrudResolver } from './TimeSheetCalendar/TimeSheetCalendarCrudResolver';
 export { UserCrudResolver } from './User/UserCrudResolver';
 export { VerificationRequestCrudResolver } from './VerificationRequest/VerificationRequestCrudResolver';
-export { ViewTimeSheetCalendarCrudResolver } from './ViewTimeSheetCalendar/ViewTimeSheetCalendarCrudResolver';
+export { ViewCalendarTimeSheetCrudResolver } from './ViewCalendarTimeSheet/ViewCalendarTimeSheetCrudResolver';

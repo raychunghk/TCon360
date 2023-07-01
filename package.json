@@ -92,6 +92,7 @@
     "cookies-next": "^2.1.2",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
+    "decimal.js": "^10.4.3",
     "docxtemplater": "^3.37.11",
     "dotenv": "^16.0.3",
     "embla-carousel-react": "^7.1.0",

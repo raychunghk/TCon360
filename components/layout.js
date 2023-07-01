@@ -35,11 +35,37 @@ import {
     IconTree,
     IconSwitchHorizontal,
 } from '@tabler/icons-react';
+import { useSession , signOut} from "next-auth/react"
 const name = 'Ray Chung';
 export const siteTitle = 'NxTimeT';
 export default function Layout({ children, home }) {
     const theme = useMantineTheme();
     const [opened, setOpened] = useState(false);
+    const { data: session } = useSession()
+    const [username, setUsername] = useState(false);
+    let _username;
+    if (session) {
+        console.log('session?');
+        console.log(session);
+      //  console.log(session.user.username)
+        _username = session.user.name;
+
+    } else {
+        console.log("no session")
+    }
+    const buttonStyles = (theme) => ({
+        display: 'block',
+        width: '115px',
+        padding: theme.spacing.xs,
+        borderRadius: theme.radius.sm,
+        color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+        '&:hover': {
+            backgroundColor:
+                theme.colorScheme === 'dark'
+                    ? theme.colors.dark[6]
+                    : theme.colors.gray[0],
+        },
+    });
     return (
 
         <AppShell
@@ -76,56 +102,38 @@ export default function Layout({ children, home }) {
                             </Group>
 
                             <Group position="right">
-                                <Link href='/login' className={linkstyle.links}>
+                                <Text>{_username}</Text>
+                                {_username ? (
+                           
                                     <UnstyledButton
-                                        sx={(theme) => ({
-                                            display: 'block',
-                                            width: '100%',
-                                            padding: theme.spacing.xs,
-                                            borderRadius: theme.radius.sm,
-                                            color:
-                                                theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-                                            '&:hover': {
-                                                backgroundColor:
-                                                    theme.colorScheme === 'dark'
-                                                        ? theme.colors.dark[6]
-                                                        : theme.colors.gray[0],
-                                            },
-                                        })}
-                                    >
-                                        <Group>
-                                            <ThemeIcon variant="light">
-                                                <IconLogin />
-                                            </ThemeIcon>
-
-                                            <Text size="sm">Login</Text>
+                                     onClick={signOut()}
+                                        sx={buttonStyles} 
+                                    >    <Group>
+                                    <ThemeIcon variant="light">
+                                        <IconLogout />
+                                    </ThemeIcon>
+                                        <Text size="sm">Logout</Text>
                                         </Group>
                                     </UnstyledButton>
-                                </Link>
+                            
+                                ) : (
+                                    <Link href='/login' className={linkstyle.links}>
+                                        <UnstyledButton sx={buttonStyles}>
+                                            <Group>
+                                                <ThemeIcon variant="light">
+                                                    <IconLogin />
+                                                </ThemeIcon>
+                                                <Text size="sm">Login</Text>
+                                            </Group>
+                                        </UnstyledButton>
+                                    </Link>
+                                )}
                                 <Link href='/signup' className={linkstyle.links}>
-                                    <UnstyledButton
-                                        sx={(theme) => ({
-                                            display: 'block',
-                                            width: '100%',
-                                            padding: theme.spacing.xs,
-                                            borderRadius: theme.radius.sm,
-                                            color:
-                                                theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-                                            '&:hover': {
-                                                backgroundColor:
-                                                    theme.colorScheme === 'dark'
-                                                        ? theme.colors.dark[6]
-                                                        : theme.colors.gray[0],
-                                            },
-                                        })}
-                                    >
+                                    <UnstyledButton sx={buttonStyles}>
                                         <Group>
                                             <ThemeIcon variant="light">
                                                 <IconLogin />
                                             </ThemeIcon>
-
                                             <Text size="sm">Signup</Text>
                                         </Group>
                                     </UnstyledButton>

@@ -47,7 +47,9 @@ export const authOptions = {
           // check if the token matches the credentials
           if (credentials.token === token) {
             // return the user object with their information
-            return { id, name, email, username };
+            let rtn =  { id:decodedToken.sub, name:username, email:email,picture:'', username:username };
+            console.log('rtn?')
+            return rtn;
           }
         } catch (error) {
           console.log('rror')
@@ -62,31 +64,45 @@ export const authOptions = {
     },
   ],
   callbacks: {
-    async jwt(token, user, account, profile, isNewUser) {
+    //async jwt(token, user, account, profile, isNewUser) {
+      async jwt({ token, account }) {
       // get the token cookie using nookies
       const cookies = parseCookies();
       const tokenCookie = cookies.token;
-
+      console.log('token cookie')
+      console.log(tokenCookie)
+      console.log('jwt is called')
+ 
+      console.log('account')
+      console.log(account)
       // if there's a token cookie, add it to the JWT token
       if (tokenCookie) {
-        token.token = tokenCookie;
+        token.token = tokenCookie
       }
-
+      console.log('token')
+      console.log(token)
+      console.log('token.token')
+      console.log(token.token)
       return token;
     },
 
-    async session(session, user) {
+    async session({ session, token, user }) {
       // get the token cookie using nookies
       const cookies = parseCookies();
-      const token = cookies.token;
-      session.user = user;
-      session.basePath = '/absproxy/5000'
       console.log('session is called');
+      console.log('session ?')
+      console.log(session)
+      
+      console.log('token?')
+      console.log(token)
+      console.log('user?')
+      console.log({user})
+      session.user = {name:token.name, email:token.email};
+      session.basePath = '/absproxy/5000'
       // add the token to the session object
       session.token = token;
-      console.log('session user?')
-      console.log(session.user)
-      console.log('token?')
+      
+      
       console.log(session.token)
       return session;
     },

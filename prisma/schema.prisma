@@ -182,14 +182,14 @@ model TimeSheetCalendar {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view viewTimeSheetCalendar {
+view viewCalendarTimeSheet {
   CalendarDate           DateTime   @id 
   CalendarDateStr       String?
   WeekDayName            String?
   Year                   Int?
   Month                  Int?
   VacationChargable      Decimal?
-  PublicHolidayChargable Decimal?
+  isPublicHoliday  Decimal?
   HolidaySummary         String?
   LeaveRequestId         Int?
  

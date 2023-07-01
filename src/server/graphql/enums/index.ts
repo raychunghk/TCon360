@@ -14,4 +14,4 @@ export { TimeSheetScalarFieldEnum } from './TimeSheetScalarFieldEnum';
 export { TransactionIsolationLevel } from './TransactionIsolationLevel';
 export { UserScalarFieldEnum } from './UserScalarFieldEnum';
 export { VerificationRequestScalarFieldEnum } from './VerificationRequestScalarFieldEnum';
-export { ViewTimeSheetCalendarScalarFieldEnum } from './ViewTimeSheetCalendarScalarFieldEnum';
+export { ViewCalendarTimeSheetScalarFieldEnum } from './ViewCalendarTimeSheetScalarFieldEnum';
