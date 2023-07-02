@@ -46,6 +46,7 @@ export class FindFirstUserOrThrowArgs {
         | 'password'
         | 'createdAt'
         | 'updatedAt'
+        | 'staffId'
       >
     | undefined;
 }

@@ -1,12 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import jwt from "jsonwebtoken";
 import { JwtService } from '@nestjs/jwt';
-import argon2 from 'argon2';
+import * as bcrypt from 'bcryptjs';
 import { UsersService } from './users.service';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload } from './jwtpayload.interface';
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,22 +17,20 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
-    if (user && await argon2.verify(user.password, password)) {
+    if (user && bcrypt.compareSync(password, user.password)) {
       const { password, ...result } = user;
       return result;
     }
     return null;
   }
-
   decodejwt(token: string): any {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded;
   }
-
   async signUp(user: Prisma.UserCreateInput): Promise<User> {
     console.log(user)
     let userReturn;
-    const hashedPassword = await argon2.hash(user.password, { type: argon2.argon2id });
+    const hashedPassword = await bcrypt.hash(user.password, 10);
     try {
       const userReturn = await this.prisma.user.create({
         data: {
@@ -46,6 +43,7 @@ export class AuthService {
       console.log(error)
     }
     return userReturn;
+    //return this.usersService.createUser(user);
   }
 
   async login(identifier: string, password: string) {
@@ -64,7 +62,7 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const isPasswordValid = await argon2.verify(user.password, password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
@@ -90,4 +88,7 @@ export class AuthService {
 
     return token;
   }
+
+
+
 }

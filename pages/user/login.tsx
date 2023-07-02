@@ -84,11 +84,11 @@ const handleLogin = async (event) => {
             token: tokenCookie,
             redirect: false
         });
-        if (signInResult.error) { // Handle Error on client side
+       /* if (signInResult.error) { // Handle Error on client side
             console.log('sign in result')
             console.log(signInResult)
             console.log(signInResult.error)
-        }
+        }*/
         router.push("/"); // redirect to the dashboard page on successful login
     } else {
         setLoginStatus("Login failed."); // set the login status to a failure message

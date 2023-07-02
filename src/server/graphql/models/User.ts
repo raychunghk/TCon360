@@ -60,7 +60,12 @@ export class User {
 
   sessions?: Session[];
 
-  staff?: Staff | null;
+  staff?: Staff[];
+
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: true,
+  })
+  staffId?: number | null;
 
   @TypeGraphQL.Field((_type) => UserCount, {
     nullable: true,

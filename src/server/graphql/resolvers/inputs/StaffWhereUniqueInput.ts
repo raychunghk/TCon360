@@ -11,9 +11,4 @@ export class StaffWhereUniqueInput {
     nullable: true,
   })
   id?: number | undefined;
-
-  @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
-  })
-  userId?: string | undefined;
 }

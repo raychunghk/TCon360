@@ -32,14 +32,14 @@ export class Staff {
   @Field()
   ManagerEmail: string;
 
-  @Field({ nullable: true })
-  userId?: string;
+  @Field()
+  userId: string;
 
   @Field((_type) => [LeaveRequest])
   leaveRequests: LeaveRequest[];
 
-  @Field((_type) => User, { nullable: true })
-  user?: User;
+  @Field((_type) => User)
+  user: User;
 
   @Field((_type) => [staffFiles])
   staffFiles: staffFiles[];

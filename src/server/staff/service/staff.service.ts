@@ -11,12 +11,14 @@ import { PrismaClient } from "@prisma/client";
 export class StaffService {
   constructor(@Inject(PrismaService) private prisma: PrismaService) { }
 
-  async createStaff(stfInfo: Prisma.StaffCreateInput, _userId:String): Promise<Staff> {
+  async createStaff(stfInfo: Prisma.StaffCreateInput, _userId:string): Promise<Staff> {
     console.log(stfInfo);
     const stfWithUserId = { ...stfInfo, userId: _userId};
     const rtn = await this.prisma.staff.create({
-      data: stfInfo,
+      data: {
+        ...stfInfo,
       user: { connect: { id:_userId} }  
+      }
     });
     console.log(rtn);
     return rtn;

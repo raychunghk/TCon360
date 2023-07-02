@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { AccountOrderByRelationAggregateInput } from '../inputs/AccountOrderByRelationAggregateInput';
 import { SessionOrderByRelationAggregateInput } from '../inputs/SessionOrderByRelationAggregateInput';
-import { StaffOrderByWithRelationInput } from '../inputs/StaffOrderByWithRelationInput';
+import { StaffOrderByRelationAggregateInput } from '../inputs/StaffOrderByRelationAggregateInput';
 import { SortOrder } from '../../enums/SortOrder';
 
 @TypeGraphQL.InputType('UserOrderByWithRelationInput', {
@@ -56,6 +56,11 @@ export class UserOrderByWithRelationInput {
   })
   updatedAt?: 'asc' | 'desc' | undefined;
 
+  @TypeGraphQL.Field((_type) => SortOrder, {
+    nullable: true,
+  })
+  staffId?: 'asc' | 'desc' | undefined;
+
   @TypeGraphQL.Field((_type) => AccountOrderByRelationAggregateInput, {
     nullable: true,
   })
@@ -66,8 +71,8 @@ export class UserOrderByWithRelationInput {
   })
   sessions?: SessionOrderByRelationAggregateInput | undefined;
 
-  @TypeGraphQL.Field((_type) => StaffOrderByWithRelationInput, {
+  @TypeGraphQL.Field((_type) => StaffOrderByRelationAggregateInput, {
     nullable: true,
   })
-  staff?: StaffOrderByWithRelationInput | undefined;
+  staff?: StaffOrderByRelationAggregateInput | undefined;
 }

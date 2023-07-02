@@ -58,9 +58,9 @@ export class StaffGroupBy {
   ManagerEmail!: string;
 
   @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
+    nullable: false,
   })
-  userId!: string | null;
+  userId!: string;
 
   @TypeGraphQL.Field((_type) => StaffCountAggregate, {
     nullable: true,

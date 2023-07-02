@@ -5,9 +5,10 @@ import { DecimalJSScalar } from '../../scalars';
 import { AccountUpdateManyWithoutUserNestedInput } from '../inputs/AccountUpdateManyWithoutUserNestedInput';
 import { DateTimeFieldUpdateOperationsInput } from '../inputs/DateTimeFieldUpdateOperationsInput';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../inputs/NullableDateTimeFieldUpdateOperationsInput';
+import { NullableIntFieldUpdateOperationsInput } from '../inputs/NullableIntFieldUpdateOperationsInput';
 import { NullableStringFieldUpdateOperationsInput } from '../inputs/NullableStringFieldUpdateOperationsInput';
 import { SessionUpdateManyWithoutUserNestedInput } from '../inputs/SessionUpdateManyWithoutUserNestedInput';
-import { StaffUpdateOneWithoutUserNestedInput } from '../inputs/StaffUpdateOneWithoutUserNestedInput';
+import { StaffUpdateManyWithoutUserNestedInput } from '../inputs/StaffUpdateManyWithoutUserNestedInput';
 import { StringFieldUpdateOperationsInput } from '../inputs/StringFieldUpdateOperationsInput';
 
 @TypeGraphQL.InputType('UserUpdateInput', {
@@ -59,6 +60,11 @@ export class UserUpdateInput {
   })
   updatedAt?: DateTimeFieldUpdateOperationsInput | undefined;
 
+  @TypeGraphQL.Field((_type) => NullableIntFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  staffId?: NullableIntFieldUpdateOperationsInput | undefined;
+
   @TypeGraphQL.Field((_type) => AccountUpdateManyWithoutUserNestedInput, {
     nullable: true,
   })
@@ -69,8 +75,8 @@ export class UserUpdateInput {
   })
   sessions?: SessionUpdateManyWithoutUserNestedInput | undefined;
 
-  @TypeGraphQL.Field((_type) => StaffUpdateOneWithoutUserNestedInput, {
+  @TypeGraphQL.Field((_type) => StaffUpdateManyWithoutUserNestedInput, {
     nullable: true,
   })
-  staff?: StaffUpdateOneWithoutUserNestedInput | undefined;
+  staff?: StaffUpdateManyWithoutUserNestedInput | undefined;
 }

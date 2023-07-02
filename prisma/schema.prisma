@@ -55,6 +55,22 @@ model Session {
   user         User     @relation(fields: [userId], references: [id])
 }
 
+model Staff {
+  id            Int            @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName   String
+  ManagerTitle  String
+  ManagerEmail  String
+  userId        String
+  leaveRequests LeaveRequest[]
+  user          User           @relation(fields: [userId], references: [id])
+  staffFiles    staffFiles[]
+}
+
 model User {
   id            String    @id @default(cuid())
   username      String?   @unique
@@ -68,8 +84,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   staff         Staff[]
+  staffId       Int?
 }
-
 model VerificationRequest {
   id         String   @id @default(cuid())
   identifier String
@@ -80,23 +96,7 @@ model VerificationRequest {
 
   @@unique([identifier, token])
 }
-
-model Staff {
-  id            Int            @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName   String
-  ManagerTitle  String
-  ManagerEmail  String
-  userId        String?        @unique
-  leaveRequests LeaveRequest[]
-  user          User?          @relation(fields: [userId], references: [id])
-  staffFiles    staffFiles[]
-}
-
+ 
 model Post {
   id        Int      @id @default(autoincrement())
   title     String
@@ -107,35 +107,33 @@ model Post {
 }
 
 model CalendarMaster {
-  CalendarDate  DateTime         @id
-  WeekDayName   String?
-  Year          Int
-  Month         Int
- 
+  CalendarDate DateTime @id
+  WeekDayName  String?
+  Year         Int
+  Month        Int
 }
 
 model PublicHoliday {
-  StartDate      DateTime        @id
-  EndDate        DateTime
-  Summary        String?
- 
+  StartDate DateTime @id
+  EndDate   DateTime
+  Summary   String?
 }
 
 model CalendarVacation {
-  VacationDate   DateTime        @id
+  VacationDate   DateTime @id
   ChargeableDay  Decimal
   LeaveRequestId Int
- 
-  leaveRequest   LeaveRequest    @relation(fields: [LeaveRequestId], references: [id])
+
+  leaveRequest LeaveRequest @relation(fields: [LeaveRequestId], references: [id])
 }
 
 model TimeSheet {
-  id                  Int        @id @default(autoincrement()) @unique
+  id                  Int                 @id @unique @default(autoincrement())
   StartDate           DateTime
   EndDate             DateTime
   TSCalendarID        Int
   TimeSheetFileName   String?
-  TotalChargeableDay  Decimal @default(0)
+  TotalChargeableDay  Decimal             @default(0)
   TotalChargeableHour Decimal             @default(0)
   TotalOTHour         Decimal
   calendar            TimeSheetCalendar[]
@@ -183,14 +181,13 @@ model TimeSheetCalendar {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view viewCalendarTimeSheet {
-  CalendarDate           DateTime   @id 
-  CalendarDateStr       String?
-  WeekDayName            String?
-  Year                   Int?
-  Month                  Int?
-  VacationChargable      Decimal?
-  isPublicHoliday  Decimal?
-  HolidaySummary         String?
-  LeaveRequestId         Int?
- 
+  CalendarDate      DateTime @id
+  CalendarDateStr   String?
+  WeekDayName       String?
+  Year              Int?
+  Month             Int?
+  VacationChargable Decimal?
+  PublicHolidayChargable   Decimal?
+  HolidaySummary    String?
+  LeaveRequestId    Int?
 }

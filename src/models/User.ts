@@ -2,7 +2,7 @@ import { Post } from './Post';
 import { Account } from './Account';
 import { Session } from './Session';
 import { Staff } from './Staff';
-import { Field, ObjectType, ID } from 'type-graphql';
+import { Field, ObjectType, ID, Int } from 'type-graphql';
 
 @ObjectType()
 export class User {
@@ -39,8 +39,11 @@ export class User {
   @Field((_type) => [Session])
   sessions: Session[];
 
-  @Field((_type) => Staff, { nullable: true })
-  staff?: Staff;
+  @Field((_type) => [Staff])
+  staff: Staff[];
+
+  @Field((_type) => Int, { nullable: true })
+  staffId?: number;
 
   // skip overwrite 👇
 }

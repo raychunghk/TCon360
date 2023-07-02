@@ -1,15 +1,16 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import getEvents from './ics.mjs'
 import path from 'path'
+import argon2 from 'argon2';
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
 
 const prisma = new PrismaClient();
 async function main() {
-  //genholiday()
-  createViewIfNotExists();
-  //genStaffInfo();
- // gencalendar();
+  genStaffInfo();
+//  gencalendar();
+ // genholiday()
+  //createViewIfNotExists();
 }
 
 
@@ -72,16 +73,16 @@ async function genholiday() {
   //return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()
   try {
     for (const e of evt) {
-    const calendar = await prisma.publicHoliday.create({
+      const calendar = await prisma.publicHoliday.create({
         data: {
           StartDate: e.StartDate,
           EndDate: e.EndDate,
           Summary: e.Summary
         },
       });
-    //  console.log(e.StartDate)
+      //  console.log(e.StartDate)
     }
-   
+
   } catch (error) {
     console.log(error)
   }
@@ -102,19 +103,43 @@ async function genStaffInfo() {
   userId        String?        @unique
   leaveRequests LeaveRequest[]
   */
-  const stf = await prisma.staff.create({
-    data: {
-      StaffName: 'Chung Wai Man'
-      , AgentName: 'Seamatch Asia Limited'
-      , StaffCategory: 'CAP/CSA'
-      , Department: 'ArchSD'
-      , PostUnit: 'TS3'
-      , ManagerName: 'Mr Anthony WONG'
-      , ManagerEmail: 'wongyf3@archsd.gov.hk'
-      , ManagerTitle: 'PSM/TS33'
+  try {
+    const hashedPassword = await argon2.hash('admin', { type: argon2.argon2id });
+    const user = {
+      username: 'raychung',
+      name: 'Ray Chung',
+      email: 'mannchung@gmail.com',
+      password: hashedPassword,
+    };
 
-    },
-  });
+    const u = await prisma.user.create({
+      data: user,
+    });
+
+    const stf = await prisma.staff.create({
+      data: {
+        StaffName: 'Chung Wai Man'
+        , AgentName: 'Seamatch Asia Limited'
+        , StaffCategory: 'CAP/CSA'
+        , Department: 'ArchSD'
+        , PostUnit: 'TS3'
+        , ManagerName: 'Mr Anthony WONG'
+        , ManagerEmail: 'wongyf3@archsd.gov.hk'
+        , ManagerTitle: 'PSM/TS33'
+        , user: { connect: { id: u.id } }
+      },
+    });
+
+    // Update the user's staffId with the new staff's id
+    await prisma.user.update({
+      where: { id: u.id },
+      data: { staffId: stf.id }
+    });
+
+    console.log(stf)
+  } catch (error) {
+    console.log(error)
+  }
 }
 async function gencalendar() {
   // ... you will write your Prisma Client queries here

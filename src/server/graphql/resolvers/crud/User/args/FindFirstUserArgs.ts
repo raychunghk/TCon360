@@ -46,6 +46,7 @@ export class FindFirstUserArgs {
         | 'password'
         | 'createdAt'
         | 'updatedAt'
+        | 'staffId'
       >
     | undefined;
 }

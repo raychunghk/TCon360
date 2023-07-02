@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { DateTimeNullableWithAggregatesFilter } from '../inputs/DateTimeNullableWithAggregatesFilter';
 import { DateTimeWithAggregatesFilter } from '../inputs/DateTimeWithAggregatesFilter';
+import { IntNullableWithAggregatesFilter } from '../inputs/IntNullableWithAggregatesFilter';
 import { StringNullableWithAggregatesFilter } from '../inputs/StringNullableWithAggregatesFilter';
 import { StringWithAggregatesFilter } from '../inputs/StringWithAggregatesFilter';
 
@@ -70,4 +71,9 @@ export class UserScalarWhereWithAggregatesInput {
     nullable: true,
   })
   updatedAt?: DateTimeWithAggregatesFilter | undefined;
+
+  @TypeGraphQL.Field((_type) => IntNullableWithAggregatesFilter, {
+    nullable: true,
+  })
+  staffId?: IntNullableWithAggregatesFilter | undefined;
 }

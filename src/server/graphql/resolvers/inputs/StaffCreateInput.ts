@@ -56,9 +56,9 @@ export class StaffCreateInput {
   leaveRequests?: LeaveRequestCreateNestedManyWithoutStaffInput | undefined;
 
   @TypeGraphQL.Field((_type) => UserCreateNestedOneWithoutStaffInput, {
-    nullable: true,
+    nullable: false,
   })
-  user?: UserCreateNestedOneWithoutStaffInput | undefined;
+  user!: UserCreateNestedOneWithoutStaffInput;
 
   @TypeGraphQL.Field((_type) => StaffFilesCreateNestedManyWithoutStaffInput, {
     nullable: true,

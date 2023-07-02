@@ -6,7 +6,6 @@ import { IntFilter } from '../inputs/IntFilter';
 import { LeaveRequestListRelationFilter } from '../inputs/LeaveRequestListRelationFilter';
 import { StaffFilesListRelationFilter } from '../inputs/StaffFilesListRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
-import { StringNullableFilter } from '../inputs/StringNullableFilter';
 import { UserRelationFilter } from '../inputs/UserRelationFilter';
 
 @TypeGraphQL.InputType('StaffWhereInput', {
@@ -73,10 +72,10 @@ export class StaffWhereInput {
   })
   ManagerEmail?: StringFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StringNullableFilter, {
+  @TypeGraphQL.Field((_type) => StringFilter, {
     nullable: true,
   })
-  userId?: StringNullableFilter | undefined;
+  userId?: StringFilter | undefined;
 
   @TypeGraphQL.Field((_type) => LeaveRequestListRelationFilter, {
     nullable: true,

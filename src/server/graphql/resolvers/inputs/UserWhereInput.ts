@@ -5,8 +5,9 @@ import { DecimalJSScalar } from '../../scalars';
 import { AccountListRelationFilter } from '../inputs/AccountListRelationFilter';
 import { DateTimeFilter } from '../inputs/DateTimeFilter';
 import { DateTimeNullableFilter } from '../inputs/DateTimeNullableFilter';
+import { IntNullableFilter } from '../inputs/IntNullableFilter';
 import { SessionListRelationFilter } from '../inputs/SessionListRelationFilter';
-import { StaffRelationFilter } from '../inputs/StaffRelationFilter';
+import { StaffListRelationFilter } from '../inputs/StaffListRelationFilter';
 import { StringFilter } from '../inputs/StringFilter';
 import { StringNullableFilter } from '../inputs/StringNullableFilter';
 
@@ -74,6 +75,11 @@ export class UserWhereInput {
   })
   updatedAt?: DateTimeFilter | undefined;
 
+  @TypeGraphQL.Field((_type) => IntNullableFilter, {
+    nullable: true,
+  })
+  staffId?: IntNullableFilter | undefined;
+
   @TypeGraphQL.Field((_type) => AccountListRelationFilter, {
     nullable: true,
   })
@@ -84,8 +90,8 @@ export class UserWhereInput {
   })
   sessions?: SessionListRelationFilter | undefined;
 
-  @TypeGraphQL.Field((_type) => StaffRelationFilter, {
+  @TypeGraphQL.Field((_type) => StaffListRelationFilter, {
     nullable: true,
   })
-  staff?: StaffRelationFilter | undefined;
+  staff?: StaffListRelationFilter | undefined;
 }

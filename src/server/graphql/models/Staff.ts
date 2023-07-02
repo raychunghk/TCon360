@@ -57,13 +57,13 @@ export class Staff {
   ManagerEmail!: string;
 
   @TypeGraphQL.Field((_type) => String, {
-    nullable: true,
+    nullable: false,
   })
-  userId?: string | null;
+  userId!: string;
 
   leaveRequests?: LeaveRequest[];
 
-  user?: User | null;
+  user?: User;
 
   staffFiles?: StaffFiles[];
 

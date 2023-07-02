@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { DecimalJSScalar } from '../../scalars';
 import { AccountCreateNestedManyWithoutUserInput } from '../inputs/AccountCreateNestedManyWithoutUserInput';
 import { SessionCreateNestedManyWithoutUserInput } from '../inputs/SessionCreateNestedManyWithoutUserInput';
-import { StaffCreateNestedOneWithoutUserInput } from '../inputs/StaffCreateNestedOneWithoutUserInput';
+import { StaffCreateNestedManyWithoutUserInput } from '../inputs/StaffCreateNestedManyWithoutUserInput';
 
 @TypeGraphQL.InputType('UserCreateInput', {
   description: '',
@@ -55,6 +55,11 @@ export class UserCreateInput {
   })
   updatedAt?: Date | undefined;
 
+  @TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
+    nullable: true,
+  })
+  staffId?: number | undefined;
+
   @TypeGraphQL.Field((_type) => AccountCreateNestedManyWithoutUserInput, {
     nullable: true,
   })
@@ -65,8 +70,8 @@ export class UserCreateInput {
   })
   sessions?: SessionCreateNestedManyWithoutUserInput | undefined;
 
-  @TypeGraphQL.Field((_type) => StaffCreateNestedOneWithoutUserInput, {
+  @TypeGraphQL.Field((_type) => StaffCreateNestedManyWithoutUserInput, {
     nullable: true,
   })
-  staff?: StaffCreateNestedOneWithoutUserInput | undefined;
+  staff?: StaffCreateNestedManyWithoutUserInput | undefined;
 }

@@ -88,7 +88,7 @@ App.getInitialProps = async (appContext: AppContext) => {
  
  
   console.log('basePath' + basePath);
-  console.log('pageprops:' + { ...pageProps } + pageProps.title);
+  //console.log('pageprops:' + { ...pageProps } + pageProps.title);
   //console.log(pageProps)
 //  console.log(pageProps.session())
 
