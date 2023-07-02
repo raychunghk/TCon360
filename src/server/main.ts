@@ -10,6 +10,7 @@ import { RenderService } from 'nest-next';
 import secureSession from '@fastify/secure-session';
 import session from 'express-session';
 import Fastify from 'fastify'
+
 import Next from 'next';
 import { INestApplication } from '@nestjs/common';
 async function bootstrap() {

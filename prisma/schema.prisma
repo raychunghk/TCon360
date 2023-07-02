@@ -67,7 +67,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
-  staff         Staff?
+  staff         Staff[]
 }
 
 model VerificationRequest {

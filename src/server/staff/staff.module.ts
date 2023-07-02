@@ -3,8 +3,10 @@ import { StaffService } from './service/staff.service';
 import { StaffController } from './staff.controller';
 import { PrismaService } from 'src/server/prisma/prisma.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
+import { UsersService } from '../auth/users.service';
+import { AuthService } from '../auth/auth.service';
 @Module({
-  providers: [StaffService, PrismaService, StaffFilesService],
+  providers: [StaffService, PrismaService, StaffFilesService, UsersService, AuthService],
   controllers: [StaffController],
 })
 export class StaffModule {}

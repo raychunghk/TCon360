@@ -9,25 +9,27 @@ import { PrismaClient } from "@prisma/client";
 
 @Injectable()
 export class StaffService {
-  constructor(@Inject(PrismaService) private prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private prisma: PrismaService) { }
 
-  async createStaff(stfInfo: Prisma.StaffCreateInput): Promise<Staff> {
+  async createStaff(stfInfo: Prisma.StaffCreateInput, _userId:String): Promise<Staff> {
     console.log(stfInfo);
+    const stfWithUserId = { ...stfInfo, userId: _userId};
     const rtn = await this.prisma.staff.create({
       data: stfInfo,
+      user: { connect: { id:_userId} }  
     });
     console.log(rtn);
     return rtn;
   }
-  getPrisma(){
-    if(!this.prisma){
+  getPrisma() {
+    if (!this.prisma) {
       return new PrismaClient();
-    }else{
+    } else {
       return this.prisma;
     }
   }
   async getStaffById(_id: number): Promise<Staff> {
-    console.log('prisma ?'+this.prisma)
+    console.log('prisma ?' + this.prisma)
     const staff = await this.getPrisma().staff.findUnique({
       where: {
         id: _id,

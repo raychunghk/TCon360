@@ -106,7 +106,7 @@ export default function Layout({ children, home }) {
                                 {_username ? (
                            
                                     <UnstyledButton
-                                     onClick={signOut()}
+                                     onClick={()=>signOut()}
                                         sx={buttonStyles} 
                                     >    <Group>
                                     <ThemeIcon variant="light">

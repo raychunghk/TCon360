@@ -9,11 +9,12 @@ import {
     Logger,
     NotFoundException,
     InternalServerErrorException,
-    Res,
+    Res, UseGuards,
     StreamableFile,
     UseInterceptors,
-
+    Req,
     Header,
+    Headers,
     HttpStatus,
 } from '@nestjs/common';
 import { StaffService } from './service/staff.service';
@@ -21,16 +22,67 @@ import { Prisma, Staff } from '@prisma/client';
 import LeaveRequestService from '../leaverequest/service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
 import { createReadStream } from 'fs';
+import { JwtAuthGuard } from '../guards/JwtAuthGuard';
 import type { Response } from 'express';
+import { AuthService } from '../auth/auth.service';
+import { UsersService } from '../auth/users.service';
+//import type { Request  } from 'express';
+import type { AuthReqInterface } from '../AuthReqInterface';
 @Controller('api/staff')
 export class StaffController {
 
-    constructor(private readonly staffService: StaffService, private readonly staffFilesService: StaffFilesService) { }
+    constructor(private readonly staffService: StaffService,
+        private readonly staffFilesService: StaffFilesService,
+        private readonly authService: AuthService,
+        private readonly userService: UsersService,
+
+    ) { }
+
+    @UseGuards(JwtAuthGuard)
     @Post()
-    create(@Body() stf: Prisma.StaffCreateInput): Promise<Staff> {
-        const result = this.staffService.createStaff(stf).then();
-        console.log(result);
-        return result;
+    async create(@Body() stf: Prisma.StaffCreateInput, @Headers('Authorization') auth: string,@Req() req: AuthReqInterface): Promise<Staff> {
+        console.log('user?')
+        const user =req.user;
+        console.log(auth)
+        //console.log(req)
+        const token = auth.split(' ')[1];
+        try {
+            const decodedtoken = this.authService.decodejwt(token);
+            const userId = decodedtoken.sub;
+            // Find the user with the given userId
+            const user = (await this.userService.findById(userId));
+            
+    
+            const result = this.staffService.createStaff(stf, userId).then();
+            console.log(result);
+            return result;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+   
+    }
+    @UseGuards(JwtAuthGuard)
+    @Post('/xx')
+    async create2(@Body() stf: Prisma.StaffCreateInput ): Promise<Staff> {
+   
+        //console.log(req)
+        const token = '111'
+        try {
+            const decodedtoken = this.authService.decodejwt(token);
+            const userId = decodedtoken.sub;
+            // Find the user with the given userId
+            const user = (await this.userService.findById(userId));
+            const stfWithUserId = { ...stf, userId: user.id };
+    
+            const result = this.staffService.createStaff(stf ,user.id).then();
+            console.log(result);
+            return result;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+   
     }
     @Get('download/:id')
     async download(@Param('id') staffFileId: number, @Res() res: Response) {

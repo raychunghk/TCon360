@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from './users.service';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { JwtPayload } from './jwtpayload.interface';
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,7 +23,10 @@ export class AuthService {
     }
     return null;
   }
-
+  decodejwt(token: string): any {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return decoded;
+  }
   async signUp(user: Prisma.UserCreateInput): Promise<User> {
     console.log(user)
     let userReturn;
@@ -44,6 +48,9 @@ export class AuthService {
 
   async login(identifier: string, password: string) {
     const user = await this.prisma.user.findFirst({
+      include: {
+        staff: true,
+      },
       where: {
         OR: [
           { email: identifier },
@@ -67,7 +74,7 @@ export class AuthService {
       email: user.email,
     };
     const options = {
-      expiresIn: '1m', // token expires in 1 minute
+      expiresIn: '15m', // token expires in 1 minute
     };
     const token = this.jwtService.sign(payload, options);
 
@@ -78,7 +85,7 @@ export class AuthService {
     console.log(decoded);
 
     // Access the payload
-    
+
     return token;
   }
 

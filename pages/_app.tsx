@@ -89,9 +89,9 @@ App.getInitialProps = async (appContext: AppContext) => {
  
   console.log('basePath' + basePath);
   console.log('pageprops:' + { ...pageProps } + pageProps.title);
-  console.log(pageProps)
-  console.log(pageProps.session())
-  console.log(pageProps.session())
+  //console.log(pageProps)
+//  console.log(pageProps.session())
+
   return {
     ...appProps,
     colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
