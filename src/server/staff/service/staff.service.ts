@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ConsoleLogger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Staff, Prisma } from '@prisma/client';
 import { PrismaClient } from "@prisma/client";
@@ -11,13 +11,13 @@ import { PrismaClient } from "@prisma/client";
 export class StaffService {
   constructor(@Inject(PrismaService) private prisma: PrismaService) { }
 
-  async createStaff(stfInfo: Prisma.StaffCreateInput, _userId:string): Promise<Staff> {
+  async createStaff(stfInfo: Prisma.StaffCreateInput, _userId: string): Promise<Staff> {
     console.log(stfInfo);
-    const stfWithUserId = { ...stfInfo, userId: _userId};
+    const stfWithUserId = { ...stfInfo, userId: _userId };
     const rtn = await this.prisma.staff.create({
       data: {
         ...stfInfo,
-      user: { connect: { id:_userId} }  
+        user: { connect: { id: _userId } }
       }
     });
     console.log(rtn);
@@ -41,5 +41,19 @@ export class StaffService {
       throw new Error(`Staff member with ID ${_id} not found`);
     }
     return staff;
+  }
+  async updateStaff(id: number, data: Prisma.StaffUpdateInput) {
+    try {
+      const rtn = await this.prisma.staff.update({
+        where: { id },
+        data,
+      });
+      logger
+      console.log('update result');
+      return rtn;
+    } catch (error) {
+      console.log('update staff error');
+      console.log(error);
+    }
   }
 }

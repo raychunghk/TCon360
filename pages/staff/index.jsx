@@ -19,14 +19,13 @@ import MyCard from '../../components/MyCard';
 import Head from 'next/head';
 import {useState} from 'react';
 import MyModal from '../../components/MyModal';
-import {parseCookies, setCookie} from "nookies";
-import UserStyle from '../../styles/User.module.css'
+import {parseCookies, setCookie} from 'nookies';
+import UserStyle from '../../styles/User.module.css';
 import axios from 'axios';
 import {useForm as uForm} from 'react-hook-form';
 require('dotenv').config();
 // import { basePath } from '/src/shared/constants/env'
 export default function User() {
-
     const userModel = {
         StaffName: '',
         AgentName: '',
@@ -36,14 +35,13 @@ export default function User() {
         ManagerName: '',
         ManagerTitle: '',
         ManagerEmail: ''
-    }
+    };
     const [formValues, setFormValues] = useState(userModel);
     const [modalOpen, setModalOpen] = useState(false);
     const {register, handleSubmit, reset} = uForm();
     const [submitting, setSubmitting] = useState(false);
     const form = useForm({
         initialValues: {
-
             user: {
                 userModel
             }
@@ -61,20 +59,19 @@ export default function User() {
     };
     const cookies = parseCookies();
     const tokenCookie = cookies.token;
-    console.log(tokenCookie)
+    console.log(tokenCookie);
     const onSubmit = async (event) => { // event.preventDefault();
 
-
-        console.log(basepath)
+        console.log(basepath);
         const port = process.env.PORT;
-        console.log(port)
+        console.log(port);
         setSubmitting(true);
 
         const headers = {
-            'Authorization': `Bearer ${tokenCookie}`
+            Authorization: `Bearer ${tokenCookie}`
         };
         // path = `${basePath}/api/user`;
-        const response = await axios.post(`${basepath}/api/staff`, formValues,{headers});
+        const response = await axios.post(`${basepath}/api/staff`, formValues, {headers});
         // console.log(response.data);
         setSubmitting(false);
         if ([200, 201].includes(response.status)) {
@@ -84,9 +81,7 @@ export default function User() {
         } else {
             console.error('Failed to create staff record:', response);
         }
-
     };
-
 
     return (
         <Layout home>
@@ -99,12 +94,9 @@ export default function User() {
                     handleSubmit(onSubmit)
             }>
                 {basepath}
-                <MyCard title={"Create Staff Info"}>
-
+                <MyCard title={'Create Staff Info'}>
                     <Grid pb={30}>
-
                         <Grid.Col span={6}>
-
                             <TextInput placeholder="Staff name" mt="sm" label="Staff Name" {...register('StaffName', { required: true })}
                                 onChange={handleInputChange}/>
                         </Grid.Col>
@@ -157,9 +149,7 @@ export default function User() {
                                 }
                                 onChange={handleInputChange}/>
                         </Grid.Col>
-
                     </Grid>
-
 
                     <Card.Section bg="indigo.2" py="md"
                         sx={
@@ -170,19 +160,13 @@ export default function User() {
                                 height: '100%'
                             }
                     }>
-
-
                         <Button type="submit" fullWidth
                             loading={submitting}
-
                             maw={250}
                             radius="md">
                             Submit
                         </Button>
-
                     </Card.Section>
-
-
                 </MyCard>
             </form>
             <Text size="sm"
@@ -194,11 +178,11 @@ export default function User() {
                 mt={3}>
                 {
                 JSON.stringify(formValues, null, 2)
-            } </Code>
+            }
+                {' '} </Code>
             <MyModal open={modalOpen}
                 onClose={handleModalClose}
-                msg={"Staff Record Created Successfully"}/>
-
+                msg={'Staff Record Created Successfully'}/>
         </Layout>
     );
 }

@@ -13,8 +13,18 @@ import {
   IconSunset2,
   IconTree,
   IconSwitchHorizontal,
+  IconUserEdit,
+  IconUserPlus,
+  IconUserCircle,
 } from '@tabler/icons-react';
-import { ThemeIcon, UnstyledButton, Group, Text, Anchor, NavLink } from '@mantine/core';
+import {
+  ThemeIcon,
+  UnstyledButton,
+  Group,
+  Text,
+  Anchor,
+  NavLink,
+} from '@mantine/core';
 import Link from 'next/link';
 import styles from './mainlinks.module.css';
 type LinkItemProps = {
@@ -34,17 +44,73 @@ const data = [
     label: 'Time Sheet',
     link: '/#',
     child: [
-      { icon: <IconEyeglass size="1rem" />, color: 'blue', label: 'View', link: '/timesheet' },
-      { icon: <IconCalendarPlus size="1rem" />, color: 'blue', label: 'Create', link: '/timesheet/create' },
+      {
+        icon: <IconEyeglass size="1rem" />,
+        color: 'blue',
+        label: 'View',
+        link: '/timesheet',
+      },
+      {
+        icon: <IconCalendarPlus size="1rem" />,
+        color: 'blue',
+        label: 'Create',
+        link: '/timesheet/create',
+      },
     ],
   },
-  { icon: <IconCalendarStats size="1rem" />, color: 'violet', label: 'Calendar', link: '/calendar' },
-  { icon: <IconSunset2 size="1rem" />, color: 'grape', label: 'Leave Request', link: '/leaverequest' },
-  { icon: <IconUser size="1rem" />, color: 'gray', label: 'Staff Info', link: '/staff' },
-  { icon: <IconTree size="1rem" />, color: 'gray', label: 'Test', link: '/test' },
-  { icon: <IconTree size="1rem" />, color: 'gray', label: 'bill', link: '/tbill' },
+  {
+    icon: <IconUserCircle size="1rem" />,
+    color: 'teal',
+    label: 'User Profile',
+    link: '/#',
+    child: [
+      {
+        icon: <IconUserPlus size="1rem" />,
+        color: 'cyan.5',
+        label: 'Create Profile',
+        link: '/staff',
+      },
+      {
+        icon: <IconUserEdit size="1runrurem" />,
+        color: 'cyan.5',
+        label: 'Edit Profile',
+        link: '/staff/edit',
+      },
+    ],
+  },
+  {
+    icon: <IconCalendarStats size="1rem" />,
+    color: 'violet',
+    label: 'Calendar',
+    link: '/calendar',
+  },
+  {
+    icon: <IconSunset2 size="1rem" />,
+    color: 'grape',
+    label: 'Leave Request',
+    link: '/leaverequest',
+  },
+
+  {
+    icon: <IconTree size="1rem" />,
+    color: 'gray',
+    label: 'Test',
+    link: '/test',
+  },
+  {
+    icon: <IconTree size="1rem" />,
+    color: 'gray',
+    label: 'bill',
+    link: '/tbill',
+  },
 ];
-function CustomLink({ href, children }: { href: string; children: React.ReactNode }) {
+function CustomLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
     <Link href={href} className={styles.links}>
       <UnstyledButton
@@ -70,7 +136,6 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
   );
 }
 function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
-
   const marginLeft = isChild ? 20 : 0;
 
   return (
@@ -81,7 +146,10 @@ function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
             {icon}
           </ThemeIcon>
 
-          <Text size="sm">{label}{isChild}</Text>
+          <Text size="sm">
+            {label}
+            {isChild}
+          </Text>
         </Group>
       </CustomLink>
 

@@ -1,14 +1,17 @@
-import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import {Prisma, User} from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
+import { UsersService } from './users.service';
+
 interface LoginDto {
   identifier: string;
   password: string;
 }
 @Controller("api")
 export class UsersController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private usersService:UsersService) {}
 
   //@HttpCode(200)
   //@UseGuards(LocalAuthGuard)
@@ -46,5 +49,13 @@ export class UsersController {
     // Handle sign-up logic here
   }
 
+  @Get('user/myuser')
+  @UseGuards(AuthGuard('jwt'))
+  async getMyUser(@Req() req) {
+    const userId = req.user.id;
+    const user = await this.usersService.getUserWithStaff(userId);
+    console.log(user);
+    return user;
+  }
 
 }

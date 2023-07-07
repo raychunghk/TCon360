@@ -11,11 +11,13 @@ export class UsersService {
         let user;
         const hashedPassword = await bcrypt.hash(data.password, 10);
         try {
-            const user = await this.prisma.user.create({  data: {
-                ...data,
-                password: hashedPassword,
-              } });
-           
+            const user = await this.prisma.user.create({
+                data: {
+                    ...data,
+                    password: hashedPassword,
+                }
+            });
+
         } catch (error) {
             console.log(error)
         }
@@ -27,6 +29,18 @@ export class UsersService {
         return user;
     }
 
+    async getUserWithStaff(userId: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { staff: true },
+        });
+
+        if (!user) {
+            throw new Error(`User with ID ${userId} not found`);
+        }
+
+        return user;
+    }
     async findByEmail(email: string): Promise<User> {
         const user = await this.prisma.user.findUnique({ where: { email } });
         return user;
