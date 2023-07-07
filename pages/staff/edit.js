@@ -30,10 +30,10 @@ export default function User() {
     ManagerName: '',
     ManagerTitle: '',
     ManagerEmail: ''
-    ,userId:''
-    ,id:null
+    , userId: ''
+    , id: null
   };
-  
+
   const [formValues, setFormValues] = useState(staffModel);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -88,7 +88,7 @@ export default function User() {
 
       if (response.status === 200) {
         setModalOpen(true);
-        setEditing(false);
+        setEditing(true);
       } else {
         console.error('Failed to update staff record:', response);
       }
@@ -140,19 +140,29 @@ export default function User() {
                 disabled={!editing} value={formValues.ManagerEmail} />
             </Grid.Col>
           </Grid>
-
-          <Button type="submit" variant="outline" color="blue" disabled={!editing || submitting}>
-            Save
-          </Button>
+          <Card.Section
+            bg="indigo.2"
+            py="md"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <Button type="submit" maw={250}
+              radius="md" color="blue" disabled={!editing || submitting}>
+              Save
+            </Button>
+          </Card.Section>
         </MyCard>
       </form>
 
-      <MyModal isOpen={modalOpen} onClose={handleModalClose}>
-        <Text align="center" size="lg">
-          Staff record updated successfully!
-        </Text>
-        <Code>{JSON.stringify(formValues, null, 2)}</Code>
-      </MyModal>
+
+      <MyModal open={modalOpen}
+        onClose={handleModalClose}
+        msg={' Staff record updated successfully!'} />
+      <Code>{JSON.stringify(formValues, null, 2)}</Code>
     </Layout>
   );
 }

@@ -1,4 +1,4 @@
-import { Injectable, Inject, ConsoleLogger } from '@nestjs/common';
+import { Injectable, Inject, ConsoleLogger, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Staff, Prisma } from '@prisma/client';
 import { PrismaClient } from "@prisma/client";
@@ -48,7 +48,7 @@ export class StaffService {
         where: { id },
         data,
       });
-      logger
+      Logger.log('rtn', rtn);
       console.log('update result');
       return rtn;
     } catch (error) {

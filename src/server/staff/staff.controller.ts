@@ -124,7 +124,7 @@ export class StaffController {
   ) {
     console.log('in update staff');
     console.log(updateStaff);
-    const rtn = await this.staffService.updateStaff(id, updateStaff);
+    const rtn = await this.staffService.updateStaff(Number(id), updateStaff);
     console.log('rtn');
     console.log(rtn);
     Logger.log(rtn);
