@@ -21,6 +21,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { UserResolver } from './user/user.resolver';
 import { JwtAuthGuard } from './guards/JwtAuthGuard';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   /* should pass a NEXT.js server instance
       as the argument to `forRootAsync` */
@@ -32,6 +33,7 @@ import { AuthModule } from './auth/auth.module';
       { passthrough404: true, viewsDir: null },
     
     ),
+   
     StaffModule,
     TestModule,
     TimesheetModule,
