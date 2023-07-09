@@ -6,6 +6,7 @@ import { UsersService } from './users.service';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload } from './jwtpayload.interface';
+import { StaffService } from '../staff/service/staff.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly prismaService: PrismaService,
     private readonly prisma: PrismaService,
+    private staffService: StaffService,
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
@@ -33,20 +35,34 @@ export class AuthService {
   async signUp(user: Prisma.UserCreateInput): Promise<User> {
     console.log(user);
     let userReturn;
-    const hashedPassword = await argon2.hash(user.password, {
+    const { staff, ...userData } = user;
+    const stf: any = { ...staff };
+    console.log('staff?');
+    console.log(stf);
+    const hashedPassword = await argon2.hash(userData.password, {
       type: argon2.argon2id,
     });
+    //user: { connect: { id: _userId } }
     try {
-      const userReturn = await this.prisma.user.create({
+      const createdUser = await this.prisma.user.create({
         data: {
-          ...user,
+          username: userData.username,
+          email: userData.email,
           password: hashedPassword,
         },
       });
+      const _userId = createdUser.id;
+      const rtn = await this.prisma.staff.create({
+        data: {
+          ...stf,
+          user: { connect: { id: _userId } },
+        },
+      });
+      return createdUser;
     } catch (error) {
       console.log(error);
     }
-    return userReturn;
+   
   }
 
   async login(identifier: string, password: string) {

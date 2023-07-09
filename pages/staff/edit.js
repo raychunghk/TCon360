@@ -10,10 +10,11 @@ import {
   Text,
   Code,
   Card,
-  Modal
+  Modal,
 } from '@mantine/core';
 import Layout from '../../components/layout';
 import MyCard from '../../components/MyCard';
+import StaffFormGrid from '../../components/StaffFormGrid';
 import MyModal from '../../components/MyModal';
 import { basepath } from '/global';
 import UserStyle from '../../styles/User.module.css';
@@ -29,15 +30,15 @@ export default function User() {
     PostUnit: '',
     ManagerName: '',
     ManagerTitle: '',
-    ManagerEmail: ''
-    , userId: ''
-    , id: null
+    ManagerEmail: '',
+    userId: '',
+    id: null,
   };
 
   const [formValues, setFormValues] = useState(staffModel);
+  const [editing, setEditing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [editing, setEditing] = useState(false);
   const { register, handleSubmit, reset } = useHookForm();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
@@ -46,16 +47,18 @@ export default function User() {
     const getStaffData = async () => {
       try {
         const headers = {
-          Authorization: `Bearer ${tokenCookie}`
+          Authorization: `Bearer ${tokenCookie}`,
         };
 
-        const response = await axios.get(`${basepath}/api/user/myuser`, { headers });
+        const response = await axios.get(`${basepath}/api/user/myuser`, {
+          headers,
+        });
 
         if (response.status === 200) {
           const _staff = response.data.staff[0];
           console.log(_staff);
           setFormValues(_staff);
-          setEditing(true)
+          setEditing(true);
         }
       } catch (error) {
         console.error('Failed to fetch staff data:', error);
@@ -72,7 +75,7 @@ export default function User() {
   const handleInputChange = (event) => {
     setFormValues({
       ...formValues,
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   };
 
@@ -80,11 +83,15 @@ export default function User() {
     setSubmitting(true);
 
     const headers = {
-      Authorization: `Bearer ${tokenCookie}`
+      Authorization: `Bearer ${tokenCookie}`,
     };
 
     try {
-      const response = await axios.put(`${basepath}/api/staff/${formValues.id}`, formValues, { headers });
+      const response = await axios.put(
+        `${basepath}/api/staff/${formValues.id}`,
+        formValues,
+        { headers },
+      );
 
       if (response.status === 200) {
         setModalOpen(true);
@@ -106,40 +113,12 @@ export default function User() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <MyCard title="Staff Info">
-          <Grid pb={30}>
-            <Grid.Col span={6}>
-              <TextInput label="Staff Name" placeholder="Staff name" {...register('StaffName', { required: true })}
-                onChange={handleInputChange} disabled={!editing} value={formValues.StaffName} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Agent name" placeholder="Agentname" name="AgentName" onChange={handleInputChange}
-                disabled={!editing} value={formValues.AgentName} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Staff category" placeholder="Staff category" name="StaffCategory" onChange={handleInputChange}
-                disabled={!editing} value={formValues.StaffCategory} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Department" placeholder="Department" name="Department" onChange={handleInputChange}
-                disabled={!editing} value={formValues.Department} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Post unit" placeholder="Post unit" name="PostUnit" onChange={handleInputChange}
-                disabled={!editing} value={formValues.PostUnit} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Manager name" placeholder="Manager name" name="ManagerName" onChange={handleInputChange}
-                disabled={!editing} value={formValues.ManagerName} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Manager title" placeholder="Manager title" name="ManagerTitle" onChange={handleInputChange}
-                disabled={!editing} value={formValues.ManagerTitle} />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput label="Manager email" placeholder="Manager email" name="ManagerEmail" onChange={handleInputChange}
-                disabled={!editing} value={formValues.ManagerEmail} />
-            </Grid.Col>
-          </Grid>
+          <StaffFormGrid
+            formValues={formValues}
+            handleInputChange={handleInputChange}
+            editing={editing}
+          />
+
           <Card.Section
             bg="indigo.2"
             py="md"
@@ -150,18 +129,24 @@ export default function User() {
               height: '100%',
             }}
           >
-            <Button type="submit" maw={250}
-              radius="md" color="blue" disabled={!editing || submitting}>
+            <Button
+              type="submit"
+              maw={250}
+              radius="md"
+              color="blue"
+              disabled={!editing || submitting}
+            >
               Save
             </Button>
           </Card.Section>
         </MyCard>
       </form>
 
-
-      <MyModal open={modalOpen}
+      <MyModal
+        open={modalOpen}
         onClose={handleModalClose}
-        msg={' Staff record updated successfully!'} />
+        msg={' Staff record updated successfully!'}
+      />
       <Code>{JSON.stringify(formValues, null, 2)}</Code>
     </Layout>
   );

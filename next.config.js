@@ -1,12 +1,13 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const _basepath = `/absproxy/5000`
-//const _basepath = `${process.env.BASEPATH}`
-
+//const _basepath = process.env.BASEPATH
+console.log('_basepath');
+console.log(_basepath);
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
-console.log(_basepath);
+ 
 const nextConfig = {
   basePath: _basepath,
   assetPrefix: _basepath,

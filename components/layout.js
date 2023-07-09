@@ -22,22 +22,7 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
-import {
-  IconHome2,
-  IconGauge,
-  IconFingerprint,
-  IconCalendarStats,
-  IconUser,
-  IconCalendarEvent,
-  IconCalendarPlus,
-  IconEyeglass,
-  IconClock,
-  IconLogout,
-  IconLogin,
-  IconSunset2,
-  IconTree,
-  IconSwitchHorizontal,
-} from '@tabler/icons-react';
+import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 const name = 'Ray Chung';
 export const siteTitle = 'NxTimeT';
@@ -54,7 +39,12 @@ export default function Layout({ children, home }) {
     _username = session.user.name;
   } else {
     console.log('no session');
+    // signOut();
   }
+  const handleSignout = () => {
+    console.log('hihi');
+    signOut();
+  };
   const buttonStyles = (theme) => ({
     display: 'block',
     width: '115px',
@@ -109,7 +99,10 @@ export default function Layout({ children, home }) {
               <Group position="right">
                 <Text>{_username}</Text>
                 {_username ? (
-                  <UnstyledButton onClick={() => signOut()} sx={buttonStyles}>
+                  <UnstyledButton
+                    onClick={() => handleSignout()}
+                    sx={buttonStyles}
+                  >
                     {' '}
                     <Group>
                       <ThemeIcon variant="light">

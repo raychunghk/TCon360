@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { basepath } from '/global';
+//import { basepath } from '/global';
 import {
   TextInput,
   Checkbox,
@@ -25,7 +25,8 @@ import axios from 'axios';
 import { useForm as uForm } from 'react-hook-form';
 require('dotenv').config();
 // import { basePath } from '/src/shared/constants/env'
-export default function User() {
+export default function User(props) {
+  const { basepath } = props;
   const userModel = {
     StaffName: '',
     AgentName: '',
