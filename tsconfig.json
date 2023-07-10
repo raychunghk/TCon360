@@ -34,6 +34,6 @@
     "pages/leaverequest/index.jsx",
     "pages/_document.jsx",
     "pages/api/auth/[...nextauth].js"
-  ],
+, "pages/user/signup.tsx", "components/Signupcard.js"  ],
   "exclude": ["node_modules"]
 }

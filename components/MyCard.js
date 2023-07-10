@@ -14,7 +14,6 @@ function MyCard({ title, children }) {
             ? theme.colors.dark[6]
             : theme.colors.gray[0],
         borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.gray[1],
         '&:hover': {
           backgroundColor:
             theme.colorScheme === 'dark'

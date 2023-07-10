@@ -113,12 +113,93 @@ export default function User() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <MyCard title="Staff Info">
-          <StaffFormGrid
+          {/* <StaffFormGrid
             formValues={formValues}
             handleInputChange={handleInputChange}
             editing={editing}
-          />
-
+          /> */}
+          <Grid pb={30} pt={30}>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Name of Staff"
+                placeholder="Name of Staff"
+                name="StaffName"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.StaffName}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Name of T-contractor"
+                placeholder="Name of T-contractor"
+                name="AgentName"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.AgentName}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Staff category"
+                placeholder="Staff category"
+                name="StaffCategory"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.StaffCategory}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Department"
+                placeholder="Department"
+                name="Department"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.Department}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Post unit"
+                placeholder="Post unit"
+                name="PostUnit"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.PostUnit}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Manager name"
+                placeholder="Manager name"
+                name="ManagerName"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.ManagerName}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Manager title"
+                placeholder="Manager title"
+                name="ManagerTitle"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.ManagerTitle}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                label="Manager email"
+                placeholder="Manager email"
+                name="ManagerEmail"
+                onChange={handleInputChange}
+                disabled={!editing}
+                value={formValues.ManagerEmail}
+              />
+            </Grid.Col>
+          </Grid>
           <Card.Section
             bg="indigo.2"
             py="md"

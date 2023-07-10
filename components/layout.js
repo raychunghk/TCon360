@@ -112,27 +112,29 @@ export default function Layout({ children, home }) {
                     </Group>
                   </UnstyledButton>
                 ) : (
-                  <Link href="/login" className={linkstyle.links}>
-                    <UnstyledButton sx={buttonStyles}>
-                      <Group>
-                        <ThemeIcon variant="light">
-                          <IconLogin />
-                        </ThemeIcon>
-                        <Text size="sm">Login</Text>
-                      </Group>
-                    </UnstyledButton>
-                  </Link>
+                  <Group>
+                    <Link href="/login" className={linkstyle.links}>
+                      <UnstyledButton sx={buttonStyles}>
+                        <Group>
+                          <ThemeIcon variant="light">
+                            <IconLogin />
+                          </ThemeIcon>
+                          <Text size="sm">Login</Text>
+                        </Group>
+                      </UnstyledButton>
+                    </Link>{' '}
+                    <Link href="/signup" className={linkstyle.links}>
+                      <UnstyledButton sx={buttonStyles}>
+                        <Group>
+                          <ThemeIcon variant="light">
+                            <IconLogin />
+                          </ThemeIcon>
+                          <Text size="sm">Signup</Text>
+                        </Group>
+                      </UnstyledButton>
+                    </Link>
+                  </Group>
                 )}
-                <Link href="/signup" className={linkstyle.links}>
-                  <UnstyledButton sx={buttonStyles}>
-                    <Group>
-                      <ThemeIcon variant="light">
-                        <IconLogin />
-                      </ThemeIcon>
-                      <Text size="sm">Signup</Text>
-                    </Group>
-                  </UnstyledButton>
-                </Link>
               </Group>
             </Group>
           </div>
