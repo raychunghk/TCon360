@@ -7,10 +7,10 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 async function main() {
-  genStaffInfo();
-//  gencalendar();
- // genholiday()
-  //createViewIfNotExists();
+  //genStaffInfo();
+  gencalendar();
+  genholiday()
+  createViewIfNotExists();
 }
 
 

@@ -58,11 +58,18 @@ export class AuthService {
           user: { connect: { id: _userId } },
         },
       });
-      return createdUser;
+      const _user = await this.prisma.user.findFirst({
+        include: {
+          staff: true,
+        },
+        where: {
+          OR: [{ username: userData.username }],
+        },
+      });
+      return _user;
     } catch (error) {
       console.log(error);
     }
-   
   }
 
   async login(identifier: string, password: string) {

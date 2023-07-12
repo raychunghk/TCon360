@@ -33,6 +33,7 @@ import {
   matches,
 } from '@mantine/form';
 import Signupcard from '../../components/Signupcard';
+import { handleLoginSuccess } from './handleLoginSuccess';
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -40,8 +41,9 @@ const useStyles = createStyles((theme) => ({
     height: '100vh',
   },
   form: {
-    borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-      }`,
+    borderRight: `1px solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+    }`,
     maxWidth: 800,
     paddingTop: 80,
     height: '100vh',
@@ -81,7 +83,7 @@ export default function SignupPage() {
     PostUnit: '',
     ManagerName: '',
     ManagerTitle: '',
-    ManagerEmail: '',
+    ManagerEmail: 'manager@1.com',
   };
   const [formValues, setFormValues] = useState(staffModel);
   const [editing, setEditing] = useState(false);
@@ -106,6 +108,9 @@ export default function SignupPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
   const mainpage = '/';
+  const maxAge = process.env.TOKEN_MAX_AGE;
+  console.log('_maxage?');
+  console.log(maxAge);
   console.log('formValues');
   console.log(formValues);
   const form = useForm({
@@ -118,7 +123,7 @@ export default function SignupPage() {
               ? 'Username must include at least 6 characters'
               : null,
           password:
-            values.password.length < 6
+            values.password.length < 5
               ? 'Password must include at least 6 characters'
               : null,
           email: /^\S+@\S+$/.test(values.email) ? null : 'Invalid email',
@@ -162,28 +167,6 @@ export default function SignupPage() {
       }
     },
   });
-  // validate: {
-  //   email: isEmail('Please enter a valid email address'),
-  //   username: isNotEmpty('Please enter a username'),
-  //   password: isNotEmpty('Please enter a password'),
-  //   StaffName: hasLength(
-  //     { min: 2, max: 50 },
-  //     'Name must be 2-50 characters long',
-  //   ),
-  //   AgentName: isNotEmpty('Please enter a Agent name'),
-  //   StaffCategory: isNotEmpty('Please enter a staff category'),
-  //   Department: isNotEmpty('Please enter a department'),
-  //   PostUnit: isNotEmpty('Please enter a post unit'),
-  //   ManagerName: hasLength(
-  //     { min: 2, max: 50 },
-  //     'Name must be 2-50 characters long',
-  //   ),
-  //   ManagerTitle: hasLength(
-  //     { min: 2, max: 50 },
-  //     'Title must be 2-50 characters long',
-  //   ),
-  //   ManagerEmail: isEmail('Please enter a valid email address'),
-  // },
 
   useEffect(() => {
     const getStaffData = async () => {
@@ -228,6 +211,7 @@ export default function SignupPage() {
 
       if (response.ok) {
         // router.push(mainpage);
+        await handleLoginSuccess(response, router);
       } else {
         console.error('Error signing up:', response.statusText);
       }
@@ -266,6 +250,7 @@ export default function SignupPage() {
             >
               Create an Account
             </Title>
+
             <Stepper active={active} onStepClick={setActive} breakpoint="sm">
               <Stepper.Step
                 label="First step"
@@ -279,7 +264,7 @@ export default function SignupPage() {
                     <Grid.Col span={6}>
                       <TextInput
                         label="Email address"
-                        placeholder="hello@gmail.com"
+                        placeholder="username@department.gov.hk"
                         size="md"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
@@ -289,7 +274,7 @@ export default function SignupPage() {
                     <Grid.Col span={6}>
                       <TextInput
                         label="Username"
-                        placeholder="johndoe"
+                        placeholder="Username"
                         size="md"
                         value={username}
                         onChange={(event) => setUsername(event.target.value)}
@@ -319,63 +304,50 @@ export default function SignupPage() {
                     T-contract Staff Details
                   </Title>
                   <Grid pb={10} pt={10}>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Name of Staff"
-                        placeholder="Name of Staff"
-                        name="StaffName"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.StaffName}
-                        {...form.getInputProps('StaffName')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Name of T-contractor"
-                        placeholder="Name of T-contractor"
-                        name="AgentName"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.AgentName}
-                        {...form.getInputProps('AgentName')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Staff category"
-                        placeholder="Staff category"
-                        name="StaffCategory"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.StaffCategory}
-                        {...form.getInputProps('StaffCategory')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Department"
-                        placeholder="Department"
-                        name="Department"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.Department}
-                        {...form.getInputProps('Department')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Post unit"
-                        placeholder="Post unit"
-                        name="PostUnit"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.PostUnit}
-                        {...form.getInputProps('PostUnit')}
-                      />
-                    </Grid.Col>
+                    {[
+                      {
+                        label: 'Name of Staff',
+                        placeholder: 'Name of Staff',
+                        name: 'StaffName',
+                        value: formValues.StaffName,
+                      },
+                      {
+                        label: 'Name of T-contractor',
+                        placeholder: 'Name of T-contractor',
+                        name: 'AgentName',
+                        value: formValues.AgentName,
+                      },
+                      {
+                        label: 'Staff category',
+                        placeholder: 'Staff category',
+                        name: 'StaffCategory',
+                        value: formValues.StaffCategory,
+                      },
+                      {
+                        label: 'Department',
+                        placeholder: 'Department',
+                        name: 'Department',
+                        value: formValues.Department,
+                      },
+                      {
+                        label: 'Post unit',
+                        placeholder: 'Post unit',
+                        name: 'PostUnit',
+                        value: formValues.PostUnit,
+                      },
+                    ].map(({ label, placeholder, name, value }) => (
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label={label}
+                          placeholder={placeholder}
+                          name={name}
+                          onChange={handleInputChange}
+                          value={value}
+                          {...form.getInputProps(name)}
+                        />
+                      </Grid.Col>
+                    ))}
                   </Grid>
-                  {`${active}`}
                 </Paper>
               </Stepper.Step>
               <Stepper.Step
@@ -387,101 +359,142 @@ export default function SignupPage() {
                     Timesheet Certifying Officer
                   </Title>
                   <Grid pb={10} pt={10}>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Manager name"
-                        placeholder="Manager name"
-                        name="ManagerName"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.ManagerName}
-                        {...form.getInputProps('ManagerName')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Designation(Manager post title)"
-                        placeholder="Designation(Manager post title)"
-                        name="ManagerTitle"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.ManagerTitle}
-                        {...form.getInputProps('ManagerTitle')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Manager email"
-                        placeholder="Manager email"
-                        name="ManagerEmail"
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues.ManagerEmail}
-                        {...form.getInputProps('ManagerEmail')}
-                      />
-                    </Grid.Col>
+                    {[
+                      {
+                        label: 'Manager name',
+                        placeholder: 'Manager name',
+                        name: 'ManagerName',
+                        value: formValues.ManagerName,
+                      },
+                      {
+                        label: 'Designation(Manager post title)',
+                        placeholder: 'Designation(Manager post title)',
+                        name: 'ManagerTitle',
+                        value: formValues.ManagerTitle,
+                      },
+                      {
+                        label: 'Manager email',
+                        placeholder: 'Manager email',
+                        name: 'ManagerEmail',
+                        value: formValues.ManagerEmail,
+                      },
+                    ].map(({ label, placeholder, name, value }) => (
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label={label}
+                          placeholder={placeholder}
+                          name={name}
+                          onChange={handleInputChange}
+                          value={value}
+                          {...form.getInputProps(name)}
+                        />
+                      </Grid.Col>
+                    ))}
                   </Grid>
                 </Paper>
               </Stepper.Step>
               <Stepper.Completed>
-                Please review the signup info:
-                <Signupcard
-                  title="User Information"
-                  cols={[
-                    <Grid.Col span={3}>Login Name</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.username}</Grid.Col>,
-                    <Grid.Col span={3}>User Email</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.email}</Grid.Col>,
-      
-                  ]}
-                />
-                <Signupcard
-                  title="T-contract Staff Details"
-                  cols={[
-                    <Grid.Col span={3}>Name of Staff</Grid.Col>,
-                    <Grid.Col span={9}>{form.values.StaffName}</Grid.Col>,
-                    <Grid.Col span={3}>Name of T-contractor</Grid.Col>,
-                    <Grid.Col span={9}>{form.values.AgentName}</Grid.Col>,
-                    <Grid.Col span={3}>Staff Category</Grid.Col>,
-                    <Grid.Col span={9}>{form.values.StaffCategory}</Grid.Col>,
-                    <Grid.Col span={3}>Department</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.Department}</Grid.Col>,
-                    <Grid.Col span={3}>Post Unit</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.PostUnit}</Grid.Col>,
-                  ]}
-                />
-                <Signupcard
-                  title="Timesheet Certifying Officer"
-                  cols={[
-                    <Grid.Col span={3}>Signature</Grid.Col>,
-                    <Grid.Col span={3}></Grid.Col>,
-                    <Grid.Col span={3}>Name</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.ManagerName}</Grid.Col>,
-                    <Grid.Col span={3}>Designation</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.ManagerTitle}</Grid.Col>,
-                    <Grid.Col span={3}>Email</Grid.Col>,
-                    <Grid.Col span={3}>{form.values.ManagerEmail}</Grid.Col>,
-                  ]}
-                />
+                <Paper shadow="sm" p="md" withBorder>
+                  <Title order={2}>Please review the signup info:</Title>
+                  <Signupcard
+                    title="User Information"
+                    cols={[
+                      {
+                        label: 'Login Name',
+                        value: form.values.username,
+                        span: 2,
+                        valspan: 4,
+                      },
+                      {
+                        label: 'User Email',
+                        value: form.values.email,
+                        span: 2,
+                        valspan: 4,
+                      },
+                    ]}
+                  />
+                  <Signupcard
+                    title="T-contract Staff Details"
+                    cols={[
+                      {
+                        label: 'Name of Staff',
+                        value: form.values.StaffName,
+                        span: 3,
+                        valspan: 9,
+                      },
+
+                      {
+                        label: 'Name of T-contractor',
+                        value: form.values.AgentName,
+                        span: 3,
+                        valspan: 9,
+                      },
+                      {
+                        label: 'Staff Category',
+                        value: form.values.StaffCategory,
+                        span: 3,
+                        valspan: 9,
+                      },
+                      {
+                        label: 'Department',
+                        value: form.values.Department,
+                        span: 3,
+                        valspan: 3,
+                      },
+                      {
+                        label: 'Post Unit',
+                        value: form.values.PostUnit,
+                        span: 3,
+                        valspan: 3,
+                      },
+                    ]}
+                  />
+                  <Signupcard
+                    title="Timesheet Certifying Officer"
+                    cols={[
+                      { label: 'Signature', value: '', span: 3, valspan: 3 },
+                      {
+                        label: 'Name',
+                        value: form.values.ManagerName,
+                        span: 2,
+                        valspan: 4,
+                      },
+                      {
+                        label: 'Designation',
+                        value: form.values.ManagerTitle,
+                        span: 2,
+                        valspan: 4,
+                      },
+                      {
+                        label: 'Email',
+                        value: form.values.ManagerEmail,
+                        span: 2,
+                        valspan: 4,
+                      },
+                    ]}
+                  />
+                </Paper>
               </Stepper.Completed>
             </Stepper>
 
             <Group position="center" mt="xl">
-              <Button variant="default" onClick={prevStep}>
-                Back
-              </Button>
-              <Button variant="light" onClick={nextStep}>
-                Next step
-              </Button>
-              {active === 3 && <Button type="submit">Sign Up</Button>}
+              {active !== 0 && (
+                <Button variant="default" onClick={prevStep}>
+                  Back
+                </Button>
+              )}
+              {active !== 3 && (
+                <Button variant="light" onClick={nextStep}>
+                  Next step
+                </Button>
+              )}
+              {active === 3 && (
+                <>
+                  <Button type="submit">Sign Up</Button>
+                  {/* <Checkbox label="Keep me logged in" size="md" /> */}
+                </>
+              )}
             </Group>
-
-            {/* <StaffFormGrid
-            formValues={formValues}
-            handleInputChange={handleInputChange}
-            editing={editing}
-            form={form}
-          /> */}
 
             {/* <Button fullWidth mt="xl" size="md" onClick={handleSubmit}>
               Sign Up

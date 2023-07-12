@@ -86,6 +86,7 @@ model User {
   staff         Staff[]
   staffId       Int?
 }
+
 model VerificationRequest {
   id         String   @id @default(cuid())
   identifier String
@@ -96,7 +97,7 @@ model VerificationRequest {
 
   @@unique([identifier, token])
 }
- 
+
 model Post {
   id        Int      @id @default(autoincrement())
   title     String
@@ -120,7 +121,8 @@ model PublicHoliday {
 }
 
 model CalendarVacation {
-  VacationDate   DateTime @id
+  id             Int      @id @unique @default(autoincrement())
+  VacationDate   DateTime
   ChargeableDay  Decimal
   LeaveRequestId Int
 
@@ -181,13 +183,13 @@ model TimeSheetCalendar {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view viewCalendarTimeSheet {
-  CalendarDate      DateTime @id
-  CalendarDateStr   String?
-  WeekDayName       String?
-  Year              Int?
-  Month             Int?
-  VacationChargable Decimal?
-  PublicHolidayChargable   Decimal?
-  HolidaySummary    String?
-  LeaveRequestId    Int?
+  CalendarDate           DateTime @id
+  CalendarDateStr        String?
+  WeekDayName            String?
+  Year                   Int?
+  Month                  Int?
+  VacationChargable      Decimal?
+  PublicHolidayChargable Decimal?
+  HolidaySummary         String?
+  LeaveRequestId         Int?
 }

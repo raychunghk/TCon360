@@ -16,6 +16,9 @@ const nextConfig = {
       '/': { page: '/' }
     }
   },
+  env: {
+    TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
+  },
   experimental: {
     appDir: false,
   },

@@ -42,16 +42,21 @@ export class UsersController {
   //async signUp(@Request() req) {
   async signUp(@Body() user: Prisma.UserCreateInput) {
     //const user = req.body;
-    let rtn;
+
     try {
       console.log('signup here');
       console.log(user);
       //  const usercreate =   Prisma.UserCreateInput
-      rtn = this.authService.signUp(user);
+      const newUser = await this.authService.signUp(user);
+      const accessToken = await this.authService.login(
+        user.username,
+        user.password,
+      );
+      return { accessToken };
     } catch (error) {
       console.log(error);
+      throw error;
     }
-    return rtn;
     // Handle sign-up logic here
   }
 

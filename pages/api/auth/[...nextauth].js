@@ -4,8 +4,8 @@ import { parseCookies, setCookie } from 'nookies';
 import CredentialsProvider from 'next-auth/providers/credentials';
 // import Providers from "next-auth/providers"
 export const authOptions = {
-  basePath: '/absproxy/5000/api/auth',
-  //    baseUrl: 'https://code2.raygor.cc/absproxy/5000',
+  // basePath: '/absproxy/5000/api/auth',
+  baseUrl: 'https://code2.raygor.cc/absproxy/5000',
   providers: [
     {
       id: 'custom-provider',
@@ -70,23 +70,20 @@ export const authOptions = {
       },
     },
   ],
-  redirect: false,
-  jwt: {
-    secret: process.env.JWT_SECRET,
-    maxAge: parseInt(process.env.TOKEN_MAX_AGE),
-  },
-  session: {
-    maxAge: parseInt(process.env.TOKEN_MAX_AGE),
-  },
   callbacks: {
     // async jwt(token, user, account, profile, isNewUser) {
-    async jwt({ token, account }) {
+    async jwt(jwtobj) {
+      const { token, user, account, profile, isNewUser } = jwtobj;
       // get the token cookie using nookies
+      console.log('jwt is called');
+      console.log('jwtobj');
+      console.log(JSON.stringify(jwtobj));
       const cookies = parseCookies();
+      console.log('cookies');
+      console.log(cookies);
       const tokenCookie = cookies.token;
       console.log('token cookie');
       console.log(tokenCookie);
-      console.log('jwt is called');
 
       console.log('account');
       console.log(account);
@@ -94,10 +91,28 @@ export const authOptions = {
       if (tokenCookie) {
         token.token = tokenCookie;
       }
-      console.log('token');
+      console.log('token in jwt');
       console.log(token);
+      if (token.hasOwnProperty('exp')) {
+        const expdate = new Date(token.exp * 1000);
 
-      return token;
+        console.log('token expiry date');
+        console.log(expdate);
+        console.log('now compared with expdate');
+
+        console.log('now');
+        const now = new Date().getTime() / 1000;
+        console.log(now);
+        if (token.hasOwnProperty('exp') && now < token.exp) {
+          console.log('New date is earlier than token expiration');
+          return token;
+        }
+      }
+      if (account) {
+        return token;
+      }
+
+      // Return previous token if the access token has not expired yet
     },
 
     async session({ session, token, user }) {
@@ -107,24 +122,21 @@ export const authOptions = {
       console.log('session ?');
       console.log(session);
 
-      console.log('nx session token?');
+      console.log('token?');
       console.log(token);
-      console.log('nx now?');
-      console.log(new Date());
-
-      const iat = new Date(token['iat'] * 1000);
-
-      console.log('nx Token iat  on:', iat);
-      const expDate = new Date(token['exp'] * 1000);
-
-      console.log('nx Token expires on:', expDate);
-      console.log('user?');
+      console.log('user in session callback?');
       console.log({ user });
-      // Check if token has expired
-      if (new Date().getTime() > expDate.getTime()) {
-        console.log('Token has expired. Removing from session.');
-        delete session.token;
-      } else {
+      console.log('now');
+      const now = new Date().getTime() / 1000;
+      console.log(now);
+      if (token.hasOwnProperty('exp')) {
+        const expdate = new Date(token.exp * 1000);
+
+        console.log('token expiry date');
+        console.log(expdate);
+      }
+      if (token.hasOwnProperty('exp') && now < token.exp) {
+        console.log('New date is earlier than token expiration');
         session.user = {
           name: token.name,
           email: token.email,
@@ -134,16 +146,19 @@ export const authOptions = {
         session.token = token;
 
         console.log(session.token);
+        return session;
+      } else {
+        console.log('token is expired');
       }
-
-      return session;
     },
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    maxAge: parseInt(process.env.TOKEN_MAX_AGE),
   },
   session: {
     jwt: true,
-  },
-  jw: {
-    secret: process.env.JWT_SECRET,
+    maxAge: parseInt(process.env.TOKEN_MAX_AGE),
   },
   // basePath: '/absproxy/5000',
 };

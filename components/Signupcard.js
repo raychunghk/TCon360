@@ -6,7 +6,6 @@ const SignupCard = ({ title, cols }) => {
       shadow="sm"
       padding="lg"
       radius="md"
-  
       mt={20}
       withBorder
       sx={(theme) => ({
@@ -34,7 +33,16 @@ const SignupCard = ({ title, cols }) => {
       </Card.Section>
 
       <Grid style={{ fontSize: '0.9rem' }} mt={10}>
-        {cols}
+        {cols.map(({ label, value, span, valspan }) => (
+          <>
+            <Grid.Col span={span} key={label}>
+              <strong>{label}</strong>
+            </Grid.Col>
+            <Grid.Col span={valspan} key={label}>
+              {value}
+            </Grid.Col>
+          </>
+        ))}
       </Grid>
     </Card>
   );
