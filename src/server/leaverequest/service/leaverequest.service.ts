@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 
-import { LeaveRequest, Prisma } from '@prisma/client';
+import { LeaveRequest, Prisma, PublicHoliday } from '@prisma/client';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import Docxtemplater from 'docxtemplater';
@@ -15,9 +15,9 @@ import { PrismaService } from '../../prisma/prisma.service';
 //js/NxTime/src/server/leaverequest/service/leaverequest.service.ts
 
 @Injectable()
-export default class LeaveRequestService {
+export class LeaveRequestService {
   constructor(
-    private prisma: PrismaService,
+    @Inject(PrismaService) private prisma: PrismaService,
     private staffservice: StaffService,
     private staffFileservice: StaffFilesService,
   ) {}
@@ -248,6 +248,10 @@ export default class LeaveRequestService {
   }
   async findAll(): Promise<LeaveRequest[]> {
     return this.prisma.leaveRequest.findMany();
+  }
+
+  async findAllPublicHoliday(): Promise<PublicHoliday[]> {
+    return this.prisma.publicHoliday.findMany();
   }
 
   async findOne(id: number): Promise<LeaveRequest> {

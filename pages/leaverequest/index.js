@@ -13,6 +13,7 @@ import {
   Select,
   Text,
   Flex,
+  Indicator
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
@@ -24,8 +25,10 @@ import { basepath } from '/global';
 import Head from 'next/head';
 import { useForm as uForm } from 'react-hook-form';
 import { StaffService } from 'src/server/staff/service/staff.service';
+import { LeaveRequestService } from 'src/server/leaverequest/service/leaverequest.service';
 import { responsePathAsArray } from 'graphql';
-export default function LeaveRequestForm({ staff }) {
+import { PrismaClient } from '@prisma/client';
+export default function LeaveRequestForm({ staff, publicholidays }) {
   const theme = useMantineTheme();
   const [submitting, setSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -48,11 +51,48 @@ export default function LeaveRequestForm({ staff }) {
     error: null,
     helper: null,
   });
-
+  console.log('publicholidays');
+  console.log(publicholidays);
   const handleModalClose = () => {
     setModalOpen(false);
   };
-  // const { register, handleSubmit, reset } = uForm();
+  const dayStyle = {
+    backgroundColor: 'red',
+    color: 'white',
+    borderRadius: '15%',
+    width: '24px',
+    height: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  function getBusinessDays(startDate, endDate) {
+    // Copy start and end dates to avoid modifying the originals
+    startDate = new Date(startDate.getTime());
+    endDate = new Date(endDate.getTime());
+
+    // Swap start and end dates if they are reversed
+    if (startDate > endDate) {
+      var temp = startDate;
+      startDate = endDate;
+      endDate = temp;
+    }
+
+    var businessDays = 0;
+    var dayMilliseconds = 86400000; // Number of milliseconds in a day
+
+    // Iterate over each day between the two dates
+    while (startDate <= endDate) {
+      var dayOfWeek = startDate.getDay();
+      if (dayOfWeek != 0 && dayOfWeek != 6) {
+        // Exclude weekends
+        businessDays++;
+      }
+      startDate.setTime(startDate.getTime() + dayMilliseconds); // Move to next day
+    }
+
+    return businessDays;
+  }
   useEffect(() => {
     const { leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd } =
       leaveRequest;
@@ -61,6 +101,12 @@ export default function LeaveRequestForm({ staff }) {
     let days = 0;
     let returnDate = null;
     let _ampmend = AMPMEnd;
+    if(!leavePeriodStart){
+      leaveRequest.leavePeriodEnd = null;
+      leaveRequest.leaveDays = 0;
+      leaveRequest.dateOfReturn = null;
+      
+    }
     if (endDate) {
       if (!AMPMEnd || AMPMEnd === 'NA') {
         // alert('Please choose "AMPM", "AM", or "PM" for the end time');
@@ -74,20 +120,24 @@ export default function LeaveRequestForm({ staff }) {
         return;
       }
       const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
-      const endIsAM = AMPMEnd === 'AM';
       const startIsPM = AMPMStart === 'PM';
-      const endIsPM = AMPMEnd === 'AMPM' || AMPMEnd === 'PM';
+      const endIsAM = AMPMEnd === 'AM';
+      const endIsPM = AMPMEnd === 'AMPM';
       if (startIsAM && endIsAM) {
-        days = (endDate - startDate) / (1000 * 60 * 60 * 24) + 0.5;
+        //days = (endDate - startDate) / (1000 * 60 * 60 * 24) + 0.5;
+        days = getBusinessDays(startDate, endDate) + 0.5;
         returnDate = endDate;
       } else if (startIsPM && endIsPM) {
-        days = (endDate - startDate) / (1000 * 60 * 60 * 24) + 0.5;
+        //days = (endDate - startDate) / (1000 * 60 * 60 * 24) + 0.5;
+        days = getBusinessDays(startDate, endDate) - 0.5;
         returnDate = getNextWorkingDate(endDate);
       } else if (startIsPM && endIsAM) {
-        days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        //days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        days = getBusinessDays(startDate, endDate);
         returnDate = endDate;
       } else if (startIsAM && endIsPM) {
-        days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        //days = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        days = getBusinessDays(startDate, endDate);
         returnDate = endDate;
       }
     } else {
@@ -170,10 +220,6 @@ export default function LeaveRequestForm({ staff }) {
       value: 'AM',
       label: 'AM',
     },
-    {
-      value: 'PM',
-      label: 'PM',
-    },
   ];
   function adjustTimeZoneVal(dateval) {
     if (dateval)
@@ -240,12 +286,29 @@ export default function LeaveRequestForm({ staff }) {
   const handleDateInputSelect = (date, stateobj) => {
     console.log('handle date input select');
     console.log(date);
-    if (!isWeekend(date)) {
+    if (!excludeHoliday(date)) {
       //           setSelected((current) => [...current, date]);
       setLeaveRequest(stateobj);
     }
   };
+  const excludeHoliday = (date) => {
+    const isWeekendDay = isWeekend(date);
+    const formattedDate = format(date, 'M/d/yyyy');
+console.log('formattereddate')
+console.log(formattedDate)
+    const isHoliday = publicholidays.some(
+      (holiday) => holiday.StartDate === formattedDate
+    );
+    const rtn =  isWeekendDay || isHoliday;
+    if(rtn){
+      console.log('this is holiday')
+      console.log(date)
+    }
+ return rtn;
 
+    //console.log(date)
+    //return isWeekend(date) 
+  };
   return (
     <Layout>
       <Head>
@@ -301,6 +364,18 @@ export default function LeaveRequestForm({ staff }) {
                     leavePeriodStart: _date,
                   })
                 }
+                excludeDate={excludeHoliday}                  
+                renderDay={ (date) => {
+                  const isDisabled =    !excludeHoliday (date);
+                  const day = date.getDate();
+            
+                  return (
+                    
+                    <div style={ isDisabled?null:dayStyle}  title={isDisabled?'':'Public Holiday'}>{day}</div>
+                  
+                  );
+                }
+               }
               />{' '}
               {errors.leavePeriodStart && (
                 <span className="error">Leave period start is required</span>
@@ -332,12 +407,26 @@ export default function LeaveRequestForm({ staff }) {
                       24 * 60 * 60 * 1000,
                   )
                 }
+            
                 onChange={(_date) =>
                   handleDateInputSelect(_date, {
                     ...leaveRequest,
                     leavePeriodEnd: _date,
                   })
                 }
+                excludeDate={excludeHoliday}                  
+                renderDay={ (date) => {
+                  const isDisabled =    !excludeHoliday (date);
+                  const day = date.getDate();
+            
+                  return (
+                    
+                    <div style={ isDisabled?null:dayStyle}  title={isDisabled?'':'Public Holiday'}>{day}</div>
+                  
+                  );
+                }
+               }
+                disabled={!leaveRequest.leavePeriodStart}
               />
             </Grid.Col>
             <Grid.Col span={6}>
@@ -353,7 +442,9 @@ export default function LeaveRequestForm({ staff }) {
                     error: null,
                     helper: null,
                   })
+                  
                 }
+                disabled={!leaveRequest.leavePeriodStart}
                 error={leaveRequest.error?.AMPMEnd}
                 description={leaveRequest.helper?.AMPMEnd}
               />
@@ -383,6 +474,7 @@ export default function LeaveRequestForm({ staff }) {
                   })
                 }
                 value={leaveRequest.staffSignDate}
+                excludeDate={excludeHoliday}
                 defaultDate={new Date()}
                 defaultValue={new Date()}
               />
@@ -394,6 +486,7 @@ export default function LeaveRequestForm({ staff }) {
                 label="Date of Return"
                 valueFormat="DD-MM-YYYY"
                 value={leaveRequest.dateOfReturn}
+                excludeDate={excludeHoliday}
               />
             </Grid.Col>
             <Grid.Col span={6} display={Flex}>
@@ -448,11 +541,21 @@ export default function LeaveRequestForm({ staff }) {
 }
 export const getServerSideProps = async ({ params }) => {
   // const { id } = params;
+  const prisma = new PrismaClient();
   const staffService = new StaffService();
+  const leaveReqSvc = new LeaveRequestService(prisma);
+  const _publicholidays = await leaveReqSvc.findAllPublicHoliday();
   const staff = await staffService.getStaffById(1);
+  const publicholidays = _publicholidays.map((holiday) => ({
+    Summary: holiday.Summary,
+    StartDate: holiday.StartDate.toLocaleDateString(),
+  }));
+  console.log(publicholidays);
+  //console.log(publicholidays);
   return {
     props: {
       staff,
+      publicholidays,
     },
   };
 };

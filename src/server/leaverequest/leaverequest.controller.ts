@@ -1,8 +1,15 @@
 import {
-  Logger, Body, Controller, Delete, Get, Param, Post, Put, Res,
+  Logger,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Res,
   StreamableFile,
   UseInterceptors,
-
   NotFoundException,
   InternalServerErrorException,
   Header,
@@ -10,24 +17,30 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { Prisma, LeaveRequest } from '@prisma/client';
-import LeaveRequestService from './service/leaverequest.service';
+import { LeaveRequestService } from './service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
 import { createReadStream } from 'fs';
 
 @Controller('/api/leaverequest')
 export class LeaveRequestController {
-  constructor(private leaveRequestService: LeaveRequestService, private readonly staffFilesService: StaffFilesService) { }
+  constructor(
+    private leaveRequestService: LeaveRequestService,
+    private readonly staffFilesService: StaffFilesService,
+  ) {}
   @Post(':staffId')
   async createLeaveRequest(
     @Param('staffId') staffId: string,
     @Body() leaveRequestData: Prisma.LeaveRequestCreateInput,
   ) {
-    Logger.verbose("hello")
-    Logger.log("staffid", staffId);
-    Logger.log("leaveRequestData", leaveRequestData);
+    Logger.verbose('hello');
+    Logger.log('staffid', staffId);
+    Logger.log('leaveRequestData', leaveRequestData);
     //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
-    const leaveRequest = await this.leaveRequestService.createword(parseInt(staffId), leaveRequestData);
-    Logger.log("create result", leaveRequest)
+    const leaveRequest = await this.leaveRequestService.createword(
+      parseInt(staffId),
+      leaveRequestData,
+    );
+    Logger.log('create result', leaveRequest);
 
     return leaveRequest;
     // return {
@@ -55,8 +68,6 @@ export class LeaveRequestController {
   async findOne(@Param('id') id: string): Promise<LeaveRequest> {
     return this.leaveRequestService.findOne(+id);
   }
-
- 
 
   @Put(':id')
   async update(
