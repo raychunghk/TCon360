@@ -27,3 +27,9 @@ img {
   max-width: 100%;
   display: block;
 }
+
+.clsweekend{
+  color:black;
+  font-weight: 900;
+  background-color: red;
+}

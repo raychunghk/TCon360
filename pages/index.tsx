@@ -8,7 +8,9 @@ import {
 } from '@mantine/core';
 import Head from 'next/head';
 
-export default function HomePage() {
+export default function HomePage(props) {
+  console.log('homepage basepath?')
+
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -16,9 +18,9 @@ export default function HomePage() {
       <Head>
         <title>Home Page</title>
       </Head>
-      <Welcome />
-      <ColorSchemeToggle />
-      <Text>Resize app to see responsive navbar in action</Text>
+      <Welcome {...props}/>
+      {/* <ColorSchemeToggle /> */}
+      
     </Layout>
   );
 }

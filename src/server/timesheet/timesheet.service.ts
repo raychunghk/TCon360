@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { spawn } from 'child_process';
 import { PrismaService } from '../prisma/prisma.service';
-import { Staff, Prisma } from '@prisma/client';
+import { Staff, Prisma, viewCalendarTimeSheet } from '@prisma/client';
 import { format } from 'date-fns'
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -17,6 +17,7 @@ import { Decimal } from 'decimal.js';
 
 @Injectable()
 export class TimesheetService {
+
     private projectRoot = process.cwd();
     private readonly xlsfilename = 'T26TimeSheet.xlsx';
     constructor(private prisma: PrismaService) { } getContent() {
@@ -29,6 +30,35 @@ export class TimesheetService {
     getFilePath(filename: string) {
         //return `${__dirname}/../../../../timesheet/${filename}`;
         return path.join(this.projectRoot, 'timesheet', filename);
+    }
+    async getCalendarEvents(year: number, month: number): Promise<any[]> {
+        const results = await this.prisma.viewCalendarTimeSheet.findMany({
+            where: {
+                AND: [
+                    { Year: year },
+                    { Month: month },
+                    {
+                        OR: [
+                            { HolidaySummary: { not: null } },
+                            { LeaveRequestId: { not: null } },
+                        ],
+                    },
+                ],
+            },
+            select: {
+                CalendarDate: true,
+                HolidaySummary: true,
+                LeaveRequestId: true,
+            },
+        });
+
+        return results.map((result: viewCalendarTimeSheet) => {
+            const title = result.HolidaySummary ? result.HolidaySummary : result.LeaveRequestId ? 'Vacation' : null;
+            const date = result.CalendarDate.toISOString().substring(0, 10);
+            const IsWeekend = title.startsWith('S')
+            const _groupid  = result.LeaveRequestId? result.LeaveRequestId:'';
+            return { title, date, display: IsWeekend ? 'background' : '', classNames:[IsWeekend?'clsweekend':''] ,groupId:_groupid};
+        });
     }
     async writeStaffInfoJsonToExcel(jsonObj: any, fieldmap: Record<string, string>, destPath: string) {
         const workbook = new ExcelJS.Workbook();
@@ -87,7 +117,7 @@ export class TimesheetService {
             console.log('File copied successfully!');
 
             // Load the workbook
-           
+
             console.log(stf);
             const fieldmap = {
                 StaffName: 'D5',
@@ -164,7 +194,7 @@ export class TimesheetService {
             }
             const totalcell = worksheet.getCell("C51");
             totalcell.value = total;
-           
+
             worksheet.name = `Timesheet_${timesheetFileDate}`;
             await workbook.xlsx.writeFile(destPath);
             console.log('calendar written to cell successfully!');

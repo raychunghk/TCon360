@@ -13,7 +13,7 @@ import {
   Select,
   Text,
   Flex,
-  Indicator
+  Indicator,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
@@ -57,11 +57,21 @@ export default function LeaveRequestForm({ staff, publicholidays }) {
     setModalOpen(false);
   };
   const dayStyle = {
-    backgroundColor: 'red',
+    backgroundColor: '#de3184',
     color: 'white',
-    borderRadius: '15%',
-    width: '24px',
-    height: '24px',
+    borderRadius: '35%',
+    width: '26px',
+    height: '26px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  const weekendstyle = {
+    backgroundColor: '#f5bcb8',
+    color: 'black',
+    borderRadius: '38%',
+    width: '26px',
+    height: '26px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -101,11 +111,11 @@ export default function LeaveRequestForm({ staff, publicholidays }) {
     let days = 0;
     let returnDate = null;
     let _ampmend = AMPMEnd;
-    if(!leavePeriodStart){
+    let _ampmstart = AMPMStart;
+    if (!leavePeriodStart) {
       leaveRequest.leavePeriodEnd = null;
       leaveRequest.leaveDays = 0;
       leaveRequest.dateOfReturn = null;
-      
     }
     if (endDate) {
       if (!AMPMEnd || AMPMEnd === 'NA') {
@@ -114,10 +124,8 @@ export default function LeaveRequestForm({ staff, publicholidays }) {
         // return;
       }
       if (AMPMStart === 'AM') {
-        alert(
-          'If leave period end is set, AMPM start can only be "AMPM" or "PM"',
-        );
-        return;
+        _ampmstart = 'AMPM';
+        //AMPMStart = _ampmstart;
       }
       const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
       const startIsPM = AMPMStart === 'PM';
@@ -133,12 +141,19 @@ export default function LeaveRequestForm({ staff, publicholidays }) {
         returnDate = getNextWorkingDate(endDate);
       } else if (startIsPM && endIsAM) {
         //days = (endDate - startDate) / (1000 * 60 * 60 * 24);
-        days = getBusinessDays(startDate, endDate);
+        days = getBusinessDays(startDate, endDate) - 1;
         returnDate = endDate;
       } else if (startIsAM && endIsPM) {
         //days = (endDate - startDate) / (1000 * 60 * 60 * 24);
         days = getBusinessDays(startDate, endDate);
-        returnDate = endDate;
+        returnDate =getNextWorkingDate(endDate);
+
+        // returnDate = endDate;
+        // create a new date object with the same time as endDate
+        //returnDate.setDate(endDate.getDate() + 1);
+        //returnDate = format(returnDate, 'M/d/yyyy')
+        //   console.log('returnDate')
+        console.log(returnDate);
       }
     } else {
       _ampmend = 'NA';
@@ -156,6 +171,7 @@ export default function LeaveRequestForm({ staff, publicholidays }) {
     setLeaveRequest((prevRequest) => ({
       ...prevRequest,
       AMPMEnd: _ampmend,
+      AMPMStart: _ampmstart,
       leaveDays: days,
       dateOfReturn: returnDate,
     }));
@@ -291,23 +307,46 @@ export default function LeaveRequestForm({ staff, publicholidays }) {
       setLeaveRequest(stateobj);
     }
   };
-  const excludeHoliday = (date) => {
-    const isWeekendDay = isWeekend(date);
-    const formattedDate = format(date, 'M/d/yyyy');
-console.log('formattereddate')
-console.log(formattedDate)
-    const isHoliday = publicholidays.some(
-      (holiday) => holiday.StartDate === formattedDate
+
+  const getSummaryByDate = (date) => {
+    const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
+    const event = publicholidays.find((e) => e.StartDate === formattedDate);
+    console.log('event');
+    console.log(event);
+    return event ? event.Summary : 'Week End';
+  };
+  const myRenderDay = (date) => {
+    const isDisabled = !excludeHoliday(date);
+    const day = date.getDate();
+    const tootip = isDisabled ? '' : getSummaryByDate(date);
+    const style = isDisabled ? null : isWeekend(date) ? weekendstyle : dayStyle;
+    return (
+      <div style={style} title={isDisabled ? '' : tootip}>
+        {day}
+      </div>
     );
-    const rtn =  isWeekendDay || isHoliday;
-    if(rtn){
-      console.log('this is holiday')
-      console.log(date)
+  };
+  const excludeHoliday = (date) => {
+    if (date) {
+      const isWeekendDay = isWeekend(date);
+      const formattedDate = format(date, 'M/d/yyyy');
+      console.log('formattereddate');
+      console.log(formattedDate);
+      const isHoliday = publicholidays.some(
+        (holiday) => holiday.StartDate === formattedDate,
+      );
+      const rtn = isWeekendDay || isHoliday;
+      if (rtn) {
+        console.log('this is holiday');
+        console.log(date);
+      }
+      return rtn;
+    } else {
+      return null;
     }
- return rtn;
 
     //console.log(date)
-    //return isWeekend(date) 
+    //return isWeekend(date)
   };
   return (
     <Layout>
@@ -356,7 +395,7 @@ console.log(formattedDate)
                 clearable
                 label="Leave period start"
                 required
-                valueFormat="DD-MM-YYYY"
+                name="leavePeriodStart"
                 value={leaveRequest.leavePeriodStart}
                 onChange={(_date) =>
                   handleLeaveStartSelect(_date, {
@@ -364,18 +403,10 @@ console.log(formattedDate)
                     leavePeriodStart: _date,
                   })
                 }
-                excludeDate={excludeHoliday}                  
-                renderDay={ (date) => {
-                  const isDisabled =    !excludeHoliday (date);
-                  const day = date.getDate();
-            
-                  return (
-                    
-                    <div style={ isDisabled?null:dayStyle}  title={isDisabled?'':'Public Holiday'}>{day}</div>
-                  
-                  );
-                }
-               }
+                valueFormat="DD-MM-YYYY"
+                firstDayOfWeek={0}
+                excludeDate={excludeHoliday}
+                renderDay={myRenderDay}
               />{' '}
               {errors.leavePeriodStart && (
                 <span className="error">Leave period start is required</span>
@@ -397,9 +428,7 @@ console.log(formattedDate)
             </Grid.Col>
             <Grid.Col span={6}>
               <DatePickerInput
-                clearable
                 label="Leave period end"
-                valueFormat="DD-MM-YYYY"
                 value={leaveRequest.leavePeriodEnd}
                 minDate={
                   new Date(
@@ -407,26 +436,18 @@ console.log(formattedDate)
                       24 * 60 * 60 * 1000,
                   )
                 }
-            
                 onChange={(_date) =>
                   handleDateInputSelect(_date, {
                     ...leaveRequest,
                     leavePeriodEnd: _date,
                   })
                 }
-                excludeDate={excludeHoliday}                  
-                renderDay={ (date) => {
-                  const isDisabled =    !excludeHoliday (date);
-                  const day = date.getDate();
-            
-                  return (
-                    
-                    <div style={ isDisabled?null:dayStyle}  title={isDisabled?'':'Public Holiday'}>{day}</div>
-                  
-                  );
-                }
-               }
+                clearable
                 disabled={!leaveRequest.leavePeriodStart}
+                valueFormat="DD-MM-YYYY"
+                firstDayOfWeek={0}
+                excludeDate={excludeHoliday}
+                renderDay={myRenderDay}
               />
             </Grid.Col>
             <Grid.Col span={6}>
@@ -442,7 +463,6 @@ console.log(formattedDate)
                     error: null,
                     helper: null,
                   })
-                  
                 }
                 disabled={!leaveRequest.leavePeriodStart}
                 error={leaveRequest.error?.AMPMEnd}
@@ -464,7 +484,6 @@ console.log(formattedDate)
                 clearable
                 placeholder="Staff sign date"
                 name="staffSignDate"
-                valueFormat="DD-MM-YYYY"
                 onChange={(_date) =>
                   handleDateInputSelect(_date, {
                     ...leaveRequest,
@@ -474,9 +493,12 @@ console.log(formattedDate)
                   })
                 }
                 value={leaveRequest.staffSignDate}
-                excludeDate={excludeHoliday}
                 defaultDate={new Date()}
                 defaultValue={new Date()}
+                valueFormat="DD-MM-YYYY"
+                firstDayOfWeek={0}
+                excludeDate={excludeHoliday}
+                renderDay={myRenderDay}
               />
             </Grid.Col>
             <Grid.Col span={6}>
@@ -484,9 +506,11 @@ console.log(formattedDate)
                 clearable
                 name="dateOfReturn"
                 label="Date of Return"
-                valueFormat="DD-MM-YYYY"
                 value={leaveRequest.dateOfReturn}
+                valueFormat="DD-MM-YYYY"
+                firstDayOfWeek={0}
                 excludeDate={excludeHoliday}
+                renderDay={myRenderDay}
               />
             </Grid.Col>
             <Grid.Col span={6} display={Flex}>

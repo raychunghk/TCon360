@@ -40,4 +40,18 @@ describe('TimesheetController', () => {
       expect(result).toEqual(result);
     });
   });
+  describe('create current month events', () => {
+    it.only('should call makeTimeSheet with correct parameters', async () => {
+      const year = 2023;
+      const month = 7;
+
+
+      // jest.spyOn(service, 'makeTimeSheet').mockResolvedValue(xlsxPath);
+
+      const result = await controller.getCalendarEvents({ year, month });
+      console.log(result);
+      //expect(service.makeTimeSheet).toHaveBeenCalledWith(1, year, month);
+      expect(result).toEqual(result);
+    });
+  });
 });

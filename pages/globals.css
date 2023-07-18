@@ -7,8 +7,11 @@ body {
   line-height: 1.6;
   font-size: 18px;
   height:100%;
+ 
 }
-
+.clsweekend{
+  background-color: red;
+}
 * {
   box-sizing: border-box;
 }

@@ -12,7 +12,7 @@ describe('TestController', () => {
     controller = module.get<TestController>(TestController);
   });
 
-  it('should be defined', () => {
+  it.only('should be defined', () => {
     expect(controller).toBeDefined();
   });
 });

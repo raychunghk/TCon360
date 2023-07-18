@@ -22,6 +22,8 @@ import session from 'express-session';
 interface CustomSessionProviderProps extends SessionProviderProps {
   token: string;
 }
+import { GlobalStyles } from '@mantine/core';
+import   '../styles/styles.css'
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
 
@@ -67,6 +69,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
         <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+          rel="stylesheet"
+        />
       </Head>
 
       <ColorSchemeProvider

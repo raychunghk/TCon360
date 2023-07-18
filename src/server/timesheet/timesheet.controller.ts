@@ -13,16 +13,18 @@ export class TimesheetController {
     return res.send(json);
   }
 
-
-
-
   @Post('create')
-  async postFunction(@Body() data: {year:number, month: number }) {
-    console.log("server accepted param data:"+data.month+",year:"+data.year);
-    const _fileid  = await this.tsService.makeTimeSheet(1, data.year,data.month);
-    
+  async postFunction(@Body() data: { year: number, month: number }) {
+    console.log("server accepted param data:" + data.month + ",year:" + data.year);
+    const _fileid = await this.tsService.makeTimeSheet(1, data.year, data.month);
+
     return {
       fileid: _fileid
     };
+  }
+
+  @Get('calendar')
+  async getCalendarEvents(@Body() data: { year: number, month: number }): Promise<any[]> {
+    return this.tsService.getCalendarEvents(data.year, data.month);
   }
 }

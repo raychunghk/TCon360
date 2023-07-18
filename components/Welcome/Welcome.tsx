@@ -1,25 +1,71 @@
-import { Title, Text, Anchor } from '@mantine/core';
+import { Title, Text, Anchor, Group } from '@mantine/core';
 import useStyles from './Welcome.styles';
 
-export function Welcome() {
-  const { classes } = useStyles();
+import { Calendar } from '@mantine/dates';
 
+
+import { useEffect, useState } from 'react';
+
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import axios from 'axios';
+export function Welcome(props) {
+  console.log('welcome prosp?')
+  const basepath = process.env.basepath;//props.basepath;
+  console.log(props)
+  console.log('basepath?')
+  console.log(basepath);
+  const { classes } = useStyles();
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const apiurl = `${basepath}/api/timesheet/calendar`;
+  console.log('calendarurl')
+  console.log(apiurl)
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const response = await axios.get(apiurl, {
+        params: { year: 2023, month: 7 }, // adjust parameters as needed
+      });
+      if ([200, 201].includes(response.status)) {
+        console.log('gettting calendar')
+        console.log(response.data)
+        const events = await response.data;
+        setCalendarEvents(events);
+        // reset();
+      } else {
+        console.error('Failed to create timesheet record:', response);
+      }
+    }
+ 
+    fetchEvents();
+  }, []);
+  const [date, setDate] = useState(new Date());
+
+  const handleDateChange = (newDate) => {
+    setDate(newDate);
+  };
+
+  const fnEventclick= (e)=>{
+console.log(e.event)
+console.log(e.event.title)
+  }
   return (
     <>
-      <Title className={classes.title} align="center" mt={100}>
+      <Title className={classes.title} align="center" mt={20}>
         Welcome to{' '}
         <Text inherit variant="gradient" component="span">
-          Mantine
+          NxTime
         </Text>
       </Title>
-      <Text color="dimmed" align="center" size="lg" sx={{ maxWidth: 580 }} mx="auto" mt="xl">
-        This starter Next.js project includes a minimal setup for server side rendering, if you want
-        to learn more on Mantine + Next.js integration follow{' '}
-        <Anchor href="https://mantine.dev/guides/next/" size="lg">
-          this guide
-        </Anchor>
-        . To get started edit index.tsx file.
-      </Text>
+
+      <FullCalendar
+        plugins={[dayGridPlugin]}
+        height={600}
+        eventClick = {fnEventclick}
+        aspectRatio={1.5}
+        initialView="dayGridMonth"
+        events={calendarEvents}
+      />
+
     </>
   );
 }
