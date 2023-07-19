@@ -90,7 +90,7 @@ export default function LoginPage(props) {
           mt="md"
           mb={50}
         >
-          Welcome to TS Generator!
+          Welcome to NxTime!
         </Title>
         {loginStatus && (
           <Text color="red" fw={700} fz="md" align="center">
