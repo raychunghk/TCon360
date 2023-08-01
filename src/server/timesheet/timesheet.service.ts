@@ -53,11 +53,11 @@ export class TimesheetService {
         });
 
         return results.map((result: viewCalendarTimeSheet) => {
-            const title = result.HolidaySummary ? result.HolidaySummary : result.LeaveRequestId ? 'Vacation' : null;
+            const title = result.HolidaySummary ? result.HolidaySummary : result.LeaveRequestId ? `Vacation ${result.LeaveRequestId}` : null;
             const date = result.CalendarDate.toISOString().substring(0, 10);
             const IsWeekend = title.startsWith('S')
             const _groupid  = result.LeaveRequestId? result.LeaveRequestId:'';
-            return { title, date, display: IsWeekend ? 'background' : '', classNames:[IsWeekend?'clsweekend':''] ,groupId:_groupid, extendedProps:{leaverequestid:result.LeaveRequestId}};
+            return { id:result.LeaveRequestId,title, date, display: IsWeekend ? 'background' : '', classNames:[IsWeekend?'clsweekend':''] ,groupId:_groupid, extendedProps:{result}};
         });
     }
     async writeStaffInfoJsonToExcel(jsonObj: any, fieldmap: Record<string, string>, destPath: string) {

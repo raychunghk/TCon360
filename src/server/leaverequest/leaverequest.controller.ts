@@ -14,30 +14,39 @@ import {
   InternalServerErrorException,
   Header,
   HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { Prisma, LeaveRequest } from '@prisma/client';
 import { LeaveRequestService } from './service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
 import { createReadStream } from 'fs';
+import { AuthGuard } from '@nestjs/passport';
+import { UsersService } from '../auth/users.service';
 
 @Controller('/api/leaverequest')
 export class LeaveRequestController {
   constructor(
     private leaveRequestService: LeaveRequestService,
     private readonly staffFilesService: StaffFilesService,
-  ) {}
-  @Post(':staffId')
+    private readonly usrSvc: UsersService,
+  ) { }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
   async createLeaveRequest(
-    @Param('staffId') staffId: string,
+    @Req() req,
     @Body() leaveRequestData: Prisma.LeaveRequestCreateInput,
   ) {
-    Logger.verbose('hello');
+    const userId = req.user.id;
+    const user = await this.usrSvc.getUserWithStaff(userId);
+    const staffId = user.staffId;
     Logger.log('staffid', staffId);
     Logger.log('leaveRequestData', leaveRequestData);
     //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
     const leaveRequest = await this.leaveRequestService.createword(
-      parseInt(staffId),
+      staffId,
       leaveRequestData,
     );
     Logger.log('create result', leaveRequest);
@@ -55,7 +64,7 @@ export class LeaveRequestController {
     //   fileID: leaveRequest.fileId
     // }
   }
-  @Post()
+  @Post('/staff/:staffId')
   async createLeaveRequest2(@Body() leaveRequestData) {
     return this.leaveRequestService.createLeaveRequestforgql(leaveRequestData);
   }
@@ -79,6 +88,7 @@ export class LeaveRequestController {
 
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
-    return this.leaveRequestService.remove(+id);
+    const deleteResult = await this.leaveRequestService.remove(+id);
+    return deleteResult;
   }
 }

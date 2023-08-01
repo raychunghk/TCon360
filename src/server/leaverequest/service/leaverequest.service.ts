@@ -268,6 +268,11 @@ export class LeaveRequestService {
   }
 
   async remove(id: number): Promise<void> {
-    await this.prisma.leaveRequest.delete({ where: { id } });
+    try {
+      await this.prisma.leaveRequest.delete({ where: { id } });  
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
 }

@@ -54,7 +54,7 @@ describe('LeaveRequestService', () => {
   describe('createword', () => {
     it('should create a new Leave Request for a staff member', async () => {
       const staffId = 1;
-      let leaveRequest2: Prisma.LeaveRequestCreateInput = {
+      const leaveRequest2: Prisma.LeaveRequestCreateInput = {
         leavePeriodStart: new Date('2023-06-05'),
         leavePeriodEnd: null,
         leaveDays: 1,
@@ -65,7 +65,7 @@ describe('LeaveRequestService', () => {
         staff: null,
         staffFile: null,
       };
-      let leaveRequest: Prisma.LeaveRequestCreateInput = {
+      const leaveRequest: Prisma.LeaveRequestCreateInput = {
         leavePeriodStart: '2023-06-08T00:00:00.000Z',
         leavePeriodEnd: null,
         AMPMEnd: 'NA',
@@ -101,10 +101,11 @@ describe('LeaveRequestService', () => {
         new Date('2023-07-04'),
         new Date('2023-07-05'),
       ];
+
       Logger.verbose(expectedResult);
       console.log('expectedResult');
       console.log(expectedResult);
-      const result =  leaveRequestService.getDateArray(startDate, endDate);
+      const result = leaveRequestService.getDateArray(startDate, endDate);
 
       console.log('actual result');
       console.log(result);
@@ -112,7 +113,7 @@ describe('LeaveRequestService', () => {
     });
   });
   describe('getholiday', () => {
-    it.only('should return an array of dates between start and end dates',async () => {
+    it.only('should return an array of dates between start and end dates', async () => {
       const result = await leaveRequestService.findAllPublicHoliday();
       console.log(result);
       console.log('actual result');

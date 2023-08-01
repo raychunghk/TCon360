@@ -52,6 +52,7 @@
     "@emotion/server": "^11.11.0",
     "@fastify/secure-session": "^6.1.0",
     "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/interaction": "^6.1.8",
     "@fullcalendar/react": "^6.1.8",
     "@mantine/carousel": "^6.0.13",
     "@mantine/core": "^6.0.16",

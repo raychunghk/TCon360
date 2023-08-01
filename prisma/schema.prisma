@@ -126,7 +126,7 @@ model CalendarVacation {
   ChargeableDay  Decimal
   LeaveRequestId Int
 
-  leaveRequest LeaveRequest @relation(fields: [LeaveRequestId], references: [id])
+  leaveRequest LeaveRequest @relation(fields: [LeaveRequestId], references: [id], onDelete: Cascade)
 }
 
 model TimeSheet {
@@ -152,7 +152,7 @@ model LeaveRequest {
   staffSignDate    DateTime
   fileId           Int
   staffId          Int
-  calendarVacation CalendarVacation[]
+  calendarVacation CalendarVacation[] 
   staff            Staff              @relation(fields: [staffId], references: [id])
   staffFile        staffFiles         @relation(fields: [fileId], references: [id], onDelete: Cascade)
 }

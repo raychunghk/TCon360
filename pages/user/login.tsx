@@ -16,6 +16,7 @@ import { signIn } from 'next-auth/react';
 import { setJwtToken } from 'next-auth/jwt';
 import bg from 'public/images/loginbg1.webp';
 import { useState } from 'react';
+import {siteTitle} from 'components/util/label'
 import { handleLoginSuccess } from './handleLoginSuccess';
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -90,7 +91,7 @@ export default function LoginPage(props) {
           mt="md"
           mb={50}
         >
-          Welcome to NxTime!
+          {siteTitle}
         </Title>
         {loginStatus && (
           <Text color="red" fw={700} fz="md" align="center">
@@ -131,6 +132,6 @@ export default function LoginPage(props) {
 }
 LoginPage.getInitialProps = async (ctx) => {
   return {
-    title: 'Login TS Generator',
+    title: `Login ${siteTitle}`,
   };
 };

@@ -121,7 +121,8 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           >
             <Component {...pageProps} basepath={basepath} />
             <Notifications />
-          </MantineProvider></PublicHolidaysContext.Provider>
+          </MantineProvider>
+          </PublicHolidaysContext.Provider>
       </ColorSchemeProvider>
     </SessionProvider>
   );
