@@ -15,7 +15,7 @@ import { UtilsContext } from '../../components/util/utilCtx';
 import { PrismaClient } from '@prisma/client';
 import { PublicHolidaysContext } from '../_app';
 //export default function LeaveRequestForm({ staff, publicholidays }) {
-export default function CreateLeaveRequestForm({ staff }) {
+export default function CreateLeaveRequestForm() {
   const LeaveRequestPeriod = {
     leavePeriodStart: null,
     leavePeriodEnd: null,
@@ -23,8 +23,8 @@ export default function CreateLeaveRequestForm({ staff }) {
   return (
     <Layout>
       <LeaveRequestForm
-        staff={staff}
-        formType={'new'}
+     
+        formType={'create'}
         LeaveRequestPeriod={LeaveRequestPeriod}
       />
     </Layout>
@@ -32,13 +32,13 @@ export default function CreateLeaveRequestForm({ staff }) {
 }
 export const getServerSideProps = async ({ params }) => {
   const staffService = new StaffService();
-  const staff = await staffService.getStaffById(1);
+  
   const prisma = new PrismaClient();
   const leaveReqSvc = new LeaveRequestService(prisma);
 
   return {
     props: {
-      staff,
+     
     },
   };
 };

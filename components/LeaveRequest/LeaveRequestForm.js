@@ -1,3 +1,4 @@
+import { getToken } from 'next-auth/jwt';
 import { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { parseCookies } from 'nookies';
@@ -8,7 +9,7 @@ import {
   Col,
   useMantineTheme,
   Center,
-  NumberInput,
+  rem,
   Card,
   Select,
   Text,
@@ -17,13 +18,13 @@ import {
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import MyCard from '../../components/MyCard';
-import Layout from '../../components/layout';
+
 import MyModal from '../../components/MyModal';
 import { format, parseISO, isWeekend } from 'date-fns';
 import { basepath } from '/global';
 import Head from 'next/head';
 import { useForm as uForm } from 'react-hook-form';
-
+import { useSession } from 'next-auth/react';
 import {
   getBusinessDays,
   formatResponseDate,
@@ -35,18 +36,36 @@ import {
   ampmOptions,
   ampmOptionsEnd,
 } from '../../components/util/leaverequest.util';
-import { UtilsContext } from '../../components/util/utilCtx';
+import {
+  IconCalendarPlus,
+  IconCalendarX,
+  IconCalendarUp,
+  IconFileSpreadsheet,
+} from '@tabler/icons-react';
 
 import { PublicHolidaysContext } from '../../pages/_app';
 import { async } from 'rxjs';
 //export default function LeaveRequestForm({ staff, publicholidays }) {
+
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context);
+  const staff = session.staff;
+  console.log(' in server staff');
+  console.log(staff);
+  return {
+    props: {
+      staff,
+    },
+  };
+}
+
 export default function LeaveRequestForm({
-  staff,
   formType,
   leaveRequestId,
   onDeleteEvent,
   onClose,
-  LeaveRequestPeriod
+  LeaveRequestPeriod,
+  fetchEvents,
 }) {
   console.log('form type?');
   console.log(formType);
@@ -63,36 +82,52 @@ export default function LeaveRequestForm({
   const [submitting, setSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
+  const [staff, setStaff] = useState(null);
   const {
     register,
     formState: { errors },
     reset,
     handleSubmit,
   } = useForm();
-  const newLeaveRequest= {
-    leavePeriodStart: LeaveRequestPeriod.start?LeaveRequestPeriod.start:null,
-    leavePeriodEnd: LeaveRequestPeriod.end?LeaveRequestPeriod.end:null,
+  const newLeaveRequest = {
+    leavePeriodStart: LeaveRequestPeriod?.start ?? null,
+    leavePeriodEnd: LeaveRequestPeriod?.end ?? null,
     AMPMStart: 'AMPM',
     AMPMEnd: '',
     leaveDays: 0,
     dateOfReturn: null,
     staffSignDate: new Date(),
-    staffId: staff.id,
+    staffId: null,
     fileId: null,
     error: null,
     helper: null,
-  }
+  };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
   console.log('publicholidays');
   console.log(publicholidays);
   const handleModalClose = () => {
     setModalOpen(false);
+    if(onClose){
+      onClose(); // Close the drawers
+    }
   };
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
   const headers = {
     Authorization: `Bearer ${tokenCookie}`,
   };
+
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    console.log('session?');
+    console.log(session);
+    if (session?.user) {
+      console.log(session.user.staff);
+      setStaff(session.user.staff);
+      setLeaveRequest({ ...leaveRequest, staffId: session.user.staff.id });
+    }
+  }, [session]);
+
   useEffect(() => {
     if (formType === 'edit') {
       const getLeaveRequestData = async () => {
@@ -206,6 +241,8 @@ export default function LeaveRequestForm({
     leaveRequest.leavePeriodStart,
     leaveRequest.leavePeriodEnd,
   ]);
+
+  const updateOnClick = async (e) => {};
   const deleteOnClick = async (e) => {
     leaveRequestId = leaveRequest.id;
     setSubmitting(true);
@@ -220,14 +257,15 @@ export default function LeaveRequestForm({
       );
 
       if ([200, 201].includes(response.status)) {
-        await onDeleteEvent(leaveRequestId);
-        setModalMsg('Leave Record Deleted Successfully')
+        setModalMsg('Leave Record Deleted Successfully');
         setModalOpen(true);
         reset();
-        onClose(); // Close the drawer
+        
         let _data = formatResponseDate(response.data);
         console.log('Delete Response');
         console.log(_data);
+        await onDeleteEvent(leaveRequestId);
+        
       } else {
         console.error('Failed to create leave request:', response);
       }
@@ -236,6 +274,7 @@ export default function LeaveRequestForm({
       console.error(error);
       // Handle error
     }
+    
     setSubmitting(false);
   };
   const onSubmit = async (e) => {
@@ -256,7 +295,7 @@ export default function LeaveRequestForm({
     console.log('original leave start');
     console.log(leaveRequest.leavePeriodStart);
     try {
-      const response = await axios.post(
+      const response = await axios[formType === 'create' ? 'post' : 'put'](
         `${basepath}/api/leaverequest/`,
         newData,
         {
@@ -265,7 +304,7 @@ export default function LeaveRequestForm({
       );
 
       if ([200, 201].includes(response.status)) {
-        setModalMsg('Leave Record Created Successfully')
+        setModalMsg('Leave Record Created Successfully');
         setModalOpen(true);
         reset();
 
@@ -275,6 +314,9 @@ export default function LeaveRequestForm({
         setLeaveRequest({
           ..._data,
         });
+        if (fetchEvents) {
+          await fetchEvents();
+        }
       } else {
         console.error('Failed to create leave request:', response);
       }
@@ -314,15 +356,15 @@ export default function LeaveRequestForm({
           <Grid gutter={theme.spacing.md} py={20}>
             <Col span={6}>
               <Text weight={500}>Staff Name:</Text>{' '}
-              <Text>{staff.StaffName}</Text>
+              <Text>{staff && staff.StaffName}</Text>
             </Col>
             <Col span={6}>
               <Text weight={500}>Agent Name:</Text>{' '}
-              <Text>{staff.AgentName}</Text>
+              <Text>{staff && staff.AgentName}</Text>
             </Col>
             <Col span={6}>
               <Text weight={500}>Staff Category:</Text>{' '}
-              <Text>{staff.StaffCategory}</Text>
+              <Text>{staff && staff.StaffCategory}</Text>
             </Col>
             <Col span={6} />
             <Grid.Col span={12}>
@@ -481,6 +523,7 @@ export default function LeaveRequestForm({
                   <Button
                     component="a"
                     target="_blank"
+                    leftIcon={<IconFileSpreadsheet size={rem(18)} />}
                     href={`${basepath}/api/staff/download/${leaveRequest.fileId}`}
                   >
                     Download Leave Form
@@ -495,38 +538,62 @@ export default function LeaveRequestForm({
             sx={{
               display: 'flex',
               alignItems: 'center',
+              gap: 'md',
               justifyContent: 'center',
               height: '100%',
             }}
           >
-            <Button
-              type="submit"
-              fullWidth
-              loading={submitting}
-              maw={250}
-              radius="md"
+            {' '}
+            <Flex
+              mih={50}
+              gap="md"
+              justify="center"
+              align="center"
+              direction="row"
+              wrap="wrap"
             >
-              {formType === 'new' ? 'Create Leave Request' : 'Update'}
-            </Button>
-            {formType === 'edit' && (
-              <Button
-                loading={submitting}
-                maw={250}
-                radius="md"
-                onClick={deleteOnClick}
-              >
-                Delete
-              </Button>
-            )}
+              {formType === 'create' && (
+                <Button
+                  type="submit"
+                  fullWidth
+                  loading={submitting}
+                  leftIcon={<IconCalendarPlus size={rem(18)} />}
+                  maw={250}
+                  radius="md"
+                >
+                  Create Leave Request
+                </Button>
+              )}
+
+              {formType === 'edit' && (
+                <>
+                  <Button
+                    loading={submitting}
+                    maw={250}
+                    radius="md"
+                    leftIcon={<IconCalendarUp size={rem(18)} />}
+                    onClick={updateOnClick}
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    loading={submitting}
+                    maw={250}
+                    radius="md"
+                    onClick={deleteOnClick}
+                    variant="gradient"
+                    gradient={{ from: 'orange', to: 'red' }}
+                    leftIcon={<IconCalendarX size={rem(18)} />}
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
+            </Flex>
           </Card.Section>
         </MyCard>
       </form>
-      <MyModal
-        open={modalOpen}
-        onClose={handleModalClose}
-        msg={modalMsg}
-        
-      />
+      <MyModal open={modalOpen} onClose={handleModalClose} msg={modalMsg} />
     </>
   );
 }

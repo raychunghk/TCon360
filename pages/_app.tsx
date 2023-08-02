@@ -70,8 +70,8 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         const data = response.data;
         const formattedPublicHolidays = data.map((holiday) => ({
           Summary: holiday.Summary,
-          
-          StartDate: format((new Date(holiday.StartDate)),'M/d/yyyy'),
+
+          StartDate: format((new Date(holiday.StartDate)), 'M/d/yyyy'),
         }));
         console.log('formatted public holidays?')
         console.log(formattedPublicHolidays)
@@ -122,7 +122,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             <Component {...pageProps} basepath={basepath} />
             <Notifications />
           </MantineProvider>
-          </PublicHolidaysContext.Provider>
+        </PublicHolidaysContext.Provider>
       </ColorSchemeProvider>
     </SessionProvider>
   );

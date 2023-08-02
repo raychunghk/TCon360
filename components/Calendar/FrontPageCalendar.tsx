@@ -29,9 +29,23 @@ export function FrontPageCalendar(props) {
   const apiurl = `${basepath}/api/timesheet/calendar`
   console.log('calendarurl')
   console.log(apiurl)
-
+  async function fetchEvents() {
+    const response = await axios.get(apiurl
+      //   , {
+      //   params: { year: year, month: month },
+      // }
+    );
+    if ([200, 201].includes(response.status)) {
+      console.log('gettting calendar');
+      console.log(response.data);
+      const events = await response.data;
+      setCalendarEvents(events);
+    } else {
+      console.error('Failed to fetch events:', response);
+    }
+  }
   useEffect(() => {
-    const fetchEvents = async () => {
+    /*const fetchEvents = async () => {
       const response = await axios.get(apiurl, {
         params: { year: 2023, month: 7 }, // adjust parameters as needed
       })
@@ -44,17 +58,18 @@ export function FrontPageCalendar(props) {
       } else {
         console.error('Failed to create timesheet record:', response)
       }
-    }
+    }*/
 
-    fetchEvents()
+    fetchEvents();
   }, [])
   const [date, setDate] = useState(new Date())
   const handleDeleteEvent = (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
       calendarRef.current.getApi().getEventById(eventId).remove();
-      //fetchEvents();
+      fetchEvents();
     } catch (error) {
+      throw (error);
       console.log(error)
     }
 
@@ -86,8 +101,8 @@ export function FrontPageCalendar(props) {
     const _end = selectInfo.end;
     count = differenceInBusinessDays(_end, _start);
     console.log(`datediffer? ${count}`)
-    let leaveRequestPeriodEnd = count==1?null:subDays(_end, 1);
-    
+    let leaveRequestPeriodEnd = count == 1 ? null : subDays(_end, 1);
+
     setLeaveRequestPeriod({
       start: selectInfo.start,
       end: leaveRequestPeriodEnd
@@ -123,11 +138,12 @@ export function FrontPageCalendar(props) {
           NxTime
         </Text>
       </Title>
-      <Drawer opened={opened} onClose={close} size={550} title="Edit Event">
+      <Drawer opened={opened} onClose={close} size={550} title="Leave Request">
         {/* Drawer content */}
-        {formType && <LeaveRequestForm staff={1} formType={formType} leaveRequestId={leaveRequestId} onDeleteEvent={handleDeleteEvent} // pass the callback function
+        {formType && <LeaveRequestForm formType={formType} leaveRequestId={leaveRequestId} onDeleteEvent={handleDeleteEvent} // pass the callback function
           onClose={close}
           LeaveRequestPeriod={LeaveRequestPeriod}
+          fetchEvents={fetchEvents}
         />}
 
       </Drawer>

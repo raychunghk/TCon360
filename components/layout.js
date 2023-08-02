@@ -25,7 +25,7 @@ import {
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 const name = 'Ray Chung';
-export const siteTitle = 'NxTimeT';
+export const siteTitle = 'NxTime';
 export default function Layout({ children, home }) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
@@ -93,7 +93,7 @@ export default function Layout({ children, home }) {
                   height={30}
                   style={{ marginRight: '5px' }}
                 />
-                <Text id="sitetitle">TS Generator</Text>
+                <Text id="sitetitle">NxTime - Timesheet and Leave Form manager</Text>
               </Group>
 
               <Group position="right">
@@ -149,7 +149,7 @@ export default function Layout({ children, home }) {
             justify={{ sm: 'center' }}
             className={styles.flex}
           >
-            <div>Developed by RayCWM</div>
+            <div>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</div>
           </Flex>
         </Footer>
       }

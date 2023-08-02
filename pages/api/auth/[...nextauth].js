@@ -42,7 +42,7 @@ export const authOptions = {
           const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
           console.log('Decoded token:', decodedToken); // log the decoded token
-          const { id, name, email, username } = decodedToken;
+          const { id, name, email, username ,staff} = decodedToken;
           console.log('decodedToken');
           console.log(decodedToken);
           // check if the token matches the credentials
@@ -54,6 +54,7 @@ export const authOptions = {
               email: email,
               picture: '',
               username: username,
+              staff, staff,
             };
             console.log('rtn?');
             return rtn;
@@ -78,21 +79,26 @@ export const authOptions = {
       console.log('jwt is called');
       console.log('jwtobj');
       console.log(JSON.stringify(jwtobj));
-      const cookies = parseCookies();
-      console.log('cookies');
-      console.log(cookies);
-      const tokenCookie = cookies.token;
-      console.log('token cookie');
-      console.log(tokenCookie);
+      //const cookies = parseCookies();
+      //console.log('cookies');
+      //console.log(cookies);
+      console.log('users?')
+      console.log(user)
+      //const tokenCookie = cookies.token;
+      //console.log('token cookie');
+      //console.log(tokenCookie);
 
       console.log('account');
       console.log(account);
       // if there's a token cookie, add it to the JWT token
-      if (tokenCookie) {
-        token.token = tokenCookie;
+      
+      if (user && user.hasOwnProperty('staff')){
+        token.staff = user.staff[0]
+
       }
       console.log('token in jwt');
       console.log(token);
+      
       if (token.hasOwnProperty('exp')) {
         const expdate = new Date(token.exp * 1000);
 
@@ -140,12 +146,15 @@ export const authOptions = {
         session.user = {
           name: token.name,
           email: token.email,
+          staff :token.staff,
         };
         session.basePath = '/absproxy/5000';
         // add the token to the session object
         session.token = token;
 
         console.log(session.token);
+        console.log('session.user');
+        console.log(session.user);
         return session;
       } else {
         console.log('token is expired');

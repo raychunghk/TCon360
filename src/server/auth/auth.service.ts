@@ -95,6 +95,7 @@ export class AuthService {
       username: user.username,
       name: user.name,
       email: user.email,
+      staff: user.staff,
     };
     const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
     console.log(tokenage);

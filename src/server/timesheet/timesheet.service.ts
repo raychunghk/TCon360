@@ -31,19 +31,24 @@ export class TimesheetService {
         //return `${__dirname}/../../../../timesheet/${filename}`;
         return path.join(this.projectRoot, 'timesheet', filename);
     }
-    async getCalendarEvents(year: number, month: number): Promise<any[]> {
+    //async getCalendarEvents(year: number, month: number): Promise<any[]> {
+    async getCalendarEvents(): Promise<any[]> {
         const results = await this.prisma.viewCalendarTimeSheet.findMany({
             where: {
-                AND: [
-                    { Year: year },
-                    { Month: month },
-                    {
-                        OR: [
-                            { HolidaySummary: { not: null } },
-                            { LeaveRequestId: { not: null } },
-                        ],
-                    },
+                OR: [
+                    { HolidaySummary: { not: null } },
+                    { LeaveRequestId: { not: null } },
                 ],
+                // AND: [
+                //     { Year: year },
+                //     { Month: month },
+                //     {
+                //         OR: [
+                //             { HolidaySummary: { not: null } },
+                //             { LeaveRequestId: { not: null } },
+                //         ],
+                //     },
+                // ],
             },
             select: {
                 CalendarDate: true,
