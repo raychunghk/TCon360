@@ -35,6 +35,7 @@ import {
   getNextWorkingDate,
   ampmOptions,
   ampmOptionsEnd,
+  leaveTypes,
 } from '../../components/util/leaverequest.util';
 import {
   IconCalendarPlus,
@@ -66,6 +67,7 @@ export default function LeaveRequestForm({
   onClose,
   LeaveRequestPeriod,
   fetchEvents,
+  leavePurpose,
 }) {
   console.log('form type?');
   console.log(formType);
@@ -84,7 +86,6 @@ export default function LeaveRequestForm({
   const [modalMsg, setModalMsg] = useState('');
   const [staff, setStaff] = useState(null);
   const {
-    register,
     formState: { errors },
     reset,
     handleSubmit,
@@ -102,6 +103,9 @@ export default function LeaveRequestForm({
     fileId: null,
     error: null,
     helper: null,
+    leavePurpose: '',
+    leaveType: 'vacation',
+    leavePurpose,
   };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
   console.log('publicholidays');
@@ -289,11 +293,13 @@ export default function LeaveRequestForm({
       leaveDays: leaveRequest.leaveDays,
       dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
       staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
+      leavePurpose: leaveRequest.leavePurpose,
+      leaveType: leaveRequest.leaveType,
     };
     console.log('newdata: ');
     console.log(newData);
-    console.log('original leave start');
-    console.log(leaveRequest.leavePeriodStart);
+    //console.log('original leave start');
+    //console.log(leaveRequest.leavePeriodStart);
     try {
       const response = await axios[formType === 'create' ? 'post' : 'put'](
         `${basepath}/api/leaverequest/`,
@@ -355,7 +361,6 @@ export default function LeaveRequestForm({
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
             <Col span={6}>
-              
               <TextInput
                 id="Title"
                 name="Title"
@@ -397,6 +402,28 @@ export default function LeaveRequestForm({
                     }`}{' '}
                   </p>
                 )}{' '}
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                id="leavePurpose"
+                name="leavePurpose"
+                label="Leave purpose(optional)"
+                value={leaveRequest.leavePurpose}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Select
+                label="Leave Type"
+                data={leaveTypes}
+                defaultValue="vacation"
+                value={leaveRequest.leaveType}
+                onChange={(value) =>
+                  setLeaveRequest({
+                    ...leaveRequest,
+                    leaveType: value,
+                  })
+                }
+              />
             </Grid.Col>
             <Grid.Col span={6}>
               <DatePickerInput
