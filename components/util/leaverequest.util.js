@@ -5,6 +5,16 @@ let publicholidays;
 export function setPublicHolidays(holidays) {
   publicholidays = holidays;
 }
+export const leaveTypes = [
+  {
+    value: 'vacation',
+    label: 'Vacation',
+  },
+  {
+    value: 'sick',
+    label: 'Sick',
+  },
+];
 export const ampmOptions = [
   {
     value: 'AMPM',
@@ -92,7 +102,7 @@ export function getBusinessDays(startDate, endDate) {
   }
 
   var businessDays = 0;
-  var dayMilliseconds = 86400000; // Number of milliseconds in a day
+  //var dayMilliseconds = 86400000; // Number of milliseconds in a day
 
   // Iterate over each day between the two dates
   while (startDate <= endDate) {
@@ -178,7 +188,7 @@ export function getNextWorkingDatex(date) {
 export const isPublicHoliday = (date) => {
   const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   const event = publicholidays.find((e) => e.StartDate === formattedDate);
-  if(event){
+  if (event) {
     console.log('event public holiday?')
     console.log(event)
   }
@@ -207,8 +217,8 @@ export const excludeHoliday = (date) => {
   if (date) {
     const isWeekendDay = isWeekend(date);
     const formattedDate = format(date, 'M/d/yyyy');
-   // console.log('formattereddate');
-  //  console.log(formattedDate);
+    // console.log('formattereddate');
+    //  console.log(formattedDate);
     const isHoliday = publicholidays.some(
       (holiday) => holiday.StartDate === formattedDate,
     );

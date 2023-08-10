@@ -1,1 +1,1 @@
-sqlite3 /config/workspace/vm/js/NxTime/prisma/database/timesheet.db
+sqlite3 ./prisma/database/timesheet.db

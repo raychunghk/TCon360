@@ -35,6 +35,7 @@ import {
   getNextWorkingDate,
   ampmOptions,
   ampmOptionsEnd,
+  leaveTypes,
 } from '../../components/util/leaverequest.util';
 import {
   IconCalendarPlus,
@@ -66,6 +67,7 @@ export default function LeaveRequestForm({
   onClose,
   LeaveRequestPeriod,
   fetchEvents,
+  leavePurpose,
 }) {
   console.log('form type?');
   console.log(formType);
@@ -84,7 +86,6 @@ export default function LeaveRequestForm({
   const [modalMsg, setModalMsg] = useState('');
   const [staff, setStaff] = useState(null);
   const {
-    register,
     formState: { errors },
     reset,
     handleSubmit,
@@ -101,13 +102,16 @@ export default function LeaveRequestForm({
     fileId: null,
     error: null,
     helper: null,
+    leavePurpose: '',
+    leaveType: 'vacation',
+    leavePurpose,
   };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
   console.log('publicholidays');
   console.log(publicholidays);
   const handleModalClose = () => {
     setModalOpen(false);
-    if(onClose){
+    if (onClose) {
       onClose(); // Close the drawers
     }
   };
@@ -242,7 +246,7 @@ export default function LeaveRequestForm({
     leaveRequest.leavePeriodEnd,
   ]);
 
-  const updateOnClick = async (e) => {};
+  const updateOnClick = async (e) => { };
   const deleteOnClick = async (e) => {
     leaveRequestId = leaveRequest.id;
     setSubmitting(true);
@@ -260,12 +264,11 @@ export default function LeaveRequestForm({
         setModalMsg('Leave Record Deleted Successfully');
         setModalOpen(true);
         reset();
-        
+
         let _data = formatResponseDate(response.data);
         console.log('Delete Response');
         console.log(_data);
         await onDeleteEvent(leaveRequestId);
-        
       } else {
         console.error('Failed to create leave request:', response);
       }
@@ -274,7 +277,7 @@ export default function LeaveRequestForm({
       console.error(error);
       // Handle error
     }
-    
+
     setSubmitting(false);
   };
   const onSubmit = async (e) => {
@@ -289,11 +292,13 @@ export default function LeaveRequestForm({
       leaveDays: leaveRequest.leaveDays,
       dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
       staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
+      leavePurpose: leaveRequest.leavePurpose,
+      leaveType: leaveRequest.leaveType,
     };
     console.log('newdata: ');
     console.log(newData);
-    console.log('original leave start');
-    console.log(leaveRequest.leavePeriodStart);
+    //console.log('original leave start');
+    //console.log(leaveRequest.leavePeriodStart);
     try {
       const response = await axios[formType === 'create' ? 'post' : 'put'](
         `${basepath}/api/leaverequest/`,
@@ -375,18 +380,38 @@ export default function LeaveRequestForm({
                   <p>
                     <label>Leave Period</label>
                     <br />{' '}
-                    {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${
-                      leaveRequest.AMPMStart === 'AMPM'
-                        ? ''
-                        : leaveRequest.AMPMStart
-                    } to ${format(
-                      leaveRequest.leavePeriodEnd,
-                      'dd-MMM-yyyy',
-                    )} ${
-                      leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
-                    }`}{' '}
+                    {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${leaveRequest.AMPMStart === 'AMPM'
+                      ? ''
+                      : leaveRequest.AMPMStart
+                      } to ${format(
+                        leaveRequest.leavePeriodEnd,
+                        'dd-MMM-yyyy',
+                      )} ${leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
+                      }`}{' '}
                   </p>
                 )}{' '}
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                id="leavePurpose"
+                name="leavePurpose"
+                label="Leave purpose(optional)"
+                value={leaveRequest.leavePurpose}
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Select
+                label="Leave Type"
+                data={leaveTypes}
+                defaultValue="vacation"
+                value={leaveRequest.leaveType}
+                onChange={(value) =>
+                  setLeaveRequest({
+                    ...leaveRequest,
+                    leaveType: value,
+                  })
+                }
+              />
             </Grid.Col>
             <Grid.Col span={6}>
               <DatePickerInput
@@ -431,7 +456,7 @@ export default function LeaveRequestForm({
                 minDate={
                   new Date(
                     new Date(leaveRequest.leavePeriodStart).getTime() +
-                      24 * 60 * 60 * 1000,
+                    24 * 60 * 60 * 1000,
                   )
                 }
                 onChange={(_date) =>

@@ -8,8 +8,8 @@ import argon2 from 'argon2';
 const prisma = new PrismaClient();
 async function main() {
   genStaffInfo();
-//  gencalendar();
- // genholiday()
+  //gencalendar();
+  //genholiday()
   //createViewIfNotExists();
 }
 
@@ -66,8 +66,9 @@ async function createViewIfNotExists() {
 }
 async function genholiday() {
   const __dirname = path.resolve();
-  //let _path = path.join(__dirname, 'tc.ics')
-  let _path = path.join('/config/workspace/vm/js/NxTime/prisma/tc.ics')
+  console.log(__dirname);
+  let _path = path.join(__dirname, 'prisma/tc.ics')
+  //let _path = path.join('/config/workspace/vm/js/NxTime/prisma/tc.ics')
   console.log(_path)
   const evt = getEvents(_path)
   //return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()

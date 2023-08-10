@@ -152,9 +152,11 @@ model LeaveRequest {
   staffSignDate    DateTime
   fileId           Int
   staffId          Int
-  calendarVacation CalendarVacation[] 
+  calendarVacation CalendarVacation[]
   staff            Staff              @relation(fields: [staffId], references: [id])
   staffFile        staffFiles         @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  leavePurpose          String?
+  leaveType        String
 }
 
 model staffFiles {
