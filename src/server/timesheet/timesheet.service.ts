@@ -32,24 +32,31 @@ export class TimesheetService {
         return path.join(this.projectRoot, 'timesheet', filename);
     }
     //async getCalendarEvents(year: number, month: number): Promise<any[]> {
-    async getCalendarEvents(): Promise<any[]> {
+    async getCalendarEvents(_stfid: number): Promise<any[]> {
         const results = await this.prisma.viewCalendarTimeSheet.findMany({
             where: {
                 OR: [
                     { HolidaySummary: { not: null } },
-                    { LeaveRequestId: { not: null } },
-                ],
-                // AND: [
-                //     { Year: year },
-                //     { Month: month },
-                //     {
-                //         OR: [
-                //             { HolidaySummary: { not: null } },
-                //             { LeaveRequestId: { not: null } },
-                //         ],
-                //     },
-                // ],
-            },
+                    {
+                        AND: [
+                            { LeaveRequestId: { not: null } },
+                            { staffId: _stfid },
+                        ]
+                    }
+                ]
+
+            }
+            // AND: [
+            //     { Year: year },
+            //     { Month: month },
+            //     {
+            //         OR: [
+            //             { HolidaySummary: { not: null } },
+            //             { LeaveRequestId: { not: null } },
+            //         ],
+            //     },
+            // ],
+            ,
             select: {
                 CalendarDate: true,
                 HolidaySummary: true,
@@ -61,8 +68,8 @@ export class TimesheetService {
             const title = result.HolidaySummary ? result.HolidaySummary : result.LeaveRequestId ? `Vacation ${result.LeaveRequestId}` : null;
             const date = result.CalendarDate.toISOString().substring(0, 10);
             const IsWeekend = title.startsWith('S')
-            const _groupid  = result.LeaveRequestId? result.LeaveRequestId:'';
-            return { id:result.LeaveRequestId,title, date, display: IsWeekend ? 'background' : '', classNames:[IsWeekend?'clsweekend':''] ,groupId:_groupid, extendedProps:{result}};
+            const _groupid = result.LeaveRequestId ? result.LeaveRequestId : '';
+            return { id: result.LeaveRequestId, title, date, display: IsWeekend ? 'background' : '', classNames: [IsWeekend ? 'clsweekend' : ''], groupId: _groupid, extendedProps: { result } };
         });
     }
     async writeStaffInfoJsonToExcel(jsonObj: any, fieldmap: Record<string, string>, destPath: string) {

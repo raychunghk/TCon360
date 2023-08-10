@@ -3,18 +3,18 @@ generator client {
   previewFeatures = ["views"]
 }
 
-generator typegraphql {
-  provider            = "typegraphql-prisma"
-  output              = "../src/server/graphql"
-  formatGeneratedCode = "prettier"
-}
+// generator typegraphql {
+//   provider            = "typegraphql-prisma"
+//   output              = "../src/server/graphql"
+//   formatGeneratedCode = "prettier"
+// }
 
-generator PrismaTypeGraphQLTypesGenerator {
-  provider     = "npx prisma-typegraphql-types-generator"
-  enumsOutput  = "./src/types/enums"
-  modelsOutput = "./src/models"
-  useYarn      = "true"
-}
+// generator PrismaTypeGraphQLTypesGenerator {
+//   provider     = "npx prisma-typegraphql-types-generator"
+//   enumsOutput  = "./src/types/enums"
+//   modelsOutput = "./src/models"
+//   useYarn      = "true"
+// }
 
 datasource db {
   provider = "sqlite"
@@ -152,7 +152,8 @@ model LeaveRequest {
   staffSignDate    DateTime
   fileId           Int
   staffId          Int
-  calendarVacation CalendarVacation[] 
+  Title            String?
+  calendarVacation CalendarVacation[]
   staff            Staff              @relation(fields: [staffId], references: [id])
   staffFile        staffFiles         @relation(fields: [fileId], references: [id], onDelete: Cascade)
 }
@@ -192,4 +193,5 @@ view viewCalendarTimeSheet {
   PublicHolidayChargable Decimal?
   HolidaySummary         String?
   LeaveRequestId         Int?
+  staffId                Int?
 }

@@ -103,10 +103,7 @@ export function FrontPageCalendar(props) {
     console.log(`datediffer? ${count}`)
     let leaveRequestPeriodEnd = count == 1 ? null : subDays(_end, 1);
 
-    setLeaveRequestPeriod({
-      start: selectInfo.start,
-      end: leaveRequestPeriodEnd
-    })
+  
     const selectedDates = [];
     let date = selectInfo.start;
     /* while (date < selectInfo.end) {
@@ -118,6 +115,11 @@ export function FrontPageCalendar(props) {
 
     const title = prompt(`Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`);
     if (title) {
+      setLeaveRequestPeriod({
+        title:title,
+        start: selectInfo.start,
+        end: leaveRequestPeriodEnd
+      })
       setFormType('create')
       setleaveRequestId(0)
       open();
@@ -143,6 +145,7 @@ export function FrontPageCalendar(props) {
         {formType && <LeaveRequestForm formType={formType} leaveRequestId={leaveRequestId} onDeleteEvent={handleDeleteEvent} // pass the callback function
           onClose={close}
           LeaveRequestPeriod={LeaveRequestPeriod}
+          
           fetchEvents={fetchEvents}
         />}
 

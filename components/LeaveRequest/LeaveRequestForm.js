@@ -90,6 +90,7 @@ export default function LeaveRequestForm({
     handleSubmit,
   } = useForm();
   const newLeaveRequest = {
+    title: LeaveRequestPeriod?.title ?? null,
     leavePeriodStart: LeaveRequestPeriod?.start ?? null,
     leavePeriodEnd: LeaveRequestPeriod?.end ?? null,
     AMPMStart: 'AMPM',
@@ -107,7 +108,7 @@ export default function LeaveRequestForm({
   console.log(publicholidays);
   const handleModalClose = () => {
     setModalOpen(false);
-    if(onClose){
+    if (onClose) {
       onClose(); // Close the drawers
     }
   };
@@ -260,12 +261,11 @@ export default function LeaveRequestForm({
         setModalMsg('Leave Record Deleted Successfully');
         setModalOpen(true);
         reset();
-        
+
         let _data = formatResponseDate(response.data);
         console.log('Delete Response');
         console.log(_data);
         await onDeleteEvent(leaveRequestId);
-        
       } else {
         console.error('Failed to create leave request:', response);
       }
@@ -274,7 +274,7 @@ export default function LeaveRequestForm({
       console.error(error);
       // Handle error
     }
-    
+
     setSubmitting(false);
   };
   const onSubmit = async (e) => {
@@ -355,6 +355,16 @@ export default function LeaveRequestForm({
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
             <Col span={6}>
+              
+              <TextInput
+                id="Title"
+                name="Title"
+                label="Title"
+                value={leaveRequest.title}
+                readOnly
+              />
+            </Col>
+            <Col span={6}>
               <Text weight={500}>Staff Name:</Text>{' '}
               <Text>{staff && staff.StaffName}</Text>
             </Col>
@@ -366,7 +376,7 @@ export default function LeaveRequestForm({
               <Text weight={500}>Staff Category:</Text>{' '}
               <Text>{staff && staff.StaffCategory}</Text>
             </Col>
-            <Col span={6} />
+
             <Grid.Col span={12}>
               {leaveRequest.leavePeriodStart &&
                 leaveRequest.AMPMStart &&

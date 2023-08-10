@@ -1,7 +1,6 @@
-import { Field, ObjectType, ID, Int } from 'type-graphql';
 import { LeaveRequest } from './LeaveRequest';
 import { CalendarMaster } from './CalendarMaster';
-
+import { Field, ObjectType, Int } from 'type-graphql';
 
 @ObjectType()
 export class CalendarVacation {

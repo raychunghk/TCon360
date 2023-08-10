@@ -8,9 +8,9 @@ import argon2 from 'argon2';
 const prisma = new PrismaClient();
 async function main() {
   genStaffInfo();
-//  gencalendar();
- // genholiday()
-  //createViewIfNotExists();
+gencalendar();
+ genholiday()
+createViewIfNotExists();
 }
 
 
@@ -45,14 +45,18 @@ async function createViewIfNotExists() {
               WeekDayName
           WHEN PH.Summary IS NOT NULL THEN
               PH.Summary
+          WHEN LR.Title IS NOT NULL then
+              LR.Title
           ELSE
               null
       END AS HolidaySummary
-      ,LeaveRequestId
+      ,v.LeaveRequestId as LeaveRequestId
+      ,LR.staffId as staffId
   FROM
       CalendarMaster C
       LEFT JOIN CalendarVacation V ON V.VacationDate = C.CalendarDate
-      LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate; 
+      LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+      left join LeaveRequest  LR on  LR.id = v.LeaveRequestId; ; 
       `);
       console.log('View created successfully!');
     } else {

@@ -5,10 +5,11 @@ import { PrismaService } from 'src/server/prisma/prisma.service';
 import { LeaveRequestService } from '../leaverequest/service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
 import { StaffService } from '../staff/service/staff.service';
+import { UsersService } from '../auth/users.service';
 @Module({
   controllers: [TimesheetController]
   , providers: [TimesheetService, PrismaService, LeaveRequestService,
-    StaffService,
+    StaffService, UsersService,
     StaffFilesService,]
 })
 export class TimesheetModule { }

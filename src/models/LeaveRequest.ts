@@ -44,5 +44,8 @@ export class LeaveRequest {
   @Field((_type) => staffFiles)
   staffFile: staffFiles;
 
+  @Field({ nullable: true })
+  Title?: string;
+
   // skip overwrite 👇
 }
