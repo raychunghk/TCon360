@@ -29,5 +29,8 @@ export class viewCalendarTimeSheet {
   @Field((_type) => Int, { nullable: true })
   LeaveRequestId?: number;
 
+  @Field((_type) => Int, { nullable: true })
+  staffId?: number;
+
   // skip overwrite 👇
 }

@@ -194,4 +194,5 @@ view viewCalendarTimeSheet {
   PublicHolidayChargable Decimal?
   HolidaySummary         String?
   LeaveRequestId         Int?
+  staffId                Int?
 }

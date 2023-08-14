@@ -10,6 +10,8 @@ import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
 import { useDisclosure, useInputState } from '@mantine/hooks';
+import { parseCookies } from 'nookies';
+import { useSession } from 'next-auth/react';
 export function FrontPageCalendar(props) {
   const [opened, { open, close }] = useDisclosure(false);
   console.log('Calendar prosp?');
@@ -26,12 +28,23 @@ export function FrontPageCalendar(props) {
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   const [selectedDates, setSelectedDates] = useState([]);
   const [leavePurpose, setleavePurpose] = useState(null);
+  const [staff, setStaff] = useState(null);
   const apiurl = `${basepath}/api/timesheet/calendar`;
   console.log('calendarurl');
   console.log(apiurl);
   async function fetchEvents() {
+    const cookies = parseCookies();
+    const tokenCookie = cookies.token;
+    console.log(tokenCookie);
+
+    const headers = {
+      Authorization: `Bearer ${tokenCookie}`,
+    };
     const response = await axios.get(
       apiurl,
+      {
+        headers,
+      },
       //   , {
       //   params: { year: year, month: month },
       // }
@@ -45,24 +58,22 @@ export function FrontPageCalendar(props) {
       console.error('Failed to fetch events:', response);
     }
   }
+  const { data: session, status } = useSession();
   useEffect(() => {
-    /*const fetchEvents = async () => {
-      const response = await axios.get(apiurl, {
-        params: { year: 2023, month: 7 }, // adjust parameters as needed
-      })
-      if ([200, 201].includes(response.status)) {
-        console.log('gettting calendar')
-        console.log(response.data)
-        const events = await response.data
-        setCalendarEvents(events)
-        // reset();
-      } else {
-        console.error('Failed to create timesheet record:', response)
-      }
-    }*/
+    console.log('session?');
+    console.log(session);
+    if (session?.user) {
+      console.log(session.user.staff);
+      setStaff(session.user.staff);
+      fetchEvents();
+    }
+  }, [session]);
+  /*
+  useEffect(() => {
+  
 
     fetchEvents();
-  }, []);
+  }, []);*/
   const [date, setDate] = useState(new Date());
   const handleDeleteEvent = (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
