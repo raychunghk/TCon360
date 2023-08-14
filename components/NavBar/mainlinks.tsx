@@ -5,27 +5,78 @@ import {
   IconFingerprint,
   IconCalendarStats,
   IconUser,
-  IconSettings,
+  IconCalendarEvent,
+  IconCalendarPlus,
+  IconEyeglass,
+  IconClock,
   IconLogout,
   IconSunset2,
   IconTree,
   IconSwitchHorizontal,
+  IconUserEdit,
+  IconUserPlus,
+  IconUserCircle,
 } from '@tabler/icons-react';
-import { ThemeIcon, UnstyledButton, Group, Text, Anchor } from '@mantine/core';
+import {
+  ThemeIcon,
+  UnstyledButton,
+  Group,
+  Text,
+  Anchor,
+  NavLink,
+} from '@mantine/core';
 import Link from 'next/link';
-interface MainLinkProps {
+import styles from './mainlinks.module.css';
+type LinkItemProps = {
   icon: React.ReactNode;
   color: string;
   label: string;
   link: string;
-}
+  child?: LinkItemProps[];
+  isChild?: boolean;
+  LinkComponent?: React.ComponentType<{ href: string }>;
+};
 const data = [
   { icon: <IconHome2 size="1rem" />, color: 'blue', label: 'Home', link: '/' },
   {
-    icon: <IconCalendarStats size="1rem" />,
+    icon: <IconClock size="1rem" />,
     color: 'teal',
     label: 'Time Sheet',
-    link: '/timesheet',
+    link: '/#',
+    child: [
+      {
+        icon: <IconEyeglass size="1rem" />,
+        color: 'blue',
+        label: 'View',
+        link: '/timesheet',
+      },
+      {
+        icon: <IconCalendarPlus size="1rem" />,
+        color: 'blue',
+        label: 'Create',
+        link: '/timesheet/create',
+      },
+    ],
+  },
+  {
+    icon: <IconUserCircle size="1rem" />,
+    color: 'teal',
+    label: 'User Profile',
+    link: '/#',
+    child: [
+      {
+        icon: <IconUserPlus size="1rem" />,
+        color: 'cyan.5',
+        label: 'Create Profile',
+        link: '/staff',
+      },
+      {
+        icon: <IconUserEdit size="1runrurem" />,
+        color: 'cyan.5',
+        label: 'Edit Profile',
+        link: '/staff/edit',
+      },
+    ],
   },
   {
     icon: <IconCalendarStats size="1rem" />,
@@ -36,26 +87,32 @@ const data = [
   {
     icon: <IconSunset2 size="1rem" />,
     color: 'grape',
-    label: 'Vacation',
-    link: '/vacation',
+    label: 'Leave Request',
+    link: '/leaverequest',
   },
-  {
-    icon: <IconUser size="1rem" />,
-    color: 'gray',
-    label: 'User Info',
-    link: '/user',
-  },
+
   {
     icon: <IconTree size="1rem" />,
     color: 'gray',
     label: 'Test',
     link: '/test',
   },
+  {
+    icon: <IconTree size="1rem" />,
+    color: 'gray',
+    label: 'bill',
+    link: '/tbill',
+  },
 ];
-import styles from './mainlinks.module.css';
-function MainLink({ icon, color, label, link }: MainLinkProps) {
+function CustomLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
-    <Link href={link} className={styles.links}>
+    <Link href={href} className={styles.links}>
       <UnstyledButton
         sx={(theme) => ({
           display: 'block',
@@ -73,19 +130,45 @@ function MainLink({ icon, color, label, link }: MainLinkProps) {
           },
         })}
       >
+        {children}
+      </UnstyledButton>
+    </Link>
+  );
+}
+function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
+  const marginLeft = isChild ? 20 : 0;
+
+  return (
+    <div style={{ marginLeft }}>
+      <CustomLink href={link}>
         <Group>
           <ThemeIcon color={color} variant="light">
             {icon}
           </ThemeIcon>
 
-          <Text size="sm">{label}</Text>
+          <Text size="sm">
+            {label}
+            {isChild}
+          </Text>
         </Group>
-      </UnstyledButton>
-    </Link>
+      </CustomLink>
+
+      {/* Render child links */}
+      {child &&
+        child.map((childLink) => (
+          <LinkItem key={childLink.label} {...childLink} isChild={true} />
+        ))}
+    </div>
   );
 }
 
+// Use LinkItem component with CustomLink component as LinkComponent prop
 export default function MainLinks() {
-  const links = data.map((link) => <MainLink {...link} key={link.label} />);
-  return <div>{links}</div>;
+  return (
+    <div>
+      {data.map((item) => (
+        <LinkItem key={item.label} {...item} isChild={false} />
+      ))}
+    </div>
+  );
 }

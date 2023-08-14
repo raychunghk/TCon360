@@ -14,14 +14,14 @@ async function getCalendaryMonthByYearMonth(month, year) {
 
     return currentcalendar;
 }
-export default async function getCurrentMonthCalendar() {
+export default async function getCurrentMonthCalendar(currentMonth) {
     //const currentcalendar = await getCalendaryMonthByYearMonth(4, 2023);
     //console.log(currentcalendar)
     const dt = new Date();
     console.log(dt.getFullYear())
     console.log(dt.getMonth()+1);
     const currentYear = dt.getFullYear();
-    const currentMonth = dt.getMonth()+1;
+    //const currentMonth = dt.getMonth()+1;
     return (await getCalendaryMonthByYearMonth(currentMonth, currentYear))
 }
 

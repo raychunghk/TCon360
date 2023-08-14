@@ -4,8 +4,10 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
     Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  line-height: 1.6;
+  line-height: 20;
   font-size: 18px;
+  height:100%;
+  background-color: black;
 }
 
 * {
@@ -24,4 +26,10 @@ a:hover {
 img {
   max-width: 100%;
   display: block;
+}
+
+.clsweekend{
+  color:black;
+  font-weight: 900;
+  background-color: red;
 }

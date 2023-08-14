@@ -1,0 +1,1 @@
+sqlite3 ./prisma/database/timesheet.db

@@ -14,7 +14,7 @@ import { ParamsInterceptor } from './params.interceptor';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('/')
+  @Get('')
   @Render('index')
   @UseInterceptors(ParamsInterceptor)
   home() {
@@ -30,6 +30,19 @@ export class AppController {
   @Render('timesheet')
   @UseInterceptors(ParamsInterceptor)
   public timesheet() {
+    return {};
+  }
+
+  @Get('login')
+  @Render('user/login')
+  @UseInterceptors(ParamsInterceptor)
+  public login() {
+    return {};
+  }
+  @Get('signup')
+  @Render('user/signup')
+  @UseInterceptors(ParamsInterceptor)
+  public signup() {
     return {};
   }
 }

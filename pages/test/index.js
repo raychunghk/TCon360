@@ -1,9 +1,9 @@
 import Layout from '../../components/layout';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
-
+import { basepath } from '/global';
 async function getApiText() {
-    const response = await fetch((process.env.URL || '') + '/absproxy/5000/api/test');
+    const response = await fetch((process.env.URL || '') + `${basepath}/api/test`);
     const data = await response.json();
     const text = data.content;
     return text;
@@ -41,7 +41,9 @@ function test() {
     const [content, setContent] = useState('')
 
     useEffect(() => {
-        fetch('/absproxy/5000/api/test')
+        console.log('basepath?')
+        console.log(basepath)
+        fetch(`${basepath}/api/test`)
             .then(res => res.json())
             .then(data => setContent(data.content))
     }, [])

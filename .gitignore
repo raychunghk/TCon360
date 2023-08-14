@@ -1,7 +1,11 @@
 # compiled output
 /dist
 /node_modules
-
+/.next/*
+.next/*
+/.next
+/prisma/database
+/src/server/graphql/*
 # Logs
 logs
 *.log
@@ -10,7 +14,7 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
+/timesheet/*.docx*
 # OS
 .DS_Store
 

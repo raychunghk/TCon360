@@ -1,9 +1,19 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+generator typegraphql {
+  provider            = "typegraphql-prisma"
+  output              = "../src/server/graphql"
+  formatGeneratedCode = "prettier"
+}
+
+generator PrismaTypeGraphQLTypesGenerator {
+  provider     = "npx prisma-typegraphql-types-generator"
+  enumsOutput  = "./src/types/enums"
+  modelsOutput = "./src/models"
+  useYarn      = "true"
 }
 
 datasource db {
@@ -11,20 +21,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model PostUser {
   id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
   posts Post[]
 }
 
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Staff {
+  id            Int            @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName   String
+  ManagerTitle  String
+  ManagerEmail  String
+  userId        String
+  leaveRequests LeaveRequest[]
+  user          User           @relation(fields: [userId], references: [id])
+  staffFiles    staffFiles[]
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String?   @unique
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  staff         Staff[]
+  staffId       Int?
+}
+
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
 model Post {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
+  published Boolean  @default(false)
   authorId  Int
+  author    PostUser @relation(fields: [authorId], references: [id])
 }
 
 model CalendarMaster {
@@ -33,50 +113,86 @@ model CalendarMaster {
   Year         Int
   Month        Int
 }
-model UserVacation{
-  VacationDate DateTime @id
-  ChargeableDay Decimal
-}
-model Holiday {
-  StartDate   DateTime @id
-  EndDate     DateTime
-  Summary     String?
+
+model PublicHoliday {
+  StartDate DateTime @id
+  EndDate   DateTime
+  Summary   String?
 }
 
-model Staff {
-  id            Int    @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName      String
-  ManagerTitle     String
-  ManagerEmail     String
+model CalendarVacation {
+  id             Int      @id @unique @default(autoincrement())
+  VacationDate   DateTime
+  ChargeableDay  Decimal
+  LeaveRequestId Int
+
+  leaveRequest LeaveRequest @relation(fields: [LeaveRequestId], references: [id], onDelete: Cascade)
 }
 
 model TimeSheet {
-  id                  Int                 @id @default(autoincrement())
+  id                  Int                 @id @unique @default(autoincrement())
   StartDate           DateTime
   EndDate             DateTime
-  calendar            TimeSheetCalendar[]
   TSCalendarID        Int
-  TotalChargeableDay  Decimal
+  TimeSheetFileName   String?
+  TotalChargeableDay  Decimal             @default(0)
   TotalChargeableHour Decimal             @default(0)
   TotalOTHour         Decimal
+  calendar            TimeSheetCalendar[]
+}
+
+model LeaveRequest {
+  id               Int                @id @default(autoincrement())
+  leavePeriodStart DateTime
+  AMPMStart        String
+  leavePeriodEnd   DateTime?
+  AMPMEnd          String?
+  leaveDays        Float
+  dateOfReturn     DateTime
+  staffSignDate    DateTime
+  fileId           Int
+  staffId          Int
+  calendarVacation CalendarVacation[]
+  staff            Staff              @relation(fields: [staffId], references: [id])
+  staffFile        staffFiles         @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  leavePurpose     String?
+  leaveType        String
+}
+
+model staffFiles {
+  id           Int            @id @default(autoincrement())
+  filePath     String
+  fileType     String
+  staffId      Int
+  LeaveRequest LeaveRequest[]
+  staff        Staff          @relation(fields: [staffId], references: [id])
 }
 
 model TimeSheetCalendar {
   id             Int       @id @default(autoincrement())
   DayID          Int
   CalendarDate   DateTime
-  timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
   TimeSheetID    Int
   ChargeableDay  Decimal
   ChargeableHour Decimal
-  Traing         Decimal   @default(0)
+  Training       Decimal   @default(0)
   Vacation       Decimal   @default(0)
   PublicHoliday  Decimal   @default(0)
   WeekEnd        Decimal   @default(0)
   Others         Decimal   @default(0)
+  timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view viewCalendarTimeSheet {
+  CalendarDate           DateTime @id
+  CalendarDateStr        String?
+  WeekDayName            String?
+  Year                   Int?
+  Month                  Int?
+  VacationChargable      Decimal?
+  PublicHolidayChargable Decimal?
+  HolidaySummary         String?
+  LeaveRequestId         Int?
+  staffId                Int?
 }
