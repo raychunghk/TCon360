@@ -3,7 +3,11 @@
     "jsx": "preserve",
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "moduleResolution": "Node",
     "declaration": true,
     "removeComments": true,
@@ -33,7 +37,12 @@
     "src/server/leaverequest/leaverequest.resolver.ts",
     "pages/leaverequest/index.jsx",
     "pages/_document.jsx",
-    "pages/api/auth/[...nextauth].js"
-, "pages/user/signup.tsx", "components/Signupcard.js"  ],
-  "exclude": ["node_modules"]
+    "pages/api/auth/[...nextauth].js",
+    "pages/user/signup.tsx",
+    "components/Signupcard.js",
+    "src/server/timesheet/service/timesheet.service.ts.nouse"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
