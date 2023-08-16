@@ -1,8 +1,13 @@
 .clsweekend {
-  color: #8b96cf;
+  color: #000b5b;
   font-weight: bold;
-  opacity: 1;
-  background: #f7dbdb !important;
+
+  background: #ffc4c4 !important;
 }
 
- 
+.clsPublicHoliday {
+  color: #000b5b;
+  font-weight: bold;
+  border-color: #f54b4b;
+  background: #f54b4b !important;
+}

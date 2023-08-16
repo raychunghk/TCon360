@@ -75,13 +75,19 @@ export class TimesheetService {
       const IsWeekend = title.startsWith('S');
       //const _groupid = result.LeaveRequestId ? result.LeaveRequestId : '';
       const _groupid = result.LeaveRequestId || '';
+      const _clsname = IsWeekend
+        ? 'clsweekend'
+        : result.LeaveRequestId
+        ? ''
+        : 'clsPublicHoliday';
+      const _color = result.LeaveRequestId ? '#3940fa' : '';
       return {
         id: result.ID,
         title,
         start: _start,
         end: enddatestr,
         display: IsWeekend ? 'background' : '',
-        classNames: [IsWeekend ? 'clsweekend' : ''],
+        classNames: [_clsname],
         groupId: _groupid,
         extendedProps: { result },
       };
@@ -196,7 +202,7 @@ export class TimesheetService {
           },
         ],
       });
-      let firstdatecell = 20;
+      const firstdatecell = 20;
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(destPath);
       const worksheet = workbook.getWorksheet(1);
@@ -226,6 +232,8 @@ export class TimesheetService {
         try {
           if (i < objCalendar.length) {
             let dt = objCalendar[i];
+            console.log('objecalendar??');
+            console.log(dt);
             //cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
             const holidayCell = worksheet.getCell('L' + datecellpos);
             const vacationLeaveCell = worksheet.getCell('J' + datecellpos);
@@ -238,8 +246,12 @@ export class TimesheetService {
               isHoliday = 1;
             }
             if (dt.LeaveRequestId && isHoliday == 0) {
-              cell.value = zero;
-              vacationLeaveCell.value = one;
+              const cellval = Number(1 - Number(dt.VacationChargable));
+              cell.value = cellval;
+              vacationLeaveCell.value = Number(dt.VacationChargable); //objCalendar.VacationChargable;
+              if (cellval > 0) {
+                total += cellval;
+              }
               isHoliday = 1;
             }
             if (isHoliday === 0) {
@@ -249,7 +261,7 @@ export class TimesheetService {
             }
           } else {
             emptydateRowID.forEach((x) => {
-              let _hcellid = x + datecellpos;
+              const _hcellid = x + datecellpos;
               console.log(`last row post ${_hcellid}`);
               const _cell = worksheet.getCell(_hcellid);
               _cell.value = '';

@@ -1,0 +1,15 @@
+-- -- SQLite
+-- SELECT ID,
+--     CalendarDate,
+--     CalendarDateStr,
+--     WeekDayName,
+--     Year,
+--     Month,
+--     VacationChargable,
+--     PublicHolidayChargable,
+--     HolidaySummary,
+--     LeaveRequestId,
+--     staffId
+-- FROM viewCalendarTimeSheet
+-- where Month = 8
+-- ;

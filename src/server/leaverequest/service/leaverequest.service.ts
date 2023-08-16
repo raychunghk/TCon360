@@ -38,12 +38,12 @@ export class LeaveRequestService {
   getFilePath(filename: string) {
     return path.resolve(`${__dirname}/../../../../timesheet/${filename}`);
   }
-  private formatdate(_date): String {
+  private formatdate(_date): string {
     if (_date) return format(new Date(_date), 'dd/MM/yyyy');
   }
   public getDateArray(start, end) {
     const dateArray = [];
-    let currentDate = new Date(start);
+    const currentDate = new Date(start);
     if (!end) dateArray.push(new Date(currentDate));
     while (currentDate <= end) {
       dateArray.push(new Date(currentDate));
@@ -269,10 +269,9 @@ export class LeaveRequestService {
 
   async remove(id: number): Promise<void> {
     try {
-      await this.prisma.leaveRequest.delete({ where: { id } });  
+      await this.prisma.leaveRequest.delete({ where: { id } });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-    
   }
 }

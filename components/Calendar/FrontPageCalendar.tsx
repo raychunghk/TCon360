@@ -118,9 +118,27 @@ export function FrontPageCalendar(props) {
     console.log(e.event.id);
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
     setleaveRequestId(_leaveRequestid);
-    console.log('leave request id ');
-    setFormType('edit');
-    open();
+    console.log('leave request props?');
+    console.log(e.event.extendedProps.result);
+    if (_leaveRequestid) {
+      setFormType('edit');
+      open();
+    }
+  };
+  const convertDateStringToDate = (dateString) => {
+    const parts = dateString.split('-');
+    const year = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const day = parseInt(parts[2]);
+
+    return new Date(year, month, day);
+  };
+  const isSameDate = (date1, date2) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   };
   const handleDateSelect = (selectInfo) => {
     console.log(selectInfo);
@@ -135,6 +153,20 @@ export function FrontPageCalendar(props) {
       start: selectInfo.start,
       end: leaveRequestPeriodEnd,
     });
+
+    //const selectedDate = arg.start;
+
+    // Access the events data from the FullCalendar component
+
+    // Iterate through the events to check if any events intersect with the selected date
+    const hasEventsOnSelectedDate = calendarEvents.some((event) =>
+      isSameDate(convertDateStringToDate(event.start), _start),
+    );
+    if (hasEventsOnSelectedDate) {
+      console.log('Selected date contains events');
+    } else {
+      console.log('Selected date does not contain events');
+    }
 
     const _leavePurpose = prompt(
       `Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`,
