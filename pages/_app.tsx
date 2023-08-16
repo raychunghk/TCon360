@@ -132,7 +132,8 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
 
   const pageProps = { session, ...appProps.pageProps } || {}; // Extract pageProps object
-
+  console.log('sesson in _app.tsx')
+  console.log(session);
   console.log('basePath' + basePath);
   //console.log('pageprops:' + { ...pageProps } + pageProps.title);
   //console.log(pageProps)

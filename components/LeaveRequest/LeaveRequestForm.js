@@ -91,6 +91,7 @@ export default function LeaveRequestForm({
     handleSubmit,
   } = useForm();
   const newLeaveRequest = {
+    title: LeaveRequestPeriod?.title ?? null,
     leavePeriodStart: LeaveRequestPeriod?.start ?? null,
     leavePeriodEnd: LeaveRequestPeriod?.end ?? null,
     AMPMStart: 'AMPM',
@@ -246,7 +247,7 @@ export default function LeaveRequestForm({
     leaveRequest.leavePeriodEnd,
   ]);
 
-  const updateOnClick = async (e) => { };
+  const updateOnClick = async (e) => {};
   const deleteOnClick = async (e) => {
     leaveRequestId = leaveRequest.id;
     setSubmitting(true);
@@ -360,6 +361,15 @@ export default function LeaveRequestForm({
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
             <Col span={6}>
+              <TextInput
+                id="Title"
+                name="Title"
+                label="Title"
+                value={leaveRequest.title}
+                readOnly
+              />
+            </Col>
+            <Col span={6}>
               <Text weight={500}>Staff Name:</Text>{' '}
               <Text>{staff && staff.StaffName}</Text>
             </Col>
@@ -371,7 +381,7 @@ export default function LeaveRequestForm({
               <Text weight={500}>Staff Category:</Text>{' '}
               <Text>{staff && staff.StaffCategory}</Text>
             </Col>
-            <Col span={6} />
+
             <Grid.Col span={12}>
               {leaveRequest.leavePeriodStart &&
                 leaveRequest.AMPMStart &&
@@ -380,14 +390,16 @@ export default function LeaveRequestForm({
                   <p>
                     <label>Leave Period</label>
                     <br />{' '}
-                    {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${leaveRequest.AMPMStart === 'AMPM'
-                      ? ''
-                      : leaveRequest.AMPMStart
-                      } to ${format(
-                        leaveRequest.leavePeriodEnd,
-                        'dd-MMM-yyyy',
-                      )} ${leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
-                      }`}{' '}
+                    {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${
+                      leaveRequest.AMPMStart === 'AMPM'
+                        ? ''
+                        : leaveRequest.AMPMStart
+                    } to ${format(
+                      leaveRequest.leavePeriodEnd,
+                      'dd-MMM-yyyy',
+                    )} ${
+                      leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
+                    }`}{' '}
                   </p>
                 )}{' '}
             </Grid.Col>
@@ -456,7 +468,7 @@ export default function LeaveRequestForm({
                 minDate={
                   new Date(
                     new Date(leaveRequest.leavePeriodStart).getTime() +
-                    24 * 60 * 60 * 1000,
+                      24 * 60 * 60 * 1000,
                   )
                 }
                 onChange={(_date) =>

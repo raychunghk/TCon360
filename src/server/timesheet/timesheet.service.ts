@@ -104,6 +104,7 @@ export class TimesheetService {
     return destPath;
   }
 
+<<<<<<< HEAD
   formatDate(date: Date): string {
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -160,6 +161,72 @@ export class TimesheetService {
     if (fs.existsSync(destPath)) {
       console.log('Destination file already exists!');
       fs.unlinkSync(destPath);
+=======
+    private projectRoot = process.cwd();
+    private readonly xlsfilename = 'T26TimeSheet.xlsx';
+    constructor(private prisma: PrismaService) { } getContent() {
+        const filePath = this.getFilePath(this.xlsfilename);
+        const fileContent = fs.readFileSync(filePath);
+        const workbook = XLSX.read(fileContent);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        return XLSX.utils.sheet_to_json(sheet);
+    }
+    getFilePath(filename: string) {
+        //return `${__dirname}/../../../../timesheet/${filename}`;
+        return path.join(this.projectRoot, 'timesheet', filename);
+    }
+    //async getCalendarEvents(year: number, month: number): Promise<any[]> {
+    async getCalendarEvents(_stfid: number): Promise<any[]> {
+        const results = await this.prisma.viewCalendarTimeSheet.findMany({
+            where: {
+                OR: [
+                    { HolidaySummary: { not: null } },
+                    {
+                        AND: [
+                            { LeaveRequestId: { not: null } },
+                            { staffId: _stfid },
+                        ]
+                    }
+                ]
+
+            }
+            // AND: [
+            //     { Year: year },
+            //     { Month: month },
+            //     {
+            //         OR: [
+            //             { HolidaySummary: { not: null } },
+            //             { LeaveRequestId: { not: null } },
+            //         ],
+            //     },
+            // ],
+            ,
+            select: {
+                CalendarDate: true,
+                HolidaySummary: true,
+                LeaveRequestId: true,
+            },
+        });
+
+        return results.map((result: viewCalendarTimeSheet) => {
+            const title = result.HolidaySummary ? result.HolidaySummary : result.LeaveRequestId ? `Vacation ${result.LeaveRequestId}` : null;
+            const date = result.CalendarDate.toISOString().substring(0, 10);
+            const IsWeekend = title.startsWith('S')
+            const _groupid = result.LeaveRequestId ? result.LeaveRequestId : '';
+            return { id: result.LeaveRequestId, title, date, display: IsWeekend ? 'background' : '', classNames: [IsWeekend ? 'clsweekend' : ''], groupId: _groupid, extendedProps: { result } };
+        });
+    }
+    async writeStaffInfoJsonToExcel(jsonObj: any, fieldmap: Record<string, string>, destPath: string) {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(destPath);
+        const worksheet = workbook.getWorksheet(1);        // Write the values to the worksheet
+        for (const field of Object.keys(fieldmap)) {
+            const cell = worksheet.getCell(fieldmap[field]);
+            cell.value = jsonObj[field];
+        }        // Save the workbook to the destination path
+        await workbook.xlsx.writeFile(destPath); console.log('Data written to Excel file successfully!');
+        return destPath;
+>>>>>>> 4116ed6705f22ad9d75275141662c63a37ed1e8b
     }
 
     try {

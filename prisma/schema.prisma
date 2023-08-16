@@ -3,18 +3,18 @@ generator client {
   previewFeatures = ["views"]
 }
 
-generator typegraphql {
-  provider            = "typegraphql-prisma"
-  output              = "../src/server/graphql"
-  formatGeneratedCode = "prettier"
-}
+// generator typegraphql {
+//   provider            = "typegraphql-prisma"
+//   output              = "../src/server/graphql"
+//   formatGeneratedCode = "prettier"
+// }
 
-generator PrismaTypeGraphQLTypesGenerator {
-  provider     = "npx prisma-typegraphql-types-generator"
-  enumsOutput  = "./src/types/enums"
-  modelsOutput = "./src/models"
-  useYarn      = "true"
-}
+// generator PrismaTypeGraphQLTypesGenerator {
+//   provider     = "npx prisma-typegraphql-types-generator"
+//   enumsOutput  = "./src/types/enums"
+//   modelsOutput = "./src/models"
+//   useYarn      = "true"
+// }
 
 datasource db {
   provider = "sqlite"
