@@ -196,3 +196,22 @@ view viewCalendarTimeSheet {
   LeaveRequestId         Int?
   staffId                Int?
 }
+
+view viewEvents {
+  ID               Int       @id
+  leavePeriodStart DateTime
+  leavePeriodEnd   DateTime?
+  StartDateStr     String
+  WeekDayName      String
+  Year             Int
+  Month            Int
+  HolidaySummary   String?
+  EndDateStr       String?
+  dateOfReturn     DateTime?
+  ReturnDateStr    String?
+  AMPMStart        String?
+  AMPMEnd          String?
+  staffId          Int?
+  leaveType        String?
+  LeaveRequestId   Int?
+}

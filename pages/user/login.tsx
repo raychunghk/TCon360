@@ -10,13 +10,14 @@ import {
   Title,
   Text,
   Anchor,
+  LoadingOverlay,
 } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import { setJwtToken } from 'next-auth/jwt';
+import { useDisclosure } from '@mantine/hooks';
 import bg from 'public/images/loginbg1.webp';
 import { useState } from 'react';
-import {siteTitle} from 'components/util/label'
+import { siteTitle } from 'components/util/label';
 import { handleLoginSuccess } from './handleLoginSuccess';
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -25,9 +26,8 @@ const useStyles = createStyles((theme) => ({
     height: '100vh',
   },
   form: {
-    borderRight: `1px solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-    }`,
+    borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+      }`,
     maxWidth: 450,
     paddingTop: 80,
     height: '100vh',
@@ -58,9 +58,10 @@ export default function LoginPage(props) {
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [loginStatus, setLoginStatus] = useState(null); // add login status state variable
+  const [visible, { toggle, open, close }] = useDisclosure(false);
   const handleLogin = async (event) => {
     event.preventDefault();
-
+    open();
     const response = await fetch('/absproxy/5000/api/user/login', {
       // the URL of your Nest.js API endpoint
       method: 'POST',
@@ -73,6 +74,7 @@ export default function LoginPage(props) {
     if (response.ok) {
       await handleLoginSuccess(response, router);
     } else {
+      close();
       setLoginStatus('Login failed.'); // set the login status to a failure message
     }
   };
@@ -84,6 +86,7 @@ export default function LoginPage(props) {
   return (
     <Container fluid className={classes.wrapper}>
       <Paper className={classes.form} radius={0} p={30}>
+
         <Title
           order={2}
           className={classes.title}
@@ -100,6 +103,11 @@ export default function LoginPage(props) {
         )}{' '}
         {/* show the login status message if present */}
         <form onSubmit={handleLogin}>
+          <LoadingOverlay
+            visible={visible}
+            overlayBlur={2}
+            transitionDuration={500}
+          />
           <TextInput
             label="Email address or username"
             placeholder="hello@gmail.com"
@@ -116,7 +124,7 @@ export default function LoginPage(props) {
             onChange={(event) => setPassword(event.target.value)}
           />
           <Checkbox label="Keep me logged in" mt="xl" size="md" />
-          <Button type="submit" fullWidth mt="xl" size="md">
+          <Button type="submit" fullWidth mt="xl" size="md"  >
             Login
           </Button>
         </form>

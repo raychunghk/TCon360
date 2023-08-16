@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../guards/JwtAuthGuard';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../auth/users.service';
 import type { AuthReqInterface } from '../AuthReqInterface';
+import { setDefaultResultOrder } from 'dns';
 @Controller('api/timesheet')
 export class TimesheetController {
   constructor(
@@ -23,7 +24,7 @@ export class TimesheetController {
     private readonly leaveRequestSvc: LeaveRequestService,
     private readonly authService: AuthService,
     private readonly userService: UsersService,
-  ) {}
+  ) { }
   @Get('content')
   async getContent(@Res() res) {
     const json = await this.tsService.getContent();
@@ -61,6 +62,8 @@ export class TimesheetController {
   ): Promise<any[]> {
     console.log('user?');
     const user = req.user;
+    console.log('user?');
+    console.log(user);
     console.log(auth);
     //console.log(req)
     const token = auth.split(' ')[1];
@@ -70,7 +73,7 @@ export class TimesheetController {
       // Find the user with the given userId
       const user = await this.userService.findById(userId);
 
-      const result = this.tsService.getCalendarEvents(user.staffId);
+      const result = await this.tsService.getCalendarEvents(user.staffId);
       console.log('calendar event result');
       //const result = this.staffService.createStaff(stf, userId).then();
       console.log(result);

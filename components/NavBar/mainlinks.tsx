@@ -139,7 +139,9 @@ function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
   const marginLeft = isChild ? 20 : 0;
 
   return (
+    
     <div style={{ marginLeft }}>
+      
       <CustomLink href={link}>
         <Group>
           <ThemeIcon color={color} variant="light">

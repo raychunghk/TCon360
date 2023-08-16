@@ -4,7 +4,12 @@ import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { spawn } from 'child_process';
 import { PrismaService } from '../prisma/prisma.service';
-import { Staff, Prisma, viewCalendarTimeSheet } from '@prisma/client';
+import {
+  Staff,
+  Prisma,
+  viewCalendarTimeSheet,
+  viewEvents,
+} from '@prisma/client';
 import { format } from 'date-fns';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -31,7 +36,7 @@ export class TimesheetService {
   }
   //async getCalendarEvents(year: number, month: number): Promise<any[]> {
   async getCalendarEvents(staffid): Promise<any[]> {
-    const results = await this.prisma.viewCalendarTimeSheet.findMany({
+    /*const results = await this.prisma.viewCalendarTimeSheet.findMany({
       where: {
         OR: [{ HolidaySummary: { not: null } }, { staffId: staffid }],
       },
@@ -41,21 +46,40 @@ export class TimesheetService {
         LeaveRequestId: true,
       },
     });
-
-    return results.map((result: viewCalendarTimeSheet) => {
+    */
+    const results = await this.prisma.viewEvents.findMany({
+      where: {
+        OR: [{ HolidaySummary: { not: null } }, { staffId: staffid }],
+      },
+      select: {
+        ID: true,
+        leavePeriodStart: true,
+        leavePeriodEnd: true,
+        HolidaySummary: true,
+        LeaveRequestId: true,
+      },
+    });
+    return results.map((result: viewEvents) => {
       const title = result.HolidaySummary
         ? result.HolidaySummary
         : result.LeaveRequestId
         ? `Vacation ${result.LeaveRequestId}`
         : null;
-      const date = result.CalendarDate.toISOString().substring(0, 10);
+      const _start = result.leavePeriodStart.toISOString().substring(0, 10);
+      const _end = result.leavePeriodEnd;
+      const enddatestr = _end
+        ? new Date(_end.getTime() + 24 * 60 * 60 * 1000)
+            .toISOString()
+            .substring(0, 10)
+        : '';
       const IsWeekend = title.startsWith('S');
       //const _groupid = result.LeaveRequestId ? result.LeaveRequestId : '';
       const _groupid = result.LeaveRequestId || '';
       return {
-        id: result.LeaveRequestId,
+        id: result.ID,
         title,
-        date,
+        start: _start,
+        end: enddatestr,
         display: IsWeekend ? 'background' : '',
         classNames: [IsWeekend ? 'clsweekend' : ''],
         groupId: _groupid,
@@ -206,20 +230,22 @@ export class TimesheetService {
             const holidayCell = worksheet.getCell('L' + datecellpos);
             const vacationLeaveCell = worksheet.getCell('J' + datecellpos);
             let isHoliday = 0;
+            const one = 1;
+            const zero = 0;
             if (new Decimal(dt.PublicHolidayChargable).greaterThan(0)) {
-              cell.value = '0.0';
-              holidayCell.value = '1.0';
+              cell.value = zero;
+              holidayCell.value = one;
               isHoliday = 1;
             }
             if (dt.LeaveRequestId && isHoliday == 0) {
-              cell.value = '0.0';
-              vacationLeaveCell.value = '1.0';
+              cell.value = zero;
+              vacationLeaveCell.value = one;
               isHoliday = 1;
             }
             if (isHoliday === 0) {
-              cell.value = '1.0';
+              cell.value = one;
               total += 1;
-              holidayCell.value = '0.0';
+              holidayCell.value = zero;
             }
           } else {
             emptydateRowID.forEach((x) => {

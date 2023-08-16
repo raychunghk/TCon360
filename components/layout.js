@@ -3,10 +3,13 @@ import Head from 'next/head';
 import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
 import Link from 'next/link';
-import { useState } from 'react';
+
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { basepath } from '/global';
+import { useDisclosure } from '@mantine/hooks';
 import {
+  LoadingOverlay,
   AppShell,
   Navbar,
   ThemeIcon,
@@ -31,8 +34,9 @@ export default function Layout({ children, home }) {
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
   const [username, setUsername] = useState(false);
+  const [visible, { toggle }] = useDisclosure(false);
   let _username;
-  if (session) {
+  /*if (session) {
     console.log('session?');
     console.log(session);
     //  console.log(session.user.username)
@@ -40,7 +44,16 @@ export default function Layout({ children, home }) {
   } else {
     console.log('no session');
     // signOut();
-  }
+  }*/
+    useEffect(() => {
+    
+    if (session?.user) {
+      console.log(session.user.staff);
+      
+       _username = session.user.name;
+       setUsername(_username);
+    }
+  }, [session]);
   const handleSignout = () => {
     console.log('hihi');
     signOut();
@@ -93,12 +106,14 @@ export default function Layout({ children, home }) {
                   height={30}
                   style={{ marginRight: '5px' }}
                 />
-                <Text id="sitetitle">NxTime - Timesheet and Leave Form manager</Text>
+                <Text id="sitetitle">
+                  NxTime - Timesheet and Leave Form manager
+                </Text>
               </Group>
 
               <Group position="right">
-                <Text>{_username}</Text>
-                {_username ? (
+                <Text>{username}</Text>
+                {username ? (
                   <UnstyledButton
                     onClick={() => handleSignout()}
                     sx={buttonStyles}

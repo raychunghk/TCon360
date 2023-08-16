@@ -116,7 +116,7 @@
     "fastify-static": "^4.7.0",
     "fetch": "^1.1.0",
     "fs": "^0.0.1-security",
-    "graphql": "^16.6.0",
+    "graphql": "^16.8.0",
     "graphql-fields": "^2.0.3",
     "graphql-request": "^6.1.0",
     "gray-matter": "^4.0.3",
@@ -207,7 +207,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "4.2.0",
-    "typegraphql-prisma": "^0.25.1",
+    "typegraphql-prisma": "^0.27.0",
     "typescript": "^5.0.4"
   }
 }

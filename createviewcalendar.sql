@@ -1,0 +1,1 @@
+select * from viewEvents where Month = 8;

@@ -1,7 +1,5 @@
 import { Title, Text, Anchor, Group, Drawer } from '@mantine/core';
 import useStyles from './Calendar.styles';
-
-import { Calendar } from '@mantine/dates';
 import { differenceInBusinessDays, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
@@ -33,29 +31,30 @@ export function FrontPageCalendar(props) {
   console.log('calendarurl');
   console.log(apiurl);
   async function fetchEvents() {
-    const cookies = parseCookies();
-    const tokenCookie = cookies.token;
-    console.log(tokenCookie);
+    try {
+      const cookies = parseCookies();
+      const tokenCookie = cookies.token;
+      console.log(tokenCookie);
 
-    const headers = {
-      Authorization: `Bearer ${tokenCookie}`,
-    };
-    const response = await axios.get(
-      apiurl,
-      {
+      const headers = {
+        Authorization: `Bearer ${tokenCookie}`,
+      };
+      const response = await axios.get(apiurl, {
         headers,
-      },
-      //   , {
-      //   params: { year: year, month: month },
-      // }
-    );
-    if ([200, 201].includes(response.status)) {
-      console.log('gettting calendar');
-      console.log(response.data);
-      const events = await response.data;
-      setCalendarEvents(events);
-    } else {
-      console.error('Failed to fetch events:', response);
+      });
+      if ([200, 201].includes(response.status)) {
+        console.log('gettting calendar');
+        const events = await response.data;
+        console.log(events);
+        /*setCalendarEvents([
+          { title: 'nice event', start: new Date(), end : new Date('18 aug 2023'), resourceId: 'a' },
+        ]);*/
+        setCalendarEvents(events);
+      } else {
+        console.error('Failed to fetch events:', response);
+      }
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
     }
   }
   const { data: session, status } = useSession();
@@ -106,10 +105,9 @@ export function FrontPageCalendar(props) {
   const handleDateSelect = (selectInfo) => {
     console.log(selectInfo);
 
-    let count;
     const _start = selectInfo.start;
     const _end = selectInfo.end;
-    count = differenceInBusinessDays(_end, _start);
+    const count = differenceInBusinessDays(_end, _start);
     console.log(`datediffer? ${count}`);
     const leaveRequestPeriodEnd = count == 1 ? null : subDays(_end, 1);
 
@@ -117,14 +115,6 @@ export function FrontPageCalendar(props) {
       start: selectInfo.start,
       end: leaveRequestPeriodEnd,
     });
-    const selectedDates = [];
-    const date = selectInfo.start;
-    /* while (date < selectInfo.end) {
-       selectedDates.push(date);
-       date = new Date(date.getTime() + 24 * 60 * 60 * 1000); // add one day
-     }
-     setSelectedDatesCount(selectedDates.length);
- */
 
     const _leavePurpose = prompt(
       `Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`,

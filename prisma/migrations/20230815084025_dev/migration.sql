@@ -102,7 +102,7 @@ CREATE TABLE "CalendarVacation" (
     "VacationDate" DATETIME NOT NULL,
     "ChargeableDay" DECIMAL NOT NULL,
     "LeaveRequestId" INTEGER NOT NULL,
-    CONSTRAINT "CalendarVacation_LeaveRequestId_fkey" FOREIGN KEY ("LeaveRequestId") REFERENCES "LeaveRequest" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "CalendarVacation_LeaveRequestId_fkey" FOREIGN KEY ("LeaveRequestId") REFERENCES "LeaveRequest" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -129,6 +129,8 @@ CREATE TABLE "LeaveRequest" (
     "staffSignDate" DATETIME NOT NULL,
     "fileId" INTEGER NOT NULL,
     "staffId" INTEGER NOT NULL,
+    "leavePurpose" TEXT,
+    "leaveType" TEXT NOT NULL,
     CONSTRAINT "LeaveRequest_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES "Staff" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "LeaveRequest_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "staffFiles" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );

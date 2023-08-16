@@ -7,13 +7,17 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 async function main() {
-  //  genStaffInfo();
-  //gencalendar();
-  //genholiday()
-  createViewIfNotExists();
+  await gencalendar();
+  await genholiday();
+  await createViewIfNotExists();
+  await genStaffInfo();
+}
+function createViewIfNotExists() {
+  createViewCalendarIfNotExists();
+  createViewEventsIfNotExists();
 }
 
-async function createViewIfNotExists() {
+async function createViewCalendarIfNotExists() {
   try {
     const viewname = 'viewCalendarTimeSheet';
     const viewExists = await prisma.$queryRaw(Prisma.sql`
@@ -23,41 +27,105 @@ async function createViewIfNotExists() {
     if (viewExists.length === 0) {
       await prisma.$queryRaw(Prisma.sql`
       create view viewCalendarTimeSheet as 
-      select
-      CalendarDate,
-      STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate/1000,'unixepoch')) AS CalendarDateStr,
-      WeekDayName,
-      Year,
-      Month,
-      CASE
-          WHEN V.ChargeableDay > 0 THEN ChargeableDay
-          ELSE 0
-      END AS VacationChargable,
-      CASE
-          WHEN WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN
-              1
-          ELSE
-              0
-      END AS PublicHolidayChargable,
-      CASE
-          WHEN WeekDayName LIKE 'S%' THEN
-              WeekDayName
-          WHEN PH.Summary IS NOT NULL THEN
-              PH.Summary
-          ELSE
-              null
-      END AS HolidaySummary
-      ,V.LeaveRequestId,LR.staffId
-  FROM
-      CalendarMaster C
-      LEFT JOIN CalendarVacation V ON V.VacationDate = C.CalendarDate
-      LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
-      LEFT JOIN LeaveRequest LR ON LR.id = V.LeaveRequestId;
+      select ROW_NUMBER() OVER (
+        ORDER BY C.CalendarDate
+    ) AS ID,
+    CalendarDate,
+    STRFTIME(
+        '%Y-%m-%d %H:%M:%S',
+        DATETIME(CalendarDate / 1000, 'unixepoch')
+    ) AS CalendarDateStr,
+    WeekDayName,
+    Year,
+    Month,
+    CASE
+        WHEN WeekDayName LIKE 'S%'
+        OR PH.Summary IS NOT NULL THEN 0
+        WHEN V.ChargeableDay > 0 THEN ChargeableDay
+        ELSE 0
+    END AS VacationChargable,
+    CASE
+        WHEN WeekDayName LIKE 'S%'
+        OR PH.Summary IS NOT NULL THEN 1
+        ELSE 0
+    END AS PublicHolidayChargable,
+    CASE
+        WHEN WeekDayName LIKE 'S%' THEN WeekDayName
+        WHEN PH.Summary IS NOT NULL THEN PH.Summary
+        WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
+        ELSE null
+    END AS HolidaySummary,
+    V.LeaveRequestId,
+    LR.staffId
+FROM CalendarMaster C
+    LEFT JOIN CalendarVacation V ON V.VacationDate = C.CalendarDate
+    LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+    LEFT JOIN LeaveRequest LR ON LR.id = V.LeaveRequestId
       
       `);
       console.log('View created successfully!');
     } else {
       console.log('View already exists!');
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+async function createViewEventsIfNotExists() {
+  try {
+    const viewname = 'viewEvents';
+    const viewExists = await prisma.$queryRaw(Prisma.sql`
+      SELECT name FROM sqlite_master WHERE type='view' AND name='viewEvents';
+    `);
+
+    if (viewExists.length === 0) {
+      await prisma.$queryRaw(Prisma.sql`
+      create view viewEvents as 
+   select ROW_NUMBER() OVER (
+        ORDER BY C.CalendarDate
+    ) AS ID,
+    CalendarDate as leavePeriodStart,
+    LR.leavePeriodEnd,
+    STRFTIME(
+        '%Y-%m-%d %H:%M:%S',
+        DATETIME(CalendarDate / 1000, 'unixepoch')
+    ) AS StartDateStr,
+    WeekDayName,
+    Year,
+    Month,
+    CASE
+        WHEN WeekDayName LIKE 'S%' THEN WeekDayName
+        WHEN PH.Summary IS NOT NULL THEN PH.Summary
+        when LR.leavePurpose is not null then LR.leavePurpose
+        ELSE null
+    END AS HolidaySummary,
+    STRFTIME(
+        '%Y-%m-%d %H:%M:%S',
+        DATETIME(LR.leavePeriodEnd / 1000, 'unixepoch')
+    ) AS EndDateStr,
+    LR.dateOfReturn,
+    STRFTIME(
+    '%Y-%m-%d %H:%M:%S',
+    DATETIME(LR.dateOfReturn / 1000, 'unixepoch')
+) AS ReturnDateStr,
+    LR.AMPMStart,
+    LR.AMPMEnd,
+    LR.staffId,
+    LR.leaveType,
+    LR.id as LeaveRequestId
+FROM CalendarMaster C
+    LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+    left join LeaveRequest LR on LR.leavePeriodStart = CalendarDate
+where HolidaySummary is not null;
+    
+    
+      
+      `);
+      console.log(`${viewname} created successfully!`);
+    } else {
+      console.log(`${viewname} already exists!`);
     }
   } catch (error) {
     console.error(error);
