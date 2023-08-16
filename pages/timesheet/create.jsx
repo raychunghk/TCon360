@@ -2,26 +2,14 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { MonthPicker } from '@mantine/dates';
-import {
-  Button,
-  Card,
-  Grid,
-  Modal,
-  Text,
-  Center,
-  Group,
-  Box,
-  Flex,
-} from '@mantine/core';
+import { Button, Card, Grid, Modal, Text, Center, Group } from '@mantine/core';
 import Layout from '../../components/layout';
 import MyCard from '../../components/MyCard';
 import Head from 'next/head';
-import UserStyle from '../../styles/User.module.css';
 import { basepath } from '/global';
-import { authOptions } from '../api/auth/[...nextauth]';
 import { useSession } from 'next-auth/react';
 import { IconTableExport } from '@tabler/icons-react';
-import { getServerSession } from 'next-auth/next';
+
 export default function CreateTimesheet() {
   const [modalOpen, setModalOpen] = useState(false);
   const { register, handleSubmit, reset } = useReactHookForm();

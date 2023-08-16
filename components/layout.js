@@ -3,12 +3,13 @@ import Head from 'next/head';
 import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
 import Link from 'next/link';
-
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+import useStyles from '../styles/layout.styles';
 import { basepath } from '/global';
 import { useDisclosure } from '@mantine/hooks';
 import {
+  Title,
   LoadingOverlay,
   AppShell,
   Navbar,
@@ -29,10 +30,11 @@ import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 const name = 'Ray Chung';
 export const siteTitle = 'NxTime';
-export default function Layout({ children, home }) {
+export default function Layout({ children, home, contentpadding = '0px' }) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
+  const { classes } = useStyles();
   const [username, setUsername] = useState(false);
   const [visible, { toggle }] = useDisclosure(false);
   let _username;
@@ -45,13 +47,12 @@ export default function Layout({ children, home }) {
     console.log('no session');
     // signOut();
   }*/
-    useEffect(() => {
-    
+  useEffect(() => {
     if (session?.user) {
       console.log(session.user.staff);
-      
-       _username = session.user.name;
-       setUsername(_username);
+
+      _username = session.user.name;
+      setUsername(_username);
     }
   }, [session]);
   const handleSignout = () => {
@@ -73,6 +74,7 @@ export default function Layout({ children, home }) {
   });
   return (
     <AppShell
+      padding={contentpadding}
       styles={{
         main: {
           background:
@@ -106,9 +108,13 @@ export default function Layout({ children, home }) {
                   height={30}
                   style={{ marginRight: '5px' }}
                 />
-                <Text id="sitetitle">
-                  NxTime - Timesheet and Leave Form manager
-                </Text>
+
+                <Title className={classes.title} align="center">
+                  Welcome to{' '}
+                  <Text inherit variant="gradient" component="span">
+                    NxTime - Timesheet and Leave Form manager
+                  </Text>
+                </Title>
               </Group>
 
               <Group position="right">
@@ -119,7 +125,7 @@ export default function Layout({ children, home }) {
                     sx={buttonStyles}
                   >
                     {' '}
-                    <Group>
+                    <Group style={{ width: '150px' }}>
                       <ThemeIcon variant="light">
                         <IconLogout />
                       </ThemeIcon>
@@ -140,7 +146,7 @@ export default function Layout({ children, home }) {
                     </Link>{' '}
                     <Link href="/signup" className={linkstyle.links}>
                       <UnstyledButton sx={buttonStyles}>
-                        <Group>
+                        <Group style={{ width: '150px' }}>
                           <ThemeIcon variant="light">
                             <IconLogin />
                           </ThemeIcon>

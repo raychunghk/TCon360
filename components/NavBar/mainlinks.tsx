@@ -91,18 +91,7 @@ const data = [
     link: '/leaverequest',
   },
 
-  {
-    icon: <IconTree size="1rem" />,
-    color: 'gray',
-    label: 'Test',
-    link: '/test',
-  },
-  {
-    icon: <IconTree size="1rem" />,
-    color: 'gray',
-    label: 'bill',
-    link: '/tbill',
-  },
+  
 ];
 function CustomLink({
   href,

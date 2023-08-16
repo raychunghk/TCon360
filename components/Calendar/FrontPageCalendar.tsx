@@ -1,5 +1,5 @@
 import { Title, Text, Anchor, Group, Drawer } from '@mantine/core';
-import useStyles from './Calendar.styles';
+
 import { differenceInBusinessDays, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
@@ -8,7 +8,7 @@ import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
 import { useDisclosure, useInputState } from '@mantine/hooks';
-import { parseCookies } from 'nookies';
+import { parseCookies, setCookie } from 'nookies';
 import { useSession } from 'next-auth/react';
 export function FrontPageCalendar(props) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -18,13 +18,13 @@ export function FrontPageCalendar(props) {
   console.log(props);
   console.log('basepath?');
   console.log(basepath);
-  const { classes } = useStyles();
+
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [leaveRequestId, setleaveRequestId] = useState(null);
   const [LeaveRequestPeriod, setLeaveRequestPeriod] = useState(null);
   const [formType, setFormType] = useState(null);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
-  const [selectedDates, setSelectedDates] = useState([]);
+  //const [selectedDates, setSelectedDates] = useState([]);
   const [leavePurpose, setleavePurpose] = useState(null);
   const [staff, setStaff] = useState(null);
   const apiurl = `${basepath}/api/timesheet/calendar`;
@@ -33,11 +33,14 @@ export function FrontPageCalendar(props) {
   async function fetchEvents() {
     try {
       const cookies = parseCookies();
-      const tokenCookie = cookies.token;
-      console.log(tokenCookie);
-
+      const _token = cookies.token;
+      console.log(_token);
+      if (!_token) {
+        const { accessToken } = session;
+        console.log(accessToken);
+      }
       const headers = {
-        Authorization: `Bearer ${tokenCookie}`,
+        Authorization: `Bearer ${_token}`,
       };
       const response = await axios.get(apiurl, {
         headers,
@@ -49,7 +52,11 @@ export function FrontPageCalendar(props) {
         /*setCalendarEvents([
           { title: 'nice event', start: new Date(), end : new Date('18 aug 2023'), resourceId: 'a' },
         ]);*/
-        setCalendarEvents(events);
+        console.log('calendar event length');
+        console.log(calendarEvents.length);
+        if (events.length >= calendarEvents.length) {
+          setCalendarEvents(events);
+        }
       } else {
         console.error('Failed to fetch events:', response);
       }
@@ -57,13 +64,26 @@ export function FrontPageCalendar(props) {
       console.error('Failed to fetch events:', error);
     }
   }
+
   const { data: session, status } = useSession();
   useEffect(() => {
     console.log('session?');
     console.log(session);
-    if (session?.user) {
+
+    if (session) {
+      const sessionexpirydate = new Date(session.expires);
+      const cookies = parseCookies();
+
+      setCookie(null, 'token', cookies.token, {
+        expires: sessionexpirydate,
+        path: '/',
+      });
+
       console.log(session.user.staff);
       setStaff(session.user.staff);
+      const _tkn = session?.token;
+      console.log('token???');
+      console.log(_tkn);
       fetchEvents();
     }
   }, [session]);
@@ -135,12 +155,6 @@ export function FrontPageCalendar(props) {
   };
   return (
     <>
-      <Title className={classes.title} align="center" mt={20}>
-        Welcome to{' '}
-        <Text inherit variant="gradient" component="span">
-          NxTime
-        </Text>
-      </Title>
       <Drawer opened={opened} onClose={close} size={550} title="Leave Request">
         {/* Drawer content */}
         {formType && (
@@ -158,8 +172,13 @@ export function FrontPageCalendar(props) {
 
       <FullCalendar
         ref={calendarRef}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'resourceTimelineWeek,dayGridMonth,timeGridWeek',
+        }}
         plugins={[dayGridPlugin, interactionPlugin]}
-        height={600}
+        height={'100%'}
         eventClick={fnEventclick}
         aspectRatio={1.5}
         initialView="dayGridMonth"

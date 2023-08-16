@@ -4,12 +4,12 @@ export default createStyles((theme) => ({
  
   title: {
     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    fontSize: 40,
-    fontWeight: 500,
-    letterSpacing: -2,
+    fontSize: 18,
+  
+    letterSpacing: 0,
 
     [theme.fn.smallerThan('md')]: {
-      fontSize: 25,
+      fontSize: 12,
     },
   },
 }));

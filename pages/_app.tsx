@@ -101,6 +101,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
         <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
+        <link rel="stylesheet" href={`${basepath}/styles/globals.css`} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
         <link

@@ -42,7 +42,7 @@ export const authOptions = {
           const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
           console.log('Decoded token:', decodedToken); // log the decoded token
-          const { id, name, email, username ,staff} = decodedToken;
+          const { id, name, email, username, staff } = decodedToken;
           console.log('decodedToken');
           console.log(decodedToken);
           // check if the token matches the credentials
@@ -54,7 +54,8 @@ export const authOptions = {
               email: email,
               picture: '',
               username: username,
-              staff, staff,
+              staff,
+              tkn: token,
             };
             console.log('rtn?');
             return rtn;
@@ -82,8 +83,8 @@ export const authOptions = {
       //const cookies = parseCookies();
       //console.log('cookies');
       //console.log(cookies);
-      console.log('users?')
-      console.log(user)
+      console.log('users?');
+      console.log(user);
       //const tokenCookie = cookies.token;
       //console.log('token cookie');
       //console.log(tokenCookie);
@@ -91,14 +92,13 @@ export const authOptions = {
       console.log('account');
       console.log(account);
       // if there's a token cookie, add it to the JWT token
-      
-      if (user && user.hasOwnProperty('staff')){
-        token.staff = user.staff[0]
 
+      if (user && user.hasOwnProperty('staff')) {
+        token.staff = user.staff[0];
       }
       console.log('token in jwt');
       console.log(token);
-      
+
       if (token.hasOwnProperty('exp')) {
         const expdate = new Date(token.exp * 1000);
 
@@ -146,7 +146,7 @@ export const authOptions = {
         session.user = {
           name: token.name,
           email: token.email,
-          staff :token.staff,
+          staff: token.staff,
         };
         session.basePath = '/absproxy/5000';
         // add the token to the session object

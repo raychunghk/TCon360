@@ -8,7 +8,6 @@ import {
   Grid,
   Col,
   useMantineTheme,
-  Center,
   rem,
   Card,
   Select,
@@ -45,7 +44,7 @@ import {
 } from '@tabler/icons-react';
 
 import { PublicHolidaysContext } from '../../pages/_app';
-import { async } from 'rxjs';
+
 //export default function LeaveRequestForm({ staff, publicholidays }) {
 
 export async function getServerSideProps(context) {
@@ -103,7 +102,7 @@ export default function LeaveRequestForm({
     fileId: null,
     error: null,
     helper: null,
-    leavePurpose: '',
+
     leaveType: 'vacation',
     leavePurpose,
   };
@@ -326,7 +325,6 @@ export default function LeaveRequestForm({
       } else {
         console.error('Failed to create leave request:', response);
       }
-      // Do something with the response data
     } catch (error) {
       console.error(error);
       // Handle error
@@ -360,15 +358,6 @@ export default function LeaveRequestForm({
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
-            <Col span={6}>
-              <TextInput
-                id="Title"
-                name="Title"
-                label="Title"
-                value={leaveRequest.title}
-                readOnly
-              />
-            </Col>
             <Col span={6}>
               <Text weight={500}>Staff Name:</Text>{' '}
               <Text>{staff && staff.StaffName}</Text>
@@ -409,6 +398,13 @@ export default function LeaveRequestForm({
                 name="leavePurpose"
                 label="Leave purpose(optional)"
                 value={leaveRequest.leavePurpose}
+                onChange={(event) => {
+                  const updatedLeaveRequest = {
+                    ...leaveRequest,
+                    leavePurpose: event.target.value,
+                  };
+                  setLeaveRequest(updatedLeaveRequest);
+                }}
               />
             </Grid.Col>
             <Grid.Col span={6}>

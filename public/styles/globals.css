@@ -26,3 +26,11 @@ img {
   max-width: 100%;
   display: block;
 }
+.fc-header-toolbar {
+  padding: 10px 15px;
+  /* Add your extra CSS styles here */
+  /* Example:
+  background-color: red;
+  color: white;
+  */
+}

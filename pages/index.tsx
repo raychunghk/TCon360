@@ -1,34 +1,15 @@
 import { FrontPageCalendar } from '../components/Calendar/FrontPageCalendar';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import Layout, { siteTitle } from '../components/layout';
-import { useState } from 'react';
-import {
-  Text,
-  useMantineTheme,
-  Drawer
-} from '@mantine/core';
+import Layout from '../components/layout';
 import Head from 'next/head';
-import LeaveRequestForm from '../components/LeaveRequest/LeaveRequestForm';
- 
+
 export default function HomePage(props) {
-  console.log('homepage basepath?')
-
-  const theme = useMantineTheme();
-  
   return (
-    <Layout home>
+    <Layout home contentpadding="0px">
       <Head>
-        <title>Home Page</title>
+        <title>NxTime</title>
       </Head>
-
-
-      <FrontPageCalendar {...props}/>
+      <FrontPageCalendar {...props} />
       {/* <ColorSchemeToggle /> */}
-      
     </Layout>
   );
 }
-
-/*
-  
-*/

@@ -1,19 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
-import { useForm } from 'react-hook-form';
-
 import Layout from '../../components/layout';
 import LeaveRequestForm from '../../components/LeaveRequest/LeaveRequestForm';
-import MyModal from '../../components/MyModal';
-import { format, parseISO, isWeekend } from 'date-fns';
-import { basepath } from '/global';
-import Head from 'next/head';
-import { useForm as uForm } from 'react-hook-form';
+
 import { StaffService } from 'src/server/staff/service/staff.service';
 import { LeaveRequestService } from 'src/server/leaverequest/service/leaverequest.service';
 
-import { UtilsContext } from '../../components/util/utilCtx';
 import { PrismaClient } from '@prisma/client';
-import { PublicHolidaysContext } from '../_app';
+
 //export default function LeaveRequestForm({ staff, publicholidays }) {
 export default function CreateLeaveRequestForm() {
   const LeaveRequestPeriod = {
@@ -21,9 +13,8 @@ export default function CreateLeaveRequestForm() {
     leavePeriodEnd: null,
   };
   return (
-    <Layout>
+    <Layout contentpadding="20px">
       <LeaveRequestForm
-     
         formType={'create'}
         LeaveRequestPeriod={LeaveRequestPeriod}
       />
@@ -32,13 +23,10 @@ export default function CreateLeaveRequestForm() {
 }
 export const getServerSideProps = async ({ params }) => {
   const staffService = new StaffService();
-  
   const prisma = new PrismaClient();
   const leaveReqSvc = new LeaveRequestService(prisma);
 
   return {
-    props: {
-     
-    },
+    props: {},
   };
 };

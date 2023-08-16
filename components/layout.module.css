@@ -13,3 +13,12 @@
 
     font-size: 1em;
 }
+
+.fc-header-toolbar {
+  padding: 0px 15px;
+  /* Add your extra CSS styles here */
+  /* Example:
+  background-color: red;
+  color: white;
+  */
+}
