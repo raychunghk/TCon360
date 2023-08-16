@@ -15,6 +15,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 /timesheet/*.docx*
+/timesheet/T26TimeSheet_ChungWaiMan_*.xlsx
 # OS
 .DS_Store
 
