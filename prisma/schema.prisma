@@ -91,14 +91,14 @@ model VerificationRequest {
   @@unique([identifier, token])
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  Int
-  author    PostUser @relation(fields: [authorId], references: [id])
-}
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   title     String
+//   content   String?
+//   published Boolean  @default(false)
+//   authorId  Int
+//   author    PostUser @relation(fields: [authorId], references: [id])
+// }
 
 model CalendarMaster {
   CalendarDate DateTime @id
@@ -207,4 +207,5 @@ view viewEvents {
   AMPMEnd          String?
   staffId          Int?
   LeaveRequestId   Int?
+  leaveDays        Float?
 }

@@ -47,6 +47,9 @@ export class TimesheetService {
         HolidaySummary: true,
         LeaveRequestId: true,
         eventType: true,
+        leaveDays: true,
+        Year: true,
+        Month: true,
       },
     });
     return results.map((result: viewEvents) => {

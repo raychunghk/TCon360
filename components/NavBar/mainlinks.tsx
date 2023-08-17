@@ -44,12 +44,12 @@ const data = [
     label: 'Time Sheet',
     link: '/#',
     child: [
-      {
-        icon: <IconEyeglass size="1rem" />,
-        color: 'blue',
-        label: 'View',
-        link: '/timesheet',
-      },
+      // {
+      //   icon: <IconEyeglass size="1rem" />,
+      //   color: 'blue',
+      //   label: 'View',
+      //   link: '/timesheet',
+      // },
       {
         icon: <IconCalendarPlus size="1rem" />,
         color: 'blue',
@@ -78,18 +78,18 @@ const data = [
       },
     ],
   },
-  {
-    icon: <IconCalendarStats size="1rem" />,
-    color: 'violet',
-    label: 'Calendar',
-    link: '/calendar',
-  },
-  {
-    icon: <IconSunset2 size="1rem" />,
-    color: 'grape',
-    label: 'Leave Request',
-    link: '/leaverequest',
-  },
+  // {
+  //   icon: <IconCalendarStats size="1rem" />,
+  //   color: 'violet',
+  //   label: 'Calendar',
+  //   link: '/calendar',
+  // },
+  // {
+  //   icon: <IconSunset2 size="1rem" />,
+  //   color: 'grape',
+  //   label: 'Leave Request',
+  //   link: '/leaverequest',
+  // },
 
   
 ];

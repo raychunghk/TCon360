@@ -1,143 +1,240 @@
-
-The month buttons inside the mantine's monthpicker is too wide, how can I make in narrower
-
+i have this prisma schema. and sqlite view,
+I have fetchEvents function to retrieve all events ,
+ Now I want to calculate a total chargeable days,
+ The value is based on the current month showing on the FullCalendar component, 
+  which is the total number of calendar days minus the "leaveDays" of the viewEvent array filtered of the FullCalendar's current month
+  , the value should be updated when switching to different month, also consider year changes when switch from dec to jan or jan to dec
+ the value is to output on the calendar title , 
+ it is working when switching months, however, it does not change the title when the page is firstly landed because the fetchevents is called after the title is set
+ how to fix?
+ 
 ```
-import { useState } from 'react';
+import { Title, Text, Anchor, Group, Drawer } from '@mantine/core';
+
+import { differenceInBusinessDays, subDays } from 'date-fns';
+import { useEffect, useState, useRef } from 'react';
+import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
+import FullCalendar from '@fullcalendar/react';
+import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
-import { useForm as useReactHookForm } from 'react-hook-form';
-import { MonthPicker } from '@mantine/dates';
-import { Button, Card, Grid, Modal, Text, Center, Group } from '@mantine/core';
-import { IconTableExport } from '@tabler/icons-react';
+import styles from './calendar.module.css';
+import { useDisclosure, useInputState } from '@mantine/hooks';
+import { parseCookies, setCookie } from 'nookies';
 import { useSession } from 'next-auth/react';
-import { basepath } from '/global';
-import MyCard from '../MyCard';
-import { CSSProperties } from 'react';
-import download from 'downloadjs';
-export default function CreateTimesheetPage({ pickersize = 'md' }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { register, handleSubmit, reset } = useReactHookForm();
-  const [submitting, setSubmitting] = useState(false);
-  const [fileid, setfileid] = useState(false);
-  const [monthValue, setMonthValue] = useState(new Date());
+export function FrontPageCalendar(props) {
+  const [opened, { open, close }] = useDisclosure(false);
+  console.log('Calendar prosp?');
+  const calendarRef = useRef(null);
+  const basepath = process.env.basepath; //props.basepath;
+  console.log(props);
+  console.log('basepath?');
+  console.log(basepath);
+
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [leaveRequestId, setleaveRequestId] = useState(null);
+  const [LeaveRequestPeriod, setLeaveRequestPeriod] = useState(null);
+  const [formType, setFormType] = useState(null);
+  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
+  //const [selectedDates, setSelectedDates] = useState([]);
+  const [leavePurpose, setleavePurpose] = useState(null);
+  const [staff, setStaff] = useState(null);
+  const apiurl = `${basepath}/api/timesheet/calendar`;
+  console.log('calendarurl');
+  console.log(apiurl);
+  async function fetchEvents() {
+    try {
+      const cookies = parseCookies();
+      const _token = cookies.token;
+      console.log(_token);
+      if (!_token) {
+        const { accessToken } = session;
+        console.log(accessToken);
+      }
+      const headers = {
+        Authorization: `Bearer ${_token}`,
+      };
+      const response = await axios.get(apiurl, {
+        headers,
+      });
+      if ([200, 201].includes(response.status)) {
+        console.log('gettting calendar');
+        const events = await response.data;
+        console.log(events);
+        /*setCalendarEvents([
+          { title: 'nice event', start: new Date(), end : new Date('18 aug 2023'), resourceId: 'a' },
+        ]);*/
+        console.log('calendar event length');
+        console.log(calendarEvents.length);
+        if (events.length != calendarEvents.length) {
+          setCalendarEvents(events);
+        }
+      } else {
+        console.error('Failed to fetch events:', response);
+      }
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+    }
+  }
+
   const { data: session, status } = useSession();
-  const onSubmit = async (event) => {
-    setSubmitting(true);
-    const year = monthValue.getFullYear();
-    const month = monthValue.getMonth() + 1;
-    const response = await axios.post(`${basepath}/api/timesheet/create`, {
-      year,
-      month,
+  useEffect(() => {
+    console.log('session?');
+    console.log(session);
+
+    if (session) {
+      const sessionexpirydate = new Date(session.expires);
+      const cookies = parseCookies();
+
+      setCookie(null, 'token', cookies.token, {
+        expires: sessionexpirydate,
+        path: '/',
+      });
+
+      console.log(session.user.staff);
+      setStaff(session.user.staff);
+      const _tkn = session?.token;
+      console.log('token???');
+      console.log(_tkn);
+      fetchEvents();
+    }
+  }, [session]);
+  
+  const [date, setDate] = useState(new Date());
+  const handleDeleteEvent = (eventId) => {
+    // Call FullCalendar's removeEvent method to remove the event
+    try {
+      calendarRef.current.getApi().getEventById(eventId).remove();
+      fetchEvents();
+    } catch (error) {
+      throw error;
+      console.log(error);
+    }
+  };
+  const handleDateChange = (newDate) => {
+    setDate(newDate);
+  };
+  const handleSelect = (arg) => {
+    console.log(arg.start);
+    console.log(arg.end);
+  };
+  const fnEventclick = (e) => {
+    console.log('event click');
+    console.log(e.event);
+    console.log(e.event.title);
+    console.log(e.event.id);
+    const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
+    setleaveRequestId(_leaveRequestid);
+    console.log('leave request props?');
+    console.log(e.event.extendedProps.result);
+    if (_leaveRequestid) {
+      setFormType('edit');
+      open();
+    }
+  };
+  const convertDateStringToDate = (dateString) => {
+    const parts = dateString.split('-');
+    const year = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const day = parseInt(parts[2]);
+
+    return new Date(year, month, day);
+  };
+  const isSameDate = (date1, date2) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
+  const handleSelectAllow = (selectInfo) => {
+    const selectedDate = selectInfo.start;
+
+    // Disable selection on weekends (Saturday and Sunday)
+    if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
+      return false;
+    }
+  
+    const hasEventsOnSelectedDate = calendarEvents.some((event) => {
+      const eventStartDate = convertDateStringToDate(event.start);
+      const eventEndDate = event.end
+        ? convertDateStringToDate(event.end)
+        : eventStartDate;
+
+      if (isSameDate(eventStartDate, selectedDate)) {
+        return true;
+      }
+
+      if (
+        event.end &&
+        selectedDate >= eventStartDate &&
+        selectedDate < eventEndDate
+      ) {
+        return true;
+      }
+
+      return false;
     });
-    setSubmitting(false);
-    if ([200, 201].includes(response.status)) {
-      setfileid(response.data.fileid);
-      setModalOpen(true);
-    } else {
-      console.error('Failed to create timesheet record:', response);
-    }
-  };
-  const handleDownloadFile = async () => {
-    const url = `${basepath}/api/staff/download/${fileid}`;
-    const response = await axios.get(url, { responseType: 'blob' });
-    const disposition = response.headers['content-disposition'];
-    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-    const matches = filenameRegex.exec(disposition);
-    const filename = matches ? matches[1] : `${fileid}.xml`;
-    download(response.data, filename);
-  };
-  const handleModalClose = () => {
-    setModalOpen(false);
-    if (fileid) {
-      handleDownloadFile();
-    }
+    return !hasEventsOnSelectedDate;
+
+    //return true;
   };
 
-  const handleMonthChange = (date) => {
-    if (fileid) {
-      setfileid(null);
+  const handleDateSelect = (selectInfo) => {
+    console.log(selectInfo);
+
+    const _start = selectInfo.start;
+    const _end = selectInfo.end;
+    const count = differenceInBusinessDays(_end, _start);
+    console.log(`datediffer? ${count}`);
+    const leaveRequestPeriodEnd = count == 1 ? null : subDays(_end, 1);
+
+    setLeaveRequestPeriod({
+      start: selectInfo.start,
+      end: leaveRequestPeriodEnd,
+    });
+
+  
+
+    const _leavePurpose = prompt(
+      `Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`,
+    );
+    if (_leavePurpose) {
+      setleavePurpose(_leavePurpose);
+      setFormType('create');
+      setleaveRequestId(0);
+      open();
+      /*
+      setCalendarEvents([...calendarEvents, {
+        title,
+        start: selectInfo.startStr,
+        end: selectInfo.endStr,
+        allDay: selectInfo.allDay,
+      }]);*/
     }
-    setMonthValue(date);
-  };
-  // CSS styles to reduce button width
-  const buttonStyle: CSSProperties = {
-    width: '50px', // Adjust the width as needed
   };
   return (
     <>
-      <form method="post" onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title={'Create TimeSheet'} cardwidth={250}>
-          <Grid pb={5} ta="center">
-            <Grid.Col span={12}>
-              <Group position="center">
-                <MonthPicker
-                  maxLevel="year"
-                  value={monthValue}
-                  withCellSpacing={false}
-                  onChange={handleMonthChange}
-                  size={pickersize}
-                />
-              </Group>
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <Group position="center">
-                {fileid && (
-                  <Button
-                    component="a"
-                    target="_blank"
-                    leftIcon={<IconTableExport size="1rem" />}
-                    href={`${basepath}/api/staff/download/${fileid}`}
-                  >
-                    Download TimeSheet
-                  </Button>
-                )}
-              </Group>
-            </Grid.Col>
-          </Grid>
-          <Card.Section
-            bg="indigo.2"
-            py="md"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-            }}
-          >
-            <Button
-              type="submit"
-              fullWidth
-              loading={submitting}
-              maw={'70%'}
-              radius="md"
-            >
-              Submit
-            </Button>
-          </Card.Section>
-        </MyCard>
-      </form>
-      <Modal.Root opened={modalOpen} onClose={handleModalClose}>
-        <Modal.Overlay />
-        <Modal.Content>
-          <Modal.Header bg="indigo.4" c="white">
-            <Modal.Title>
-              <Text fw={700} fz="md">
-                Success
-              </Text>
-            </Modal.Title>
-            <Modal.CloseButton bg="indigo.2" />
-          </Modal.Header>
-          <Modal.Body>
-            <Text mt="md">Timesheet record created successfully!</Text>
-            <Center>
-              <Button mt="md" onClick={handleModalClose}>
-                Ok
-              </Button>
-            </Center>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal.Root>
+  
+
+      <FullCalendar
+        ref={calendarRef}
+        headerToolbar={{
+          center: 'title',
+          start: '',
+          end: 'prev,next today',
+        }}
+        plugins={[dayGridPlugin, interactionPlugin]}
+        height={'100%'}
+        eventClick={fnEventclick}
+        aspectRatio={1.5}
+        initialView="dayGridMonth"
+        selectable={true}
+        events={calendarEvents}
+        selectAllow={handleSelectAllow}
+        select={handleDateSelect} // Specify callback function for date range selection
+      />
     </>
   );
 }
-
 ```

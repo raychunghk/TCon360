@@ -7,7 +7,7 @@ import FullCalendar from '@fullcalendar/react';
 import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
-import styles from './calendar.module.css'
+import styles from './calendar.module.css';
 import { useDisclosure, useInputState } from '@mantine/hooks';
 import { parseCookies, setCookie } from 'nookies';
 import { useSession } from 'next-auth/react';
@@ -20,9 +20,13 @@ export function FrontPageCalendar(props) {
   console.log('basepath?');
   console.log(basepath);
 
+  const [chargeableDays, setChargeableDays] = useState(0);
+  const [customTitle, setCustomTitle] = useState('');
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [leaveRequestId, setleaveRequestId] = useState(null);
   const [LeaveRequestPeriod, setLeaveRequestPeriod] = useState(null);
+
+  const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
   const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   //const [selectedDates, setSelectedDates] = useState([]);
@@ -50,12 +54,10 @@ export function FrontPageCalendar(props) {
         console.log('gettting calendar');
         const events = await response.data;
         console.log(events);
-        /*setCalendarEvents([
-          { title: 'nice event', start: new Date(), end : new Date('18 aug 2023'), resourceId: 'a' },
-        ]);*/
+
         console.log('calendar event length');
         console.log(calendarEvents.length);
-        if (events.length >= calendarEvents.length) {
+        if (events.length != calendarEvents.length) {
           setCalendarEvents(events);
         }
       } else {
@@ -88,12 +90,11 @@ export function FrontPageCalendar(props) {
       fetchEvents();
     }
   }, [session]);
-  /*
   useEffect(() => {
-  
-
-    fetchEvents();
-  }, []);*/
+    // Calculate total chargeable days whenever calendar events or date changes
+    // const currentDate = new Date();
+    setTitle(CurrentStart);
+  }, [calendarEvents, CurrentStart]);
   const [date, setDate] = useState(new Date());
   const handleDeleteEvent = (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
@@ -115,8 +116,7 @@ export function FrontPageCalendar(props) {
   const fnEventclick = (e) => {
     console.log('event click');
     console.log(e.event);
-    console.log(e.event.title);
-    console.log(e.event.id);
+
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
     setleaveRequestId(_leaveRequestid);
     console.log('leave request props?');
@@ -175,7 +175,61 @@ export function FrontPageCalendar(props) {
 
     //return true;
   };
+  function handleMonthYearChange(info) {
+    if (calendarEvents.length == 0) {
+      fetchEvents();
+    }
+    setTitle(info.view.currentStart);
+  }
+  function setTitle(newDate) {
+    setCurrentStart(newDate);
+    const currentYear = newDate.getFullYear(); // Get the year
+    const currentMonth = newDate.getMonth(); // Get the month
+    console.log('New year:', currentYear);
+    console.log('New month:', currentMonth);
 
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+    const formattedFirstDay = firstDayOfMonth.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    const formattedLastDay = lastDayOfMonth.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    const _dateRange = `${formattedFirstDay} to ${formattedLastDay}`;
+
+    const filteredEvents = calendarEvents.filter(
+      (event) =>
+        event.extendedProps.result.Year === currentYear &&
+        event.extendedProps.result.Month === currentMonth + 1,
+    );
+
+    const totalDaysInMonth = new Date(
+      currentYear,
+      currentMonth + 1,
+      0,
+    ).getDate();
+    console.log('total days in month', totalDaysInMonth);
+    const leaveDays = filteredEvents.reduce(
+      (total, event) => (total += event.extendedProps.result.leaveDays || 0),
+      0,
+    );
+    console.log('total leave days ', leaveDays);
+
+    const _chargeableDays = totalDaysInMonth - leaveDays;
+    const _customTitle = `${_dateRange} (chargable days: ${_chargeableDays})`;
+    setCustomTitle(_customTitle);
+    // Update the state with the calculated chargeable days
+    setChargeableDays(_chargeableDays);
+    // Your logic here...
+  }
   const handleDateSelect = (selectInfo) => {
     console.log(selectInfo);
 
@@ -204,15 +258,9 @@ export function FrontPageCalendar(props) {
       setFormType('create');
       setleaveRequestId(0);
       open();
-      /*
-      setCalendarEvents([...calendarEvents, {
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
-      }]);*/
     }
   };
+
   return (
     <>
       <Drawer opened={opened} onClose={close} size={550} title="Leave Request">
@@ -233,10 +281,27 @@ export function FrontPageCalendar(props) {
       <FullCalendar
         ref={calendarRef}
         headerToolbar={{
-          left: 'prev,next today',
           center: 'title',
-          right: 'resourceTimelineWeek,dayGridMonth,timeGridWeek',
+          start: '',
+
+          end: 'prev,next today',
         }}
+        titleFormat={() => customTitle}
+        // views={{
+        //   customTitle: {
+        //     type: 'dayGridMonth',
+        //     // Other view-specific options...
+        //   },
+        // }}
+        // customButtons={{
+        //   customTitle: {
+        //     text: 'Custom Text', // Specify your custom text here
+
+        //     click: function () {
+        //       // Handle custom title click event (optional)
+        //     },
+        //   },
+        // }}
         plugins={[dayGridPlugin, interactionPlugin]}
         height={'100%'}
         eventClick={fnEventclick}
@@ -246,6 +311,7 @@ export function FrontPageCalendar(props) {
         events={calendarEvents}
         selectAllow={handleSelectAllow}
         select={handleDateSelect} // Specify callback function for date range selection
+        datesSet={handleMonthYearChange}
       />
     </>
   );

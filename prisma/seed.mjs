@@ -57,6 +57,7 @@ async function createViewCalendarIfNotExists() {
     END AS HolidaySummary,
     V.LeaveRequestId,
     LR.staffId
+  
 FROM CalendarMaster C
     LEFT JOIN CalendarVacation V ON V.VacationDate = C.CalendarDate
     LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
@@ -121,6 +122,11 @@ select ROW_NUMBER() OVER (
     LR.staffId,
     LR.leaveType,
     LR.id as LeaveRequestId
+    ,    case when  LR.leaveDays is not null then LR.leaveDays
+      WHEN WeekDayName LIKE 'S%' THEN 1
+        WHEN PH.Summary IS NOT NULL THEN 1
+        else null
+        end as leaveDays
 FROM CalendarMaster C
     LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
     left join LeaveRequest LR on LR.leavePeriodStart = CalendarDate

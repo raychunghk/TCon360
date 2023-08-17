@@ -13,3 +13,4 @@
 -- FROM viewCalendarTimeSheet
 -- where Month = 8
 -- ;
+select * from view
