@@ -2,19 +2,39 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { MonthPicker } from '@mantine/dates';
-import { Button, Card, Grid, Modal, Text, Center, Group } from '@mantine/core';
+import {
+  Button,
+  Card,
+  Grid,
+  Modal,
+  Text,
+  Center,
+  Group,
+  createStyles,
+} from '@mantine/core';
 import { IconTableExport } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { basepath } from '/global';
 import MyCard from '../MyCard';
+import { CSSProperties } from 'react';
 import download from 'downloadjs';
-export default function CreateTimesheetPage() {
+import { createUseStyles } from 'react-jss';
+import styles from './mp.module.css';
+const useStyles = createStyles({
+  monthButton: {
+    width: '800px',
+    justifyContent: 'center',
+  },
+});
+export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [modalOpen, setModalOpen] = useState(false);
   const { register, handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState(false);
   const [monthValue, setMonthValue] = useState(new Date());
   const { data: session, status } = useSession();
+
+  const { classes } = useStyles();
   const onSubmit = async (event) => {
     setSubmitting(true);
     const year = monthValue.getFullYear();
@@ -53,18 +73,27 @@ export default function CreateTimesheetPage() {
     }
     setMonthValue(date);
   };
+  // CSS styles to reduce button width
 
   return (
     <>
+      <style jsx global>{`
+        .mantine-MonthPicker-monthButton {
+          width: 70px !important;
+        }
+      `}</style>
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title={'Create TimeSheet'}>
-          <Grid pb={30} ta="center">
+        <MyCard title={'Create TimeSheet'} cardwidth={250}>
+          <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group position="center">
                 <MonthPicker
                   maxLevel="year"
                   value={monthValue}
+                  withCellSpacing={false}
                   onChange={handleMonthChange}
+                  size={pickersize}
+                  className={styles.monthPickerButtons}
                 />
               </Group>
             </Grid.Col>
@@ -97,7 +126,7 @@ export default function CreateTimesheetPage() {
               type="submit"
               fullWidth
               loading={submitting}
-              maw={250}
+              maw={'70%'}
               radius="md"
             >
               Submit

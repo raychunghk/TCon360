@@ -30,7 +30,7 @@ import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 const name = 'Ray Chung';
 export const siteTitle = 'NxTime';
-export default function Layout({ children, home, contentpadding = '0px' }) {
+export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();

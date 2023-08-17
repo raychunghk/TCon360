@@ -1,12 +1,12 @@
 import { Card, Text } from '@mantine/core';
 import UserStyle from '../styles/User.module.css';
-function MyCard({ title, children }) {
+function MyCard({ title, children, cardwidth = 500 }) {
   return (
     <Card
       shadow="sm"
       padding="lg"
       radius="md"
-      maw={500}
+      maw={cardwidth}
       withBorder
       sx={(theme) => ({
         backgroundColor:

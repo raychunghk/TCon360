@@ -1,6 +1,6 @@
 import { AppShell, Navbar } from '@mantine/core';
 import MainLinks from './mainlinks';
-
+import CreateTimesheetPage from '../timesheet/createform';
 export default function AppShellNavBar({ opened }) {
   return (
     <Navbar
@@ -9,7 +9,10 @@ export default function AppShellNavBar({ opened }) {
       hidden={!opened}
       width={{ sm: 200, lg: 230 }}
     >
-      <Navbar.Section>{/* Header with logo */}</Navbar.Section>
+      <Navbar.Section>
+        {/* Header with logo */}
+        <CreateTimesheetPage pickersize="xs" />
+      </Navbar.Section>
       <Navbar.Section grow mt="md">
         {/* Links sections */}
         <MainLinks />

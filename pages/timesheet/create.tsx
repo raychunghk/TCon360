@@ -21,7 +21,7 @@ export default function CreateTimesheet() {
       <Head>
         <title>Create Timesheet</title>
       </Head>
-      <CreateTimesheetPage />
+      <CreateTimesheetPage pickersize="sm" />
     </Layout>
   );
 }

@@ -1,11 +1,7 @@
-in this next.js component, i want to change it so that after submit success, 
-the modal with a ok button will popup , i wanna change it that when click ok button of the modal, 
-I can download the file from this url:
-`${basepath}/api/staff/download/${fileid}`
+
+The month buttons inside the mantine's monthpicker is too wide, how can I make in narrower
 
 ```
-
-
 import { useState } from 'react';
 import axios from 'axios';
 import { useForm as useReactHookForm } from 'react-hook-form';
@@ -15,7 +11,9 @@ import { IconTableExport } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { basepath } from '/global';
 import MyCard from '../MyCard';
-export default function CreateTimesheetPage() {
+import { CSSProperties } from 'react';
+import download from 'downloadjs';
+export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [modalOpen, setModalOpen] = useState(false);
   const { register, handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
@@ -38,9 +36,20 @@ export default function CreateTimesheetPage() {
       console.error('Failed to create timesheet record:', response);
     }
   };
-
+  const handleDownloadFile = async () => {
+    const url = `${basepath}/api/staff/download/${fileid}`;
+    const response = await axios.get(url, { responseType: 'blob' });
+    const disposition = response.headers['content-disposition'];
+    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+    const matches = filenameRegex.exec(disposition);
+    const filename = matches ? matches[1] : `${fileid}.xml`;
+    download(response.data, filename);
+  };
   const handleModalClose = () => {
     setModalOpen(false);
+    if (fileid) {
+      handleDownloadFile();
+    }
   };
 
   const handleMonthChange = (date) => {
@@ -49,18 +58,23 @@ export default function CreateTimesheetPage() {
     }
     setMonthValue(date);
   };
-
+  // CSS styles to reduce button width
+  const buttonStyle: CSSProperties = {
+    width: '50px', // Adjust the width as needed
+  };
   return (
     <>
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title={'Create TimeSheet'}>
-          <Grid pb={30} ta="center">
+        <MyCard title={'Create TimeSheet'} cardwidth={250}>
+          <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group position="center">
                 <MonthPicker
                   maxLevel="year"
                   value={monthValue}
+                  withCellSpacing={false}
                   onChange={handleMonthChange}
+                  size={pickersize}
                 />
               </Group>
             </Grid.Col>
@@ -93,7 +107,7 @@ export default function CreateTimesheetPage() {
               type="submit"
               fullWidth
               loading={submitting}
-              maw={250}
+              maw={'70%'}
               radius="md"
             >
               Submit
@@ -125,4 +139,5 @@ export default function CreateTimesheetPage() {
     </>
   );
 }
+
 ```
