@@ -36,17 +36,6 @@ export class TimesheetService {
   }
   //async getCalendarEvents(year: number, month: number): Promise<any[]> {
   async getCalendarEvents(staffid): Promise<any[]> {
-    /*const results = await this.prisma.viewCalendarTimeSheet.findMany({
-      where: {
-        OR: [{ HolidaySummary: { not: null } }, { staffId: staffid }],
-      },
-      select: {
-        CalendarDate: true,
-        HolidaySummary: true,
-        LeaveRequestId: true,
-      },
-    });
-    */
     const results = await this.prisma.viewEvents.findMany({
       where: {
         OR: [{ HolidaySummary: { not: null } }, { staffId: staffid }],
@@ -57,6 +46,7 @@ export class TimesheetService {
         leavePeriodEnd: true,
         HolidaySummary: true,
         LeaveRequestId: true,
+        eventType: true,
       },
     });
     return results.map((result: viewEvents) => {
@@ -75,19 +65,25 @@ export class TimesheetService {
       const IsWeekend = title.startsWith('S');
       //const _groupid = result.LeaveRequestId ? result.LeaveRequestId : '';
       const _groupid = result.LeaveRequestId || '';
-      const _clsname = IsWeekend
-        ? 'clsweekend'
-        : result.LeaveRequestId
-        ? ''
-        : 'clsPublicHoliday';
+
+      const mapEventStyle = new Map();
+
+      // Add key-value pairs to the hashmap
+      mapEventStyle.set('weekend', 'clsweekend');
+      mapEventStyle.set('publicholiday', 'clsPublicHoliday');
+      mapEventStyle.set('vacation', 'clsVacation');
+      mapEventStyle.set('sick', 'clsVacation');
       const _color = result.LeaveRequestId ? '#3940fa' : '';
       return {
         id: result.ID,
         title,
         start: _start,
         end: enddatestr,
-        display: IsWeekend ? 'background' : '',
-        classNames: [_clsname],
+        display:
+          result.eventType == 'weekend' || result.eventType == 'publicholiday'
+            ? 'background'
+            : '',
+        classNames: [mapEventStyle.get(result.eventType)],
         groupId: _groupid,
         extendedProps: { result },
       };
@@ -148,7 +144,7 @@ export class TimesheetService {
     staffId: number,
     year: number,
     month: number,
-  ): Promise<Number> {
+  ): Promise<number> {
     const formattedDate = new Date()
       .toISOString()
       .slice(0, 10)
@@ -224,15 +220,15 @@ export class TimesheetService {
         format(objCalendar.slice(-1)[0].CalendarDate, 'dd-MMM-yyyy'),
       );
       let total = 0;
-      let isHoliday = 0;
+      const isHoliday = 0;
       for (let i = 0; i < 31; i++) {
         cellid = 'C' + datecellpos;
         const cell = worksheet.getCell(cellid);
 
         try {
           if (i < objCalendar.length) {
-            let dt = objCalendar[i];
-            console.log('objecalendar??');
+            const dt = objCalendar[i];
+            console.log('calendar item??');
             console.log(dt);
             //cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
             const holidayCell = worksheet.getCell('L' + datecellpos);

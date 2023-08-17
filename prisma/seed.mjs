@@ -7,10 +7,10 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 async function main() {
-  await gencalendar();
-  await genholiday();
+  //await gencalendar();
+  //await genholiday();
   await createViewIfNotExists();
-  await genStaffInfo();
+  //  await genStaffInfo();
 }
 function createViewIfNotExists() {
   createViewCalendarIfNotExists();
@@ -82,8 +82,8 @@ async function createViewEventsIfNotExists() {
 
     if (viewExists.length === 0) {
       await prisma.$queryRaw(Prisma.sql`
-      create view viewEvents as 
-   select ROW_NUMBER() OVER (
+      create view viewEvents as  
+select ROW_NUMBER() OVER (
         ORDER BY C.CalendarDate
     ) AS ID,
     CalendarDate as leavePeriodStart,
@@ -101,6 +101,12 @@ async function createViewEventsIfNotExists() {
         when LR.leavePurpose is not null then LR.leavePurpose
         ELSE null
     END AS HolidaySummary,
+    CASE
+        WHEN WeekDayName LIKE 'S%' THEN 'weekend'
+        WHEN PH.Summary IS NOT NULL THEN 'publicholiday'
+        when LR.id is not null then COALESCE(LR.leaveType, 'vacation') 
+        ELSE null
+    END AS eventType,
     STRFTIME(
         '%Y-%m-%d %H:%M:%S',
         DATETIME(LR.leavePeriodEnd / 1000, 'unixepoch')

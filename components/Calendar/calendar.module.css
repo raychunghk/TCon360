@@ -29,19 +29,3 @@
 
   background: #6d6ff5 !important;
 }
-
-.fc-toolbar .fc-button {
-  /*background: linear-gradient(
-    0deg,
-    hsla(16, 100%, 66%, 1) 0%,
-    hsla(30, 77%, 65%, 1) 60%,
-    hsla(0, 100%, 89%, 1) 100%
-  ) !important;*/
-  background: linear-gradient(135deg, #ff8a00 0%, #f76b1c 100%);
-  color: white;
-  border: none;
-}
-.fc-toolbar .fc-button:hover {
-  background: #ff9933 !important;
-}
-/* Change the button radius */

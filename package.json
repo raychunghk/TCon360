@@ -105,6 +105,7 @@
     "decimal.js": "^10.4.3",
     "docxtemplater": "^3.37.11",
     "dotenv": "^16.0.3",
+    "downloadjs": "^1.4.7",
     "embla-carousel-react": "^7.1.0",
     "eslint": "^8.40.0",
     "exceljs": "^4.3.0",

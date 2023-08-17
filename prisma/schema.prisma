@@ -21,13 +21,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PostUser {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
 model Account {
   id                 String    @id @default(cuid())
   userId             String
@@ -206,12 +199,12 @@ view viewEvents {
   Year             Int
   Month            Int
   HolidaySummary   String?
+  eventType        String?
   EndDateStr       String?
   dateOfReturn     DateTime?
   ReturnDateStr    String?
   AMPMStart        String?
   AMPMEnd          String?
   staffId          Int?
-  leaveType        String?
   LeaveRequestId   Int?
 }

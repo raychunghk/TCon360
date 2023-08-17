@@ -7,6 +7,7 @@ import FullCalendar from '@fullcalendar/react';
 import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
+import styles from './calendar.module.css'
 import { useDisclosure, useInputState } from '@mantine/hooks';
 import { parseCookies, setCookie } from 'nookies';
 import { useSession } from 'next-auth/react';
@@ -140,6 +141,41 @@ export function FrontPageCalendar(props) {
       date1.getDate() === date2.getDate()
     );
   };
+  const handleSelectAllow = (selectInfo) => {
+    const selectedDate = selectInfo.start;
+
+    // Disable selection on weekends (Saturday and Sunday)
+    if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
+      return false;
+    }
+    /*const hasEventsOnSelectedDate = calendarEvents.some((event) =>
+      isSameDate(convertDateStringToDate(event.start), selectedDate),
+    );*/
+    const hasEventsOnSelectedDate = calendarEvents.some((event) => {
+      const eventStartDate = convertDateStringToDate(event.start);
+      const eventEndDate = event.end
+        ? convertDateStringToDate(event.end)
+        : eventStartDate;
+
+      if (isSameDate(eventStartDate, selectedDate)) {
+        return true;
+      }
+
+      if (
+        event.end &&
+        selectedDate >= eventStartDate &&
+        selectedDate < eventEndDate
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+    return !hasEventsOnSelectedDate;
+
+    //return true;
+  };
+
   const handleDateSelect = (selectInfo) => {
     console.log(selectInfo);
 
@@ -159,14 +195,6 @@ export function FrontPageCalendar(props) {
     // Access the events data from the FullCalendar component
 
     // Iterate through the events to check if any events intersect with the selected date
-    const hasEventsOnSelectedDate = calendarEvents.some((event) =>
-      isSameDate(convertDateStringToDate(event.start), _start),
-    );
-    if (hasEventsOnSelectedDate) {
-      console.log('Selected date contains events');
-    } else {
-      console.log('Selected date does not contain events');
-    }
 
     const _leavePurpose = prompt(
       `Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`,
@@ -216,6 +244,7 @@ export function FrontPageCalendar(props) {
         initialView="dayGridMonth"
         selectable={true}
         events={calendarEvents}
+        selectAllow={handleSelectAllow}
         select={handleDateSelect} // Specify callback function for date range selection
       />
     </>

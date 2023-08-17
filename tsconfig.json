@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     "./.eslintrc.js",
-    "pages/timesheet/create.jsx",
+    "pages/timesheet/create.jsx.backup",
     "src/server/leaverequest/leaverequest.resolver.ts",
     "pages/leaverequest/index.jsx",
     "pages/_document.jsx",
