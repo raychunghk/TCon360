@@ -147,9 +147,7 @@ export function FrontPageCalendar(props) {
     if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
       return false;
     }
-    /*const hasEventsOnSelectedDate = calendarEvents.some((event) =>
-      isSameDate(convertDateStringToDate(event.start), selectedDate),
-    );*/
+ 
     const hasEventsOnSelectedDate = calendarEvents.some((event) => {
       const eventStartDate = convertDateStringToDate(event.start);
       const eventEndDate = event.end
@@ -286,21 +284,6 @@ export function FrontPageCalendar(props) {
           end: 'prev,next today',
         }}
         titleFormat={() => customTitle}
-        // views={{
-        //   customTitle: {
-        //     type: 'dayGridMonth',
-        //     // Other view-specific options...
-        //   },
-        // }}
-        // customButtons={{
-        //   customTitle: {
-        //     text: 'Custom Text', // Specify your custom text here
-
-        //     click: function () {
-        //       // Handle custom title click event (optional)
-        //     },
-        //   },
-        // }}
         plugins={[dayGridPlugin, interactionPlugin]}
         height={'100%'}
         eventClick={fnEventclick}
