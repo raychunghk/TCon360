@@ -1,7 +1,7 @@
 import { Title, Text, Anchor, Group, Drawer } from '@mantine/core';
 
 import { differenceInBusinessDays, subDays } from 'date-fns';
-import { useEffect, useState, useRef, useReducer } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import FullCalendar from '@fullcalendar/react';
 import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
@@ -11,57 +11,26 @@ import styles from './calendar.module.css';
 import { useDisclosure, useInputState } from '@mantine/hooks';
 import { parseCookies, setCookie } from 'nookies';
 import { useSession } from 'next-auth/react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  setOpened,
-  setLeaveRequestId,
-  setLeaveRequestPeriod,
-  // Import other action creators here
-} from './actions';
-import store from './store';
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'OPEN':
-      return { ...state, opened: true };
-    case 'CLOSE':
-      return { ...state, opened: false };
-    default:
-      return state;
-  }
-};
-
 export function FrontPageCalendar(props) {
-  //const [opened, { open, close }] = useDisclosure(false);
-  const [state, dispatch] = useReducer(reducer, { opened: false });
-   //const opened = useSelector((state) => state.opened);
-   //const dispatch = useDispatch();
-  const open = () => {
-    dispatch({ type: 'OPEN' });
-  };
+  const [opened, { open, close }] = useDisclosure(false);
+  const [leaveRequestId, setleaveRequestId] = useState(null);
+  const [LeaveRequestPeriod, setLeaveRequestPeriod] = useState(null);
+  const [leavePurpose, setleavePurpose] = useState(null);
+  const [staff, setStaff] = useState(null);
+  const [chargeableDays, setChargeableDays] = useState(0);
+  const [customTitle, setCustomTitle] = useState('');
+  const [calendarEvents, setCalendarEvents] = useState([]);
 
-  const close = () => {
-    dispatch({ type: 'CLOSE' });
-  };
-  //const { opened } = state;
+  const [CurrentStart, setCurrentStart] = useState(new Date());
+  const [formType, setFormType] = useState(null);
+  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   console.log('Calendar prosp?');
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
   console.log(props);
   console.log('basepath?');
   console.log(basepath);
-
-  const [chargeableDays, setChargeableDays] = useState(0);
-  const [customTitle, setCustomTitle] = useState('');
-  const [calendarEvents, setCalendarEvents] = useState([]);
-  const [leaveRequestId, setleaveRequestId] = useState(null);
-  const [LeaveRequestPeriod, setLeaveRequestPeriod] = useState(null);
-
-  const [CurrentStart, setCurrentStart] = useState(new Date());
-  const [formType, setFormType] = useState(null);
-  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
   //const [selectedDates, setSelectedDates] = useState([]);
-  const [leavePurpose, setleavePurpose] = useState(null);
-  const [staff, setStaff] = useState(null);
   const apiurl = `${basepath}/api/timesheet/calendar`;
   console.log('calendarurl');
   console.log(apiurl);
