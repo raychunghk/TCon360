@@ -1,20 +1,108 @@
-change it so that  a mantine popover is shown against <text>user.name</text>, the content is the redux var staff, 
-Staff;s content is :
-model Staff {
+can I redux reducer save the entire  function handleSignout in the layout page below , and call it by other compoennts?
 
-  StaffName         String
-  AgentName         String
-  StaffCategory     String
-  Department        String
-  PostUnit          String
-  ManagerName       String
-  ManagerTitle      String
-  ManagerEmail      String
-  ContractStartDate DateTime
-  ContractEndDate   DateTime
-  AnnualLeave       Int
+```
+import { createSlice } from '@reduxjs/toolkit';
 
-}
+const initialState = {
+  opened: false,
+  leaveRequestId: null,
+  LeaveRequestPeriod: null,
+  leavePurpose: null,
+  staff: null,
+  chargeableDays: 0,
+  customTitle: '',
+  calendarEvents: [],
+  currentStart: new Date(),
+  formType: null,
+  selectedDatesCount: 0,
+  basepath: '',
+  authtoken: '',
+  user: null,
+  staffVacation: { total: 0, used: 0, balance: 0 },
+};
+
+export const calendarSlice = createSlice({
+  name: 'calendar',
+  initialState,
+  reducers: {
+    setOpen: (state) => {
+      state.opened = true;
+    },
+    setClose: (state) => {
+      state.opened = false;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
+    setLeaveRequestId: (state, action) => {
+      state.leaveRequestId = action.payload;
+    },
+    setLeaveRequestPeriod: (state, action) => {
+      state.LeaveRequestPeriod = action.payload;
+    },
+    setLeavePurpose: (state, action) => {
+      state.leavePurpose = action.payload;
+    },
+    setBasepath: (state, action) => {
+      state.basepath = action.payload;
+    },
+    setAuthtoken: (state, action) => {
+      state.authtoken = action.payload;
+    },
+    setStaff: (state, action) => {
+      state.staff = action.payload;
+    },
+    setChargeableDays: (state, action) => {
+      state.chargeableDays = action.payload;
+    },
+    setCustomTitle: (state, action) => {
+      state.customTitle = action.payload;
+    },
+    setCalendarEvents: (state, action) => {
+      state.calendarEvents = action.payload;
+    },
+    setCurrentStart: (state, action) => {
+      state.currentStart = action.payload;
+    },
+    setFormType: (state, action) => {
+      state.formType = action.payload;
+    },
+    setSelectedDatesCount: (state, action) => {
+      state.selectedDatesCount = action.payload;
+    },
+    setstaffVacation: (state, action) => {
+      state.staffVacation = action.payload;
+    },
+
+    clearAllState: () => {
+      return initialState;
+    },
+  },
+});
+
+export const {
+  setOpen,
+  setClose,
+  setLeaveRequestId,
+  setLeaveRequestPeriod,
+  setLeavePurpose,
+  setStaff,
+  setChargeableDays,
+  setCustomTitle,
+  setCalendarEvents,
+  setCurrentStart,
+  setFormType,
+  setSelectedDatesCount,
+  setAuthtoken,
+  setBasepath,
+  setUser,
+  clearAllState,
+  setstaffVacation,
+} = calendarSlice.actions;
+
+export const calendarReducer = calendarSlice.reducer;
+
+```
 
 ```
 import styles from './layout.module.css';
@@ -22,11 +110,11 @@ import Head from 'next/head';
 import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import useStyles from '../styles/layout.styles';
 import { basepath } from '/global';
-
+import HeaderPopover from './LayoutHeader/HeaderPopover';
 import {
   Title,
   AppShell,
@@ -38,6 +126,7 @@ import {
   Group,
   MediaQuery,
   Burger,
+  ActionIcon,
   UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
@@ -59,25 +148,42 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const { classes } = useStyles();
 
   const dispatch = useDispatch();
-  const { staff, user } = useSelector((state) => ({
-    staff: state.calendar.staff,
+  const { user } = useSelector((state) => ({
     user: state.calendar.user,
   }));
 
   useEffect(() => {
     if (!session) {
       destroyCookie(null, 'token');
+      dispatch(setUser(null));
+      dispatch(clearAllState());
       // handleSignout();
     } else {
       if (session?.user) {
         dispatch(setUser(session.user));
         dispatch(setStaff(session.user.staff));
-
-        setUser(session.user);
       }
     }
   }, [session]);
-  
+  const handleSignout = () => {
+    destroyCookie(null, 'token');
+    dispatch(clearAllState());
+    signOut();
+  };
+  const buttonStyles = (theme) => ({
+    display: 'block',
+    width: '115px',
+    padding: theme.spacing.xs,
+    borderRadius: theme.radius.sm,
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
+    },
+  });
+
   return (
     <AppShell
       padding={contentpadding}
@@ -124,19 +230,21 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
               </Group>
 
               <Group position="right">
-                <Text>{user.name}</Text>
                 {user ? (
-                  <UnstyledButton
-                    onClick={() => handleSignout()}
-                    sx={buttonStyles}
-                  >
-                    <Group style={{ width: '150px' }}>
-                      <ThemeIcon variant="light">
-                        <IconLogout />
-                      </ThemeIcon>
-                      <Text size="sm">Logout</Text>
-                    </Group>
-                  </UnstyledButton>
+                  <>
+                    <HeaderPopover></HeaderPopover>
+                    <UnstyledButton
+                      onClick={() => handleSignout()}
+                      sx={buttonStyles}
+                    >
+                      <Group style={{ width: '150px' }}>
+                        <ThemeIcon variant="light">
+                          <IconLogout />
+                        </ThemeIcon>
+                        <Text size="sm">Logout</Text>
+                      </Group>
+                    </UnstyledButton>
+                  </>
                 ) : (
                   <Group>
                     <Link href="/login" className={linkstyle.links}>
@@ -166,11 +274,23 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           </div>
         </Header>
       }
-      navbar={<AppShellNavBar opened={opened} />}
- 
+      navbar={user ? <AppShellNavBar opened={opened} /> : null}
+      footer={
+        <Footer height={28}>
+          <Flex
+            direction={{ base: 'column', sm: 'row' }}
+            gap={{ base: 'sm', sm: '0.5g' }}
+            justify={{ sm: 'center' }}
+            className={styles.flex}
+          >
+            <div>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</div>
+          </Flex>
+        </Footer>
+      }
     >
       {children}
     </AppShell>
   );
 }
+
 ```

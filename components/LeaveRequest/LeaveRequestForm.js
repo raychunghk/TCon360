@@ -314,8 +314,8 @@ export default function LeaveRequestForm({
         reset();
 
         let _data = formatResponseDate(response.data);
-        console.log('responsedata');
-        console.log(_data);
+        console.log('responsedata', _data);
+
         setLeaveRequest({
           ..._data,
         });

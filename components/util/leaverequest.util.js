@@ -189,8 +189,8 @@ export const isPublicHoliday = (date) => {
   const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   const event = publicholidays.find((e) => e.StartDate === formattedDate);
   if (event) {
-    console.log('event public holiday?')
-    console.log(event)
+    console.log('event public holiday?');
+    console.log(event);
   }
   return event;
 };

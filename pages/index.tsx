@@ -2,7 +2,7 @@ import { FrontPageCalendar } from '../components/Calendar/FrontPageCalendar';
 import Layout from '../components/layout';
 import Head from 'next/head';
 
-export default function HomePage(props, basepath) {
+export default function HomePage(props, basepath, fnhandleSignout) {
   console.log('basepath??? in home??');
   console.log(basepath);
   return (
@@ -10,7 +10,7 @@ export default function HomePage(props, basepath) {
       <Head>
         <title>NxTime</title>
       </Head>
-      <FrontPageCalendar {...props} />
+      <FrontPageCalendar {...props} handleSignout={fnhandleSignout} />
       {/* <ColorSchemeToggle /> */}
     </Layout>
   );

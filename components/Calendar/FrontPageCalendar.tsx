@@ -1,4 +1,4 @@
-import { Title, Text, Anchor, Group, Drawer } from '@mantine/core';
+import { Title, Drawer } from '@mantine/core';
 
 import { differenceInBusinessDays, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
@@ -9,8 +9,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
 import styles from './calendar.module.css';
 import { useDisclosure, useInputState } from '@mantine/hooks';
-import { parseCookies, setCookie } from 'nookies';
-import { useSession } from 'next-auth/react';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
+import { signOut, useSession } from 'next-auth/react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -23,19 +23,19 @@ import {
   setChargeableDays,
   setCustomTitle,
   setCalendarEvents,
-  // setCurrentStart,
+  setstaffVacation,
+  clearAllState,
   // setFormType,
   // setSelectedDatesCount,
 } from 'pages/reducers/calendarReducer';
 
-export function FrontPageCalendar(props) {
+export function FrontPageCalendar() {
   const dispatch = useDispatch();
-  /* const opened = useSelector((state) => state.calendar.opened);
-  const leaveRequestId = useSelector((state) => state.calendar.leaveRequestId);
-
-  const LeaveRequestPeriod = useSelector(
-    (state) => state.calendar.LeaveRequestPeriod,
-  );*/
+  const handleSignout = () => {
+    destroyCookie(null, 'token');
+    dispatch(clearAllState());
+    signOut();
+  };
   const {
     opened,
     leaveRequestId,
@@ -43,6 +43,8 @@ export function FrontPageCalendar(props) {
     chargeableDays,
     customTitle,
     calendarEvents,
+    user,
+    staffVacation,
     //  currentStart,
     //  formType,
     //  selectedDatesCount,
@@ -56,6 +58,8 @@ export function FrontPageCalendar(props) {
     chargeableDays: state.calendar.chargeableDays,
     customTitle: state.calendar.customTitle,
     calendarEvents: state.calendar.calendarEvents,
+    user: state.calendar.user,
+    staffVacation: state.calendar.staffVacation,
     //  currentStart: state.calendar.currentStart,
     //  formType: state.calendar.formType,
     //  selectedDatesCount: state.calendar.selectedDatesCount,
@@ -80,17 +84,15 @@ export function FrontPageCalendar(props) {
 
   const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
-  const [selectedDatesCount, setSelectedDatesCount] = useState(0);
-  console.log('Calendar prosp?');
+
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
-  console.log(props);
-  console.log('basepath?');
-  console.log(basepath);
+
+  console.log('basepath?', basepath);
+
   //const [selectedDates, setSelectedDates] = useState([]);
   const apiurl = `${basepath}/api/timesheet/calendar`;
-  console.log('calendarurl');
-  console.log(apiurl);
+
   async function fetchEvents() {
     if (session) {
       try {
@@ -108,15 +110,16 @@ export function FrontPageCalendar(props) {
           headers,
         });
         if ([200, 201].includes(response.status)) {
-          console.log('gettting calendar');
           const events = await response.data;
-          console.log(events);
+          console.log('gettting calendar', events);
 
-          console.log('calendar event length');
-          console.log(calendarEvents.length);
+          console.log('calendar event length', calendarEvents.length);
+
           if (events.length != calendarEvents.length) {
-            dispatch(setCalendarEvents(events));
+            await dispatch(setCalendarEvents(events));
           }
+        } else if (response.status == 401) {
+          handleSignout();
         } else {
           console.error('Failed to fetch events:', response);
         }
@@ -128,23 +131,19 @@ export function FrontPageCalendar(props) {
 
   const { data: session, status } = useSession();
   useEffect(() => {
-    console.log('session?');
-    console.log(session);
-
     if (session) {
       const sessionexpirydate = new Date(session.expires);
       const cookies = parseCookies();
+      if (cookies.token) {
+        setCookie(null, 'token', cookies.token, {
+          expires: sessionexpirydate,
+          path: '/',
+        });
+      }
 
-      setCookie(null, 'token', cookies.token, {
-        expires: sessionexpirydate,
-        path: '/',
-      });
-
-      console.log(session.user.staff);
-      //setStaff(session.user.staff);
       const _tkn = session?.token;
-      console.log('token???');
-      console.log(_tkn);
+      console.log('token???', _tkn);
+
       fetchEvents();
     }
   }, [session]);
@@ -153,8 +152,13 @@ export function FrontPageCalendar(props) {
     // const currentDate = new Date();
     setTitle(CurrentStart);
   }, [calendarEvents, CurrentStart]);
+  useEffect(() => {
+    if (user) {
+      getVacationDays(user, calendarEvents);
+    }
+  }, [user, calendarEvents]);
   const [date, setDate] = useState(new Date());
-  const handleDeleteEvent = (eventId) => {
+  const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
       calendarRef.current.getApi().getEventById(eventId).remove();
@@ -164,21 +168,15 @@ export function FrontPageCalendar(props) {
       console.log(error);
     }
   };
-  const handleDateChange = (newDate) => {
-    setDate(newDate);
-  };
-  const handleSelect = (arg) => {
-    console.log(arg.start);
-    console.log(arg.end);
-  };
+
   const fnEventclick = (e) => {
     console.log('event click');
     console.log(e.event);
 
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
     dispatch(setLeaveRequestId(_leaveRequestid));
-    console.log('leave request props?');
-    console.log(e.event.extendedProps.result);
+    console.log('leave request props?', e.event.extendedProps.result);
+
     if (_leaveRequestid) {
       setFormType('edit');
       open();
@@ -237,6 +235,40 @@ export function FrontPageCalendar(props) {
     }
     setTitle(info.view.currentStart);
   }
+  function getVacationDays(_user, _events) {
+    if (_user) {
+      const ContractStartDate = new Date(user?.staff.ContractStartDate);
+      const ContractEndDate = new Date(user?.staff.ContractEndDate);
+      const vacationEvents = _events.filter((event) => {
+        const evt = event.extendedProps.result;
+
+        return evt.LeaveRequestId !== null;
+      });
+
+      const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
+        // Calculate the leaveDays based on the condition for paramEndDate
+        const evt = event.extendedProps.result;
+        const _leaveperiodstart = new Date(evt.leavePeriodStart);
+        const _leaveperiodend = evt.leavePeriodEnd
+          ? new Date(evt.leavePeriodEnd)
+          : null;
+        const leaveDays =
+          ContractEndDate < _leaveperiodend
+            ? (ContractEndDate - _leaveperiodstart) / (1000 * 60 * 60 * 24)
+            : evt.leaveDays;
+
+        return sum + leaveDays;
+      }, 0);
+      dispatch(
+        setstaffVacation({
+          total: user.staff.AnnualLeave,
+          used: vacationLeaveDays,
+          balance: user.staff.AnnualLeave - vacationLeaveDays,
+        }),
+      );
+      console.log('vacationleavedays', vacationLeaveDays);
+    }
+  }
   function setTitle(newDate) {
     setCurrentStart(newDate);
     const currentYear = newDate.getFullYear(); // Get the year
@@ -247,17 +279,15 @@ export function FrontPageCalendar(props) {
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
-    const formattedFirstDay = firstDayOfMonth.toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
+    const formatDate = (date) =>
+      date.toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
 
-    const formattedLastDay = lastDayOfMonth.toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
+    const formattedFirstDay = formatDate(firstDayOfMonth);
+    const formattedLastDay = formatDate(lastDayOfMonth);
 
     const _dateRange = `${formattedFirstDay} to ${formattedLastDay}`;
 

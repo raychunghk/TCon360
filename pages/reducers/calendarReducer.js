@@ -15,6 +15,7 @@ const initialState = {
   basepath: '',
   authtoken: '',
   user: null,
+  staffVacation: { total: 0, used: 0, balance: 0 },
 };
 
 export const calendarSlice = createSlice({
@@ -66,6 +67,10 @@ export const calendarSlice = createSlice({
     setSelectedDatesCount: (state, action) => {
       state.selectedDatesCount = action.payload;
     },
+    setstaffVacation: (state, action) => {
+      state.staffVacation = action.payload;
+    },
+
     clearAllState: () => {
       return initialState;
     },
@@ -89,6 +94,7 @@ export const {
   setBasepath,
   setUser,
   clearAllState,
+  setstaffVacation,
 } = calendarSlice.actions;
 
 export const calendarReducer = calendarSlice.reducer;

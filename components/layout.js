@@ -7,19 +7,15 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import useStyles from '../styles/layout.styles';
 import { basepath } from '/global';
-import { format, parseISO } from 'date-fns';
+import HeaderPopover from './LayoutHeader/HeaderPopover';
+
 import {
-  Popover,
-  Button,
   Title,
-  TextInput,
   AppShell,
-  Box,
   ThemeIcon,
   Flex,
   Header,
   Footer,
-  Grid,
   Text,
   Group,
   MediaQuery,
@@ -28,12 +24,7 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
-import {
-  IconLogout,
-  IconLogin,
-  IconUser,
-  IconSquareRoundedX,
-} from '@tabler/icons-react';
+import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie } from 'nookies';
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,24 +40,14 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
   const { classes } = useStyles();
-  const [openedPop, setOpenedPop] = useState(false);
 
-  const handleOpen = () => {
-    setOpenedPop(true);
-  };
-
-  const handleClose = () => {
-    setOpenedPop(false);
-  };
-
-  const handleOutsideClick = () => {
-    if (openedpop) {
-      setOpenedPop(false);
-    }
-  };
   const dispatch = useDispatch();
-  const { staff, user } = useSelector((state) => ({
-    staff: state.calendar.staff,
+  const handleSignout = () => {
+    destroyCookie(null, 'token');
+    dispatch(clearAllState());
+    signOut();
+  };
+  const { user } = useSelector((state) => ({
     user: state.calendar.user,
   }));
 
@@ -83,11 +64,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
       }
     }
   }, [session]);
-  const handleSignout = () => {
-    destroyCookie(null, 'token');
-    dispatch(clearAllState());
-    signOut();
-  };
+
   const buttonStyles = (theme) => ({
     display: 'block',
     width: '115px',
@@ -101,33 +78,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           : theme.colors.gray[0],
     },
   });
-  const formatDate = (dateString) => {
-    if (dateString) {
-      const date = parseISO(dateString);
-      const formattedDate = format(date, 'yyyy-MMM-dd');
-      return formattedDate;
-    }
-  };
 
-  const userFields = [
-    { label: 'Staff Name:', value: user?.staff.StaffName },
-    { label: 'Agent Name:', value: user?.staff.AgentName },
-    { label: 'Staff Category:', value: user?.staff.StaffCategory },
-    { label: 'Department:', value: user?.staff.Department },
-    { label: 'Post Unit:', value: user?.staff.PostUnit },
-    { label: 'Manager Name:', value: user?.staff.ManagerName },
-    { label: 'Manager Title:', value: user?.staff.ManagerTitle },
-    { label: 'Manager Email:', value: user?.staff.ManagerEmail },
-    {
-      label: 'Contract Start Date:',
-      value: formatDate(user?.staff.ContractStartDate),
-    },
-    {
-      label: 'Contract End Date:',
-      value: formatDate(user?.staff.ContractEndDate),
-    },
-    { label: 'Annual Leave:', value: user?.staff.AnnualLeave },
-  ];
   return (
     <AppShell
       padding={contentpadding}
@@ -176,84 +127,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
               <Group position="right">
                 {user ? (
                   <>
-                    <Popover
-                      width={390}
-                      trapFocus
-                      position="bottom"
-                      withArrow
-                      shadow="md"
-                      gutter={10}
-                      opened={openedPop}
-                      closeDelay={500}
-                      onClose={handleClose}
-                    >
-                      <Popover.Target>
-                        <Button
-                          variant="link"
-                          onMouseEnter={handleOpen}
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            color: 'white',
-                            backgroundColor: '#15487E', // Subtle background color
-
-                            textDecoration: 'none',
-                            transition:
-                              'background-color 0.2s ease, color 0.2s ease',
-                            '&:hover': {
-                              backgroundColor: 'transparent',
-                              color: 'blue',
-                            },
-                          }}
-                        >
-                          <IconUser
-                            size={18}
-                            sx={{
-                              marginRight: '0.5rem',
-                            }}
-                          />
-                          {user?.name}
-                        </Button>
-                      </Popover.Target>
-                      <Popover.Dropdown
-                        sx={(theme) => ({
-                          background: ` linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e);`,
-                          borderRadius: theme.radius.md,
-                          color: 'white',
-                          boxShadow: theme.shadows.md,
-                          padding: theme.spacing.md,
-                        })}
-                      >
-                        <ActionIcon
-                          variant="filled"
-                          size="xs"
-                          style={{
-                            position: 'absolute',
-                            top: '5px',
-                            right: '5px',
-                            zIndex: '1',
-                          }}
-                          onClick={handleClose}
-                        >
-                          <IconSquareRoundedX />
-                        </ActionIcon>
-                        <Grid gutter="sm">
-                          {userFields.map((field, index) => (
-                            <React.Fragment key={index}>
-                              <Grid.Col span={5}>
-                                <Text align="right" size="sm" weight={500}>
-                                  {field.label}
-                                </Text>
-                              </Grid.Col>
-                              <Grid.Col span={7}>
-                                <Text size="sm">{field.value}</Text>
-                              </Grid.Col>
-                            </React.Fragment>
-                          ))}
-                        </Grid>
-                      </Popover.Dropdown>
-                    </Popover>
-
+                    <HeaderPopover></HeaderPopover>
                     <UnstyledButton
                       onClick={() => handleSignout()}
                       sx={buttonStyles}
@@ -295,7 +169,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           </div>
         </Header>
       }
-      navbar={<AppShellNavBar opened={opened} />}
+      navbar={user ? <AppShellNavBar opened={opened} /> : null}
       footer={
         <Footer height={28}>
           <Flex
