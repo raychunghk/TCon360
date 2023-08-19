@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { useSession, SessionProvider } from 'next-auth/react';
 import UserStyle from '../../styles/User.module.css';
@@ -18,6 +18,7 @@ import {
   Divider,
   Card,
   Stepper,
+  NumberInput,
 } from '@mantine/core';
 import bg from 'public/images/loginbg1.webp';
 import StaffFormGrid from '../../components/StaffFormGrid';
@@ -34,6 +35,14 @@ import {
 } from '@mantine/form';
 import Signupcard from '../../components/Signupcard';
 import { handleLoginSuccess } from './handleLoginSuccess';
+import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+import {
+  excludeHoliday,
+  myRenderDay,
+  setPublicHolidays,
+} from 'components/util/leaverequest.util';
+import { PublicHolidaysContext } from 'pages/_app';
+import { UtilsContext } from 'components/util/utilCtx';
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -84,6 +93,9 @@ export default function SignupPage() {
     ManagerName: '',
     ManagerTitle: '',
     ManagerEmail: 'manager@1.com',
+    ContractStartDate: null,
+    ContractEndDate: null,
+    AnnualLeave: 10,
   };
   const [formValues, setFormValues] = useState(staffModel);
   const [editing, setEditing] = useState(false);
@@ -100,6 +112,8 @@ export default function SignupPage() {
       }
       return current < 3 ? current + 1 : current;
     });
+  //let publicholidays;
+  useEffect(() => {}, []);
   // const nextStep = () =>
   //   setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
@@ -108,11 +122,16 @@ export default function SignupPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
   const mainpage = '/';
+  const publicholidays = useContext(PublicHolidaysContext);
+
+  setPublicHolidays(publicholidays);
+  console.log('publicholidays?', publicholidays);
   const maxAge = process.env.TOKEN_MAX_AGE;
-  console.log('_maxage?');
+  console.log('_maxage?', maxAge);
   console.log(maxAge);
   console.log('formValues');
   console.log(formValues);
+
   const form = useForm({
     initialValues: { ...formValues, username, password, email },
     validate: (values) => {
@@ -144,6 +163,13 @@ export default function SignupPage() {
         }
         if (!values.PostUnit) {
           errors.PostUnit = 'Post Unit is required';
+        }
+        if (!values.AnnualLeave) {
+          errors.AnnualLeave = 'AnnualLeave is required';
+        }
+        if (values.ContractEndDate <= values.ContractStartDate) {
+          errors.ContractEndDate =
+            'Contract end date should be later than Contract start date';
         }
         return errors;
       } else if (active === 2) {
@@ -335,16 +361,72 @@ export default function SignupPage() {
                         name: 'PostUnit',
                         value: formValues.PostUnit,
                       },
-                    ].map(({ label, placeholder, name, value }) => (
+                      {
+                        label: 'Contract Start Date',
+                        placeholder: 'Contract Start Date',
+                        name: 'ContractStartDate',
+                        value: formValues.ContractStartDate,
+                        type: 'datetime', // Add a type property to identify datetime inputs
+                      },
+                      {
+                        label: 'Contract End Date',
+                        placeholder: 'Contract End Date',
+                        name: 'ContractEndDate',
+                        value: formValues.ContractEndDate,
+                        type: 'datetime', // Add a type property to identify datetime inputs
+                      },
+                      {
+                        label: 'Total Annual Leave',
+                        placeholder: 'Total Annual Leave',
+                        name: 'AnnualLeave',
+                        value: formValues.AnnualLeave,
+                        type: 'number',
+                      },
+                    ].map(({ label, placeholder, name, value, type }) => (
                       <Grid.Col span={6}>
-                        <TextInput
-                          label={label}
-                          placeholder={placeholder}
-                          name={name}
-                          onChange={handleInputChange}
-                          value={value}
-                          {...form.getInputProps(name)}
-                        />
+                        {type === 'datetime' ? (
+                          // <DateTimePicker
+                          //   label={label}
+                          //   placeholder={placeholder}
+                          //   name={name}
+                          //   onChange={handleInputChange} // Replace with appropriate handler
+                          //   value={value}
+                          //   {...form.getInputProps(name)}
+                          // />
+
+                          <DatePickerInput
+                            clearable
+                            label={label}
+                            placeholder={placeholder}
+                            name={name}
+                            onChange={handleInputChange} // Replace with appropriate handler
+                            value={value}
+                            valueFormat="DD-MM-YYYY"
+                            firstDayOfWeek={0}
+                            {...form.getInputProps(name)}
+                            excludeDate={excludeHoliday}
+                            renderDay={myRenderDay}
+                          />
+                        ) : type === 'number' ? (
+                          <NumberInput
+                            label={label}
+                            placeholder={placeholder}
+                            name={name}
+                            onChange={handleInputChange} // Replace with appropriate handler
+                            value={value}
+                            min={0}
+                            {...form.getInputProps(name)}
+                          />
+                        ) : (
+                          <TextInput
+                            label={label}
+                            placeholder={placeholder}
+                            name={name}
+                            onChange={handleInputChange}
+                            value={value}
+                            {...form.getInputProps(name)}
+                          />
+                        )}
                       </Grid.Col>
                     ))}
                   </Grid>

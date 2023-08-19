@@ -438,7 +438,7 @@ export default function LeaveRequestForm({
                 firstDayOfWeek={0}
                 excludeDate={excludeHoliday}
                 renderDay={myRenderDay}
-              />{' '}
+              />
               {errors.leavePeriodStart && (
                 <span className="error">Leave period start is required</span>
               )}{' '}
