@@ -7,10 +7,10 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 async function main() {
-  //await gencalendar();
-  //await genholiday();
-  await createViewIfNotExists();
-  //  await genStaffInfo();
+  await gencalendar();
+  await genholiday();
+  //  await createViewIfNotExists();
+  //await genStaffInfo();
 }
 function createViewIfNotExists() {
   createViewCalendarIfNotExists();
@@ -208,6 +208,9 @@ async function genStaffInfo() {
         ManagerName: 'Mr Anthony WONG',
         ManagerEmail: 'wongyf3@archsd.gov.hk',
         ManagerTitle: 'PSM/TS33',
+        ContractStartDate: new Date(2023, 3, 1),
+        ContractEndDate: new Date(2024, 2, 31),
+        AnnualLeave: 12,
         user: { connect: { id: u.id } },
       },
     });

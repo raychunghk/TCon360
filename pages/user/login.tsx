@@ -18,7 +18,20 @@ import { useDisclosure } from '@mantine/hooks';
 import bg from 'public/images/loginbg1.webp';
 import { useState } from 'react';
 import { siteTitle } from 'components/util/label';
-import { handleLoginSuccess } from './handleLoginSuccess';
+//import { handleLoginSuccess } from './handleLoginSuccess';
+
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  // setLeavePurpose,
+
+  setAuthtoken,
+  setBasepath,
+
+  // setCurrentStart,
+  // setFormType,
+  // setSelectedDatesCount,
+} from 'pages/reducers/calendarReducer';
+
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -26,8 +39,9 @@ const useStyles = createStyles((theme) => ({
     height: '100vh',
   },
   form: {
-    borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-      }`,
+    borderRight: `1px solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+    }`,
     maxWidth: 450,
     paddingTop: 80,
     height: '100vh',
@@ -53,12 +67,42 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function LoginPage(props) {
+  const dispatch = useDispatch();
   const { classes } = useStyles();
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [loginStatus, setLoginStatus] = useState(null); // add login status state variable
   const [visible, { toggle, open, close }] = useDisclosure(false);
+  async function handleLoginSuccess(response, router) {
+    const data = await response.json();
+    const token = data.accessToken;
+    const _maxAge = process.env.TOKEN_MAX_AGE;
+    console.log('_maxage in handleLoginSuccess');
+    console.log(_maxAge);
+    // set the user's session token in localStorage
+    setCookie(null, 'token', token, {
+      maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
+      path: '/', // cookie path
+    });
+
+    console.log('token cookie');
+    const cookies = parseCookies();
+    const tokenCookie = cookies.token;
+    console.log(tokenCookie);
+    dispatch(setAuthtoken(tokenCookie));
+    //setJwtToken(token);
+    const signInResult = await signIn('custom-provider', {
+      token: tokenCookie,
+      redirect: false,
+    });
+    /* if (signInResult.error) { // Handle Error on client side
+        console.log('sign in result')
+        console.log(signInResult)
+        console.log(signInResult.error)
+    }*/
+    router.push('/'); // redirect to the dashboard page on successful login
+  }
   const handleLogin = async (event) => {
     event.preventDefault();
     open();
@@ -86,7 +130,6 @@ export default function LoginPage(props) {
   return (
     <Container fluid className={classes.wrapper}>
       <Paper className={classes.form} radius={0} p={30}>
-
         <Title
           order={2}
           className={classes.title}
@@ -124,7 +167,7 @@ export default function LoginPage(props) {
             onChange={(event) => setPassword(event.target.value)}
           />
           <Checkbox label="Keep me logged in" mt="xl" size="md" />
-          <Button type="submit" fullWidth mt="xl" size="md"  >
+          <Button type="submit" fullWidth mt="xl" size="md">
             Login
           </Button>
         </form>

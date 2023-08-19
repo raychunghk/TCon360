@@ -3,60 +3,89 @@ import Head from 'next/head';
 import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import useStyles from '../styles/layout.styles';
 import { basepath } from '/global';
-import { useDisclosure } from '@mantine/hooks';
+import { format, parseISO } from 'date-fns';
 import {
+  Popover,
+  Button,
   Title,
-  LoadingOverlay,
+  TextInput,
   AppShell,
-  Navbar,
+  Box,
   ThemeIcon,
   Flex,
   Header,
   Footer,
+  Grid,
   Text,
   Group,
-  Logo,
-  Box,
   MediaQuery,
   Burger,
+  ActionIcon,
   UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
-import { IconLogout, IconLogin } from '@tabler/icons-react';
+import {
+  IconLogout,
+  IconLogin,
+  IconUser,
+  IconSquareRoundedX,
+} from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
-const name = 'Ray Chung';
+import { destroyCookie } from 'nookies';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  clearAllState,
+  setUser,
+  setStaff,
+} from 'pages/reducers/calendarReducer';
+
 export const siteTitle = 'NxTime';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
   const { classes } = useStyles();
-  const [username, setUsername] = useState(false);
-  const [visible, { toggle }] = useDisclosure(false);
-  let _username;
-  /*if (session) {
-    console.log('session?');
-    console.log(session);
-    //  console.log(session.user.username)
-    _username = session.user.name;
-  } else {
-    console.log('no session');
-    // signOut();
-  }*/
-  useEffect(() => {
-    if (session?.user) {
-      console.log(session.user.staff);
+  const [openedPop, setOpenedPop] = useState(false);
 
-      _username = session.user.name;
-      setUsername(_username);
+  const handleOpen = () => {
+    setOpenedPop(true);
+  };
+
+  const handleClose = () => {
+    setOpenedPop(false);
+  };
+
+  const handleOutsideClick = () => {
+    if (openedpop) {
+      setOpenedPop(false);
+    }
+  };
+  const dispatch = useDispatch();
+  const { staff, user } = useSelector((state) => ({
+    staff: state.calendar.staff,
+    user: state.calendar.user,
+  }));
+
+  useEffect(() => {
+    if (!session) {
+      destroyCookie(null, 'token');
+      dispatch(setUser(null));
+      dispatch(clearAllState());
+      // handleSignout();
+    } else {
+      if (session?.user) {
+        dispatch(setUser(session.user));
+        dispatch(setStaff(session.user.staff));
+      }
     }
   }, [session]);
   const handleSignout = () => {
-    console.log('hihi');
+    destroyCookie(null, 'token');
+    dispatch(clearAllState());
     signOut();
   };
   const buttonStyles = (theme) => ({
@@ -72,6 +101,33 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           : theme.colors.gray[0],
     },
   });
+  const formatDate = (dateString) => {
+    if (dateString) {
+      const date = parseISO(dateString);
+      const formattedDate = format(date, 'yyyy-MMM-dd');
+      return formattedDate;
+    }
+  };
+
+  const userFields = [
+    { label: 'Staff Name:', value: user?.staff.StaffName },
+    { label: 'Agent Name:', value: user?.staff.AgentName },
+    { label: 'Staff Category:', value: user?.staff.StaffCategory },
+    { label: 'Department:', value: user?.staff.Department },
+    { label: 'Post Unit:', value: user?.staff.PostUnit },
+    { label: 'Manager Name:', value: user?.staff.ManagerName },
+    { label: 'Manager Title:', value: user?.staff.ManagerTitle },
+    { label: 'Manager Email:', value: user?.staff.ManagerEmail },
+    {
+      label: 'Contract Start Date:',
+      value: formatDate(user?.staff.ContractStartDate),
+    },
+    {
+      label: 'Contract End Date:',
+      value: formatDate(user?.staff.ContractEndDate),
+    },
+    { label: 'Annual Leave:', value: user?.staff.AnnualLeave },
+  ];
   return (
     <AppShell
       padding={contentpadding}
@@ -118,20 +174,98 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
               </Group>
 
               <Group position="right">
-                <Text>{username}</Text>
-                {username ? (
-                  <UnstyledButton
-                    onClick={() => handleSignout()}
-                    sx={buttonStyles}
-                  >
-                    {' '}
-                    <Group style={{ width: '150px' }}>
-                      <ThemeIcon variant="light">
-                        <IconLogout />
-                      </ThemeIcon>
-                      <Text size="sm">Logout</Text>
-                    </Group>
-                  </UnstyledButton>
+                {user ? (
+                  <>
+                    <Popover
+                      width={390}
+                      trapFocus
+                      position="bottom"
+                      withArrow
+                      shadow="md"
+                      gutter={10}
+                      opened={openedPop}
+                      closeDelay={500}
+                      onClose={handleClose}
+                    >
+                      <Popover.Target>
+                        <Button
+                          variant="link"
+                          onMouseEnter={handleOpen}
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'white',
+                            backgroundColor: '#15487E', // Subtle background color
+
+                            textDecoration: 'none',
+                            transition:
+                              'background-color 0.2s ease, color 0.2s ease',
+                            '&:hover': {
+                              backgroundColor: 'transparent',
+                              color: 'blue',
+                            },
+                          }}
+                        >
+                          <IconUser
+                            size={18}
+                            sx={{
+                              marginRight: '0.5rem',
+                            }}
+                          />
+                          {user?.name}
+                        </Button>
+                      </Popover.Target>
+                      <Popover.Dropdown
+                        sx={(theme) => ({
+                          background: ` linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e);`,
+                          borderRadius: theme.radius.md,
+                          color: 'white',
+                          boxShadow: theme.shadows.md,
+                          padding: theme.spacing.md,
+                        })}
+                      >
+                        <ActionIcon
+                          variant="filled"
+                          size="xs"
+                          style={{
+                            position: 'absolute',
+                            top: '5px',
+                            right: '5px',
+                            zIndex: '1',
+                          }}
+                          onClick={handleClose}
+                        >
+                          <IconSquareRoundedX />
+                        </ActionIcon>
+                        <Grid gutter="sm">
+                          {userFields.map((field, index) => (
+                            <React.Fragment key={index}>
+                              <Grid.Col span={5}>
+                                <Text align="right" size="sm" weight={500}>
+                                  {field.label}
+                                </Text>
+                              </Grid.Col>
+                              <Grid.Col span={7}>
+                                <Text size="sm">{field.value}</Text>
+                              </Grid.Col>
+                            </React.Fragment>
+                          ))}
+                        </Grid>
+                      </Popover.Dropdown>
+                    </Popover>
+
+                    <UnstyledButton
+                      onClick={() => handleSignout()}
+                      sx={buttonStyles}
+                    >
+                      <Group style={{ width: '150px' }}>
+                        <ThemeIcon variant="light">
+                          <IconLogout />
+                        </ThemeIcon>
+                        <Text size="sm">Logout</Text>
+                      </Group>
+                    </UnstyledButton>
+                  </>
                 ) : (
                   <Group>
                     <Link href="/login" className={linkstyle.links}>

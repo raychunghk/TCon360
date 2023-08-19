@@ -19,7 +19,7 @@ import MyCard from '../../components/MyCard';
 import Head from 'next/head';
 import { useState } from 'react';
 import MyModal from '../../components/MyModal';
-import { parseCookies, setCookie } from 'nookies';
+import { parseCookies } from 'nookies';
 import UserStyle from '../../styles/User.module.css';
 import axios from 'axios';
 import { useForm as uForm } from 'react-hook-form';

@@ -73,55 +73,61 @@ export class AuthService {
   }
 
   async login(identifier: string, password: string) {
-    const user = await this.prisma.user.findFirst({
-      include: {
-        staff: true,
-      },
-      where: {
-        OR: [{ email: identifier }, { username: identifier }],
-      },
-    });
-    if (!user) {
-      throw new Error('Invalid credentials');
+    let token = '';
+    try {
+      const user = await this.prisma.user.findFirst({
+        include: {
+          staff: true,
+        },
+        where: {
+          OR: [{ email: identifier }, { username: identifier }],
+        },
+      });
+      if (!user) {
+        throw new Error('Invalid credentials');
+      }
+
+      const isPasswordValid = await argon2.verify(user.password, password);
+      if (!isPasswordValid) {
+        throw new Error('Invalid credentials');
+      }
+
+      const payload = {
+        sub: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        staff: user.staff,
+      };
+      const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+      console.log(tokenage);
+      const options = {
+        expiresIn: `${tokenage}m`, // token expires in 1 minute
+      };
+      console.log('jwt options');
+      console.log(options);
+      token = this.jwtService.sign(payload, options);
+
+      // Verify the token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Print the decoded token
+      console.log('just signed in decoded token in nest.js');
+      console.log(decoded);
+      console.log('now?');
+      console.log(new Date());
+
+      const iat = new Date(decoded['iat'] * 1000);
+
+      console.log('Token iat  on:', iat);
+      const expDate = new Date(decoded['exp'] * 1000);
+
+      console.log('Token expires on:', expDate);
+      // Access the payload
+    } catch (error) {
+      console.log('error', error);
+      throw error;
     }
-
-    const isPasswordValid = await argon2.verify(user.password, password);
-    if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
-    }
-
-    const payload = {
-      sub: user.id,
-      username: user.username,
-      name: user.name,
-      email: user.email,
-      staff: user.staff,
-    };
-    const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
-    console.log(tokenage);
-    const options = {
-      expiresIn: `${tokenage}m`, // token expires in 1 minute
-    };
-    console.log('jwt options');
-    console.log(options);
-    const token = this.jwtService.sign(payload, options);
-
-    // Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Print the decoded token
-    console.log('just signed in decoded token in nest.js');
-    console.log(decoded);
-    console.log('now?');
-    console.log(new Date());
-
-    const iat = new Date(decoded['iat'] * 1000);
-
-    console.log('Token iat  on:', iat);
-    const expDate = new Date(decoded['exp'] * 1000);
-
-    console.log('Token expires on:', expDate);
-    // Access the payload
 
     return token;
   }

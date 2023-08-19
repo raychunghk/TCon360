@@ -2,7 +2,6 @@ import { format, parseISO, isWeekend } from 'date-fns';
 import { useState, createContext, useEffect } from 'react';
 import NextApp, { AppProps, AppContext } from 'next/app';
 import { getCookie, setCookie } from 'cookies-next';
-
 import Head from 'next/head';
 import {
   MantineProvider,
@@ -14,21 +13,21 @@ import { useRouter } from 'next/router';
 import {
   SessionProvider,
   SessionProviderProps,
-  getSession,
-  useSession,
+  // getSession,
+  // useSession,
 } from 'next-auth/react';
 import { basePath } from 'src/shared/constants/env';
 import { parseCookies } from 'nookies';
 import session from 'express-session';
-
 interface CustomSessionProviderProps extends SessionProviderProps {
   token: string;
 }
 import { GlobalStyles } from '@mantine/core';
-import '../styles/styles.css'
+import '../styles/styles.css';
 import axios from 'axios';
 
-
+import { Provider } from 'react-redux';
+import { store } from './reducers/store';
 
 // Create a context for publicholidays
 export const PublicHolidaysContext = createContext(null);
@@ -41,7 +40,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   const cookies = parseCookies();
   const token = cookies.token;
-  //const token = localStorage.getItem("token");
+
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
     props.colorScheme,
   );
@@ -66,15 +65,17 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   useEffect(() => {
     const loadPublicHolidays = async () => {
       try {
-        const response = await axios.get(`${basepath}/api/timesheet/publicholidays`);
+        const response = await axios.get(
+          `${basepath}/api/timesheet/publicholidays`,
+        );
         const data = response.data;
         const formattedPublicHolidays = data.map((holiday) => ({
           Summary: holiday.Summary,
 
-          StartDate: format((new Date(holiday.StartDate)), 'M/d/yyyy'),
+          StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
         }));
-        console.log('formatted public holidays?')
-        console.log(formattedPublicHolidays)
+        console.log('formatted public holidays?');
+        console.log(formattedPublicHolidays);
         setPublicHolidays(formattedPublicHolidays);
         setIsLoading(false);
       } catch (error) {
@@ -87,45 +88,46 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     return <div>Loading...</div>;
   }
   return (
-    // <SessionProvider session={session} basePath='/absproxy/5000'>
-    <SessionProvider
-      session={pageProps.session}
-      basePath={`${basepath}/api/auth`}
-      token={token}
-      {...(null as CustomSessionProviderProps)}
-    >
-      <Head>
-        <title>{title ? title : 'Mantine next example'}</title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
-        <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
-        <link rel="stylesheet" href={`${basepath}/styles/globals.css`} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-          rel="stylesheet"
-        />
-      </Head>
-
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
+    <Provider store={store}>
+      <SessionProvider
+        session={pageProps.session}
+        basePath={`${basepath}/api/auth`}
+        token={token}
+        {...(null as CustomSessionProviderProps)}
       >
-        <PublicHolidaysContext.Provider value={publicholidays}>
-          <MantineProvider
-            theme={{ colorScheme: 'light' }}
-            withGlobalStyles
-            withNormalizeCSS
-          >
-            <Component {...pageProps} basepath={basepath} />
-            <Notifications />
-          </MantineProvider>
-        </PublicHolidaysContext.Provider>
-      </ColorSchemeProvider>
-    </SessionProvider>
+        <Head>
+          <title>{title ? title : 'Mantine next example'}</title>
+          <meta
+            name="viewport"
+            content="minimum-scale=1, initial-scale=1, width=device-width"
+          />
+          <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
+          <link rel="stylesheet" href={`${basepath}/styles/globals.css`} />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
+
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
+        >
+          <PublicHolidaysContext.Provider value={publicholidays}>
+            <MantineProvider
+              theme={{ colorScheme: 'light' }}
+              withGlobalStyles
+              withNormalizeCSS
+            >
+              <Component {...pageProps} basepath={basepath} token={token} />
+              <Notifications />
+            </MantineProvider>
+          </PublicHolidaysContext.Provider>
+        </ColorSchemeProvider>
+      </SessionProvider>
+    </Provider>
   );
 }
 
@@ -133,12 +135,9 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
 
   const pageProps = { session, ...appProps.pageProps } || {}; // Extract pageProps object
-  console.log('sesson in _app.tsx')
+  console.log('sesson in _app.tsx');
   console.log(session);
   console.log('basePath' + basePath);
-  //console.log('pageprops:' + { ...pageProps } + pageProps.title);
-  //console.log(pageProps)
-  //  console.log(pageProps.session())
 
   return {
     ...appProps,

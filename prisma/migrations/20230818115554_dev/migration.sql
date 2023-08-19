@@ -1,11 +1,4 @@
 -- CreateTable
-CREATE TABLE "PostUser" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL,
-    "name" TEXT
-);
-
--- CreateTable
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
@@ -43,6 +36,9 @@ CREATE TABLE "Staff" (
     "ManagerName" TEXT NOT NULL,
     "ManagerTitle" TEXT NOT NULL,
     "ManagerEmail" TEXT NOT NULL,
+    "ContractStartDate" DATETIME NOT NULL,
+    "ContractEndDate" DATETIME NOT NULL,
+    "AnnualLeave" INTEGER NOT NULL,
     "userId" TEXT NOT NULL,
     CONSTRAINT "Staff_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -69,16 +65,6 @@ CREATE TABLE "VerificationRequest" (
     "expires" DATETIME NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Post" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "title" TEXT NOT NULL,
-    "content" TEXT,
-    "published" BOOLEAN NOT NULL DEFAULT false,
-    "authorId" INTEGER NOT NULL,
-    CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "PostUser" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -159,9 +145,6 @@ CREATE TABLE "TimeSheetCalendar" (
     "Others" DECIMAL NOT NULL DEFAULT 0,
     CONSTRAINT "TimeSheetCalendar_TimeSheetID_fkey" FOREIGN KEY ("TimeSheetID") REFERENCES "TimeSheet" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "PostUser_email_key" ON "PostUser"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_providerId_providerAccountId_key" ON "Account"("providerId", "providerAccountId");

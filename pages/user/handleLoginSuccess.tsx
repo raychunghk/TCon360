@@ -1,5 +1,15 @@
-import { parseCookies, setCookie } from 'nookies';
+
 import { signIn } from 'next-auth/react';
+import {
+  // setLeavePurpose,
+
+  setAuthtoken,
+  setBasepath,
+
+  // setCurrentStart,
+  // setFormType,
+  // setSelectedDatesCount,
+} from 'pages/reducers/calendarReducer';
 
 export async function handleLoginSuccess(response, router) {
   const data = await response.json();
@@ -17,6 +27,7 @@ export async function handleLoginSuccess(response, router) {
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
   console.log(tokenCookie);
+  dispatch(setAuthtoken(tokenCookie));
   //setJwtToken(token);
   const signInResult = await signIn('custom-provider', {
     token: tokenCookie,

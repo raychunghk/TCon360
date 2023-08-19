@@ -11,15 +11,72 @@ import styles from './calendar.module.css';
 import { useDisclosure, useInputState } from '@mantine/hooks';
 import { parseCookies, setCookie } from 'nookies';
 import { useSession } from 'next-auth/react';
+
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setOpen,
+  setClose,
+  setLeaveRequestId,
+  setLeaveRequestPeriod,
+  // setLeavePurpose,
+  setStaff,
+  setChargeableDays,
+  setCustomTitle,
+  setCalendarEvents,
+  // setCurrentStart,
+  // setFormType,
+  // setSelectedDatesCount,
+} from 'pages/reducers/calendarReducer';
+
 export function FrontPageCalendar(props) {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [leaveRequestId, setleaveRequestId] = useState(null);
-  const [LeaveRequestPeriod, setLeaveRequestPeriod] = useState(null);
+  const dispatch = useDispatch();
+  /* const opened = useSelector((state) => state.calendar.opened);
+  const leaveRequestId = useSelector((state) => state.calendar.leaveRequestId);
+
+  const LeaveRequestPeriod = useSelector(
+    (state) => state.calendar.LeaveRequestPeriod,
+  );*/
+  const {
+    opened,
+    leaveRequestId,
+    LeaveRequestPeriod,
+    chargeableDays,
+    customTitle,
+    calendarEvents,
+    //  currentStart,
+    //  formType,
+    //  selectedDatesCount,
+    //  leavePurpose,
+    //  staff,
+    //  session,
+  } = useSelector((state) => ({
+    opened: state.calendar.opened,
+    leaveRequestId: state.calendar.leaveRequestId,
+    LeaveRequestPeriod: state.calendar.LeaveRequestPeriod,
+    chargeableDays: state.calendar.chargeableDays,
+    customTitle: state.calendar.customTitle,
+    calendarEvents: state.calendar.calendarEvents,
+    //  currentStart: state.calendar.currentStart,
+    //  formType: state.calendar.formType,
+    //  selectedDatesCount: state.calendar.selectedDatesCount,
+    //  leavePurpose: state.calendar.leavePurpose,
+    //  staff: state.calendar.staff,
+    //  session: state.calendar.session,
+  }));
+
+  const open = () => {
+    dispatch(setOpen());
+  };
+
+  const close = () => {
+    dispatch(setClose());
+  };
+
+  const setLeaveRequestPeriodAction = (period) => {
+    dispatch(setLeaveRequestPeriod(period));
+  };
   const [leavePurpose, setleavePurpose] = useState(null);
-  const [staff, setStaff] = useState(null);
-  const [chargeableDays, setChargeableDays] = useState(0);
-  const [customTitle, setCustomTitle] = useState('');
-  const [calendarEvents, setCalendarEvents] = useState([]);
+  //fconst [staff, setStaff] = useState(null);
 
   const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
@@ -35,35 +92,37 @@ export function FrontPageCalendar(props) {
   console.log('calendarurl');
   console.log(apiurl);
   async function fetchEvents() {
-    try {
-      const cookies = parseCookies();
-      const _token = cookies.token;
-      console.log(_token);
-      if (!_token) {
-        const { accessToken } = session;
-        console.log(accessToken);
-      }
-      const headers = {
-        Authorization: `Bearer ${_token}`,
-      };
-      const response = await axios.get(apiurl, {
-        headers,
-      });
-      if ([200, 201].includes(response.status)) {
-        console.log('gettting calendar');
-        const events = await response.data;
-        console.log(events);
-
-        console.log('calendar event length');
-        console.log(calendarEvents.length);
-        if (events.length != calendarEvents.length) {
-          setCalendarEvents(events);
+    if (session) {
+      try {
+        const cookies = parseCookies();
+        const _token = cookies.token;
+        console.log(_token);
+        if (!_token) {
+          const { accessToken } = session;
+          console.log(accessToken);
         }
-      } else {
-        console.error('Failed to fetch events:', response);
+        const headers = {
+          Authorization: `Bearer ${_token}`,
+        };
+        const response = await axios.get(apiurl, {
+          headers,
+        });
+        if ([200, 201].includes(response.status)) {
+          console.log('gettting calendar');
+          const events = await response.data;
+          console.log(events);
+
+          console.log('calendar event length');
+          console.log(calendarEvents.length);
+          if (events.length != calendarEvents.length) {
+            dispatch(setCalendarEvents(events));
+          }
+        } else {
+          console.error('Failed to fetch events:', response);
+        }
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
       }
-    } catch (error) {
-      console.error('Failed to fetch events:', error);
     }
   }
 
@@ -82,7 +141,7 @@ export function FrontPageCalendar(props) {
       });
 
       console.log(session.user.staff);
-      setStaff(session.user.staff);
+      //setStaff(session.user.staff);
       const _tkn = session?.token;
       console.log('token???');
       console.log(_tkn);
@@ -117,7 +176,7 @@ export function FrontPageCalendar(props) {
     console.log(e.event);
 
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
-    setleaveRequestId(_leaveRequestid);
+    dispatch(setLeaveRequestId(_leaveRequestid));
     console.log('leave request props?');
     console.log(e.event.extendedProps.result);
     if (_leaveRequestid) {
@@ -147,7 +206,7 @@ export function FrontPageCalendar(props) {
     if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
       return false;
     }
- 
+
     const hasEventsOnSelectedDate = calendarEvents.some((event) => {
       const eventStartDate = convertDateStringToDate(event.start);
       const eventEndDate = event.end
@@ -222,9 +281,9 @@ export function FrontPageCalendar(props) {
 
     const _chargeableDays = totalDaysInMonth - leaveDays;
     const _customTitle = `${_dateRange} (chargable days: ${_chargeableDays})`;
-    setCustomTitle(_customTitle);
+    dispatch(setCustomTitle(_customTitle));
     // Update the state with the calculated chargeable days
-    setChargeableDays(_chargeableDays);
+    dispatch(setChargeableDays(_chargeableDays));
     // Your logic here...
   }
   const handleDateSelect = (selectInfo) => {
@@ -236,7 +295,7 @@ export function FrontPageCalendar(props) {
     console.log(`datediffer? ${count}`);
     const leaveRequestPeriodEnd = count == 1 ? null : subDays(_end, 1);
 
-    setLeaveRequestPeriod({
+    setLeaveRequestPeriodAction({
       start: selectInfo.start,
       end: leaveRequestPeriodEnd,
     });
@@ -253,7 +312,7 @@ export function FrontPageCalendar(props) {
     if (_leavePurpose) {
       setleavePurpose(_leavePurpose);
       setFormType('create');
-      setleaveRequestId(0);
+      dispatch(setLeaveRequestId(0));
       open();
     }
   };

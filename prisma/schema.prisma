@@ -49,19 +49,22 @@ model Session {
 }
 
 model Staff {
-  id            Int            @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName   String
-  ManagerTitle  String
-  ManagerEmail  String
-  userId        String
-  leaveRequests LeaveRequest[]
-  user          User           @relation(fields: [userId], references: [id])
-  staffFiles    staffFiles[]
+  id                Int            @id @default(autoincrement())
+  StaffName         String
+  AgentName         String
+  StaffCategory     String
+  Department        String
+  PostUnit          String
+  ManagerName       String
+  ManagerTitle      String
+  ManagerEmail      String
+  ContractStartDate DateTime
+  ContractEndDate   DateTime
+  AnnualLeave       Int
+  userId            String
+  leaveRequests     LeaveRequest[]
+  user              User           @relation(fields: [userId], references: [id])
+  staffFiles        staffFiles[]
 }
 
 model User {

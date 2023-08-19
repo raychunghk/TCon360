@@ -96,6 +96,9 @@ export const authOptions = {
       if (user && user.hasOwnProperty('staff')) {
         token.staff = user.staff[0];
       }
+      if (user?.hasOwnProperty('tkn')) {
+        token.tkn = user.tkn;
+      }
       console.log('token in jwt');
       console.log(token);
 
@@ -159,6 +162,12 @@ export const authOptions = {
       } else {
         console.log('token is expired');
       }
+    }, 
+    async signOut({ redirect }) {
+      // Destroy session cookies upon signout
+      console.log('signout next auth called')
+      await fetch('/api/auth/callback/logout');
+      await redirect('/');
     },
   },
   jwt: {
