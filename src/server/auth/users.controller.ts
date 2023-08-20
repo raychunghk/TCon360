@@ -37,7 +37,22 @@ export class UsersController {
     console.log(accessToken);
     return { accessToken };
   }
-
+  @Post('user/validateuser')
+  //async signUp(@Request() req) {
+  async validateUser(@Body() data: { username: string; email: string }) {
+    const { username, email } = data;
+    const existingUser = await this.authService.userExists(username, email);
+    if (existingUser) {
+      // Username or email already exists, return an error response
+      return {
+        message: 'Username or email already exists',
+      };
+    } else {
+      return {
+        message: 'ok',
+      };
+    }
+  }
   @Post('user/signup')
   //async signUp(@Request() req) {
   async signUp(@Body() user: Prisma.UserCreateInput) {
@@ -47,6 +62,17 @@ export class UsersController {
       console.log('signup here');
       console.log(user);
       //  const usercreate =   Prisma.UserCreateInput
+      const existingUser = await this.authService.userExists(
+        user.username,
+        user.email,
+      );
+      if (existingUser) {
+        // Username or email already exists, return an error response
+        return {
+          statusCode: 400,
+          message: 'Username or email already exists',
+        };
+      }
       const newUser = await this.authService.signUp(user);
       const accessToken = await this.authService.login(
         user.username,

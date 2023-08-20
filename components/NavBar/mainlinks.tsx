@@ -36,62 +36,75 @@ type LinkItemProps = {
   isChild?: boolean;
   LinkComponent?: React.ComponentType<{ href: string }>;
 };
+const iconSizeStyle = {
+  fontSize: '1.125rem',
+};
+const defaultIconSize = '2rem';
 const data = [
-  { icon: <IconHome2 size="1rem" />, color: 'blue', label: 'Home', link: '/' },
   {
-    icon: <IconClock size="1rem" />,
+    icon: <IconHome2 size={defaultIconSize} />,
+    color: 'blue',
+    label: 'Home',
+    link: '/',
+  },
+  {
+    icon: <IconSunset2 size={defaultIconSize} />,
+    color: 'grape',
+    label: 'Leave Request',
+    link: '/leaverequest',
+  },
+  {
+    icon: <IconClock size={defaultIconSize} />,
     color: 'teal',
     label: 'Time Sheet',
-    link: '/#',
-    child: [
-      // {
-      //   icon: <IconEyeglass size="1rem" />,
-      //   color: 'blue',
-      //   label: 'View',
-      //   link: '/timesheet',
-      // },
-      {
-        icon: <IconCalendarPlus size="1rem" />,
-        color: 'blue',
-        label: 'Create',
-        link: '/timesheet/create',
-      },
-    ],
+    link: '/timesheet/create',
+    // child: [
+    //   // {
+    //   //   icon: <IconEyeglass size={defaultIconSize} />,
+    //   //   color: 'blue',
+    //   //   label: 'View',
+    //   //   link: '/timesheet',
+    //   // },
+    //   {
+    //     icon: <IconCalendarPlus size={defaultIconSize} />,
+    //     color: 'blue',
+    //     label: 'Create',
+    //     link: '/timesheet/create',
+    //   },
+    // ],
   },
   {
-    icon: <IconUserCircle size="1rem" />,
+    icon: <IconUserEdit size={'1.5rem'} color="blue" />,
     color: 'teal',
     label: 'User Profile',
-    link: '/#',
-    child: [
-      {
-        icon: <IconUserPlus size="1rem" />,
-        color: 'cyan.5',
-        label: 'Create Profile',
-        link: '/staff',
-      },
-      {
-        icon: <IconUserEdit size="1runrurem" />,
-        color: 'cyan.5',
-        label: 'Edit Profile',
-        link: '/staff/edit',
-      },
-    ],
+    link: '/staff/edit',
+    // child: [
+    //   // {
+    //   //   icon: <IconUserPlus size={defaultIconSize} />,
+    //   //   color: 'cyan.5',
+    //   //   label: 'Create Profile',
+    //   //   link: '/staff',
+    //   // },
+    //   {
+    //     icon: <IconUserEdit size={defaultIconSize} />,
+    //     color: 'cyan.5',
+    //     label: 'Edit Profile',
+    //     link: '/staff/edit',
+    //   },
+    // ],
   },
   // {
-  //   icon: <IconCalendarStats size="1rem" />,
+  //   icon: <IconCalendarStats size={defaultIconSize} />,
   //   color: 'violet',
   //   label: 'Calendar',
   //   link: '/calendar',
   // },
   // {
-  //   icon: <IconSunset2 size="1rem" />,
+  //   icon: <IconSunset2 size={defaultIconSize} />,
   //   color: 'grape',
   //   label: 'Leave Request',
   //   link: '/leaverequest',
   // },
-
-  
 ];
 function CustomLink({
   href,
@@ -128,9 +141,7 @@ function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
   const marginLeft = isChild ? 20 : 0;
 
   return (
-    
     <div style={{ marginLeft }}>
-      
       <CustomLink href={link}>
         <Group>
           <ThemeIcon color={color} variant="light">

@@ -74,24 +74,21 @@ export const authOptions = {
   ],
   callbacks: {
     // async jwt(token, user, account, profile, isNewUser) {
+
     async jwt(jwtobj) {
       const { token, user, account, profile, isNewUser } = jwtobj;
-      // get the token cookie using nookies
-      console.log('jwt is called');
-      console.log('jwtobj');
-      console.log(JSON.stringify(jwtobj));
-      //const cookies = parseCookies();
-      //console.log('cookies');
-      //console.log(cookies);
-      console.log('users?');
-      console.log(user);
-      //const tokenCookie = cookies.token;
-      //console.log('token cookie');
-      //console.log(tokenCookie);
 
-      console.log('account');
-      console.log(account);
-      // if there's a token cookie, add it to the JWT token
+      const logJwtCallback = (description, variable) =>
+        logCallback('jwt', description, variable);
+
+      logJwtCallback('jwtobj', JSON.stringify(jwtobj));
+
+      const cookies = parseCookies();
+      logJwtCallback('cookies', cookies);
+
+      logJwtCallback('users?', user);
+
+      logJwtCallback('Account:', account);
 
       if (user && user.hasOwnProperty('staff')) {
         token.staff = user.staff[0];
@@ -99,73 +96,61 @@ export const authOptions = {
       if (user?.hasOwnProperty('tkn')) {
         token.tkn = user.tkn;
       }
-      console.log('token in jwt');
-      console.log(token);
+      logJwtCallback('token in jwt', token);
 
       if (token.hasOwnProperty('exp')) {
-        const expdate = new Date(token.exp * 1000);
+        const expdate = new Date(token.exp * 1000 + 5000);
+        logJwtCallback('token expiry date', expdate);
+        logJwtCallback('now compared with expdate');
 
-        console.log('token expiry date');
-        console.log(expdate);
-        console.log('now compared with expdate');
-
-        console.log('now');
         const now = new Date().getTime() / 1000;
-        console.log(now);
+        logJwtCallback('now', now);
+
         if (token.hasOwnProperty('exp') && now < token.exp) {
-          console.log('New date is earlier than token expiration');
+          logJwtCallback('New date is earlier than token expiration');
           return token;
         }
       }
       if (account) {
         return token;
       }
-
-      // Return previous token if the access token has not expired yet
     },
 
     async session({ session, token, user }) {
-      // get the token cookie using nookies
-      const cookies = parseCookies();
-      console.log('session is called');
-      console.log('session ?');
-      console.log(session);
+      const logSessionCallback = (description, ...args) =>
+        logCallback('session callback:', description, ...args);
 
-      console.log('token?');
-      console.log(token);
-      console.log('user in session callback?');
-      console.log({ user });
-      console.log('now');
-      const now = new Date().getTime() / 1000;
-      console.log(now);
+      const cookies = parseCookies();
+      logSessionCallback('session?', session);
+      logSessionCallback('token?', token);
+      logSessionCallback('user in session?', { user });
+      logSessionCallback('now', new Date().getTime() / 1000);
+
       if (token.hasOwnProperty('exp')) {
         const expdate = new Date(token.exp * 1000);
-
-        console.log('token expiry date');
-        console.log(expdate);
+        logSessionCallback('token expiry date', expdate);
       }
+
+      const now = new Date().getTime() / 1000;
       if (token.hasOwnProperty('exp') && now < token.exp) {
-        console.log('New date is earlier than token expiration');
+        logSessionCallback('New date is earlier than token expiration');
         session.user = {
           name: token.name,
           email: token.email,
           staff: token.staff,
         };
         session.basePath = '/absproxy/5000';
-        // add the token to the session object
         session.token = token;
-
-        console.log(session.token);
-        console.log('session.user');
-        console.log(session.user);
+        logSessionCallback('session.token?', session.token);
+        logSessionCallback('session.user?', session.user);
         return session;
       } else {
-        console.log('token is expired');
+        logSessionCallback('token is expired');
       }
-    }, 
+    },
     async signOut({ redirect }) {
       // Destroy session cookies upon signout
-      console.log('signout next auth called')
+      console.log('signout next auth called');
       await fetch('/api/auth/callback/logout');
       await redirect('/');
     },
@@ -180,6 +165,9 @@ export const authOptions = {
   },
   // basePath: '/absproxy/5000',
 };
-
+function logCallback(context, description, ...args) {
+  const prefixedDescription = `${context} callback: ${description}`;
+  console.log(prefixedDescription, ...args);
+}
 // export default (req, res) => NextAuth(req, res, options)
 export default NextAuth(authOptions);

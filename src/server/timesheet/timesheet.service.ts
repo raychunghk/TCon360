@@ -38,7 +38,10 @@ export class TimesheetService {
   async getCalendarEvents(staffid): Promise<any[]> {
     const results = await this.prisma.viewEvents.findMany({
       where: {
-        OR: [{ HolidaySummary: { not: null } }, { staffId: staffid }],
+        OR: [
+          { eventType: { in: ['weekend', 'publicholiday'] } },
+          { staffId: staffid },
+        ],
       },
       select: {
         ID: true,

@@ -68,10 +68,10 @@ export default function LeaveRequestForm({
   fetchEvents,
   leavePurpose,
 }) {
-  console.log('form type?');
-  console.log(formType);
-  console.log('leave Request ID?');
-  console.log(leaveRequestId);
+  console.log('form type?', formType);
+
+  console.log('leave Request ID?', leaveRequestId);
+
   const _publicholidays = useContext(PublicHolidaysContext);
   const publicholidays = _publicholidays;
   setPublicHolidays(publicholidays);
@@ -107,8 +107,8 @@ export default function LeaveRequestForm({
     leavePurpose,
   };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
-  console.log('publicholidays');
-  console.log(publicholidays);
+  console.log('publicholidays', publicholidays);
+
   const handleModalClose = () => {
     setModalOpen(false);
     if (onClose) {
@@ -123,8 +123,7 @@ export default function LeaveRequestForm({
 
   const { data: session, status } = useSession();
   useEffect(() => {
-    console.log('session?');
-    console.log(session);
+    console.log('session?', session);
     if (session?.user) {
       console.log(session.user.staff);
       setStaff(session.user.staff);
@@ -148,8 +147,7 @@ export default function LeaveRequestForm({
           );
 
           if (response.status === 200) {
-            console.log('leaverequest response data');
-            console.log(response.data);
+            console.log('leaverequest response data', response.data);
             const {
               leavePeriodStart,
               leavePeriodEnd,
@@ -265,9 +263,7 @@ export default function LeaveRequestForm({
         setModalOpen(true);
         reset();
 
-        let _data = formatResponseDate(response.data);
-        console.log('Delete Response');
-        console.log(_data);
+        console.log('Delete Response', formatResponseDate(response.data));
         await onDeleteEvent(leaveRequestId);
       } else {
         console.error('Failed to create leave request:', response);
@@ -295,8 +291,7 @@ export default function LeaveRequestForm({
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
     };
-    console.log('newdata: ');
-    console.log(newData);
+    console.log('newdata: ', newData);
     //console.log('original leave start');
     //console.log(leaveRequest.leavePeriodStart);
     try {
@@ -343,8 +338,7 @@ export default function LeaveRequestForm({
     handleDateInputSelect(date, stateobj);
   };
   const handleDateInputSelect = (date, stateobj) => {
-    console.log('handle date input select');
-    console.log(date);
+    console.log('handle date input select', date);
     if (!excludeHoliday(date)) {
       setLeaveRequest(stateobj);
     }

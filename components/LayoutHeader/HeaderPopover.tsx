@@ -2,17 +2,24 @@ import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons';
 import { format, parseISO } from 'date-fns';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function HeaderPopover({}) {
   const dispatch = useDispatch();
   const [openedPop, setOpenedPop] = useState(false);
+  const [userFields, setuserFields] = useState(null);
   const { staff, user, staffVacation } = useSelector((state) => ({
     staff: state.calendar.staff,
     user: state.calendar.user,
     staffVacation: state.calendar.staffVacation,
   }));
+  useEffect(() => {
+    setUfields();
+  }, [staff, staffVacation]);
+  useEffect(() => {
+    setUfields();
+  }, []);
   const handleOpen = () => {
     setOpenedPop(true);
   };
@@ -28,31 +35,32 @@ export default function HeaderPopover({}) {
       return formattedDate;
     }
   };
-  const userFields = [
-    { label: 'Staff Name:', value: user?.staff.StaffName },
-    { label: 'Agent Name:', value: user?.staff.AgentName },
-    { label: 'Staff Category:', value: user?.staff.StaffCategory },
-    { label: 'Department:', value: user?.staff.Department },
-    { label: 'Post Unit:', value: user?.staff.PostUnit },
-    { label: 'Manager Name:', value: user?.staff.ManagerName },
-    { label: 'Manager Title:', value: user?.staff.ManagerTitle },
-    { label: 'Manager Email:', value: user?.staff.ManagerEmail },
-    {
-      label: 'Contract Start Date:',
-      value: formatDate(user?.staff.ContractStartDate),
-    },
-    {
-      label: 'Contract End Date:',
-      value: formatDate(user?.staff.ContractEndDate),
-    },
-    {
-      label: 'Annual Leave:',
-      value: `Total: ${user?.staff.AnnualLeave}`,
-      subValue: `Balance: ${staffVacation.balance}`,
-      subValue2: `Used: ${staffVacation.used}`,
-    },
-  ];
-
+  function setUfields() {
+    setuserFields([
+      { label: 'Staff Name:', value: staff.StaffName },
+      { label: 'Agent Name:', value: staff.AgentName },
+      { label: 'Staff Category:', value: staff.StaffCategory },
+      { label: 'Department:', value: staff.Department },
+      { label: 'Post Unit:', value: staff.PostUnit },
+      { label: 'Manager Name:', value: staff.ManagerName },
+      { label: 'Manager Title:', value: staff.ManagerTitle },
+      { label: 'Manager Email:', value: staff.ManagerEmail },
+      {
+        label: 'Contract Start Date:',
+        value: formatDate(staff.ContractStartDate),
+      },
+      {
+        label: 'Contract End Date:',
+        value: formatDate(staff.ContractEndDate),
+      },
+      {
+        label: 'Annual Leave:',
+        value: `Total: ${staff.AnnualLeave}`,
+        subValue: `Balance: ${staffVacation.balance}`,
+        subValue2: `Used: ${staffVacation.used}`,
+      },
+    ]);
+  }
   return (
     <Popover
       width={390}
@@ -114,26 +122,28 @@ export default function HeaderPopover({}) {
           <IconSquareRoundedX />
         </ActionIcon>
         <Grid gutter="sm">
-          {userFields.map((field, index) => (
-            <React.Fragment key={index}>
-              <Grid.Col span={5}>
-                <Text align="right" size="sm" weight={500}>
-                  {field.label}
-                </Text>
-              </Grid.Col>
-              <Grid.Col span={7}>
-                {field.subValue ? (
-                  <>
-                    <Text size="sm">{field.value}</Text>
-                    <Text size="sm">{field.subValue}</Text>
-                    <Text size="sm">{field.subValue2}</Text>
-                  </>
-                ) : (
-                  <Text size="sm">{field.value}</Text>
-                )}
-              </Grid.Col>
-            </React.Fragment>
-          ))}
+          {userFields
+            ? userFields.map((field, index) => (
+                <React.Fragment key={index}>
+                  <Grid.Col span={5}>
+                    <Text align="right" size="sm" weight={500}>
+                      {field.label}
+                    </Text>
+                  </Grid.Col>
+                  <Grid.Col span={7}>
+                    {field.subValue ? (
+                      <>
+                        <Text size="sm">{field.value}</Text>
+                        <Text size="sm">{field.subValue}</Text>
+                        <Text size="sm">{field.subValue2}</Text>
+                      </>
+                    ) : (
+                      <Text size="sm">{field.value}</Text>
+                    )}
+                  </Grid.Col>
+                </React.Fragment>
+              ))
+            : ''}
         </Grid>
       </Popover.Dropdown>
     </Popover>

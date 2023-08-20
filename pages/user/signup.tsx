@@ -16,7 +16,7 @@ import {
   Group,
   Grid,
   Divider,
-  Card,
+  Notification,
   Stepper,
   NumberInput,
 } from '@mantine/core';
@@ -42,7 +42,9 @@ import {
   setPublicHolidays,
 } from 'components/util/leaverequest.util';
 import { PublicHolidaysContext } from 'pages/_app';
+import { useDispatch, useSelector } from 'react-redux';
 import { UtilsContext } from 'components/util/utilCtx';
+import axios from 'axios';
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -97,6 +99,7 @@ export default function SignupPage() {
     ContractEndDate: null,
     AnnualLeave: 10,
   };
+
   const [formValues, setFormValues] = useState(staffModel);
   const [editing, setEditing] = useState(false);
   const router = useRouter();
@@ -105,13 +108,25 @@ export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [active, setActive] = useState(0);
-  const nextStep = () =>
+  const [errorMessage, setErrorMessage] = useState('');
+  const dispatch = useDispatch();
+  const nextStep = async () => {
+    if (active === 0) {
+      const isValid = await validateStep0(
+        form.values.username,
+        form.values.email,
+      );
+      if (!isValid) {
+        return;
+      }
+    }
     setActive((current) => {
       if (form.validate().hasErrors) {
         return current;
       }
       return current < 3 ? current + 1 : current;
     });
+  };
   //let publicholidays;
   useEffect(() => {}, []);
   // const nextStep = () =>
@@ -134,8 +149,15 @@ export default function SignupPage() {
 
   const form = useForm({
     initialValues: { ...formValues, username, password, email },
-    validate: (values) => {
+    validate: async (values) => {
       if (active === 0) {
+        const isValid = await validateStep0(values.username, values.email);
+        if (!isValid) {
+          return {
+            username: 'Username or email already exists',
+            email: 'Username or email already exists',
+          };
+        }
         return {
           username:
             values.username.trim().length < 6
@@ -217,16 +239,14 @@ export default function SignupPage() {
 
   async function handleSubmit(form) {
     // event.preventDefault();
-    console.log('form?');
-    console.log(form);
+    console.log('form?', form);
+
     const { email, password, username, ...staff } = form;
     const user = { email, password, username, staff };
     setFormValues({ ...staff });
 
-    console.log('form values');
-    console.log(formValues);
-    console.log('user');
-    console.log(user);
+    console.log('form values', formValues);
+    console.log('user', user);
 
     try {
       const response = await fetch(`${basepath}/api/user/signup`, {
@@ -237,7 +257,17 @@ export default function SignupPage() {
 
       if (response.ok) {
         // router.push(mainpage);
-        await handleLoginSuccess(response, router);
+        await handleLoginSuccess(response, router, dispatch);
+      } else if (response.status === 400) {
+        // Display an error message and jump to stepper page 1
+        const data = await response.json();
+        console.error('Error signing up:', data.message);
+
+        // Set the stepper activeStep to 0 (page 1)
+        setActive(0);
+
+        // Scroll to the top of the page
+        window.scrollTo(0, 0);
       } else {
         console.error('Error signing up:', response.statusText);
       }
@@ -249,7 +279,52 @@ export default function SignupPage() {
   if (loading) {
     return <p>Loading...</p>;
   }
+  const handleStepClick = (stepIndex) => {
+    // Perform validation before switching to Step 1
+    console.log('stepIndex', stepIndex);
+    if (stepIndex === 1) {
+      const isValid = validateStep0(form.values.username, form.values.email); // Custom validation function for Step 0
+      if (!isValid) {
+        return; // Do not switch to Step 1 if validation fails
+      }
+    }
 
+    setActive(stepIndex);
+  };
+
+  const validateStep0 = async (_username, _email) => {
+    console.log('form.values.username', form.values.username);
+    // const _username = form.values.username;
+    // const _email = form.values.email;
+    const postval = {
+      username: _username,
+      email: _email,
+    };
+    console.log('postval', postval);
+    try {
+      // Make an HTTP request to the server to validate the user
+      const response = await axios.post(`${basepath}/api/user/validateuser`, {
+        username: _username,
+        email: _email,
+      });
+
+      if (response.data.message === 'ok') {
+        setErrorMessage(null);
+        // Validation successful, return true
+        return true;
+      } else {
+        // Validation failed, return false
+        // You can display an error message or perform any necessary actions
+        const errmsg = 'Username or email already exists';
+        console.error(errmsg);
+        setErrorMessage(errmsg);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error validating user:', error);
+      return false;
+    }
+  };
   return (
     <>
       <Head>
@@ -277,7 +352,11 @@ export default function SignupPage() {
               Create an Account
             </Title>
 
-            <Stepper active={active} onStepClick={setActive} breakpoint="sm">
+            <Stepper
+              active={active}
+              onStepClick={handleStepClick}
+              breakpoint="sm"
+            >
               <Stepper.Step
                 label="First step"
                 description="Enter login details"
@@ -318,7 +397,16 @@ export default function SignupPage() {
                       />
                     </Grid.Col>
                   </Grid>
-                  {`${active}`}
+                  {errorMessage && (
+                    <Notification
+                      color="red"
+                      title="Error"
+                      onClose={() => setErrorMessage('')}
+                      style={{ marginTop: '1rem' }}
+                    >
+                      {errorMessage}
+                    </Notification>
+                  )}
                 </Paper>
               </Stepper.Step>
               <Stepper.Step
@@ -385,15 +473,6 @@ export default function SignupPage() {
                     ].map(({ label, placeholder, name, value, type }) => (
                       <Grid.Col span={6}>
                         {type === 'datetime' ? (
-                          // <DateTimePicker
-                          //   label={label}
-                          //   placeholder={placeholder}
-                          //   name={name}
-                          //   onChange={handleInputChange} // Replace with appropriate handler
-                          //   value={value}
-                          //   {...form.getInputProps(name)}
-                          // />
-
                           <DatePickerInput
                             clearable
                             label={label}

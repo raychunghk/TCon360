@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   async signUp(user: Prisma.UserCreateInput): Promise<User> {
-    console.log(user);
+    console.log('user', user);
     let userReturn;
     const { staff, ...userData } = user;
     const stf: any = { ...staff };
@@ -58,6 +58,11 @@ export class AuthService {
           user: { connect: { id: _userId } },
         },
       });
+      const stfid = rtn.id;
+      await this.prisma.user.update({
+        where: { id: _userId },
+        data: { staffId: stfid },
+      });
       const _user = await this.prisma.user.findFirst({
         include: {
           staff: true,
@@ -71,7 +76,16 @@ export class AuthService {
       console.log(error);
     }
   }
-
+  async userExists(_username: string, _email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ email: _email }, { username: _username }],
+      },
+    });
+    let rtn = false;
+    if (user) rtn = true;
+    return rtn;
+  }
   async login(identifier: string, password: string) {
     let token = '';
     try {

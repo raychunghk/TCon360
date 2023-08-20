@@ -47,8 +47,9 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     dispatch(clearAllState());
     signOut();
   };
-  const { user } = useSelector((state) => ({
+  const { user, staff } = useSelector((state) => ({
     user: state.calendar.user,
+    staff: state.calendar.staff,
   }));
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     } else {
       if (session?.user) {
         dispatch(setUser(session.user));
-        dispatch(setStaff(session.user.staff));
+        if (!staff) dispatch(setStaff(session.user.staff));
       }
     }
   }, [session]);
@@ -108,14 +109,15 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
             </MediaQuery>
             <Group position="apart" style={{ width: '100%' }} p="10px">
               <Group position="left">
-                <Image
-                  src={`${basepath}/favicon.svg`}
-                  alt="Icon"
-                  width={30}
-                  height={30}
-                  style={{ marginRight: '5px' }}
-                />
-
+                <Link href="/">
+                  <Image
+                    src={`${basepath}/favicon.svg`}
+                    alt="Icon"
+                    width={30}
+                    height={30}
+                    style={{ marginRight: '5px' }}
+                  />
+                </Link>
                 <Title className={classes.title} align="center">
                   Welcome to{' '}
                   <Text inherit variant="gradient" component="span">

@@ -31,7 +31,7 @@ export class LeaveRequestController {
     private leaveRequestService: LeaveRequestService,
     private readonly staffFilesService: StaffFilesService,
     private readonly usrSvc: UsersService,
-  ) { }
+  ) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
@@ -41,7 +41,7 @@ export class LeaveRequestController {
   ) {
     const userId = req.user.id;
     const user = await this.usrSvc.getUserWithStaff(userId);
-    const staffId = user.staffId;
+    const staffId = user.staffId ? user.staffId : user.staff[0].id;
     Logger.log('staffid', staffId);
     Logger.log('leaveRequestData', leaveRequestData);
     //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);

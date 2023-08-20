@@ -21,15 +21,13 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   try {
     const pathname = request.nextUrl.pathname;
-   // const cookies = parseCookies();
-   // const token = cookies.token;
-   // console.log('middleware token?')
-   // console.log(token);
-    console.log('middlewarepath name?');
-    console.log(pathname);
+    // const cookies = parseCookies();
+    // const token = cookies.token;
+    // console.log('middleware token?')
+    // console.log(token);
+    console.log('middlewarepath name?', pathname);
   } catch (error) {
-    console.log('middleware error');
-    console.log(error);
+    console.log('middleware error', error);
   }
 
   return NextResponse.next();

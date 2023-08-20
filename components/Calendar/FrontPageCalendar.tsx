@@ -1,9 +1,10 @@
 import { Title, Drawer } from '@mantine/core';
 
-import { differenceInBusinessDays, subDays } from 'date-fns';
+import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import FullCalendar from '@fullcalendar/react';
+import listPlugin from '@fullcalendar/list';
 import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from 'axios';
@@ -21,13 +22,20 @@ import {
   // setLeavePurpose,
   setStaff,
   setChargeableDays,
-  setCustomTitle,
+  //setCustomTitle,
   setCalendarEvents,
   setstaffVacation,
   clearAllState,
   // setFormType,
   // setSelectedDatesCount,
 } from 'pages/reducers/calendarReducer';
+import {
+  convertDateStringToDate,
+  handleSelectAllow,
+  isSameDate,
+} from './calendar.util';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import CustomView from './customeView';
 
 export function FrontPageCalendar() {
   const dispatch = useDispatch();
@@ -41,7 +49,7 @@ export function FrontPageCalendar() {
     leaveRequestId,
     LeaveRequestPeriod,
     chargeableDays,
-    customTitle,
+    //   customTitle,
     calendarEvents,
     user,
     staffVacation,
@@ -87,7 +95,7 @@ export function FrontPageCalendar() {
 
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
-
+  const [customTitle, setCustomTitle] = useState('');
   console.log('basepath?', basepath);
 
   //const [selectedDates, setSelectedDates] = useState([]);
@@ -98,7 +106,7 @@ export function FrontPageCalendar() {
       try {
         const cookies = parseCookies();
         const _token = cookies.token;
-        console.log(_token);
+        console.log('_token?', _token);
         if (!_token) {
           const { accessToken } = session;
           console.log(accessToken);
@@ -118,13 +126,15 @@ export function FrontPageCalendar() {
           if (events.length != calendarEvents.length) {
             await dispatch(setCalendarEvents(events));
           }
-        } else if (response.status == 401) {
-          handleSignout();
         } else {
           console.error('Failed to fetch events:', response);
         }
       } catch (error) {
-        console.error('Failed to fetch events:', error);
+        if (error.response && error.response.status === 401) {
+          handleSignout();
+        } else {
+          console.error('Error! Failed to fetch events:', error);
+        }
       }
     }
   }
@@ -156,7 +166,7 @@ export function FrontPageCalendar() {
     if (user) {
       getVacationDays(user, calendarEvents);
     }
-  }, [user, calendarEvents]);
+  }, [ calendarEvents]);
   const [date, setDate] = useState(new Date());
   const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
@@ -164,8 +174,8 @@ export function FrontPageCalendar() {
       calendarRef.current.getApi().getEventById(eventId).remove();
       fetchEvents();
     } catch (error) {
+      console.log('error', error);
       throw error;
-      console.log(error);
     }
   };
 
@@ -182,53 +192,7 @@ export function FrontPageCalendar() {
       open();
     }
   };
-  const convertDateStringToDate = (dateString) => {
-    const parts = dateString.split('-');
-    const year = parseInt(parts[0]);
-    const month = parseInt(parts[1]) - 1;
-    const day = parseInt(parts[2]);
 
-    return new Date(year, month, day);
-  };
-  const isSameDate = (date1, date2) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
-  const handleSelectAllow = (selectInfo) => {
-    const selectedDate = selectInfo.start;
-
-    // Disable selection on weekends (Saturday and Sunday)
-    if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) {
-      return false;
-    }
-
-    const hasEventsOnSelectedDate = calendarEvents.some((event) => {
-      const eventStartDate = convertDateStringToDate(event.start);
-      const eventEndDate = event.end
-        ? convertDateStringToDate(event.end)
-        : eventStartDate;
-
-      if (isSameDate(eventStartDate, selectedDate)) {
-        return true;
-      }
-
-      if (
-        event.end &&
-        selectedDate >= eventStartDate &&
-        selectedDate < eventEndDate
-      ) {
-        return true;
-      }
-
-      return false;
-    });
-    return !hasEventsOnSelectedDate;
-
-    //return true;
-  };
   function handleMonthYearChange(info) {
     if (calendarEvents.length == 0) {
       fetchEvents();
@@ -269,28 +233,24 @@ export function FrontPageCalendar() {
       console.log('vacationleavedays', vacationLeaveDays);
     }
   }
-  function setTitle(newDate) {
-    setCurrentStart(newDate);
+  function setTitle(newDate = new Date()) {
+    // setCurrentStart(newDate);
     const currentYear = newDate.getFullYear(); // Get the year
     const currentMonth = newDate.getMonth(); // Get the month
-    console.log('New year:', currentYear);
-    console.log('New month:', currentMonth);
 
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-
-    const formatDate = (date) =>
-      date.toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      });
-
-    const formattedFirstDay = formatDate(firstDayOfMonth);
-    const formattedLastDay = formatDate(lastDayOfMonth);
+    const formatDate = (date) => format(date, 'd-MMM-yyyy');
+    const formattedFirstDay = formatDate(
+      new Date(currentYear, currentMonth, 1),
+    );
+    const formattedLastDay = formatDate(
+      new Date(currentYear, currentMonth + 1, 0),
+    );
 
     const _dateRange = `${formattedFirstDay} to ${formattedLastDay}`;
-
+    if (!user) {
+      setCustomTitle(_dateRange);
+      return;
+    }
     const filteredEvents = calendarEvents.filter(
       (event) =>
         event.extendedProps.result.Year === currentYear &&
@@ -311,7 +271,7 @@ export function FrontPageCalendar() {
 
     const _chargeableDays = totalDaysInMonth - leaveDays;
     const _customTitle = `${_dateRange} (chargable days: ${_chargeableDays})`;
-    dispatch(setCustomTitle(_customTitle));
+    setCustomTitle(_customTitle);
     // Update the state with the calculated chargeable days
     dispatch(setChargeableDays(_chargeableDays));
     // Your logic here...
@@ -368,21 +328,45 @@ export function FrontPageCalendar() {
         ref={calendarRef}
         headerToolbar={{
           center: 'title',
-          start: '',
+          start: 'dayGridMonth,cv',
 
           end: 'prev,next today',
         }}
         titleFormat={() => customTitle}
-        plugins={[dayGridPlugin, interactionPlugin]}
+        plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
         height={'100%'}
         eventClick={fnEventclick}
         aspectRatio={1.5}
-        initialView="dayGridMonth"
-        selectable={true}
         events={calendarEvents}
-        selectAllow={handleSelectAllow}
-        select={handleDateSelect} // Specify callback function for date range selection
+        selectable={true}
+        // selectAllow={() => true}
+        // initialView="timeGrid"
+        initialView="dayGridMonth"
+        selectAllow={(selectinfo) =>
+          handleSelectAllow(selectinfo, calendarEvents)
+        }
         datesSet={handleMonthYearChange}
+        select={handleDateSelect} // Specify callback function for date range selection
+        views={{
+          dayGridMonth: {
+            buttonText: 'Month',
+          },
+          listWeek: {
+            type: 'list',
+            //  duration: { weeks: 1 },
+            buttonText: 'List',
+          },
+          timeGridFourDay: {
+            type: 'timeGrid',
+            duration: { days: 365 },
+          },
+          cv: {
+            component: CustomView,
+            buttonText: 'Leave Requests',
+            events: calendarEvents,
+            // Pass the events object to the custom view component
+          },
+        }}
       />
     </>
   );

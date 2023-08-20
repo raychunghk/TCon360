@@ -72,12 +72,14 @@ export class TimesheetController {
       const decodedtoken = this.authService.decodejwt(token);
       const userId = decodedtoken.sub;
       // Find the user with the given userId
-      const user = await this.userService.findById(userId);
-
-      const result = await this.tsService.getCalendarEvents(user.staffId);
-      console.log('calendar event result');
+      //const user = await this.userService.findById(userId);
+      const user = await this.userService.getUserWithStaff(userId);
+      const staffId = user.staffId ? user.staffId : user.staff[0].id;
+      // const staffid = user.staffId ? user.staffId : user.staff[0].id;
+      const result = await this.tsService.getCalendarEvents(staffId);
+      // console.log('calendar event result');
       //const result = this.staffService.createStaff(stf, userId).then();
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (error) {
       console.log(error);
