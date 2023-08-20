@@ -14,8 +14,7 @@ import {
   IconTree,
   IconSwitchHorizontal,
   IconUserEdit,
-  IconUserPlus,
-  IconUserCircle,
+  IconSettings,
 } from '@tabler/icons-react';
 import {
   ThemeIcon,
@@ -92,6 +91,12 @@ const data = [
     //     link: '/staff/edit',
     //   },
     // ],
+  },
+  {
+    icon: <IconSettings size={'1.5rem'} color="orange" />,
+    color: 'orange',
+    label: 'Settings',
+    link: '/admin',
   },
   // {
   //   icon: <IconCalendarStats size={defaultIconSize} />,

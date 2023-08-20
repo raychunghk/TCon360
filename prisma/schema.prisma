@@ -81,6 +81,9 @@ model User {
   sessions      Session[]
   staff         Staff[]
   staffId       Int?
+  roleId        Int
+  role          Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  userStatus   String  @default("active")
 }
 
 model VerificationRequest {
@@ -211,4 +214,10 @@ view viewEvents {
   staffId          Int?
   LeaveRequestId   Int?
   leaveDays        Float?
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
 }

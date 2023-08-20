@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 1920 1080" enableBackground="new 0 0 1920 1080" xmlSpace="preserve">
+  <linearGradient id="bgGradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1920" y2="1080">
+    <stop offset="0%" stop-color="#0D253F"/>
+    <stop offset="100%" stop-color="#0D253F" stop-opacity="0.8"/>
+  </linearGradient>
+  <path fill="url(#bgGradient)" d="M1920,1080H0V0c0,0,211.4,29.5,508.2,119.4C855.9,251,963,287.2,1110.7,321.1C1258.4,355,1423.7,375.7,1558.8,375.7c235.1,0,538.8-39.4,538.8-39.4V1080z"/>
+</svg>

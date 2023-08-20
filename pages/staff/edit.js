@@ -52,9 +52,9 @@ export default function EditStaff() {
     id: null,
   };
   const [formValues, setFormValues] = useState(staffModel);
+  const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const { register, handleSubmit, reset } = useHookForm();
   const router = useRouter();
   const cookies = parseCookies();
