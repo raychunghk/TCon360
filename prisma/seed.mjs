@@ -9,12 +9,14 @@ const prisma = new PrismaClient();
 async function main() {
   await gencalendar();
   await genholiday();
-  //  await createViewIfNotExists();
-  //await genStaffInfo();
+  await createViewIfNotExists();
+  await genStaffInfo();
 }
 function createViewIfNotExists() {
   createViewCalendarIfNotExists();
   createViewEventsIfNotExists();
+  createViewUserDetailIfNotExists();
+  createViewUserRoleIfNotExists();
 }
 
 async function createViewCalendarIfNotExists() {
@@ -74,6 +76,92 @@ FROM CalendarMaster C
     await prisma.$disconnect();
   }
 }
+
+async function createViewUserRoleIfNotExists() {
+  try {
+    const viewname = 'viewUserRole';
+    const viewExists = await prisma.$queryRaw(Prisma.sql`
+      SELECT name FROM sqlite_master WHERE type='view' AND name='viewUserRole';
+    `);
+
+    if (viewExists.length === 0) {
+      await prisma.$queryRaw(Prisma.sql`
+      
+    CREATE VIEW viewUserRole AS
+    SELECT
+      u.id AS userId,
+      u.username,
+      u.name,
+      u.email,  
+      u.roleId,
+      r.name AS roleName
+    FROM
+    User u
+    JOIN
+    Role r ON u.roleId = r.id;
+    
+      
+      `);
+      console.log(`${viewname} created successfully!`);
+    } else {
+      console.log(`${viewname} already exists!`);
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+async function createViewUserDetailIfNotExists() {
+  try {
+    const viewname = 'viewUserDetail ';
+    const viewExists = await prisma.$queryRaw(Prisma.sql`
+      SELECT name FROM sqlite_master WHERE type='view' AND name='viewUserDetail';
+    `);
+
+    if (viewExists.length === 0) {
+      await prisma.$queryRaw(Prisma.sql`
+      
+ CREATE VIEW viewUserDetail AS
+SELECT
+  u.id AS userId,
+  u.username,
+  u.name,
+  u.email,
+  u.roleId,
+  u.staffId,
+  r.name AS roleName,
+  s.StaffName,
+  s.AgentName,
+  s.StaffCategory,
+  s.Department,
+  s.PostUnit,
+  s.ManagerName,
+  s.ManagerTitle,
+  s.ManagerEmail,
+  s.ContractStartDate,
+  s.ContractEndDate,
+  s.AnnualLeave
+FROM
+  User u
+JOIN
+  Role r ON u.roleId = r.id
+JOIN
+  Staff s ON u.staffId = s.id;
+    
+      
+      `);
+      console.log(`${viewname} created successfully!`);
+    } else {
+      console.log(`${viewname} already exists!`);
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 async function createViewEventsIfNotExists() {
   try {
     const viewname = 'viewEvents';
@@ -198,8 +286,15 @@ async function genStaffInfo() {
       id: 0,
       name: 'admin',
     };
+    const role2 = {
+      id: 0,
+      name: 'staff',
+    };
     const _role = await prisma.role.create({
       data: role,
+    });
+    const _role2 = await prisma.role.create({
+      data: role2,
     });
     const u = await prisma.user.create({
       data: user,

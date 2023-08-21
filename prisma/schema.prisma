@@ -81,7 +81,7 @@ model User {
   sessions      Session[]
   staff         Staff[]
   staffId       Int?
-  roleId        Int       @default(0)
+  roleId        Int       @default(1)
   role          Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
   userStatus    String    @default("active")
 }
@@ -214,6 +214,36 @@ view viewEvents {
   staffId          Int?
   LeaveRequestId   Int?
   leaveDays        Float?
+}
+
+view ViewUserRole {
+  userId   String  @id
+  username String?
+  name     String?
+  email    String?
+  roleId   Int
+  roleName String
+}
+
+view ViewUserDetail {
+  userId            String   @id
+  username          String?
+  name              String?
+  email             String?
+  roleId            Int
+  staffId           Int?
+  roleName          String
+  StaffName         String
+  AgentName         String
+  StaffCategory     String
+  Department        String
+  PostUnit          String
+  ManagerName       String
+  ManagerTitle      String
+  ManagerEmail      String
+  ContractStartDate DateTime
+  ContractEndDate   DateTime
+  AnnualLeave       Int
 }
 
 model Role {

@@ -1,78 +1,59 @@
-install loadingoverlay, 
-change the page that when click generate public calendar, 
-add LoadingOverlay from mantine/core 
-show the mantine LoadingOverlay
-after axios request is success finished, hide the LoadingOverlay, and also show the Mymodal
+I have this 3 models and i want to create a view the gets. 
+user.id, username, name, email,roleid,staffid, role.name, 
+ StaffName         
+ AgentName         
+ StaffCategory     
+ Department        
+ PostUnit          
+ ManagerName       
+ ManagerTitle      
+ ManagerEmail      
+ ContractStartDate 
+ ContractEndDate   
+ AnnualLeave       
+joins role on role.id = usr.roleid, staff on staffid = staff.id
+use sqlite, please show me the sql to create view: viewUserDetail
 ```
-import React, { useState } from 'react';
-import {
-  Text,
-  Container,
-  Button,
-  ActionIcon,
-  TextInput,
-  Card,
-} from '@mantine/core';
-import { IconCalendarEvent } from '@tabler/icons';
-import axios from 'axios';
-import UserStyle from '/styles/User.module.css';
-import { basepath } from 'global';
-import MyModal from 'components/MyModal';
+model User {
+  id            String    @id @default(cuid())
+  username      String?   @unique
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  staff         Staff[]
+  staffId       Int?
+  roleId        Int       @default(0)
+  role          Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  userStatus    String    @default("active")
+}
 
-const CalendarManagementTab = () => {
-  const [icsUrl, setIcsUrl] = useState(
-    'https://www.1823.gov.hk/common/ical/tc.json',
-  );
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleGeneratePublicHoliday = async (event) => {
-    event.preventDefault(); // Prevent the default form submit behavior
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
 
-    const api = `${basepath}/api/admin/publicholiday`;
-    console.log('api', api);
-
-    try {
-      await axios.post(api, {
-        icsUrl: icsUrl,
-      });
-      console.log('Public holiday records generated successfully.');
-    } catch (error) {
-      console.error('Error generating public holiday records:', error);
-    }
-  };
-
-  return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Card.Section p="sm" className={UserStyle.adminSectionHeader}>
-        <Text size="xl" weight={700} color="white">
-          Calendar Manager
-        </Text>
-      </Card.Section>
-
-      <form onSubmit={handleGeneratePublicHoliday}>
-        <TextInput
-          mb="lg"
-          label="Hong Kong Public Holidays Data (Traditional Chinese)"
-          value={icsUrl}
-          onChange={(event) => setIcsUrl(event.target.value)}
-          placeholder="Enter Hong Kong Government public holiday JSON file URL"
-        />
-
-        <Button type="submit" color="blue" leftIcon={<IconCalendarEvent />}>
-          Update Public Holidays
-        </Button>
-      </form>
-      <MyModal
-        open={modalOpen}
-        onClose={handleModalClose}
-        msg={'Public Holiday is updated!'}
-      />
-    </Card>
-  );
-};
-
-export default CalendarManagementTab;
-
-```
+model Staff {
+  id                Int            @id @default(autoincrement())
+  StaffName         String
+  AgentName         String
+  StaffCategory     String
+  Department        String
+  PostUnit          String
+  ManagerName       String
+  ManagerTitle      String
+  ManagerEmail      String
+  ContractStartDate DateTime
+  ContractEndDate   DateTime
+  AnnualLeave       Int
+  userId            String
+  leaveRequests     LeaveRequest[]
+  user              User           @relation(fields: [userId], references: [id])
+  staffFiles        staffFiles[]
+}```

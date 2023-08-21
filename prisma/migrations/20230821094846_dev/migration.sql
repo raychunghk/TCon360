@@ -54,7 +54,10 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "staffId" INTEGER
+    "staffId" INTEGER,
+    "roleId" INTEGER NOT NULL DEFAULT 1,
+    "userStatus" TEXT NOT NULL DEFAULT 'active',
+    CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -146,6 +149,12 @@ CREATE TABLE "TimeSheetCalendar" (
     CONSTRAINT "TimeSheetCalendar_TimeSheetID_fkey" FOREIGN KEY ("TimeSheetID") REFERENCES "TimeSheet" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "Role" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_providerId_providerAccountId_key" ON "Account"("providerId", "providerAccountId");
 
@@ -172,3 +181,6 @@ CREATE UNIQUE INDEX "CalendarVacation_id_key" ON "CalendarVacation"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TimeSheet_id_key" ON "TimeSheet"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
