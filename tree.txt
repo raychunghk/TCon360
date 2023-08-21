@@ -1,0 +1,49 @@
+NxTime
+├── backend
+├── backup
+├── components
+│   ├── Calendar
+│   ├── ColorSchemeToggle
+│   ├── LayoutHeader
+│   ├── LeaveRequest
+│   ├── NavBar
+│   ├── timesheet
+│   ├── util
+│   └── Welcome
+├── middleware
+├── pages
+│   ├── admin
+│   ├── api
+│   │   └── auth
+│   ├── auth
+│   ├── calendar
+│   ├── leaverequest
+│   ├── reducers
+│   ├── staff
+│   ├── test
+│   ├── timesheet
+│   ├── user
+│   ├── vacation
+│   └── views
+├── prisma
+│   ├── database
+│   ├── migrations
+│   │   └── 20230818115554_dev
+│   └── views
+│       └── main
+├── public
+│   ├── images
+│   └── styles
+├── python
+├── src
+│   ├── admin
+│   ├── client
+│   │   └── ssr
+│   ├── models
+│   ├── next
+│   ├── server
+│   │   ├── admin
+ 
+ 
+
+74 directories

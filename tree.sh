@@ -1,0 +1,1 @@
+tree -d -I '.git|*.yarn|dist|node_modules|.next*' > tree.txt

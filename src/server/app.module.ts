@@ -24,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 //import CacheModule from '@neskjs/common/cache';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AdminModule } from './admin/admin.module';
 
 //import redisStore from 'cache-manager-redis-store';
 import * as redisStore from 'cache-manager-redis-store';
@@ -54,6 +55,7 @@ import * as redisStore from 'cache-manager-redis-store';
       },
     }),
     RecipeModule,
+    AdminModule,
   ],
   controllers: [AppController],
 

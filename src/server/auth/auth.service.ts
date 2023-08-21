@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private readonly prismaService: PrismaService,
+ 
     private readonly prisma: PrismaService,
     private staffService: StaffService,
   ) {}

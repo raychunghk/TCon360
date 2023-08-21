@@ -1,47 +1,78 @@
-The correctway to grab the event data from fullcalendar to the customview as below as  filteredEvents :
-
-Then i want to display those event beautifully using mantine and other css features, the events data are teh array object showing below, 
-I want to show the HolidaySummary then `leavePeriodStart(yyyy-MMM-d) to leavePeriodEnd(yyyy-MMM-d)` (No of days:${leaveDays})
+install loadingoverlay, 
+change the page that when click generate public calendar, 
+add LoadingOverlay from mantine/core 
+show the mantine LoadingOverlay
+after axios request is success finished, hide the LoadingOverlay, and also show the Mymodal
 ```
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import {
+  Text,
+  Container,
+  Button,
+  ActionIcon,
+  TextInput,
+  Card,
+} from '@mantine/core';
+import { IconCalendarEvent } from '@tabler/icons';
+import axios from 'axios';
+import UserStyle from '/styles/User.module.css';
+import { basepath } from 'global';
+import MyModal from 'components/MyModal';
 
-const CustomView = (prop) => {
-  console.log('props', prop);
- const filteredEvents = Object.values(prop.eventStore.defs)
-  .filter(event => event.groupId !== "")
-  .map(event => event.extendedProps.result);
-  console.log(filteredEvents);
-  // Render the events from all months together
-  // Customize this component to meet your specific requirements
-  return <div>hello</div>;
+const CalendarManagementTab = () => {
+  const [icsUrl, setIcsUrl] = useState(
+    'https://www.1823.gov.hk/common/ical/tc.json',
+  );
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleGeneratePublicHoliday = async (event) => {
+    event.preventDefault(); // Prevent the default form submit behavior
+
+    const api = `${basepath}/api/admin/publicholiday`;
+    console.log('api', api);
+
+    try {
+      await axios.post(api, {
+        icsUrl: icsUrl,
+      });
+      console.log('Public holiday records generated successfully.');
+    } catch (error) {
+      console.error('Error generating public holiday records:', error);
+    }
+  };
+
+  return (
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card.Section p="sm" className={UserStyle.adminSectionHeader}>
+        <Text size="xl" weight={700} color="white">
+          Calendar Manager
+        </Text>
+      </Card.Section>
+
+      <form onSubmit={handleGeneratePublicHoliday}>
+        <TextInput
+          mb="lg"
+          label="Hong Kong Public Holidays Data (Traditional Chinese)"
+          value={icsUrl}
+          onChange={(event) => setIcsUrl(event.target.value)}
+          placeholder="Enter Hong Kong Government public holiday JSON file URL"
+        />
+
+        <Button type="submit" color="blue" leftIcon={<IconCalendarEvent />}>
+          Update Public Holidays
+        </Button>
+      </form>
+      <MyModal
+        open={modalOpen}
+        onClose={handleModalClose}
+        msg={'Public Holiday is updated!'}
+      />
+    </Card>
+  );
 };
 
-export default CustomView;
-```
+export default CalendarManagementTab;
 
-filteredEvents:
-```[
-    {
-        "ID": 72,
-        "leavePeriodStart": "2023-08-03T00:00:00.000Z",
-        "leavePeriodEnd": "2023-08-08T00:00:00.000Z",
-        "HolidaySummary": "sdfd",
-        "LeaveRequestId": 24,
-        "eventType": "vacation",
-        "leaveDays": 4,
-        "Year": 2023,
-        "Month": 8
-    },
-    {
-        "ID": 95,
-        "leavePeriodStart": "2023-10-11T00:00:00.000Z",
-        "leavePeriodEnd": "2023-10-12T00:00:00.000Z",
-        "HolidaySummary": "f",
-        "LeaveRequestId": 18,
-        "eventType": "vacation",
-        "leaveDays": 2,
-        "Year": 2023,
-        "Month": 10
-    }
-]
 ```

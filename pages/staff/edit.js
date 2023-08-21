@@ -70,7 +70,7 @@ export default function EditStaff() {
         headers,
       });
 
-      if (response.status === 200) {
+      if ([200, 201].includes(response.status)) {
         const _staff = response.data.staff[0];
         console.log(_staff);
         setFormValues(_staff);

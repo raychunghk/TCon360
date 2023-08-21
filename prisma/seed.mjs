@@ -192,8 +192,15 @@ async function genStaffInfo() {
       name: 'Ray Chung',
       email: 'mannchung@gmail.com',
       password: hashedPassword,
+      roleId: 0,
     };
-
+    const role = {
+      id: 0,
+      name: 'admin',
+    };
+    const _role = await prisma.role.create({
+      data: role,
+    });
     const u = await prisma.user.create({
       data: user,
     });

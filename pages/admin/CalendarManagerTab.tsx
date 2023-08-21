@@ -3,52 +3,93 @@ import {
   Text,
   Container,
   Button,
+  LoadingOverlay,
   ActionIcon,
   TextInput,
   Card,
+  Box,
+  Tooltip,
 } from '@mantine/core';
 import { IconCalendarEvent } from '@tabler/icons';
 import axios from 'axios';
-import UserStyle from '/styles/User.module.css'
+import UserStyle from '/styles/User.module.css';
 import { basepath } from 'global';
+import MyModal from 'components/MyModal';
+
 const CalendarManagementTab = () => {
   const [icsUrl, setIcsUrl] = useState(
-    'https://www.1823.gov.hk/common/ical/gc/tc.ics',
+    'https://www.1823.gov.hk/common/ical/tc.json',
   );
-  const handleGeneratePublicHoliday = async () => {
+  const [loading, setLoading] = useState(false); // State to handle loading overlay
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMsg, setModalMsg] = useState('Calendar is updated'); // Default modal message
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleGeneratePublicHoliday = async (event) => {
+    event.preventDefault(); // Prevent the default form submit behavior
+    const api = `${basepath}/api/admin/publicholiday`;
+    setLoading(true);
+    console.log('api', api);
+
     try {
-      await axios.post(`${basepath}/api/admin/publicholiday`, {
-        icsFileUrl: 'https://www.1823.gov.hk/common/ical/gc/tc.ics',
+      const response = await axios.post(api, {
+        icsUrl: icsUrl,
       });
-      console.log('Public holiday records generated successfully.');
+
+      if ([200, 201].includes(response.status)) {
+        const msg = response.data.message;
+        console.log('Public holiday records generated successfully.');
+        setModalMsg(msg); // Set success message
+        setModalOpen(true);
+      } else {
+        console.error(
+          'Error generating public holiday records:',
+          response.statusText,
+        );
+        setModalMsg(`Error: ${response.statusText}`); // Set error message
+        setModalOpen(true);
+      }
     } catch (error) {
       console.error('Error generating public holiday records:', error);
+      setModalMsg(`Error: ${error.message}`); // Set error message
+      setModalOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Card.Section p="sm" background ={`${basepath}/favicon.svg`}   className={UserStyle.adminSectionHeader}>
-         <Text size="xl" weight={700} color="white">
-          Calendar Manager
-        </Text>
-      </Card.Section>
-
-      <TextInput
-        mb="lg"
-        label="ICS File URL"
-        value={icsUrl}
-        onChange={(event) => setIcsUrl(event.target.value)}
-        placeholder="Enter ICS file URL"
-      />
-
-      <Button
-        color="blue"
-        onClick={handleGeneratePublicHoliday}
-        leftIcon={<IconCalendarEvent />}
-      >
-        Generate Public Holidays
-      </Button>
-    </Card>
+    <Box maw={800} pos="relative">
+      <LoadingOverlay visible={loading} overlayBlur={2} />
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card.Section p="sm" className={UserStyle.adminSectionHeader}>
+          <Text size="xl" weight={700} color="white">
+            Calendar Manager
+          </Text>
+        </Card.Section>
+        <form onSubmit={handleGeneratePublicHoliday}>
+          <TextInput
+            my="sm"
+            label="Hong Kong Public Holidays Data (Traditional Chinese)"
+            value={icsUrl}
+            onChange={(event) => setIcsUrl(event.target.value)}
+            placeholder="Enter Hong Kong Government public holiday JSON file URL"
+          />
+          <Tooltip
+            position="right"
+            withArrow
+            label="To generate calendar for the next 4 years and update public holiday database."
+          >
+            <Button type="submit" color="blue" leftIcon={<IconCalendarEvent />}>
+              Update Calendar Database
+            </Button>
+          </Tooltip>
+        </form>{' '}
+        <MyModal open={modalOpen} onClose={handleModalClose} msg={modalMsg} />
+      </Card>
+    </Box>
   );
 };
 
