@@ -217,12 +217,13 @@ view viewEvents {
 }
 
 view ViewUserRole {
-  userId   String  @id
-  username String?
-  name     String?
-  email    String?
-  roleId   Int
-  roleName String
+  userId     String  @id
+  username   String?
+  name       String?
+  email      String?
+  roleId     Int
+  roleName   String
+  userStatus String
 }
 
 view ViewUserDetail {
@@ -244,6 +245,7 @@ view ViewUserDetail {
   ContractStartDate DateTime
   ContractEndDate   DateTime
   AnnualLeave       Int
+  userStatus        String
 }
 
 model Role {

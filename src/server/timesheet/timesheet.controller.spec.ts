@@ -77,6 +77,8 @@ describe('TimesheetController', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         staffId: 123,
+        roleId: 0,
+        userStatus: 'active',
       };
       const authReq = {
         user: user, // Provide a valid user object

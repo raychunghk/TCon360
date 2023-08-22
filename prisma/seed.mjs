@@ -7,232 +7,175 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 async function main() {
-  await gencalendar();
-  await genholiday();
+  //await gencalendar();
+  //await genholiday();
   await createViewIfNotExists();
-  await genStaffInfo();
+  //await genStaffInfo();
 }
 function createViewIfNotExists() {
   createViewCalendarIfNotExists();
   createViewEventsIfNotExists();
   createViewUserDetailIfNotExists();
-  createViewUserRoleIfNotExists();
+  createViewUserRole();
 }
+async function createView(viewname, createViewSQL) {
+  try {
+    await prisma.$queryRaw(Prisma.sql`
+      DROP VIEW IF EXISTS ${Prisma.raw(viewname)};
+    `);
 
+    await prisma.$queryRaw(Prisma.sql`
+      CREATE VIEW ${Prisma.raw(viewname)} AS
+    
+        ${Prisma.raw(createViewSQL)} 
+    `);
+
+    console.log(`View ${viewname} created successfully!`);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 async function createViewCalendarIfNotExists() {
-  try {
-    const viewname = 'viewCalendarTimeSheet';
-    const viewExists = await prisma.$queryRaw(Prisma.sql`
-      SELECT name FROM sqlite_master WHERE type='view' AND name='viewCalendarTimeSheet';
-    `);
-
-    if (viewExists.length === 0) {
-      await prisma.$queryRaw(Prisma.sql`
-      create view viewCalendarTimeSheet as 
-      select ROW_NUMBER() OVER (
-        ORDER BY C.CalendarDate
-    ) AS ID,
-    CalendarDate,
-    STRFTIME(
-        '%Y-%m-%d %H:%M:%S',
-        DATETIME(CalendarDate / 1000, 'unixepoch')
-    ) AS CalendarDateStr,
-    WeekDayName,
-    Year,
-    Month,
-    CASE
-        WHEN WeekDayName LIKE 'S%'
-        OR PH.Summary IS NOT NULL THEN 0
-        WHEN V.ChargeableDay > 0 THEN ChargeableDay
-        ELSE 0
-    END AS VacationChargable,
-    CASE
-        WHEN WeekDayName LIKE 'S%'
-        OR PH.Summary IS NOT NULL THEN 1
-        ELSE 0
-    END AS PublicHolidayChargable,
-    CASE
-        WHEN WeekDayName LIKE 'S%' THEN WeekDayName
-        WHEN PH.Summary IS NOT NULL THEN PH.Summary
-        WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
-        ELSE null
-    END AS HolidaySummary,
-    V.LeaveRequestId,
-    LR.staffId
-  
-FROM CalendarMaster C
-    LEFT JOIN CalendarVacation V ON V.VacationDate = C.CalendarDate
-    LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
-    LEFT JOIN LeaveRequest LR ON LR.id = V.LeaveRequestId
-      
-      `);
-      console.log('View created successfully!');
-    } else {
-      console.log('View already exists!');
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await prisma.$disconnect();
-  }
+  const viewname = 'viewCalendarTimeSheet';
+  const createViewSQL = `
+     SELECT
+        ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS ID,
+        CalendarDate,
+        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate / 1000, 'unixepoch')) AS CalendarDateStr,
+        WeekDayName,
+        Year,
+        Month,
+        CASE
+          WHEN WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN 0
+          WHEN V.ChargeableDay > 0 THEN ChargeableDay
+          ELSE 0
+        END AS VacationChargable,
+        CASE
+          WHEN WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN 1
+          ELSE 0
+        END AS PublicHolidayChargable,
+        CASE
+          WHEN WeekDayName LIKE 'S%' THEN WeekDayName
+          WHEN PH.Summary IS NOT NULL THEN PH.Summary
+          WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
+          ELSE NULL
+        END AS HolidaySummary,
+        V.LeaveRequestId,
+        LR.staffId
+      FROM
+        CalendarMaster C
+      LEFT JOIN
+        CalendarVacation V ON V.VacationDate = C.CalendarDate
+      LEFT JOIN
+        PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+      LEFT JOIN
+        LeaveRequest LR ON LR.id = V.LeaveRequestId;
+  `;
+  await createView(viewname, createViewSQL);
+}
+async function createViewUserRole() {
+  const viewname = 'viewUserRole';
+  const createViewSQL = `
+  SELECT
+        u.id AS userId,
+        u.username,
+        u.name,
+        u.email,
+        u.userStatus,
+        u.roleId,
+        r.name AS roleName
+      FROM
+        User u
+      JOIN
+        Role r ON u.roleId = r.id;
+  `;
+  await createView(viewname, createViewSQL);
 }
 
-async function createViewUserRoleIfNotExists() {
-  try {
-    const viewname = 'viewUserRole';
-    const viewExists = await prisma.$queryRaw(Prisma.sql`
-      SELECT name FROM sqlite_master WHERE type='view' AND name='viewUserRole';
-    `);
-
-    if (viewExists.length === 0) {
-      await prisma.$queryRaw(Prisma.sql`
-      
-    CREATE VIEW viewUserRole AS
-    SELECT
-      u.id AS userId,
-      u.username,
-      u.name,
-      u.email,  
-      u.roleId,
-      r.name AS roleName
-    FROM
-    User u
-    JOIN
-    Role r ON u.roleId = r.id;
-    
-      
-      `);
-      console.log(`${viewname} created successfully!`);
-    } else {
-      console.log(`${viewname} already exists!`);
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
 async function createViewUserDetailIfNotExists() {
-  try {
-    const viewname = 'viewUserDetail ';
-    const viewExists = await prisma.$queryRaw(Prisma.sql`
-      SELECT name FROM sqlite_master WHERE type='view' AND name='viewUserDetail';
-    `);
-
-    if (viewExists.length === 0) {
-      await prisma.$queryRaw(Prisma.sql`
-      
- CREATE VIEW viewUserDetail AS
-SELECT
-  u.id AS userId,
-  u.username,
-  u.name,
-  u.email,
-  u.roleId,
-  u.staffId,
-  r.name AS roleName,
-  s.StaffName,
-  s.AgentName,
-  s.StaffCategory,
-  s.Department,
-  s.PostUnit,
-  s.ManagerName,
-  s.ManagerTitle,
-  s.ManagerEmail,
-  s.ContractStartDate,
-  s.ContractEndDate,
-  s.AnnualLeave
-FROM
-  User u
-JOIN
-  Role r ON u.roleId = r.id
-JOIN
-  Staff s ON u.staffId = s.id;
-    
-      
-      `);
-      console.log(`${viewname} created successfully!`);
-    } else {
-      console.log(`${viewname} already exists!`);
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await prisma.$disconnect();
-  }
+  const viewname = 'viewUserDetail';
+  const createViewSQL = `
+    SELECT
+        u.id AS userId,
+        u.username,
+        u.name,
+        u.email,
+        u.roleId,
+        u.userStatus,
+        u.staffId,
+        r.name AS roleName,
+        s.StaffName,
+        s.AgentName,
+        s.StaffCategory,
+        s.Department,
+        s.PostUnit,
+        s.ManagerName,
+        s.ManagerTitle,
+        s.ManagerEmail,
+        s.ContractStartDate,
+        s.ContractEndDate,
+        s.AnnualLeave
+      FROM
+        User u
+      JOIN
+        Role r ON u.roleId = r.id
+      JOIN
+        Staff s ON u.staffId = s.id;
+    `;
+  await createView(viewname, createViewSQL);
 }
 
 async function createViewEventsIfNotExists() {
-  try {
-    const viewname = 'viewEvents';
-    const viewExists = await prisma.$queryRaw(Prisma.sql`
-      SELECT name FROM sqlite_master WHERE type='view' AND name='viewEvents';
-    `);
-
-    if (viewExists.length === 0) {
-      await prisma.$queryRaw(Prisma.sql`
-      create view viewEvents as  
-select ROW_NUMBER() OVER (
-        ORDER BY C.CalendarDate
-    ) AS ID,
-    CalendarDate as leavePeriodStart,
-    LR.leavePeriodEnd,
-    STRFTIME(
-        '%Y-%m-%d %H:%M:%S',
-        DATETIME(CalendarDate / 1000, 'unixepoch')
-    ) AS StartDateStr,
-    WeekDayName,
-    Year,
-    Month,
-    CASE
-        WHEN WeekDayName LIKE 'S%' THEN WeekDayName
-        WHEN PH.Summary IS NOT NULL THEN PH.Summary
-        when LR.leavePurpose is not null then LR.leavePurpose
-        ELSE null
-    END AS HolidaySummary,
-    CASE
-        WHEN WeekDayName LIKE 'S%' THEN 'weekend'
-        WHEN PH.Summary IS NOT NULL THEN 'publicholiday'
-        when LR.id is not null then COALESCE(LR.leaveType, 'vacation') 
-        ELSE null
-    END AS eventType,
-    STRFTIME(
-        '%Y-%m-%d %H:%M:%S',
-        DATETIME(LR.leavePeriodEnd / 1000, 'unixepoch')
-    ) AS EndDateStr,
-    LR.dateOfReturn,
-    STRFTIME(
-    '%Y-%m-%d %H:%M:%S',
-    DATETIME(LR.dateOfReturn / 1000, 'unixepoch')
-) AS ReturnDateStr,
-    LR.AMPMStart,
-    LR.AMPMEnd,
-    LR.staffId,
-    LR.leaveType,
-    LR.id as LeaveRequestId
-    ,    case when  LR.leaveDays is not null then LR.leaveDays
-      WHEN WeekDayName LIKE 'S%' THEN 1
-        WHEN PH.Summary IS NOT NULL THEN 1
-        else null
-        end as leaveDays
-FROM CalendarMaster C
-    LEFT JOIN PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
-    left join LeaveRequest LR on LR.leavePeriodStart = CalendarDate
-where HolidaySummary is not null;
-    
-    
-      
-      `);
-      console.log(`${viewname} created successfully!`);
-    } else {
-      console.log(`${viewname} already exists!`);
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await prisma.$disconnect();
-  }
+  const viewname = 'viewEvents';
+  const createViewSQL = `
+   SELECT
+        ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS ID,
+        CalendarDate AS leavePeriodStart,
+        LR.leavePeriodEnd,
+        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate / 1000, 'unixepoch')) AS StartDateStr,
+        WeekDayName,
+        Year,
+        Month,
+        CASE
+          WHEN WeekDayName LIKE 'S%' THEN WeekDayName
+          WHEN PH.Summary IS NOT NULL THEN PH.Summary
+          WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
+          ELSE NULL
+        END AS HolidaySummary,
+        CASE
+          WHEN WeekDayName LIKE 'S%' THEN 'weekend'
+          WHEN PH.Summary IS NOT NULL THEN 'publicholiday'
+          WHEN LR.id IS NOT NULL THEN COALESCE(LR.leaveType, 'vacation')
+          ELSE NULL
+        END AS eventType,
+        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.leavePeriodEnd / 1000, 'unixepoch')) AS EndDateStr,
+        LR.dateOfReturn,
+        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.dateOfReturn / 1000, 'unixepoch')) AS ReturnDateStr,
+        LR.AMPMStart,
+        LR.AMPMEnd,
+        LR.staffId,
+        LR.leaveType,
+        LR.id AS LeaveRequestId,
+        CASE
+          WHEN LR.leaveDays IS NOT NULL THEN LR.leaveDays
+          WHEN WeekDayName LIKE 'S%' THEN 1
+          WHEN PH.Summary IS NOT NULL THEN 1
+          ELSE NULL
+        END AS leaveDays
+      FROM
+        CalendarMaster C
+      LEFT JOIN
+        PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+      LEFT JOIN
+        LeaveRequest LR ON LR.leavePeriodStart = CalendarDate
+      WHERE
+        HolidaySummary IS NOT NULL;
+  `;
+  await createView(viewname, createViewSQL);
 }
+
 async function genholiday() {
   const __dirname = path.resolve();
   console.log(__dirname);
@@ -329,13 +272,6 @@ async function genStaffInfo() {
   }
 }
 async function gencalendar() {
-  // ... you will write your Prisma Client queries here
-  /*const usersWithPosts = await prisma.user.findMany({
-    include: {
-      posts: true,
-    },
-  })
-  console.dir(usersWithPosts, { depth: null })*/
   // let startdate: Date = new Date("January 1, 2023");
   let locale = 'en-US';
   var startyear = 2022;

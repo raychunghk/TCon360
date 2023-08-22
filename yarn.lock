@@ -819,10 +819,10 @@
   resolved "https://registry.npmjs.org/@emotion/memoize/-/memoize-0.7.1.tgz"
   integrity sha512-Qv4LTqO11jepd5Qmlp3M1YEjBumoTHcHFdgPTQ+sFlIL5myi/7xu/POwP7IRu6odBdmLXdtIs1D6TuW6kbwbbg==
 
-"@emotion/react@^11.11.0", "@emotion/react@>=11.9.0":
-  version "11.11.0"
-  resolved "https://registry.npmjs.org/@emotion/react/-/react-11.11.0.tgz"
-  integrity sha512-ZSK3ZJsNkwfjT3JpDAWJZlrGD81Z3ytNDsxw1LKq1o+xkmO5pnWfr6gmCC8gHEFf3nSSX/09YrG67jybNPxSUw==
+"@emotion/react@^11.11.1", "@emotion/react@>=11", "@emotion/react@>=11.9.0":
+  version "11.11.1"
+  resolved "https://registry.npmjs.org/@emotion/react/-/react-11.11.1.tgz"
+  integrity sha512-5mlW1DquU5HaxjLkfkGN1GA/fvVGdyHURRiX/0FHl2cfIfRxSOfmxEH5YS43edp0OldZrZ+dkBKbngxcNCdZvA==
   dependencies:
     "@babel/runtime" "^7.18.3"
     "@emotion/babel-plugin" "^11.11.0"
@@ -1625,7 +1625,7 @@
   dependencies:
     "@mantine/utils" "6.0.19"
 
-"@mantine/core@^6.0.19", "@mantine/core@6.0.19":
+"@mantine/core@^6.0.19", "@mantine/core@>=6", "@mantine/core@6.0.19":
   version "6.0.19"
   resolved "https://registry.npmjs.org/@mantine/core/-/core-6.0.19.tgz"
   integrity sha512-SvMZCOgCc315SIg6hkuLM0ZnBaAac4VFDHZ0BM5LIE4MPJUpe4QOLsg/5RGxOa5s7JRCtu/dawH3/9frvfDrhw==
@@ -1637,7 +1637,7 @@
     react-remove-scroll "^2.5.5"
     react-textarea-autosize "8.3.4"
 
-"@mantine/dates@^6.0.17":
+"@mantine/dates@^6.0.19", "@mantine/dates@>=6":
   version "6.0.19"
   resolved "https://registry.npmjs.org/@mantine/dates/-/dates-6.0.19.tgz"
   integrity sha512-+5t3ljSHuvADJeq2PkxzyLsyWQGsCCg7evz6PDdGyxkVknn9wzBMM9UZZVyB22H5c7qieDi0yoO2gQIXJzhxQg==
@@ -1667,7 +1667,7 @@
     fast-deep-equal "^3.1.3"
     klona "^2.0.5"
 
-"@mantine/hooks@^6.0.19", "@mantine/hooks@6.0.19":
+"@mantine/hooks@^6.0.19", "@mantine/hooks@>=6", "@mantine/hooks@6.0.19":
   version "6.0.19"
   resolved "https://registry.npmjs.org/@mantine/hooks/-/hooks-6.0.19.tgz"
   integrity sha512-YkmuB6kmoenU1PVuE8tLBA+6RJIY9hIsGyIQG1yuPAy6SLWNFT8g2T9YvI/psqsUbVIYGaNEXg8zq42xbxnD8Q==
@@ -3294,12 +3294,12 @@
   dependencies:
     tslib "^2.4.0"
 
-"@tabler/icons-react@*", "@tabler/icons-react@^2.18.0", "@tabler/icons-react@>=2.1.0":
-  version "2.20.0"
-  resolved "https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.20.0.tgz"
-  integrity sha512-r2uC0Mi3ozHD2G+IYi0A0Iy2203dbQo5EAFxn055MyIhH7U2VNsvyopTqOj+AVedy7cqR86T9zhryRUGC78WZA==
+"@tabler/icons-react@*", "@tabler/icons-react@^2.31.0", "@tabler/icons-react@>=2.1.0", "@tabler/icons-react@>=2.23.0":
+  version "2.31.0"
+  resolved "https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.31.0.tgz"
+  integrity sha512-P0q4VtKXJEc9lv9kxBUYfRqNuPzAYGGl26Wt8nMeY8Ck6x6tdsIWyox9fmGQh9BEoYEln7hM6pOA9eNphVmg+A==
   dependencies:
-    "@tabler/icons" "2.20.0"
+    "@tabler/icons" "2.31.0"
     prop-types "^15.7.2"
 
 "@tabler/icons@^1.107.0":
@@ -3307,10 +3307,41 @@
   resolved "https://registry.npmjs.org/@tabler/icons/-/icons-1.119.0.tgz"
   integrity sha512-Fk3Qq4w2SXcTjc/n1cuL5bccPkylrOMo7cYpQIf/yw6zP76LQV9dtLcHQUjFiUnaYuswR645CnURIhlafyAh9g==
 
-"@tabler/icons@2.20.0":
-  version "2.20.0"
-  resolved "https://registry.npmjs.org/@tabler/icons/-/icons-2.20.0.tgz"
-  integrity sha512-BsUEJoqREs8bqcrf5HfJBq6/rDvsRI3h+T+0X1o7i8LBHonsH0iAngcyL0I82YKoSy9NiVDvM3LV63zDP0nPYQ==
+"@tabler/icons@2.31.0":
+  version "2.31.0"
+  resolved "https://registry.npmjs.org/@tabler/icons/-/icons-2.31.0.tgz"
+  integrity sha512-vueOF4rjM0wcYAHOq7gcQB3fU04EAfHIwP0i/DVQdopXv84uu62DvOFHhYj9d0OBiM4O0PPoXEvsT8IVZDrYXw==
+
+"@tanstack/match-sorter-utils@8.8.4":
+  version "8.8.4"
+  resolved "https://registry.npmjs.org/@tanstack/match-sorter-utils/-/match-sorter-utils-8.8.4.tgz"
+  integrity sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==
+  dependencies:
+    remove-accents "0.4.2"
+
+"@tanstack/react-table@8.9.3":
+  version "8.9.3"
+  resolved "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.9.3.tgz"
+  integrity sha512-Ng9rdm3JPoSCi6cVZvANsYnF+UoGVRxflMb270tVj0+LjeT/ZtZ9ckxF6oLPLcKesza6VKBqtdF9mQ+vaz24Aw==
+  dependencies:
+    "@tanstack/table-core" "8.9.3"
+
+"@tanstack/react-virtual@3.0.0-beta.54":
+  version "3.0.0-beta.54"
+  resolved "https://registry.npmjs.org/@tanstack/react-virtual/-/react-virtual-3.0.0-beta.54.tgz"
+  integrity sha512-D1mDMf4UPbrtHRZZriCly5bXTBMhylslm4dhcHqTtDJ6brQcgGmk8YD9JdWBGWfGSWPKoh2x1H3e7eh+hgPXtQ==
+  dependencies:
+    "@tanstack/virtual-core" "3.0.0-beta.54"
+
+"@tanstack/table-core@8.9.3":
+  version "8.9.3"
+  resolved "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.9.3.tgz"
+  integrity sha512-NpHZBoHTfqyJk0m/s/+CSuAiwtebhYK90mDuf5eylTvgViNOujiaOaxNDxJkQQAsVvHWZftUGAx1EfO1rkKtLg==
+
+"@tanstack/virtual-core@3.0.0-beta.54":
+  version "3.0.0-beta.54"
+  resolved "https://registry.npmjs.org/@tanstack/virtual-core/-/virtual-core-3.0.0-beta.54.tgz"
+  integrity sha512-jtkwqdP2rY2iCCDVAFuaNBH3fiEi29aTn2RhtIoky8DTTiCdc48plpHHreLwmv1PICJ4AJUUESaq3xa8fZH8+g==
 
 "@testing-library/dom@^9.0.0", "@testing-library/dom@>=7.21.4", "@testing-library/dom@latest":
   version "9.3.0"
@@ -5952,10 +5983,10 @@ datez@0.0.8:
   dependencies:
     timezone-soft "1.4.1"
 
-dayjs@^1.11.7, dayjs@^1.8.34, dayjs@>=1.0.0:
-  version "1.11.7"
-  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.7.tgz"
-  integrity sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==
+dayjs@^1.11.9, dayjs@^1.8.34, dayjs@>=1.0.0:
+  version "1.11.9"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.9.tgz"
+  integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
 
 debug@^3.2.7:
   version "3.2.7"
@@ -9862,6 +9893,15 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
+mantine-react-table@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-1.1.2.tgz"
+  integrity sha512-IZGdqBEesrUW9wNODsFhRbZcIrQsvxNTU7Q5Tv4KLn+mV0YpKqYHC1jKu3jusUQbdXD1ZJf4cj2ZNnGOHbMOnA==
+  dependencies:
+    "@tanstack/match-sorter-utils" "8.8.4"
+    "@tanstack/react-table" "8.9.3"
+    "@tanstack/react-virtual" "3.0.0-beta.54"
+
 map-or-similar@^1.5.0:
   version "1.5.0"
   resolved "https://registry.npmjs.org/map-or-similar/-/map-or-similar-1.5.0.tgz"
@@ -11746,7 +11786,7 @@ react-display-name@^0.2.4:
   resolved "https://registry.npmjs.org/react-display-name/-/react-display-name-0.2.5.tgz"
   integrity sha512-I+vcaK9t4+kypiSgaiVWAipqHRXYmZIuAiS8vzFvXHHXVigg/sMKwlRgLy6LH2i3rmP+0Vzfl5lFsFRwF1r3pg==
 
-"react-dom@^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0", "react-dom@^16.7.0 || ^17 || ^18", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react-dom@^16.x || 17.x || 18.x", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18", react-dom@^18.0.0, react-dom@^18.2.0, react-dom@>=16.6.0, react-dom@>=16.8.0, react-dom@>=17.0.2, "react-dom@16.8.0 - 18", "react-dom@17.0.2 - 18":
+"react-dom@^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0", "react-dom@^16.7.0 || ^17 || ^18", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react-dom@^16.x || 17.x || 18.x", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18", react-dom@^18.0.0, react-dom@^18.2.0, react-dom@>=16, react-dom@>=16.6.0, react-dom@>=16.8.0, react-dom@>=17.0.2, react-dom@>=18.0, "react-dom@16.8.0 - 18", "react-dom@17.0.2 - 18":
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -11883,7 +11923,7 @@ react-transition-group@4.4.2:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-"react@^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0", "react@^16.11.0 || ^17.0.0 || ^18.0.0", "react@^16.5.1 || ^17.0.0 || ^18.0.0", "react@^16.7.0 || ^17 || ^18", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^16.8.0 || ^17.0.1 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^16.x || ^17.x || ^18.x", "react@^16.x || 17.x || 18.x", "react@^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18", react@^18.0.0, react@^18.2.0, "react@>= 16.3.0", "react@>= 16.8 || 18.0.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=0.14.9, react@>=16.3, react@>=16.6.0, react@>=16.8.0, react@>=16.8.6, react@>=17.0.2, "react@0.14 || 15 || 16 || 17 || 18", "react@16.8.0 - 18", "react@17.0.2 - 18":
+"react@^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0", "react@^16.11.0 || ^17.0.0 || ^18.0.0", "react@^16.5.1 || ^17.0.0 || ^18.0.0", "react@^16.7.0 || ^17 || ^18", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^16.8.0 || ^17.0.1 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^16.x || ^17.x || ^18.x", "react@^16.x || 17.x || 18.x", "react@^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18", react@^18.0.0, react@^18.2.0, "react@>= 16.3.0", "react@>= 16.8 || 18.0.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=0.14.9, react@>=16, react@>=16.3, react@>=16.6.0, react@>=16.8.0, react@>=16.8.6, react@>=17.0.2, react@>=18.0, "react@0.14 || 15 || 16 || 17 || 18", "react@16.8.0 - 18", "react@17.0.2 - 18":
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
@@ -12108,6 +12148,11 @@ remark@^14.0.2:
     remark-parse "^10.0.0"
     remark-stringify "^10.0.0"
     unified "^10.0.0"
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.npmjs.org/remove-accents/-/remove-accents-0.4.2.tgz"
+  integrity sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==
 
 repeat-string@^1.6.1:
   version "1.6.1"

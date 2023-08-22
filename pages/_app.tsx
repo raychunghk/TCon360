@@ -120,7 +120,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               theme={{ colorScheme: 'light' }}
               withGlobalStyles
               withNormalizeCSS
-            >
+            >  
               <Component {...pageProps} basepath={basepath} token={token} />
               <Notifications />
             </MantineProvider>

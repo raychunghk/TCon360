@@ -69,22 +69,25 @@ const Admin = (props) => {
       <Head>
         <title>Admin</title>
       </Head>
-      <Container p="xl">
-        <Tabs defaultValue="userManagement" onChange={handleTabChange}>
-          <Tabs.List>
-            <Tabs.Tab value="userManagement">User Management</Tabs.Tab>
-            <Tabs.Tab value="calendarManagement">Calendar Management</Tabs.Tab>
-          </Tabs.List>
 
-          <Tabs.Panel value="userManagement" pt="xs">
-            <UserManagementTab />
-          </Tabs.Panel>
+      <Tabs
+        defaultValue="userManagement"
+        onChange={handleTabChange}
+        style={{ width: '100%',height:'100%', }}
+      >
+        <Tabs.List>
+          <Tabs.Tab value="userManagement" >User Management</Tabs.Tab>
+          <Tabs.Tab value="calendarManagement">Calendar Management</Tabs.Tab>
+        </Tabs.List>
 
-          <Tabs.Panel value="calendarManagement" pt="xs">
-            <CalendarManagementTab />
-          </Tabs.Panel>
-        </Tabs>
-      </Container>
+        <Tabs.Panel value="userManagement" pt="xs"  style={{ width: '100%',height:'100%', }}>
+          <UserManagementTab />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="calendarManagement" pt="xs">
+          <CalendarManagementTab />
+        </Tabs.Panel>
+      </Tabs>
     </Layout>
   );
 };

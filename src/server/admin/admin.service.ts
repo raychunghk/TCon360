@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '../prisma/prisma.service';
 import ical2json from 'ical2json';
@@ -6,10 +6,14 @@ import ical2json from 'ical2json';
 import { isValid, parseISO, parse } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
+import { Role, User } from '@prisma/client';
+import { UpdateUserDto } from 'src/customDto/updateUserDto';
 @Injectable()
 export class AdminService {
   constructor(private readonly prisma: PrismaService) {}
-
+  async getAllUsers() {
+    return this.prisma.viewUserRole.findMany();
+  }
   adjustDateTimezone(originalDate) {
     // element["DTSTART;VALUE=DATE"]
     let parsedval = parse(originalDate, 'yyyyMMdd', new Date());
@@ -91,6 +95,28 @@ export class AdminService {
       console.log('Public holiday records generated successfully.');
     } catch (error) {
       console.error('Error generating public holiday records:', error);
+    }
+  }
+  async getAllRoles(): Promise<Role[]> {
+    try {
+      const roles = await this.prisma.role.findMany();
+      return roles;
+    } catch (error) {
+      console.error('Failed to get roles:', error);
+      throw new Error('Failed to get roles');
+    }
+  }
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    try {
+      const user = await this.prisma.user.update({
+        where: { id },
+        data: updateUserDto,
+      });
+      return user;
+    } catch (error) {
+      console.log('error', error);
+      // Handle the error appropriately (e.g., log, throw custom error)
+      throw new Error('Failed to update user');
     }
   }
   async gencalendar() {

@@ -93,7 +93,8 @@ export class AuthService {
         include: {
           staff: true,
         },
-        where: {
+        where: { 
+          userStatus: 'active',
           OR: [{ email: identifier }, { username: identifier }],
         },
       });
