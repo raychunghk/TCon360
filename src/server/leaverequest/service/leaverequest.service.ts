@@ -53,7 +53,11 @@ export class LeaveRequestService {
     return dateArray;
   }
 
-  async createword(staffId: number, data: Prisma.LeaveRequestCreateInput) {
+  async createword(
+    staffId: number,
+    contractId: number,
+    data: Prisma.LeaveRequestCreateInput,
+  ) {
     const date = new Date(Date.now());
     const formattedDate = date
       .toLocaleString('en-US', {
@@ -133,7 +137,7 @@ export class LeaveRequestService {
         },
       });
 
-      let lreq = await this.create(staffId, _file.id, data);
+      let lreq = await this.create(staffId, _file.id, contractId, data);
 
       return lreq;
     } catch (error) {
@@ -174,6 +178,7 @@ export class LeaveRequestService {
   async create(
     staffId: number,
     fileId: number,
+    contractId: number,
     data: Prisma.LeaveRequestCreateInput,
   ) {
     const staff = await this.prisma.staff.findUnique({
@@ -189,6 +194,7 @@ export class LeaveRequestService {
         data: {
           ...data,
           staffFile: { connect: { id: fileId } },
+          contract: { connect: { id: contractId } },
           staff: { connect: { id: staffId } },
         },
       });
@@ -220,6 +226,7 @@ export class LeaveRequestService {
           );
           console.log('chargable days:');
           console.log(cday);
+          
           const rtn = await this.prisma.calendarVacation.create({
             data: {
               VacationDate: element,

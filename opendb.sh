@@ -1,1 +1,1 @@
-sqlite3 ./prisma/database/timesheet.db
+sqlite3 ./prisma/database/nxtime.db

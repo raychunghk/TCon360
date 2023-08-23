@@ -91,7 +91,7 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findFirst({
         include: {
-          staff: true,
+          viewStaff: true,
         },
         where: { 
           userStatus: 'active',
@@ -112,7 +112,7 @@ export class AuthService {
         username: user.username,
         name: user.name,
         email: user.email,
-        staff: user.staff,
+        staff: user.viewStaff,
       };
       const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
       console.log(tokenage);

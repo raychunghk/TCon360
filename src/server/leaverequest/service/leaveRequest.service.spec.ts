@@ -41,9 +41,7 @@ describe('LeaveRequestService', () => {
         ManagerName: 'Mark Johnson',
         ManagerTitle: 'Sales Director',
         ManagerEmail: 'mark.johnson@example.com',
-        AnnualLeave: 12,
-        ContractEndDate: new Date(2024, 2, 31),
-        ContractStartDate: new Date(2023, 3, 1),
+
         userId: '1234',
       };
       // jest.spyOn(staffService, 'getStaffById').mockResolvedValue(staff);
@@ -83,6 +81,7 @@ describe('LeaveRequestService', () => {
       };
       const createdLeaveRequest = await leaveRequestService.createword(
         staffId,
+        1,
         leaveRequest,
       );
 

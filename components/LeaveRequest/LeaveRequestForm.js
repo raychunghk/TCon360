@@ -290,6 +290,8 @@ export default function LeaveRequestForm({
       staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
+      
+      contractId: staff.contractId,
     };
     console.log('newdata: ', newData);
     //console.log('original leave start');

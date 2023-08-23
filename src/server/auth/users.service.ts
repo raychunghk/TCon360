@@ -31,7 +31,7 @@ export class UsersService {
   async getUserWithStaff(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { staff: true },
+      include: { viewStaff: true },
     });
 
     if (!user) {

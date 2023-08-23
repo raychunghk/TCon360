@@ -41,12 +41,19 @@ export class LeaveRequestController {
   ) {
     const userId = req.user.id;
     const user = await this.usrSvc.getUserWithStaff(userId);
-    const staffId = user.staffId ? user.staffId : user.staff[0].id;
+    //const staffId = user.staffId ? user.staffId : user.staff[0].id;
+    const staffId = user.viewStaff[0].StaffId;
+    const contractId = user.viewStaff[0].contractId;
     Logger.log('staffid', staffId);
     Logger.log('leaveRequestData', leaveRequestData);
+    const attributeName = 'contractId'
+    if (leaveRequestData.hasOwnProperty(attributeName)) {
+  delete leaveRequestData[attributeName];
+}
     //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
     const leaveRequest = await this.leaveRequestService.createword(
       staffId,
+      contractId,
       leaveRequestData,
     );
     Logger.log('create result', leaveRequest);

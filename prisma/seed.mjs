@@ -17,6 +17,7 @@ function createViewIfNotExists() {
   createViewEventsIfNotExists();
   createViewUserDetailIfNotExists();
   createViewUserRole();
+  createViewStaff();
 }
 async function createView(viewname, createViewSQL) {
   try {
@@ -64,6 +65,7 @@ async function createViewCalendarIfNotExists() {
         END AS HolidaySummary,
         V.LeaveRequestId,
         LR.staffId
+        LR.contractId
       FROM
         CalendarMaster C
       LEFT JOIN
@@ -94,6 +96,36 @@ async function createViewUserRole() {
   await createView(viewname, createViewSQL);
 }
 
+async function createViewStaff() {
+  const viewname = 'viewStaff';
+  const createViewSQL = `
+ SELECT
+  s.id AS StaffId,
+  s.StaffName,
+  s.AgentName,
+  s.StaffCategory,
+  s.Department,
+  s.PostUnit,
+  s.ManagerName,
+  s.ManagerTitle,
+  s.ManagerEmail,
+  s.userId,
+  sc.ContractStartDate,
+  sc.ContractEndDate,
+  sc.AnnualLeave,
+  SC.id as contractId
+FROM Staff AS s
+LEFT JOIN StaffContract AS sc ON s.id = sc.staffId
+WHERE sc.IsActive = 1
+  AND sc.staffId = (
+    SELECT MIN(id)
+    FROM StaffContract
+    WHERE staffId = s.id
+      AND IsActive = 1
+  );
+    `;
+  await createView(viewname, createViewSQL);
+}
 async function createViewUserDetailIfNotExists() {
   const viewname = 'viewUserDetail';
   const createViewSQL = `
@@ -117,6 +149,7 @@ async function createViewUserDetailIfNotExists() {
         s.ContractStartDate,
         s.ContractEndDate,
         s.AnnualLeave
+        
       FROM
         User u
       JOIN
@@ -164,6 +197,7 @@ async function createViewEventsIfNotExists() {
           WHEN PH.Summary IS NOT NULL THEN 1
           ELSE NULL
         END AS leaveDays
+        LR.contractId 
       FROM
         CalendarMaster C
       LEFT JOIN
@@ -199,6 +233,8 @@ async function genholiday() {
     console.log(error);
   }
 }
+
+async function genContract() {}
 async function genStaffInfo() {
   /*
   id            Int            @id @default(autoincrement())
@@ -230,7 +266,7 @@ async function genStaffInfo() {
       name: 'admin',
     };
     const role2 = {
-      id: 0,
+      id: 1,
       name: 'staff',
     };
     const _role = await prisma.role.create({
@@ -253,19 +289,46 @@ async function genStaffInfo() {
         ManagerName: 'Mr Anthony WONG',
         ManagerEmail: 'wongyf3@archsd.gov.hk',
         ManagerTitle: 'PSM/TS33',
-        ContractStartDate: new Date(2023, 3, 1),
-        ContractEndDate: new Date(2024, 2, 31),
-        AnnualLeave: 12,
         user: { connect: { id: u.id } },
+        contracts: {
+          create: [
+            {
+              ContractStartDate: new Date(2023, 3, 1),
+              ContractEndDate: new Date(2024, 2, 31),
+              AnnualLeave: 12,
+              IsActive: true,
+            },
+            {
+              ContractStartDate: new Date(2024, 3, 1),
+              ContractEndDate: new Date(2025, 2, 31),
+              AnnualLeave: 15,
+              IsActive: false,
+            },
+          ],
+        },
+      },
+      include: {
+        contracts: true,
       },
     });
-
     // Update the user's staffId with the new staff's id
     await prisma.user.update({
       where: { id: u.id },
       data: { staffId: stf.id },
     });
+    // const contract = await prisma.staffContract.create({
+    //   data: {
+    //     ContractStartDate: new Date(2023, 3, 1),
+    //     ContractEndDate: new Date(2024, 2, 31),
+    //     AnnualLeave: 12,
+    //     staff: { connect: { id: stf.id } },
+    //   },
+    // });
 
+    // await prisma.staff.update({
+    //   where: { id: stf.id },
+    //   data: { activeContractId: contract.id },
+    // });
     console.log(stf);
   } catch (error) {
     console.log(error);

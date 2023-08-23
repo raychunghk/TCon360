@@ -26,24 +26,6 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
-CREATE TABLE "Staff" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "StaffName" TEXT NOT NULL,
-    "AgentName" TEXT NOT NULL,
-    "StaffCategory" TEXT NOT NULL,
-    "Department" TEXT NOT NULL,
-    "PostUnit" TEXT NOT NULL,
-    "ManagerName" TEXT NOT NULL,
-    "ManagerTitle" TEXT NOT NULL,
-    "ManagerEmail" TEXT NOT NULL,
-    "ContractStartDate" DATETIME NOT NULL,
-    "ContractEndDate" DATETIME NOT NULL,
-    "AnnualLeave" INTEGER NOT NULL,
-    "userId" TEXT NOT NULL,
-    CONSTRAINT "Staff_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "username" TEXT,
@@ -107,6 +89,32 @@ CREATE TABLE "TimeSheet" (
 );
 
 -- CreateTable
+CREATE TABLE "Staff" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "StaffName" TEXT NOT NULL,
+    "AgentName" TEXT NOT NULL,
+    "StaffCategory" TEXT NOT NULL,
+    "Department" TEXT NOT NULL,
+    "PostUnit" TEXT NOT NULL,
+    "ManagerName" TEXT NOT NULL,
+    "ManagerTitle" TEXT NOT NULL,
+    "ManagerEmail" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Staff_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "StaffContract" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "ContractStartDate" DATETIME NOT NULL,
+    "ContractEndDate" DATETIME NOT NULL,
+    "AnnualLeave" INTEGER NOT NULL,
+    "staffId" INTEGER NOT NULL,
+    "IsActive" BOOLEAN NOT NULL DEFAULT false,
+    CONSTRAINT "StaffContract_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES "Staff" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "LeaveRequest" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "leavePeriodStart" DATETIME NOT NULL,
@@ -116,12 +124,14 @@ CREATE TABLE "LeaveRequest" (
     "leaveDays" REAL NOT NULL,
     "dateOfReturn" DATETIME NOT NULL,
     "staffSignDate" DATETIME NOT NULL,
-    "fileId" INTEGER NOT NULL,
-    "staffId" INTEGER NOT NULL,
     "leavePurpose" TEXT,
     "leaveType" TEXT NOT NULL,
+    "fileId" INTEGER NOT NULL,
+    "staffId" INTEGER NOT NULL,
+    "contractId" INTEGER NOT NULL,
     CONSTRAINT "LeaveRequest_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES "Staff" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "LeaveRequest_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "staffFiles" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "LeaveRequest_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "staffFiles" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "LeaveRequest_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "StaffContract" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

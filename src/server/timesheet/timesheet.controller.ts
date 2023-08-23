@@ -74,8 +74,9 @@ export class TimesheetController {
       // Find the user with the given userId
       //const user = await this.userService.findById(userId);
       const user = await this.userService.getUserWithStaff(userId);
-      const staffId = user.staffId ? user.staffId : user.staff[0].id;
-      // const staffid = user.staffId ? user.staffId : user.staff[0].id;
+      //const staffId = user.staffId ? user.staffId : user.staff[0].id;
+      const staffId = user.viewStaff[0].StaffId;
+
       const result = await this.tsService.getCalendarEvents(staffId);
       // console.log('calendar event result');
       //const result = this.staffService.createStaff(stf, userId).then();

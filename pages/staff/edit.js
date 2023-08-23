@@ -47,6 +47,7 @@ export default function EditStaff() {
     ManagerEmail: '',
     ContractStartDate: new Date(),
     ContractEndDate: new Date(),
+    contractId: null,
     AnnualLeave: 0,
     userId: '',
     id: null,
