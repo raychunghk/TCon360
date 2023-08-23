@@ -21,6 +21,7 @@ import {
   MediaQuery,
   Burger,
   ActionIcon,
+  Button,
   UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
@@ -79,7 +80,18 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           : theme.colors.gray[0],
     },
   });
+  const buttonStyles2 = {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: '#F0F4F8', // Light grey-blue background
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease, color 0.2s ease',
 
+    '&:hover': {
+      backgroundColor: '#C0C7D1', // Deeper background color on hover
+    },
+  };
   return (
     <AppShell
       padding={contentpadding}
@@ -130,17 +142,23 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                 {user ? (
                   <>
                     <HeaderPopover></HeaderPopover>
-                    <UnstyledButton
+                    <Button
                       onClick={() => handleSignout()}
-                      sx={buttonStyles}
+                      className={classes.buttonStyles}
+                      leftIcon={
+                        <IconLogout
+                          size="1.625rem"
+                          style={{
+                            color: '#7d022f', // Set the color to purple
+                            marginRight: '0.5rem',
+                          }}
+                        />
+                      }
                     >
-                      <Group style={{ width: '150px' }}>
-                        <ThemeIcon variant="light">
-                          <IconLogout />
-                        </ThemeIcon>
-                        <Text size="sm">Logout</Text>
-                      </Group>
-                    </UnstyledButton>
+                      <Text size="sm" color="black">
+                        Logout
+                      </Text>
+                    </Button>
                   </>
                 ) : (
                   <Group>

@@ -1,3 +1,21 @@
+import { useDispatch, useSelector } from 'react-redux';
+
+export const  isPublicHoliday=(date, evts) =>{
+ 
+  const publicHolidays = evts.filter((event) => {
+    const evt = event.extendedProps.result;
+    return evt.eventType === 'publicholiday';
+  });
+
+  for (const holiday of publicHolidays) {
+    const holidayDate = new Date(holiday.extendedProps.result.leavePeriodStart);
+    if (date.getTime() === holidayDate.getTime()) {
+      return true;
+    }
+  }
+
+  return false;
+}
 export const convertDateStringToDate = (dateString) => {
   const parts = dateString.split('-');
   const year = parseInt(parts[0]);
@@ -13,6 +31,7 @@ export const isSameDate = (date1, date2) => {
     date1.getDate() === date2.getDate()
   );
 };
+
 
 export const handleSelectAllow = (selectInfo, calendarEvents) => {
   const selectedDate = selectInfo.start;

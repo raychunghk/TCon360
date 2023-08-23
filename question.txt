@@ -1,43 +1,87 @@
-I have this 3 models and i want to create a view the gets. 
-user.id, username, name, email,roleid,staffid, role.name, 
- StaffName         
- AgentName         
- StaffCategory     
- Department        
- PostUnit          
- ManagerName       
- ManagerTitle      
- ManagerEmail      
- ContractStartDate 
- ContractEndDate   
- AnnualLeave       
-joins role on role.id = usr.roleid, staff on staffid = staff.id
-use sqlite, please show me the sql to create view: viewUserDetail
+in this function
+I pass a object of array of events and one staff object as below prisma model:
+
+The events and staff are both filtered already with a staff id, 
+The function is to count total leave days for the staff within the contractstartdate and contractenddate having leaveRequestid,
+ 
+the 'leavedays' of viewEvents records the number of businessi days(days not weekend and publicholiday) taken as leave, 
+
+The 'evenType' of viewEvents can be publicholiday, vacation and weekend, 
+
+the leaveDays only consider business days, it saved in viewEvents and is already excluded publicholidays, weekends, 
+so it happens leaveDays saved is smaller than the range between leaveperiodstart and leavePeriodEnd
+
+so tha "vacationLeaveDays" in the function should only include business days.
+
+Now here is a bug the const leaveDays is wrong , 
+The case is that the staff.contractstartdate is 1-apr-2023 and contractenddate is on 31-March-2024, 
+Here is a leaveRequest event start from 27-mar-2024 to leaverequestperiodend: 3-apr-2024.
+when leaverequestperiodend beyonds contractenddate, we shoudl use the smaller value of last businessday of the contractenddate's month.
+in the calendar,  
+29th-mar-2024 is Hong Kong easter holiday , eventType 'publicholiday'
+30th-mar-2024  and 31-mar-2024 evenType is weekend,
+ 1-apr-2024 is hk easter holiday: 'publicHoliday', 
+ so finally vacationLeaveDays is wrong becase the above case is not considered, hwo to fix?
+
+
 ```
-model User {
-  id            String    @id @default(cuid())
-  username      String?   @unique
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  staff         Staff[]
-  staffId       Int?
-  roleId        Int       @default(0)
-  role          Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  userStatus    String    @default("active")
+ function getVacationDays(_user, _events) {
+    if (_user) {
+      const ContractStartDate = new Date(user?.staff.ContractStartDate);
+      const ContractEndDate = new Date(user?.staff.ContractEndDate);
+      const vacationEvents = _events.filter((event) => {
+        const evt = event.extendedProps.result;
+
+        return evt.LeaveRequestId !== null;
+      });
+
+      const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
+        // Calculate the leaveDays based on the condition for paramEndDate
+        const evt = event.extendedProps.result;
+        const _leaveperiodstart = new Date(evt.leavePeriodStart);
+        const _leaveperiodend = evt.leavePeriodEnd
+          ? new Date(evt.leavePeriodEnd)
+          : null;
+        const leaveDays =
+          ContractEndDate < _leaveperiodend
+            ? (ContractEndDate - _leaveperiodstart) / (1000 * 60 * 60 * 24)
+            : evt.leaveDays;
+
+        return sum + leaveDays;
+      }, 0);
+      dispatch(
+        setstaffVacation({
+          total: user.staff.AnnualLeave,
+          used: vacationLeaveDays,
+          balance: user.staff.AnnualLeave - vacationLeaveDays,
+        }),
+      );
+      console.log('vacationleavedays', vacationLeaveDays);
+    }
+  }
+``` 
+
+```
+view viewEvents {
+  ID               Int       @id
+  leavePeriodStart DateTime
+  leavePeriodEnd   DateTime?
+  StartDateStr     String
+  WeekDayName      String
+  Year             Int
+  Month            Int
+  HolidaySummary   String?
+  eventType        String?
+  EndDateStr       String?
+  dateOfReturn     DateTime?
+  ReturnDateStr    String?
+  AMPMStart        String?
+  AMPMEnd          String?
+  staffId          Int?
+  LeaveRequestId   Int?
+  leaveDays        Float?
 }
 
-model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
-}
 
 model Staff {
   id                Int            @id @default(autoincrement())
@@ -56,4 +100,6 @@ model Staff {
   leaveRequests     LeaveRequest[]
   user              User           @relation(fields: [userId], references: [id])
   staffFiles        staffFiles[]
-}```
+}
+
+```

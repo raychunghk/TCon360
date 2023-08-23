@@ -1,4 +1,4 @@
-import { Title, Drawer } from '@mantine/core';
+import { Button, Drawer } from '@mantine/core';
 
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
@@ -31,6 +31,7 @@ import {
 } from 'pages/reducers/calendarReducer';
 import {
   convertDateStringToDate,
+  isPublicHoliday,
   handleSelectAllow,
   isSameDate,
 } from './calendar.util';
@@ -57,7 +58,7 @@ export function FrontPageCalendar() {
     //  formType,
     //  selectedDatesCount,
     //  leavePurpose,
-    //  staff,
+    staff,
     //  session,
   } = useSelector((state) => ({
     opened: state.calendar.opened,
@@ -72,7 +73,7 @@ export function FrontPageCalendar() {
     //  formType: state.calendar.formType,
     //  selectedDatesCount: state.calendar.selectedDatesCount,
     //  leavePurpose: state.calendar.leavePurpose,
-    //  staff: state.calendar.staff,
+    staff: state.calendar.staff,
     //  session: state.calendar.session,
   }));
 
@@ -97,8 +98,6 @@ export function FrontPageCalendar() {
   const basepath = process.env.basepath; //props.basepath;
   const [customTitle, setCustomTitle] = useState('');
   console.log('basepath?', basepath);
-
-  //const [selectedDates, setSelectedDates] = useState([]);
   const apiurl = `${basepath}/api/timesheet/calendar`;
 
   async function fetchEvents() {
@@ -119,7 +118,7 @@ export function FrontPageCalendar() {
         });
         if ([200, 201].includes(response.status)) {
           const events = await response.data;
-          console.log('gettting calendar', events);
+          //          console.log('gettting calendar', events);
 
           console.log('calendar event length', calendarEvents.length);
 
@@ -164,10 +163,10 @@ export function FrontPageCalendar() {
   }, [calendarEvents, CurrentStart]);
   useEffect(() => {
     if (user) {
-      getVacationDays(user, calendarEvents);
+      setVacationSummary(user, calendarEvents);
     }
-  }, [ calendarEvents]);
-  const [date, setDate] = useState(new Date());
+  }, [calendarEvents]);
+
   const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
@@ -199,39 +198,88 @@ export function FrontPageCalendar() {
     }
     setTitle(info.view.currentStart);
   }
-  function getVacationDays(_user, _events) {
-    if (_user) {
-      const ContractStartDate = new Date(user?.staff.ContractStartDate);
-      const ContractEndDate = new Date(user?.staff.ContractEndDate);
-      const vacationEvents = _events.filter((event) => {
-        const evt = event.extendedProps.result;
+  const { isWeekend } = require('date-fns');
 
-        return evt.LeaveRequestId !== null;
-      });
+  const getBusinessDays = (startDate, endDate) => {
+    let count = 0;
+    const current = new Date(startDate);
 
-      const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
-        // Calculate the leaveDays based on the condition for paramEndDate
-        const evt = event.extendedProps.result;
-        const _leaveperiodstart = new Date(evt.leavePeriodStart);
-        const _leaveperiodend = evt.leavePeriodEnd
-          ? new Date(evt.leavePeriodEnd)
-          : null;
-        const leaveDays =
-          ContractEndDate < _leaveperiodend
-            ? (ContractEndDate - _leaveperiodstart) / (1000 * 60 * 60 * 24)
-            : evt.leaveDays;
-
-        return sum + leaveDays;
-      }, 0);
-      dispatch(
-        setstaffVacation({
-          total: user.staff.AnnualLeave,
-          used: vacationLeaveDays,
-          balance: user.staff.AnnualLeave - vacationLeaveDays,
-        }),
-      );
-      console.log('vacationleavedays', vacationLeaveDays);
+    while (current <= endDate) {
+      if (!isWeekend(current) && !isPublicHoliday(current, calendarEvents)) {
+        count++;
+      }
+      current.setDate(current.getDate() + 1);
     }
+
+    return count;
+  };
+  function setVacationSummary(_user, _events) {
+    if (!_user) {
+      return;
+    }
+
+    const ContractStartDate = new Date(_user.staff.ContractStartDate);
+    const ContractEndDate = new Date(_user.staff.ContractEndDate);
+
+    const vacationEvents = _events.filter((event) => {
+      const evt = event.extendedProps.result;
+      const _leaveperiodstart = new Date(evt.leavePeriodStart);
+      const _leaveperiodend = evt.leavePeriodEnd
+        ? new Date(evt.leavePeriodEnd)
+        : null;
+      // return (
+      //   evt.LeaveRequestId !== null && _leaveperiodstart <= ContractEndDate
+      // );
+      return (
+        evt.LeaveRequestId !== null &&
+        _leaveperiodstart <= ContractEndDate &&
+        (_leaveperiodend !== null || _leaveperiodstart > ContractStartDate)
+      );
+    });
+
+    const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
+      const evt = event.extendedProps.result;
+      const _end = new Date(event.end);
+      const _leaveperiodstart = new Date(evt.leavePeriodStart);
+      const _leaveperiodend = evt.leavePeriodEnd
+        ? new Date(evt.leavePeriodEnd)
+        : null;
+
+      if (_end < ContractStartDate) {
+        return sum;
+      }
+
+      if (!_leaveperiodend) {
+        return sum + evt.leaveDays;
+      }
+
+      if (ContractEndDate < _leaveperiodend) {
+        return sum + getBusinessDays(_leaveperiodstart, ContractEndDate);
+      }
+
+      if (
+        _leaveperiodend > ContractStartDate &&
+        _leaveperiodstart < ContractStartDate
+      ) {
+        return sum + getBusinessDays(ContractStartDate, _leaveperiodend);
+      }
+
+      if (_leaveperiodend < ContractStartDate) {
+        return sum;
+      }
+
+      return sum + evt.leaveDays;
+    }, 0);
+
+    dispatch(
+      setstaffVacation({
+        total: _user.staff.AnnualLeave,
+        used: vacationLeaveDays,
+        balance: _user.staff.AnnualLeave - vacationLeaveDays,
+      }),
+    );
+
+    console.log('vacationleavedays', vacationLeaveDays);
   }
   function setTitle(newDate = new Date()) {
     // setCurrentStart(newDate);
@@ -361,7 +409,9 @@ export function FrontPageCalendar() {
             duration: { days: 365 },
           },
           cv: {
-            component: CustomView,
+            component: (props) => (
+              <CustomView {...props} userStaff={user?.staff} />
+            ),
             buttonText: 'Leave Requests',
             events: calendarEvents,
             // Pass the events object to the custom view component

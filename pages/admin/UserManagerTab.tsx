@@ -23,12 +23,12 @@ const UserManagementTab = () => {
   const [userData, setUserData] = useState<UserRole[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [rolenames, setRoleNames] = useState([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [rolesLoaded, setRolesLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const [columnDefs, setColumnDefs] = useState<MRT_ColumnDef[]>([]);
+
   const [emailerr, setemailerr] = useState('');
   useEffect(() => {
     const fetchUserData = async () => {
@@ -38,7 +38,6 @@ const UserManagementTab = () => {
         setUserData(data.users);
         setRoles(data.roles);
         setRoleNames(data.roles.map((r) => r.name));
-        setIsDataLoaded(true);
 
         console.log('roles?', data.roles);
       } catch (error) {
@@ -55,41 +54,24 @@ const UserManagementTab = () => {
   }, [rolenames]);
 
   const columns = [
-    { accessorKey: 'userId', header: 'User ID', size: 80 },
     {
-      accessor: 'age',
-      header: 'Age',
-      mantineEditTextInputProps: {
-        error: validationErrors.age,
-        required: true,
-        type: 'number',
-        onChange: (event) => {
-          const value = event.target.value;
-          //validation logic
-          if (!value) {
-            setValidationErrors((prev) => ({
-              ...prev,
-              age: 'Age is required',
-            }));
-          } else if (value < 18) {
-            setValidationErrors({
-              ...validationErrors,
-              age: 'Age must be 18 or older',
-            });
-          } else {
-            delete validationErrors.age;
-            setValidationErrors({ ...validationErrors });
-          }
-        },
-      },
+      accessorKey: 'userId',
+      header: 'User ID',
+      size: 80,
+      enableEditing: false,
     },
+
     {
       accessorKey: 'username',
       header: 'Username',
       size: 150,
       enableEditing: false,
     },
-    { accessorKey: 'name', header: 'Name', size: 150 },
+    { accessorKey: 'name', header: 'Name', size: 150 ,
+     mantineEditTextInputProps: {
+      error: validationErrors.name,
+      }
+    },
     {
       accessorKey: 'email',
       header: 'Email',
@@ -111,11 +93,16 @@ const UserManagementTab = () => {
           }
         },
         required: true,
-        error: `${emailerr}`,
+        error: `${validationErrors?.email??''}`,
         //remove any previous validation errors when user focuses on the input
       },
     },
-    { accessorKey: 'roleId', header: 'Role ID', size: 80 },
+    {
+      accessorKey: 'roleId',
+      header: 'Role ID',
+      size: 80,
+      enableEditing: false,
+    },
     {
       accessorKey: 'roleName',
       header: 'Role Name',
@@ -142,17 +129,23 @@ const UserManagementTab = () => {
     console.log('values', values);
     // Validate user
     setValidationErrors({});
-    const validationErrors = validateUser(values);
-    if (validationErrors.email) {
-      // Handle invalid email
-      setValidationErrors({
-        email: validationErrors.email,
-      });
-      setSaving(false);
+    const newValidationErrors = validateUser(values);
+     if (Object.values(newValidationErrors).some((error) => !!error)) {
+      setValidationErrors(newValidationErrors);
+        setSaving(false);
       return;
-    } else {
-      setValidationErrors({});
     }
+    setValidationErrors({});
+    // if (validationErrors.email) {
+    //   // Handle invalid email
+    //   setValidationErrors({
+    //     email: validationErrors.email,
+    //   });
+    //   setSaving(false);
+    //   return;
+    // } else {
+    //   setValidationErrors({});
+    // }
     const _roleid = roles.filter((f) => f.name === values.roleName)[0].id;
     if (!values.hasOwnProperty('userId')) {
       // Insert the "roleId" property with a value
@@ -204,7 +197,8 @@ const UserManagementTab = () => {
   const table = useMantineReactTable({
     columns,
     data: userData,
-
+    createDisplayMode: 'row', // ('modal', and 'custom' are also available)
+    editDisplayMode: 'row', // ('modal', 'cell', 'table', and 'custom' are also available)
     onEditingRowSave: handleSaveRow, // Assign the function to onEditingRowSave prop
     enableColumnResizing: true,
 
@@ -231,7 +225,7 @@ const UserManagementTab = () => {
       isSaving: saving,
     },
   });
-
+ 
   function validateUser(val: UserRole) {
     const goodemail = validateEmail(val.email);
     if (!goodemail) {
@@ -239,10 +233,15 @@ const UserManagementTab = () => {
     }
     const rtn = {
       email: !goodemail ? 'Incorrect Email Format' : undefined,
+      name:!validateName(val.name)?'Invalid name':undefined,
     };
     console.log('validation result:', rtn);
     return rtn;
   }
+    const validateName = (name: string) =>{
+      console.log('name length', name.length)
+      return  name.length>0;
+    }
   const validateEmail = (email: string) =>
     !!email.length &&
     email
