@@ -14,6 +14,10 @@ import {
   Switch,
   NumberInput,
   useMantineTheme,
+  Stack,
+  Flex,
+  Title,
+  Paper,
 } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
@@ -26,6 +30,7 @@ import {
   type MRT_ColumnDef,
   type MRT_Row,
   type MRT_TableOptions,
+  MRT_EditActionButtons,
 } from 'mantine-react-table';
 import MyModal from '../../components/MyModal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -149,8 +154,9 @@ export default function EditStaff() {
               <DatePickerInput
                 valueFormat="DD-MM-YYYY"
                 firstDayOfWeek={0}
-                size='xs'
+                size="xs"
                 value={val}
+                withCellSpacing={false}
                 excludeDate={excludeHoliday}
                 renderDay={myRenderDay}
                 //dropdownType="modal"
@@ -183,6 +189,78 @@ export default function EditStaff() {
         // Use date-fns to format the date as "yyyy-MMM-dd"
         const formattedDate = format(renderedCellValue, 'yyyy-MMM-dd');
         return <Text>{formattedDate}</Text>;
+      },
+
+      Cell: ({ cell }) => {
+        const cellval = cell.getValue();
+        console.log('cellval?', cellval);
+        let val;
+
+        try {
+          if (cellval instanceof Date) {
+            val = format(cellval, 'yyyy-MMM-dd');
+          } else {
+            val = format(new Date(cellval), 'yyyy-MMM-dd');
+          }
+        } catch (error) {
+          console.error(error);
+          val = error.message;
+        }
+        return <Text>{val}</Text>;
+      },
+    },
+    {
+      accessorKey: 'ContractEndDate',
+      header: 'Contract End Date',
+
+      Edit: (param) => {
+        const { renderedCellValue, cell, table, column, row } = param;
+        const editingRow = table.getState().editingRow;
+        const cellval = param.cell.getValue();
+        let val;
+        if (cellval instanceof Date) {
+          val = cellval;
+        } else {
+          val = new Date(cellval);
+        }
+        if (editingRow !== null && row.id == editingRow.id) {
+          return (
+            <>
+              <DatePickerInput
+                valueFormat="DD-MM-YYYY"
+                firstDayOfWeek={0}
+                size="xs"
+                value={val}
+                withCellSpacing={false}
+                excludeDate={excludeHoliday}
+                renderDay={myRenderDay}
+                //dropdownType="modal"
+                style={{ zIndex: 9999 }}
+                onChange={(newValue) => {
+                  const updatedFormValues = { ...formValues };
+                  const updatedContracts = [...updatedFormValues.contracts];
+                  const newDate = new Date(newValue);
+                  val = newValue;
+                  if (isNaN(newDate.getTime())) {
+                    // Casting failed, set the value to the error message
+                    updatedContracts[row.index] = {
+                      ...updatedContracts[row.index],
+                      ContractEndDate: 'Invalid date',
+                    };
+                  } else {
+                    updatedContracts[row.index] = {
+                      ...updatedContracts[row.index],
+                      ContractEndDate: newDate,
+                    };
+                  }
+                  updatedFormValues.contracts = updatedContracts;
+                  setFormValues(updatedFormValues);
+                }}
+                // Add any additional props or styling as needed
+              />
+            </>
+          );
+        }
       },
       Cell: ({ cell }) => {
         const cellval = cell.getValue();
@@ -295,31 +373,60 @@ export default function EditStaff() {
   const handleSaveRow = (row) => {
     // Handle saving the edited row here
   };
-  const table = useMantineReactTable({
-    columns,
-    data: formValues.contracts,
-    createDisplayMode: 'row',
-    editDisplayMode: 'modal',
-    onEditingRowSave: handleSaveRow,
-    enableColumnResizing: true,
-    enableEditing: true,
-    enableRowActions: true,
-    positionActionsColumn: 'last',
-    initialState: {
-      columnVisibility: {
-        'mrt-row-expand': false,
+  const table =
+    publicHolidays &&
+    useMantineReactTable({
+      columns,
+      data: formValues.contracts,
+      createDisplayMode: 'row',
+      editDisplayMode: 'modal',
+      renderEditRowModalContent: (params) => {
+        console.log('params', params);
+        const { internalEditComponents, table, row } = params;
+        return (
+          <Paper style={{ height: '350px' }}>
+            <Title order={5}>Edit Contract Detail</Title>
+            <Grid gutter="md">
+              {internalEditComponents.map((component, index) =>
+                index === 0 ? null : (
+                  <Grid.Col span={6} key={index} mt={'30px'}>
+                    {component}
+                  </Grid.Col>
+                ),
+              )}
+            </Grid>
+            <Flex
+              justify="flex-end"
+              mt={'auto'}
+              style={{ position: 'absolute', bottom: '20px', right: '20px' }}
+            >
+              <MRT_EditActionButtons row={row} table={table} variant="text" />
+            </Flex>
+          </Paper>
+        );
       },
-    },
-    mantineTableContainerProps: {
-      sx: {
-        minHeight: '200px',
+      onEditingRowSave: handleSaveRow,
+      enableColumnResizing: true,
+      enableEditing: true,
+      mantineEditTextInputProps: ({ cell }) => ({
+        onBlur: (event) => {},
+      }),
+      positionActionsColumn: 'last',
+      initialState: {
+        columnVisibility: {
+          'mrt-row-expand': false,
+        },
       },
-    },
-    state: {
-      isLoading: loading,
-      isSaving: saving,
-    },
-  });
+      mantineTableContainerProps: {
+        sx: {
+          minHeight: '200px',
+        },
+      },
+      state: {
+        isLoading: loading,
+        isSaving: saving,
+      },
+    });
 
   const handleInputChange = (event) => {
     let val = event.target.value;
@@ -449,7 +556,7 @@ export default function EditStaff() {
                 )} */}
               </Grid.Col>
             ))}
-            {editing && <MantineReactTable table={table} />}
+            {publicHolidays && <MantineReactTable table={table} />}
           </Grid>
           <Card.Section
             bg="indigo.2"
@@ -490,8 +597,8 @@ export default function EditStaff() {
         msg={' Staff record updated successfully!'}
       />
       <Code>{JSON.stringify(formValues, null, 2)}</Code>
-      <Code>{JSON.stringify(publicHolidays)}</Code>
-      <Code>{JSON.stringify(calendarEvents)}</Code>
+      {/* <Code>{JSON.stringify(publicHolidays)}</Code>
+      <Code>{JSON.stringify(calendarEvents)}</Code> */}
     </Layout>
   );
 }
