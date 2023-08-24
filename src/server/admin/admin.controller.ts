@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { Role, User } from '@prisma/client';
-import { UpdateUserDto } from '../../customDto/updateUserDto';
+import { UpdateUserDto } from '../../customDto/customDTOs';
 
 @Controller('api/admin')
 export class AdminController {

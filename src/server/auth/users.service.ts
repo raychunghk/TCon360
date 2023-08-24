@@ -27,8 +27,25 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     return user;
   }
+  async getUserWithStaffAndContract(userId: string) {
+    try {
+      const nestedObject = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          staff: {
+            include: {
+              contracts: true,
+            },
+          },
+        },
+      });
 
-  async getUserWithStaff(userId: string) {
+      return nestedObject;
+    } catch (error) {
+      console.log('Error retrieving nested object:', error);
+    }
+  }
+  async getUserWithViewStaff(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { viewStaff: true },

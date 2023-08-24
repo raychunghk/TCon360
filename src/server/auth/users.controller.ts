@@ -90,7 +90,7 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   async getMyUser(@Req() req) {
     const userId = req.user.id;
-    const user = await this.usersService.getUserWithStaff(userId);
+    const user = await this.usersService.getUserWithStaffAndContract(userId);
     console.log(user);
     return user;
   }

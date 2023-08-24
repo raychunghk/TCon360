@@ -1,9 +1,14 @@
 import { format, parseISO, isWeekend } from 'date-fns';
 import { useContext } from 'react';
 import { UtilsContext } from './utilCtx';
-let publicholidays;
+import { useDispatch, useSelector } from 'react-redux';
+import { PublicHolidaysContext } from 'pages/_app';
+let arrPublicHoliday;
 export function setPublicHolidays(holidays) {
-  publicholidays = holidays;
+  arrPublicHoliday = holidays;
+}
+export function setDatepickerPlDay(holidays) {
+  arrPublicHoliday = holidays;
 }
 export const leaveTypes = [
   {
@@ -43,11 +48,7 @@ export const ampmOptionsEnd = [
     label: 'AM',
   },
 ];
-export function setpldate() {
-  publicholidays = useContext(UtilsContext);
 
-  // Use publicholidays ...
-}
 const dayStyle = {
   backgroundColor: '#de3184',
   color: 'white',
@@ -185,9 +186,23 @@ export function getNextWorkingDatex(date) {
 
   return nextWorkingDate;
 }
+const getPublicHolidays = () => {
+  if (arrPublicHoliday === null) {
+    // Assuming `publicHolidays` is the React Redux state
+    const { publicHolidays } = useSelector((state) => ({
+      publicHolidays: state.calendar.publicHolidays,
+    }));
+    return publicHolidays;
+  } else {
+    return arrPublicHoliday;
+  }
+};
 export const isPublicHoliday = (date) => {
   const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
-  const event = publicholidays.find((e) => e.StartDate === formattedDate);
+  //const _publicholidays = useContext(PublicHolidaysContext);
+  //const _plday = arrPublicHoliday;
+  const _plday = getPublicHolidays();
+  const event = _plday.find((e) => e.StartDate === formattedDate);
   if (event) {
     console.log('event public holiday?');
     console.log(event);
@@ -219,7 +234,8 @@ export const excludeHoliday = (date) => {
     const formattedDate = format(date, 'M/d/yyyy');
     // console.log('formattereddate');
     //  console.log(formattedDate);
-    const isHoliday = publicholidays.some(
+    const _publicholidays = useContext(PublicHolidaysContext);
+    const isHoliday = _publicholidays.some(
       (holiday) => holiday.StartDate === formattedDate,
     );
     const rtn = isWeekendDay || isHoliday;

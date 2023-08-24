@@ -24,8 +24,8 @@ const UserManagementTab = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [rolenames, setRoleNames] = useState([]);
 
-  const [loading, setLoading] = useState(false);
   const [rolesLoaded, setRolesLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 

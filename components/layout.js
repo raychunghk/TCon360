@@ -3,7 +3,7 @@ import Head from 'next/head';
 import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
 import useStyles from '../styles/layout.styles';
 import { basepath } from '/global';
@@ -34,10 +34,15 @@ import {
   setUser,
   setStaff,
 } from 'pages/reducers/calendarReducer';
-
+import { PublicHolidaysContext } from 'pages/_app';
+import { setPublicHolidays } from 'pages/reducers/calendarReducer';
 export const siteTitle = 'NxTime';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
+  const _publicholidays = useContext(PublicHolidaysContext);
+  const publicholidays = _publicholidays;
+  setPublicHolidays(publicholidays);
+
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
   const { classes } = useStyles();

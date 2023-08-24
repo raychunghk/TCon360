@@ -2,6 +2,7 @@ import { Injectable, Inject, ConsoleLogger, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Staff, Prisma } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
+import { UpdateStaffDto } from 'src/customDto/customDTOs';
 
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
@@ -44,18 +45,50 @@ export class StaffService {
     }
     return staff;
   }
-  async updateStaff(id: number, data: Prisma.StaffUpdateInput) {
+  async updateStaff(id: number, data: UpdateStaffDto) {
     try {
-      const rtn = await this.prisma.staff.update({
+      const { contracts, contractId, ...staffData } = data;
+
+      const staff = await this.prisma.staff.update({
         where: { id },
-        data,
+        data: {
+          ...staffData,
+          contracts: {
+            updateMany: contracts.map((contract) => ({
+              where: { id: contract.id },
+              data: {
+                ContractStartDate: contract.ContractStartDate,
+                ContractEndDate: contract.ContractEndDate,
+                AnnualLeave: contract.AnnualLeave,
+                IsActive: contract.id === contractId,
+              },
+            })),
+          },
+        },
+        include: {
+          contracts: true,
+        },
       });
-      Logger.log('rtn', rtn);
-      console.log('update result');
-      return rtn;
+
+      Logger.log('update result', staff);
+
+      return staff;
     } catch (error) {
-      console.log('update staff error');
-      console.log(error);
+      console.log('update staff error', error);
     }
   }
+  // async updateStaff(id: number, data: Prisma.StaffUpdateInput) {
+  //   try {
+  //     const rtn = await this.prisma.staff.update({
+  //       where: { id },
+  //       data,
+  //     });
+  //     Logger.log('rtn', rtn);
+  //     console.log('update result');
+  //     return rtn;
+  //   } catch (error) {
+  //     console.log('update staff error');
+  //     console.log(error);
+  //   }
+  // }
 }

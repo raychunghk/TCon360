@@ -7,7 +7,8 @@ import { isValid, parseISO, parse } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
 import { Role, User } from '@prisma/client';
-import { UpdateUserDto } from 'src/customDto/updateUserDto';
+import { UpdateUserDto } from 'src/customDto/customDTOs';
+
 @Injectable()
 export class AdminService {
   constructor(private readonly prisma: PrismaService) {}

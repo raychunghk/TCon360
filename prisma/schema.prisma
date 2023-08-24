@@ -138,7 +138,6 @@ model Staff {
   leaveRequests LeaveRequest[]
   user          User            @relation(fields: [userId], references: [id])
   staffFiles    staffFiles[]
-  contractId    Int
 }
 
 model StaffContract {

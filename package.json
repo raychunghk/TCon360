@@ -20,9 +20,10 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:debugleave": "jest --grep leaveRequest.service.spec.ts",
+    "test:debugleave": "jest --users.service.spec.ts",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:users": "jest users.service.spec.ts"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -102,6 +103,8 @@
     "body-parser": "^1.20.2",
     "cache-manager": "^5.2.3",
     "cache-manager-redis-store": "^3.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "clsx": "^1.2.1",
     "cookie-parser": "^1.4.6",
     "cookies-next": "^2.1.2",

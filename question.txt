@@ -1,71 +1,69 @@
-below is my model design for staff to make leaveRequestion, the leaveRequest records is joining in a view for making timesheet for job agency.
-Now i am having problem because there are contract period conerns.
-There exists a situation that when contract period ends, it is subjected to a new contract for a new ContractStartDate and new ContractEndDate.
-if I want to differeitate the leaveRequest for different contract period, what should I change?
-should I refactor the staff table and create a new staffContract model?
+use this mantine-react-table column config as reference.
 
-```
-view viewEvents {
-  ID               Int       @id
-  leavePeriodStart DateTime
-  leavePeriodEnd   DateTime?
-  StartDateStr     String
-  WeekDayName      String
-  Year             Int
-  Month            Int
-  HolidaySummary   String?
-  eventType        String?
-  EndDateStr       String?
-  dateOfReturn     DateTime?
-  ReturnDateStr    String?
-  AMPMStart        String?
-  AMPMEnd          String?
-  staffId          Int?
-  LeaveRequestId   Int?
-  leaveDays        Float?
-}
-model Staff {
-  id                Int            @id @default(autoincrement())
-  StaffName         String
-  AgentName         String
-  StaffCategory     String
-  Department        String
-  PostUnit          String
-  ManagerName       String
-  ManagerTitle      String
-  ManagerEmail      String
-  ContractStartDate DateTime
-  ContractEndDate   DateTime
-  AnnualLeave       Int
-  userId            String
-  leaveRequests     LeaveRequest[]
-  user              User           @relation(fields: [userId], references: [id])
-  staffFiles        staffFiles[]
-}
-model LeaveRequest {
-  id               Int                @id @default(autoincrement())
-  leavePeriodStart DateTime
-  AMPMStart        String
-  leavePeriodEnd   DateTime?
-  AMPMEnd          String?
-  leaveDays        Float
-  dateOfReturn     DateTime
-  staffSignDate    DateTime
-  fileId           Int
-  staffId          Int
-  calendarVacation CalendarVacation[]
-  staff            Staff              @relation(fields: [staffId], references: [id])
-  staffFile        staffFiles         @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  leavePurpose     String?
-  leaveType        String
-}
+create another config object for the column "ContractStartDate Date()"
 
-model staffFiles {
-  id           Int            @id @default(autoincrement())
-  filePath     String
-  fileType     String
-  staffId      Int
-  LeaveRequest LeaveRequest[]
-  staff        Staff          @relation(fields: [staffId], references: [id])
-}
+The datatype is date object, 
+render the "Edit" using DatePickerInput , render "Cell" using <Text> and use datefns to format the date as "yyyy-MMM-dd"
+
+column config:
 ```
+{
+      accessorKey: 'AnnualLeave',
+      header: 'Annual leave',
+      size: 100,
+
+      Edit: (param) => {
+        const { renderedCellValue, cell, table, column, row } = param;
+        const editingRow = table.getState().editingRow;
+        const cellval = param.cell.getValue();
+        if (editingRow !== null && row.id == editingRow.id) {
+          return (
+            <>
+              <NumberInput
+                value={cellval}
+                onChange={(newValue) => {
+                  const updatedFormValues = { ...formValues };
+                  const updatedContracts = [...updatedFormValues.contracts]; // Create a copy of the contracts array
+                  updatedContracts[row.index] = {
+                    ...updatedContracts[row.index],
+                    AnnualLeave: Number(newValue),
+                  }; // Update the specific contract object
+                  updatedFormValues.contracts = updatedContracts; // Replace the contracts array in the formValues object
+                  setFormValues(updatedFormValues);
+                }}
+                // Add any additional props or styling as needed
+              />
+            </>
+          );
+        }
+
+        return <Text>{renderedCellValue}</Text>;
+      },
+
+
+    ```
+
+    state val:
+    ```
+     const staffModel = {
+    StaffName: '',
+    AgentName: '',
+    StaffCategory: '',
+    Department: '',
+    PostUnit: '',
+    ManagerName: '',
+    ManagerTitle: '',
+    ManagerEmail: '',
+    contracts: [
+      {
+        id: null,
+        ContractStartDate: new Date(),
+        ContractEndDate: new Date(),
+        AnnualLeave: 0,
+        IsActive: false,
+      },
+    ],
+    userId: '',
+    id: null,
+  };
+  const [formValues, setFormValues] = useState(staffModel);

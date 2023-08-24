@@ -40,16 +40,16 @@ export class LeaveRequestController {
     @Body() leaveRequestData: Prisma.LeaveRequestCreateInput,
   ) {
     const userId = req.user.id;
-    const user = await this.usrSvc.getUserWithStaff(userId);
+    const user = await this.usrSvc.getUserWithViewStaff(userId);
     //const staffId = user.staffId ? user.staffId : user.staff[0].id;
     const staffId = user.viewStaff[0].StaffId;
     const contractId = user.viewStaff[0].contractId;
     Logger.log('staffid', staffId);
     Logger.log('leaveRequestData', leaveRequestData);
-    const attributeName = 'contractId'
+    const attributeName = 'contractId';
     if (leaveRequestData.hasOwnProperty(attributeName)) {
-  delete leaveRequestData[attributeName];
-}
+      delete leaveRequestData[attributeName];
+    }
     //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
     const leaveRequest = await this.leaveRequestService.createword(
       staffId,

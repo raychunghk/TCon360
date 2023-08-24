@@ -29,6 +29,7 @@ import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../auth/users.service';
 //import type { Request  } from 'express';
 import type { AuthReqInterface } from '../AuthReqInterface';
+import { UpdateStaffDto } from 'src/customDto/customDTOs';
 @Controller('api/staff')
 export class StaffController {
   constructor(
@@ -117,16 +118,21 @@ export class StaffController {
   async getStaffById(@Param('id') id: number): Promise<Staff> {
     return this.staffService.getStaffById(id);
   }
+
   @Put(':id')
   async updateStaff(
     @Param('id') id: number,
-    @Body() updateStaff: Prisma.StaffUpdateInput,
+    @Body() updateStaff: UpdateStaffDto, // Replace Prisma.StaffUpdateInput with your custom DTO
   ) {
-    console.log('in update staff');
-    console.log(updateStaff);
+    // async updateStaff(
+    //   @Param('id') id: number,
+    //   @Body() updateStaff: Prisma.StaffUpdateInput,
+    // ) {
+    console.log('in update staff', updateStaff);
+
     const rtn = await this.staffService.updateStaff(Number(id), updateStaff);
-    console.log('rtn');
-    console.log(rtn);
+    console.log('rtn', rtn);
+
     Logger.log(rtn);
     return rtn;
   }

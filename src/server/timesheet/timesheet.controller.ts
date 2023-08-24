@@ -73,7 +73,7 @@ export class TimesheetController {
       const userId = decodedtoken.sub;
       // Find the user with the given userId
       //const user = await this.userService.findById(userId);
-      const user = await this.userService.getUserWithStaff(userId);
+      const user = await this.userService.getUserWithViewStaff(userId);
       //const staffId = user.staffId ? user.staffId : user.staff[0].id;
       const staffId = user.viewStaff[0].StaffId;
 

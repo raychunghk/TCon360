@@ -95,9 +95,16 @@ export default function SignupPage() {
     ManagerName: '',
     ManagerTitle: '',
     ManagerEmail: 'manager@1.com',
-    ContractStartDate: null,
-    ContractEndDate: null,
-    AnnualLeave: 10,
+    contracts: {
+      create: [
+        {
+          ContractStartDate: null,
+          ContractEndDate: null,
+          AnnualLeave: 10,
+          IsActive: true,
+        },
+      ],
+    },
   };
 
   const [formValues, setFormValues] = useState(staffModel);
@@ -186,10 +193,14 @@ export default function SignupPage() {
         if (!values.PostUnit) {
           errors.PostUnit = 'Post Unit is required';
         }
-        if (!values.AnnualLeave) {
+
+        if (!values.contracts[0].AnnualLeave) {
           errors.AnnualLeave = 'AnnualLeave is required';
         }
-        if (values.ContractEndDate <= values.ContractStartDate) {
+        if (
+          values.contracts[0].ContractEndDate <=
+          values.contracts[0].ContractStartDate
+        ) {
           errors.ContractEndDate =
             'Contract end date should be later than Contract start date';
         }
@@ -453,21 +464,21 @@ export default function SignupPage() {
                         label: 'Contract Start Date',
                         placeholder: 'Contract Start Date',
                         name: 'ContractStartDate',
-                        value: formValues.ContractStartDate,
+                        value: formValues.contracts[0].ContractStartDate,
                         type: 'datetime', // Add a type property to identify datetime inputs
                       },
                       {
                         label: 'Contract End Date',
                         placeholder: 'Contract End Date',
                         name: 'ContractEndDate',
-                        value: formValues.ContractEndDate,
+                        value: formValues.contracts[0].ContractEndDate,
                         type: 'datetime', // Add a type property to identify datetime inputs
                       },
                       {
                         label: 'Total Annual Leave',
                         placeholder: 'Total Annual Leave',
                         name: 'AnnualLeave',
-                        value: formValues.AnnualLeave,
+                        value: formValues.contracts[0].AnnualLeave,
                         type: 'number',
                       },
                     ].map(({ label, placeholder, name, value, type }) => (
