@@ -44,6 +44,7 @@ import {
 } from 'pages/reducers/calendarReducer';
 import { useForm } from '@mantine/form';
 import { Param } from '@nestjs/common';
+import { usePublicHolidays } from './usePublicHolidays';
 import { format } from 'date-fns';
 import { AnnualLeaveEditor, inputFields, staffModel } from './edit.util';
 import {
@@ -54,14 +55,15 @@ import {
 require('dotenv').config();
 
 export default function EditStaff() {
-  const { staff, user, staffVacation, publicHolidays, calendarEvents } =
-    useSelector((state) => ({
+  const { staff, user, staffVacation, calendarEvents } = useSelector(
+    (state) => ({
       staff: state.calendar.staff,
       user: state.calendar.user,
       staffVacation: state.calendar.staffVacation,
-      publicHolidays: state.calendar.publicHolidays,
+      //  publicHolidays: state.calendar.publicHolidays,
       calendarEvents: state.calendar.calendarEvents,
-    }));
+    }),
+  );
 
   const [formValues, setFormValues] = useState(staffModel);
   const [submitting, setSubmitting] = useState(false);
@@ -95,31 +97,11 @@ export default function EditStaff() {
       console.error('Failed to fetch staff data:', error);
     }
   };
-  async function loadPublicHolidays() {
-    try {
-      const response = await axios.get(
-        `${basepath}/api/timesheet/publicholidays`,
-      );
-      const pldays = response.data.map((holiday) => ({
-        Summary: holiday.Summary,
+  const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
 
-        StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
-      }));
-      setDatepickerPlDay(pldays);
-      await dispatch(setPublicHolidays(pldays));
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  useEffect(() => {
-    console.log('public holidays?', publicHolidays);
-
-    if (!publicHolidays || publicHolidays.length == 0) {
-      loadPublicHolidays();
-    }
-  }, []);
   useEffect(() => {
     getStaffData();
+    setDatepickerPlDay(publicHolidays);
   }, [publicHolidays]);
   const handleModalClose = () => {
     setModalOpen(false);
@@ -138,7 +120,7 @@ export default function EditStaff() {
       accessorKey: 'ContractStartDate',
       header: 'Contract Start Date',
 
-      Edit: (param) => {
+       Edit: (param) => {
         const { renderedCellValue, cell, table, column, row } = param;
         const editingRow = table.getState().editingRow;
         const cellval = param.cell.getValue();
@@ -153,9 +135,12 @@ export default function EditStaff() {
             <>
               <DatePickerInput
                 valueFormat="DD-MM-YYYY"
+                name="ContractStartDate"
                 firstDayOfWeek={0}
                 size="xs"
-                value={val}
+                value={
+                  new Date(formValues.contracts[row.index].ContractStartDate)
+                }
                 withCellSpacing={false}
                 excludeDate={excludeHoliday}
                 renderDay={myRenderDay}
@@ -165,19 +150,21 @@ export default function EditStaff() {
                   const updatedFormValues = { ...formValues };
                   const updatedContracts = [...updatedFormValues.contracts];
                   const newDate = new Date(newValue);
+
                   if (isNaN(newDate.getTime())) {
                     // Casting failed, set the value to the error message
                     updatedContracts[row.index] = {
                       ...updatedContracts[row.index],
-                      ContractStartDate: 'Invalid date',
+                      ContractStartate: 'Invalid date',
                     };
                   } else {
                     updatedContracts[row.index] = {
                       ...updatedContracts[row.index],
-                      ContractStartDate: newDate,
+                      ContractStartate: newDate,
                     };
                   }
                   updatedFormValues.contracts = updatedContracts;
+
                   setFormValues(updatedFormValues);
                 }}
                 // Add any additional props or styling as needed
@@ -185,10 +172,6 @@ export default function EditStaff() {
             </>
           );
         }
-
-        // Use date-fns to format the date as "yyyy-MMM-dd"
-        const formattedDate = format(renderedCellValue, 'yyyy-MMM-dd');
-        return <Text>{formattedDate}</Text>;
       },
 
       Cell: ({ cell }) => {
@@ -225,12 +208,16 @@ export default function EditStaff() {
         }
         if (editingRow !== null && row.id == editingRow.id) {
           return (
-            <>
+            <> 
               <DatePickerInput
                 valueFormat="DD-MM-YYYY"
+                name ="ContractEndDate"
                 firstDayOfWeek={0}
+                Label = "hello"
                 size="xs"
-                value={val}
+                value={
+                  new Date(formValues.contracts[row.index].ContractEndDate)
+                }
                 withCellSpacing={false}
                 excludeDate={excludeHoliday}
                 renderDay={myRenderDay}
@@ -240,7 +227,7 @@ export default function EditStaff() {
                   const updatedFormValues = { ...formValues };
                   const updatedContracts = [...updatedFormValues.contracts];
                   const newDate = new Date(newValue);
-                  val = newValue;
+
                   if (isNaN(newDate.getTime())) {
                     // Casting failed, set the value to the error message
                     updatedContracts[row.index] = {
@@ -254,6 +241,7 @@ export default function EditStaff() {
                     };
                   }
                   updatedFormValues.contracts = updatedContracts;
+
                   setFormValues(updatedFormValues);
                 }}
                 // Add any additional props or styling as needed
@@ -280,18 +268,7 @@ export default function EditStaff() {
         return <Text>{val}</Text>;
       },
     },
-    // {
-    //   accessorKey: 'ContractStartDate',
-    //   header: 'Contract Start Date',
-    //   size: 150,
-    //   enableEditing: true,
-    // },
-    // {
-    //   accessorKey: 'ContractEndDate',
-    //   header: 'Contract End Date',
-    //   size: 150,
-    //   enableEditing: true,
-    // },
+
     {
       accessorKey: 'AnnualLeave',
       header: 'Annual leave',
@@ -372,7 +349,14 @@ export default function EditStaff() {
   ];
   const handleSaveRow = (row) => {
     // Handle saving the edited row here
-  };
+  };   const clearCacheData = () => {
+        caches.keys().then((names) => {
+            names.forEach((name) => {
+                caches.delete(name);
+            });
+        });
+        alert('Complete Cache Cleared')
+    };
   const table =
     publicHolidays &&
     useMantineReactTable({
@@ -385,11 +369,12 @@ export default function EditStaff() {
         const { internalEditComponents, table, row } = params;
         return (
           <Paper style={{ height: '350px' }}>
-            <Title order={5}>Edit Contract Detail</Title>
+            <Title order={5}>Edit Contract Detailx</Title>
             <Grid gutter="md">
               {internalEditComponents.map((component, index) =>
                 index === 0 ? null : (
-                  <Grid.Col span={6} key={index} mt={'30px'}>
+                  <Grid.Col span={6} key={index} mt={'30px'}>xcf
+                    {component.key}
                     {component}
                   </Grid.Col>
                 ),
@@ -526,34 +511,6 @@ export default function EditStaff() {
                     value={formValues[field.name]}
                   />
                 )}
-                {/* {field.type === 'number' && (
-                  <NumberInput
-                    label={field.label}
-                    placeholder={field.label}
-                    name={field.name}
-                    onChange={handleInputChange}
-                    disabled={!editing}
-                    value={formValues[field.name]}
-                  />
-                )} */}
-                {/* {field.type === 'date' && (
-                  <DatePickerInput
-                    clearable
-                    label={field.label}
-                    name={field.name}
-                    onChange={(date) =>
-                      handleInputChange({
-                        target: {
-                          name: field.name,
-                          value: date,
-                        },
-                      })
-                    }
-                    value={new Date(formValues[field.name])}
-                    valueFormat="DD-MM-YYYY"
-                    firstDayOfWeek={0}
-                  />
-                )} */}
               </Grid.Col>
             ))}
             {publicHolidays && <MantineReactTable table={table} />}
