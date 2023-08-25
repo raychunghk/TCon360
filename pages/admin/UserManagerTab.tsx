@@ -136,16 +136,7 @@ const UserManagementTab = () => {
       return;
     }
     setValidationErrors({});
-    // if (validationErrors.email) {
-    //   // Handle invalid email
-    //   setValidationErrors({
-    //     email: validationErrors.email,
-    //   });
-    //   setSaving(false);
-    //   return;
-    // } else {
-    //   setValidationErrors({});
-    // }
+ 
     const _roleid = roles.filter((f) => f.name === values.roleName)[0].id;
     if (!values.hasOwnProperty('userId')) {
       // Insert the "roleId" property with a value

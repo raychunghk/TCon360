@@ -7,5 +7,6 @@ const dispatch = useDispatch();
 export const handleSignout = () => {
   destroyCookie(null, 'token');
   dispatch(clearAllState());
+
   signOut();
 };

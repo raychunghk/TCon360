@@ -204,8 +204,8 @@ export const isPublicHoliday = (date) => {
   const _plday = getPublicHolidays();
   const event = _plday.find((e) => e.StartDate === formattedDate);
   if (event) {
-    console.log('event public holiday?');
-    console.log(event);
+  //  console.log('event public holiday?');
+   // console.log(event);
   }
   return event;
 };
@@ -213,8 +213,8 @@ export const isPublicHoliday = (date) => {
 export const getSummaryByDate = (date) => {
   // const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   const event = isPublicHoliday(date);
-  console.log('event');
-  console.log(event);
+ // console.log('event');
+  //console.log(event);
   return event ? event.Summary : 'Week End';
 };
 export const myRenderDay = (date) => {

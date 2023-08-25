@@ -31,6 +31,7 @@ function MyCard({ title, children, cardwidth = 500 }) {
       >
         <Text weight={500}>{title}</Text>
       </Card.Section>
+
       {children}
     </Card>
   );

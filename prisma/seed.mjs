@@ -64,7 +64,7 @@ async function createViewCalendarIfNotExists() {
           ELSE NULL
         END AS HolidaySummary,
         V.LeaveRequestId,
-        LR.staffId
+        LR.staffId,
         LR.contractId
       FROM
         CalendarMaster C
@@ -99,7 +99,7 @@ async function createViewUserRole() {
 async function createViewStaff() {
   const viewname = 'viewStaff';
   const createViewSQL = `
- SELECT
+SELECT
   s.id AS StaffId,
   s.StaffName,
   s.AgentName,
@@ -113,16 +113,21 @@ async function createViewStaff() {
   sc.ContractStartDate,
   sc.ContractEndDate,
   sc.AnnualLeave,
-  SC.id as contractId
+  sc.id AS contractId 
 FROM Staff AS s
-LEFT JOIN StaffContract AS sc ON s.id = sc.staffId
-WHERE sc.IsActive = 1
-  AND sc.staffId = (
-    SELECT MIN(id)
-    FROM StaffContract
-    WHERE staffId = s.id
-      AND IsActive = 1
-  );
+LEFT JOIN (
+  SELECT
+    staffId,
+    ContractStartDate,
+    ContractEndDate,
+    AnnualLeave,
+    id
+  FROM StaffContract
+  WHERE IsActive = 1
+  ORDER BY ContractStartDate
+  LIMIT 1
+) AS sc ON s.id = sc.staffId;
+
     `;
   await createView(viewname, createViewSQL);
 }
@@ -196,7 +201,7 @@ async function createViewEventsIfNotExists() {
           WHEN WeekDayName LIKE 'S%' THEN 1
           WHEN PH.Summary IS NOT NULL THEN 1
           ELSE NULL
-        END AS leaveDays
+        END AS leaveDays,
         LR.contractId 
       FROM
         CalendarMaster C

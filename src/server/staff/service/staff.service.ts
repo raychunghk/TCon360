@@ -1,6 +1,12 @@
-import { Injectable, Inject, ConsoleLogger, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  ConsoleLogger,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Staff, Prisma } from '@prisma/client';
+import { Staff, Prisma, StaffContract } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 import { UpdateStaffDto } from 'src/customDto/customDTOs';
 
@@ -11,6 +17,31 @@ import { UpdateStaffDto } from 'src/customDto/customDTOs';
 export class StaffService {
   constructor(@Inject(PrismaService) private prisma: PrismaService) {}
 
+  async updateStaffContract(
+    id: number,
+    updateStaffContractDto: Prisma.StaffContractUpdateInput,
+  ): Promise<StaffContract> {
+    try {
+      const existingContract = await this.prisma.staffContract.findUnique({
+        where: { id },
+      });
+
+      if (!existingContract) {
+        throw new NotFoundException('Staff contract not found');
+      }
+
+      const updatedContract = await this.prisma.staffContract.update({
+        where: { id },
+        data: updateStaffContractDto,
+      });
+      Logger.log('update result', updatedContract);
+      return updatedContract;
+    } catch (error) {
+      // Handle any potential errors
+      Logger.error('error', error);
+      throw new Error('Failed to update staff contract');
+    }
+  }
   async createStaff(
     stfInfo: Prisma.StaffCreateInput,
     _userId: string,

@@ -1,9 +1,5 @@
-export class UpdateUserDto {
-  name?: string;
-  email?: string;
-  roleId?: number;
-  userStatus?: string;
-}
+import { PartialType } from '@nestjs/swagger';
+import { StaffContract } from '@prisma/client';
 
 import {
   IsArray,
@@ -13,6 +9,13 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+
+export class UpdateUserDto {
+  name?: string;
+  email?: string;
+  roleId?: number;
+  userStatus?: string;
+}
 
 class UpdateContractDto {
   @IsDateString()
@@ -29,6 +32,7 @@ class UpdateContractDto {
 
 export class UpdateStaffDto {
   // Existing fields
+
   StaffName: string;
   AgentName: string;
   StaffCategory: string;
@@ -49,14 +53,4 @@ export class UpdateStaffDto {
   @IsInt()
   contractId?: number | null;
 }
-/*
-
-
-{
-    "username": "raychung",
-    "name": "Ray Chung1",
-    "email": "mannchung@gmail.com",
-    "roleName": "admin",
-    "userStatus": "active",
-    "userId": "cllkp45s90001plyf19ta6g6e"
-}*;*/
+ 

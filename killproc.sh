@@ -1,0 +1,1 @@
+ sudo kill -9 $(netstat -lntp | grep ":5000" | awk '{print $7}' | cut -d'/' -f1)

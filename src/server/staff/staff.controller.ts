@@ -38,7 +38,37 @@ export class StaffController {
     private readonly authService: AuthService,
     private readonly userService: UsersService,
   ) {}
+  @Put('contract/:id')
+  async updateStaffContract(
+    @Param('id') id: string,
+    @Body() updateStaffContractDto: Prisma.StaffContractUpdateInput,
+  ) {
+    try {
+      Logger.debug('update staff contract info', updateStaffContractDto);
+      const rtn = this.staffService.updateStaffContract(
+        parseInt(id),
+        updateStaffContractDto,
+      );
+      return rtn;
+    } catch (error) {
+      Logger.error('error', error);
+    }
+  }
 
+  @Put('updatecontracts')
+  async updateContracts(
+    @Body() contractUpdates: Prisma.StaffContractUncheckedCreateInput[],
+  ) {
+    try {
+      for (const contractUpdate of contractUpdates) {
+        const { id, ...updateStaffContractDto } = contractUpdate;
+        await this.staffService.updateStaffContract(id, updateStaffContractDto);
+      }
+      return { message: 'Contracts updated successfully' };
+    } catch (error) {
+      return { error: 'Failed to update contracts' };
+    }
+  }
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(

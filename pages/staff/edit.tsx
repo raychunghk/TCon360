@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import createContractForm from './createContractForm';
 import { useForm as useHookForm } from 'react-hook-form';
 import { parseCookies } from 'nookies';
 import axios from 'axios';
@@ -46,12 +47,20 @@ import { useForm } from '@mantine/form';
 import { Param } from '@nestjs/common';
 import { usePublicHolidays } from './usePublicHolidays';
 import { format } from 'date-fns';
-import { AnnualLeaveEditor, inputFields, staffModel } from './edit.util';
+import EditIsActiveCell, {
+  AnnualLeaveEditor,
+  DateCell,
+  EditContractModalContent,
+  createEditDateColumn,
+  inputFields,
+  staffModel,
+} from './edit.util';
 import {
   excludeHoliday,
   myRenderDay,
   setDatepickerPlDay,
 } from 'components/util/leaverequest.util';
+import CreateContractForm from './createContractForm';
 require('dotenv').config();
 
 export default function EditStaff() {
@@ -72,6 +81,9 @@ export default function EditStaff() {
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { register, handleSubmit, reset } = useHookForm();
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('Sucess');
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
@@ -106,9 +118,7 @@ export default function EditStaff() {
   const handleModalClose = () => {
     setModalOpen(false);
   };
-  //   ContractStartDate DateTime
-  // ContractEndDate   DateTime
-  // AnnualLeave       Int
+
   const columns = [
     {
       accessorKey: 'id',
@@ -120,153 +130,34 @@ export default function EditStaff() {
       accessorKey: 'ContractStartDate',
       header: 'Contract Start Date',
 
-       Edit: (param) => {
-        const { renderedCellValue, cell, table, column, row } = param;
-        const editingRow = table.getState().editingRow;
-        const cellval = param.cell.getValue();
-        let val;
-        if (cellval instanceof Date) {
-          val = cellval;
-        } else {
-          val = new Date(cellval);
-        }
-        if (editingRow !== null && row.id == editingRow.id) {
-          return (
-            <>
-              <DatePickerInput
-                valueFormat="DD-MM-YYYY"
-                name="ContractStartDate"
-                firstDayOfWeek={0}
-                size="xs"
-                value={
-                  new Date(formValues.contracts[row.index].ContractStartDate)
-                }
-                withCellSpacing={false}
-                excludeDate={excludeHoliday}
-                renderDay={myRenderDay}
-                //dropdownType="modal"
-                style={{ zIndex: 9999 }}
-                onChange={(newValue) => {
-                  const updatedFormValues = { ...formValues };
-                  const updatedContracts = [...updatedFormValues.contracts];
-                  const newDate = new Date(newValue);
+      Edit: (param) =>
+        createEditDateColumn(
+          param,
+          'ContractStartDate',
+          'Contract Start Date',
+          formValues,
+          setFormValues,
+          excludeHoliday,
+          myRenderDay,
+        ),
 
-                  if (isNaN(newDate.getTime())) {
-                    // Casting failed, set the value to the error message
-                    updatedContracts[row.index] = {
-                      ...updatedContracts[row.index],
-                      ContractStartate: 'Invalid date',
-                    };
-                  } else {
-                    updatedContracts[row.index] = {
-                      ...updatedContracts[row.index],
-                      ContractStartate: newDate,
-                    };
-                  }
-                  updatedFormValues.contracts = updatedContracts;
-
-                  setFormValues(updatedFormValues);
-                }}
-                // Add any additional props or styling as needed
-              />
-            </>
-          );
-        }
-      },
-
-      Cell: ({ cell }) => {
-        const cellval = cell.getValue();
-        console.log('cellval?', cellval);
-        let val;
-
-        try {
-          if (cellval instanceof Date) {
-            val = format(cellval, 'yyyy-MMM-dd');
-          } else {
-            val = format(new Date(cellval), 'yyyy-MMM-dd');
-          }
-        } catch (error) {
-          console.error(error);
-          val = error.message;
-        }
-        return <Text>{val}</Text>;
-      },
+      Cell: DateCell,
     },
     {
       accessorKey: 'ContractEndDate',
       header: 'Contract End Date',
 
-      Edit: (param) => {
-        const { renderedCellValue, cell, table, column, row } = param;
-        const editingRow = table.getState().editingRow;
-        const cellval = param.cell.getValue();
-        let val;
-        if (cellval instanceof Date) {
-          val = cellval;
-        } else {
-          val = new Date(cellval);
-        }
-        if (editingRow !== null && row.id == editingRow.id) {
-          return (
-            <> 
-              <DatePickerInput
-                valueFormat="DD-MM-YYYY"
-                name ="ContractEndDate"
-                firstDayOfWeek={0}
-                Label = "hello"
-                size="xs"
-                value={
-                  new Date(formValues.contracts[row.index].ContractEndDate)
-                }
-                withCellSpacing={false}
-                excludeDate={excludeHoliday}
-                renderDay={myRenderDay}
-                //dropdownType="modal"
-                style={{ zIndex: 9999 }}
-                onChange={(newValue) => {
-                  const updatedFormValues = { ...formValues };
-                  const updatedContracts = [...updatedFormValues.contracts];
-                  const newDate = new Date(newValue);
-
-                  if (isNaN(newDate.getTime())) {
-                    // Casting failed, set the value to the error message
-                    updatedContracts[row.index] = {
-                      ...updatedContracts[row.index],
-                      ContractEndDate: 'Invalid date',
-                    };
-                  } else {
-                    updatedContracts[row.index] = {
-                      ...updatedContracts[row.index],
-                      ContractEndDate: newDate,
-                    };
-                  }
-                  updatedFormValues.contracts = updatedContracts;
-
-                  setFormValues(updatedFormValues);
-                }}
-                // Add any additional props or styling as needed
-              />
-            </>
-          );
-        }
-      },
-      Cell: ({ cell }) => {
-        const cellval = cell.getValue();
-        console.log('cellval?', cellval);
-        let val;
-
-        try {
-          if (cellval instanceof Date) {
-            val = format(cellval, 'yyyy-MMM-dd');
-          } else {
-            val = format(new Date(cellval), 'yyyy-MMM-dd');
-          }
-        } catch (error) {
-          console.error(error);
-          val = error.message;
-        }
-        return <Text>{val}</Text>;
-      },
+      Edit: (param) =>
+        createEditDateColumn(
+          param,
+          'ContractEndDate',
+          'Contract End Date',
+          formValues,
+          setFormValues,
+          excludeHoliday,
+          myRenderDay,
+        ),
+      Cell: DateCell,
     },
 
     {
@@ -282,81 +173,85 @@ export default function EditStaff() {
       header: 'Is Active',
       size: 100,
       enableEditing: true,
-      Cell: (param) => {
-        const { cell } = param;
-        const cellval = cell.getValue();
-
-        return <Text>{cellval ? 'Active' : 'Inactive'}</Text>;
-      },
-      Edit: (param) => {
-        const { renderedCellValue, cell, table, column, row } = param;
-        const editingRow = table.getState().editingRow;
-        const theme = useMantineTheme();
-        const [cellval, setCellValue] = useState(param.cell.getValue());
-        if (editingRow !== null && row.id == editingRow.id) {
-          return (
-            <>
-              <Switch
-                checked={cellval}
-                onChange={(event) => {
-                  setCellValue(event.currentTarget.checked);
-                  const updatedFormValues = { ...formValues };
-                  let updatedContracts;
-                  if (event.currentTarget.checked) {
-                    updatedContracts = updatedFormValues.contracts.map(
-                      (contract, index) => {
-                        if (index === row.index) {
-                          return { ...contract, IsActive: true };
-                        } else {
-                          return { ...contract, IsActive: false };
-                        }
-                      },
-                    );
-                  } else {
-                    updatedContracts = [...updatedFormValues.contracts];
-                    updatedContracts[row.index] = {
-                      ...updatedContracts[row.index],
-                      IsActive: event.currentTarget.checked,
-                    };
-                  }
-                  updatedFormValues.contracts = updatedContracts;
-                  setFormValues(updatedFormValues);
-                }}
-                color="teal"
-                size="md"
-                label={cellval ? 'Active' : 'Inactive'}
-                thumbIcon={
-                  cellval ? (
-                    <IconCheck
-                      size="0.8rem"
-                      color={theme.colors.teal[theme.fn.primaryShade()]}
-                      stroke={3}
-                    />
-                  ) : (
-                    <IconX
-                      size="0.8rem"
-                      color={theme.colors.red[theme.fn.primaryShade()]}
-                      stroke={3}
-                    />
-                  )
-                }
-              />
-            </>
-          );
-        }
-      },
+      Cell: (param) => (
+        <Text>{param.cell.getValue() ? 'Active' : 'Inactive'}</Text>
+      ),
+      Edit: (param) => EditIsActiveCell(param, formValues, setFormValues),
     },
   ];
-  const handleSaveRow = (row) => {
+
+  const handleSaveRow = async (rowEditEvent) => {
+    setSaving(true);
+    const { row, values, exitEditingMode } = rowEditEvent;
+
+    try {
+      // Submit the contract to the API
+      //const apiurl = `${basepath}/api/staff/contract/${values.id}`;
+      const apiurl = `${basepath}/api/staff/updatecontracts`;
+
+      const contract = formValues.contracts.filter((f) => f.id === values.id);
+      const contractResponse = await axios.put(apiurl, formValues.contracts);
+      if (contractResponse.status === 200) {
+        // Call getStaffData() to refresh the staff data
+        setModalContent('Staff contract updated successfully');
+        setModalOpen(true);
+        await getStaffData();
+      } else {
+        // Display error message using Mantine modal
+        setModalContent(contractResponse.data.message);
+        setModalOpen(true);
+      }
+      // if (contract.length > 0) {
+      //   const contractStartDate = contract[0].ContractStartDate;
+      //   const contractEndDate = contract[0].ContractEndDate;
+
+      //   const updatecontract = {
+      //     ContractStartDate:
+      //       typeof contractStartDate === 'string'
+      //         ? new Date(contractStartDate)
+      //         : contractStartDate,
+      //     ContractEndDate:
+      //       typeof contractEndDate === 'string'
+      //         ? new Date(contractEndDate)
+      //         : contractEndDate,
+      //     AnnualLeave: contract[0].AnnualLeave,
+      //     IsActive: contract[0].IsActive,
+      //   };
+      //   console.log('update value from formvalues', updatecontract);
+
+      //   const contractResponse = await axios.put(apiurl, updatecontract);
+      //   if (contractResponse.status === 200) {
+      //     // Call getStaffData() to refresh the staff data
+      //     setModalContent('Staff contract updated successfully');
+      //     setModalOpen(true);
+      //     await getStaffData();
+      //   } else {
+      //     // Display error message using Mantine modal
+      //     setModalContent(contractResponse.data.message);
+      //     setModalOpen(true);
+      //   }
+      // }
+      // Handle the response and perform necessary actions
+      // ...
+
+      // Exit editing mode
+    } catch (error) {
+      // Handle error
+      setModalContent(error.message);
+      setModalOpen(true);
+    }
+    exitEditingMode();
+    setSaving(false);
     // Handle saving the edited row here
-  };   const clearCacheData = () => {
-        caches.keys().then((names) => {
-            names.forEach((name) => {
-                caches.delete(name);
-            });
-        });
-        alert('Complete Cache Cleared')
-    };
+  };
+  const clearCacheData = () => {
+    caches.keys().then((names) => {
+      names.forEach((name) => {
+        caches.delete(name);
+      });
+    });
+    alert('Complete Cache Cleared');
+  };
   const table =
     publicHolidays &&
     useMantineReactTable({
@@ -364,35 +259,20 @@ export default function EditStaff() {
       data: formValues.contracts,
       createDisplayMode: 'row',
       editDisplayMode: 'modal',
-      renderEditRowModalContent: (params) => {
-        console.log('params', params);
-        const { internalEditComponents, table, row } = params;
-        return (
-          <Paper style={{ height: '350px' }}>
-            <Title order={5}>Edit Contract Detailx</Title>
-            <Grid gutter="md">
-              {internalEditComponents.map((component, index) =>
-                index === 0 ? null : (
-                  <Grid.Col span={6} key={index} mt={'30px'}>xcf
-                    {component.key}
-                    {component}
-                  </Grid.Col>
-                ),
-              )}
-            </Grid>
-            <Flex
-              justify="flex-end"
-              mt={'auto'}
-              style={{ position: 'absolute', bottom: '20px', right: '20px' }}
-            >
-              <MRT_EditActionButtons row={row} table={table} variant="text" />
-            </Flex>
-          </Paper>
-        );
-      },
+      renderEditRowModalContent: (params) =>
+        EditContractModalContent(params, 'Update Contract'),
       onEditingRowSave: handleSaveRow,
       enableColumnResizing: true,
       enableEditing: true,
+      renderTopToolbarCustomActions: () => (
+        <Button
+          color="secondary"
+          variant="filled"
+          onClick={() => setCreateModalOpen(true)}
+        >
+          Create New Account
+        </Button>
+      ),
       mantineEditTextInputProps: ({ cell }) => ({
         onBlur: (event) => {},
       }),
@@ -426,7 +306,9 @@ export default function EditStaff() {
       [event.target.name]: val,
     });
   };
-
+  const handleCreateNewContract = () => {
+    getStaffData();
+  };
   const onSubmit = async () => {
     setSubmitting(true);
 
@@ -442,6 +324,7 @@ export default function EditStaff() {
       );
 
       if (response.status === 200) {
+        setModalContent('Staff record updated successfully');
         setModalOpen(true);
         setEditing(true);
         getStaffData();
@@ -485,6 +368,9 @@ export default function EditStaff() {
   if (!user) {
     //router.push('/');
   }
+  const handleFormToggle = () => {
+    setCreateModalOpen(!createModalOpen);
+  };
   return (
     <Layout home>
       <Head>
@@ -498,7 +384,7 @@ export default function EditStaff() {
             handleInputChange={handleInputChange}
             editing={editing}
           /> */}
-          <Grid pb={20} pt={20}>
+          <Grid pb={20} pt={10}>
             {inputFields.map((field) => (
               <Grid.Col span={4} key={field.name}>
                 {field.type === 'text' && (
@@ -547,12 +433,14 @@ export default function EditStaff() {
           </Card.Section>
         </MyCard>
       </form>
-
-      <MyModal
-        open={modalOpen}
-        onClose={handleModalClose}
-        msg={' Staff record updated successfully!'}
+      <button onClick={handleFormToggle}>Open Form</button>
+      <CreateContractForm
+        open={createModalOpen}
+        onClose={handleFormToggle}
+        onSubmit={handleCreateNewContract}
       />
+      <MyModal open={modalOpen} onClose={handleModalClose} msg={modalContent} />
+
       <Code>{JSON.stringify(formValues, null, 2)}</Code>
       {/* <Code>{JSON.stringify(publicHolidays)}</Code>
       <Code>{JSON.stringify(calendarEvents)}</Code> */}
