@@ -28,6 +28,7 @@ class UpdateContractDto {
   AnnualLeave: number;
   @IsInt()
   id: number;
+  IsActive: any;
 }
 
 export class UpdateStaffDto {

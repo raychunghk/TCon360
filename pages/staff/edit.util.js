@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useEdit } from './useEdit';
 import axios from 'axios';
 import {
   // MantineReactTable,
@@ -113,28 +114,15 @@ export const inputFields = [
 ];
 export function AnnualLeaveEditor(param, formValues, setFormValues) {
   const { renderedCellValue, cell, table, column, row } = param;
-  const editingRow = table.getState().editingRow;
-  const cellval = param.cell.getValue();
-  if (editingRow !== null && row.id == editingRow.id) {
-    return (
-      <NumberInput
-        value={cellval}
-        onChange={(newValue) => {
-          const updatedFormValues = { ...formValues };
-          const updatedContracts = [...updatedFormValues.contracts]; // Create a copy of the contracts array
-          updatedContracts[row.index] = {
-            ...updatedContracts[row.index],
-            AnnualLeave: Number(newValue),
-          }; // Update the specific contract object
-          updatedFormValues.contracts = updatedContracts; // Replace the contracts array in the formValues object
-          setFormValues(updatedFormValues);
-        }}
-        // Add any additional props or styling as needed
-      />
-    );
-  }
+  // const [leaveVal, setLeaveVal] = useState(cell.getValue());
+  // const editingRow = table.getState().editingRow;
+  // const cellval = cell.getValue();
+  const { value, handleOnChange, handleBlur } = useEdit(param);
+  // useEffect(() => {
+  //   setLeaveVal(cellval);
+  // }, [cellval]);
 
-  return <Text>{renderedCellValue}</Text>;
+  return <NumberInput value={value} onChange={handleOnChange} />;
 }
 
 export const staffModel = {
@@ -161,7 +149,7 @@ export const staffModel = {
 };
 export function DateCell({ cell }) {
   const cellval = cell.getValue();
-  console.log('cellval?', cellval);
+  //  console.log('cellval?', cellval);
   let val;
 
   try {
@@ -187,61 +175,109 @@ export function createEditDateColumn(
   myRenderDay,
 ) {
   const { renderedCellValue, cell, table, column, row } = param;
-  const editingRow = table.getState().editingRow;
-  const cellval = param.cell.getValue();
-  let val;
-  if (cellval instanceof Date) {
-    val = cellval;
-  } else {
-    val = new Date(cellval);
-  }
-  if (editingRow !== null && row.id === editingRow.id) {
-    return (
-      <>
-        <DatePickerInput
-          valueFormat="DD-MM-YYYY"
-          name={columnKey}
-          firstDayOfWeek={0}
-          size="xs"
-          value={new Date(formValues.contracts[row.index][columnKey])}
-          withCellSpacing={false}
-          excludeDate={excludeHoliday}
-          renderDay={myRenderDay}
-          // dropdownType="modal"
-          style={{ zIndex: 9999 }}
-          onChange={(newValue) => {
-            const updatedFormValues = { ...formValues };
-            const updatedContracts = [...updatedFormValues.contracts];
-            const newDate = new Date(newValue);
+  const { value, handleOnChange, handleBlur } = useEdit(param);
+  // const [dateVal, setDateVal] = useState(null);
 
-            if (isNaN(newDate.getTime())) {
-              // Casting failed, set the value to the error message
-              updatedContracts[row.index] = {
-                ...updatedContracts[row.index],
-                [columnKey]: 'Invalid date',
-              };
-            } else {
-              updatedContracts[row.index] = {
-                ...updatedContracts[row.index],
-                [columnKey]: newDate,
-              };
-            }
-            updatedFormValues.contracts = updatedContracts;
+  // const cellval = cell.getValue();
+  // useEffect(() => {
+  //   if (cellval instanceof Date) {
+  //     setDateVal(cellval);
+  //   } else {
+  //     setDateVal(new Date(cellval));
+  //   }
+  // }, [cellval]);
 
-            setFormValues(updatedFormValues);
-          }}
-          // Add any additional props or styling as needed
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <DatePickerInput
+        valueFormat="DD-MM-YYYY"
+        name={columnKey}
+        firstDayOfWeek={0}
+        size="xs"
+        value={new Date(value)}
+        withCellSpacing={false}
+        excludeDate={excludeHoliday}
+        renderDay={myRenderDay}
+        // dropdownType="modal"
+        style={{ zIndex: 9999 }}
+        onChange={(newValue) => {
+          const newDate = new Date(newValue);
+
+          handleOnChange(newDate);
+          //setFormValues(updatedFormValues);
+        }}
+        // Add any additional props or styling as needed
+      />
+    </>
+  );
 }
 
+export function createEditDateColumn2(
+  param,
+  columnKey,
+  label,
+  formValues,
+  setFormValues,
+  excludeHoliday,
+  myRenderDay,
+) {
+  const { renderedCellValue, cell, table, column, row } = param;
+  const [dateVal, setDateVal] = useState(null);
+
+  const cellval = cell.getValue();
+  useEffect(() => {
+    if (cellval instanceof Date) {
+      setDateVal(cellval);
+    } else {
+      setDateVal(new Date(cellval));
+    }
+  }, [cellval]);
+
+  return (
+    <>
+      <DatePickerInput
+        valueFormat="DD-MM-YYYY"
+        name={columnKey}
+        firstDayOfWeek={0}
+        size="xs"
+        value={dateVal}
+        withCellSpacing={false}
+        excludeDate={excludeHoliday}
+        renderDay={myRenderDay}
+        // dropdownType="modal"
+        style={{ zIndex: 9999 }}
+        onChange={(newValue) => {
+          const updatedFormValues = { ...formValues };
+          const updatedContracts = [...updatedFormValues.contracts];
+          const newDate = new Date(newValue);
+          // setVal(newDate);
+          setDateVal(newDate);
+          if (isNaN(newDate.getTime())) {
+            // Casting failed, set the value to the error message
+            updatedContracts[row.index] = {
+              ...updatedContracts[row.index],
+              [columnKey]: 'Invalid date',
+            };
+          } else {
+            updatedContracts[row.index] = {
+              ...updatedContracts[row.index],
+              [columnKey]: newDate,
+            };
+          }
+          updatedFormValues.contracts = updatedContracts;
+
+          setFormValues(updatedFormValues);
+        }}
+        // Add any additional props or styling as needed
+      />
+    </>
+  );
+}
 export default function EditIsActiveCell(param, formValues, setFormValues) {
   const { cell } = param;
   const [cellval, setCellValue] = useState(cell.getValue());
   const theme = useMantineTheme();
-
+  const { value, handleOnChange, handleBlur } = useEdit(param);
   return (
     <>
       {cellval ? (
@@ -252,30 +288,9 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
         </Container>
       ) : (
         <Switch
-          checked={cellval}
+          checked={value}
           onChange={(event) => {
-            setCellValue(event.currentTarget.checked);
-            const updatedFormValues = { ...formValues };
-            let updatedContracts;
-            if (event.currentTarget.checked) {
-              updatedContracts = updatedFormValues.contracts.map(
-                (contract, index) => {
-                  if (index === cell.row.index) {
-                    return { ...contract, IsActive: true };
-                  } else {
-                    return { ...contract, IsActive: false };
-                  }
-                },
-              );
-            } else {
-              updatedContracts = [...updatedFormValues.contracts];
-              updatedContracts[cell.row.index] = {
-                ...updatedContracts[cell.row.index],
-                IsActive: event.currentTarget.checked,
-              };
-            }
-            updatedFormValues.contracts = updatedContracts;
-            setFormValues(updatedFormValues);
+            handleOnChange(event.currentTarget.checked);
           }}
           color="teal"
           size="md"
@@ -298,34 +313,5 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
         />
       )}
     </>
-  );
-}
-
-export function EditContractModalContent(
-  params,
-  subject = 'Edit Contract Detail',
-) {
-  const { internalEditComponents, table, row } = params;
-  return (
-    <Paper style={{ height: '360px' }}>
-      <Title order={5}>{subject}</Title>
-      <Grid gutter="md">
-        {internalEditComponents.map((component, index) =>
-          index === 0 ? null : (
-            <Grid.Col span={6} key={index} mt={'10px'}>
-              {component.props.cell.column.columnDef.header}
-              {component}
-            </Grid.Col>
-          ),
-        )}
-      </Grid>
-      <Flex
-        justify="flex-end"
-        mt={'30px'}
-        style={{ position: 'absolute', bottom: '20px', right: '20px' }}
-      >
-        <MRT_EditActionButtons row={row} table={table} variant="text" />
-      </Flex>
-    </Paper>
   );
 }

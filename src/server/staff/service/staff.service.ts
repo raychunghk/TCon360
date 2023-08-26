@@ -22,15 +22,15 @@ export class StaffService {
     try {
       const staffId = contract.staffId; // Retrieve the staffId from the contract object
 
-       await this.prisma.staffContract.updateMany({
-      where: {
-        staffId: staffId,
-        IsActive: true, // Only update active contracts
-      },
-      data: {
-        IsActive: false,
-      },
-    });
+      await this.prisma.staffContract.updateMany({
+        where: {
+          staffId: staffId,
+          IsActive: true, // Only update active contracts
+        },
+        data: {
+          IsActive: false,
+        },
+      });
       const createdContract = await this.prisma.staffContract.create({
         data: {
           ...contract,
@@ -55,7 +55,17 @@ export class StaffService {
       if (!existingContract) {
         throw new NotFoundException('Staff contract not found');
       }
-
+      if (updateStaffContractDto.IsActive) {
+        await this.prisma.staffContract.updateMany({
+          where: {
+            staffId: existingContract.staffId,
+            IsActive: true, // Only update active contracts
+          },
+          data: {
+            IsActive: false,
+          },
+        });
+      }
       const updatedContract = await this.prisma.staffContract.update({
         where: { id },
         data: updateStaffContractDto,
@@ -117,7 +127,7 @@ export class StaffService {
                 ContractStartDate: contract.ContractStartDate,
                 ContractEndDate: contract.ContractEndDate,
                 AnnualLeave: contract.AnnualLeave,
-                IsActive: contract.id === contractId,
+                IsActive: contract.IsActive,
               },
             })),
           },

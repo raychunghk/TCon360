@@ -64,7 +64,6 @@ import {
   setDatepickerPlDay,
 } from 'components/util/leaverequest.util';
 import CreateContractForm from './createContractForm';
-import ContractTable from './ContractTable';
 require('dotenv').config();
 
 export default function EditStaff() {
@@ -81,12 +80,13 @@ export default function EditStaff() {
   const [formValues, setFormValues] = useState(staffModel);
   const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState('Sucess');
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
-
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('Sucess');
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
@@ -136,7 +136,9 @@ export default function EditStaff() {
       [event.target.name]: val,
     });
   };
-
+  const handleCreateNewContract = () => {
+    getStaffData();
+  };
   const onSubmit = async () => {
     setSubmitting(true);
 
@@ -196,80 +198,82 @@ export default function EditStaff() {
   if (!user) {
     //router.push('/');
   }
+  const handleFormToggle = () => {
+    setCreateModalOpen(!createModalOpen);
+  };
   return (
     <Layout home>
       <Head>
-        <title>Edit Staff Information</title>
+        <title>User Information</title>
       </Head>
-      {user ? (
-        <>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <MyCard title="Staff Info" cardwidth={800}>
-              <Grid pb={20} pt={10}>
-                {inputFields.map((field) => (
-                  <Grid.Col span={4} key={field.name}>
-                    {field.type === 'text' && (
-                      <TextInput
-                        label={field.label}
-                        placeholder={field.label}
-                        name={field.name}
-                        onChange={handleInputChange}
-                        disabled={!editing}
-                        value={formValues[field.name]}
-                      />
-                    )}
-                  </Grid.Col>
-                ))}
-                {publicHolidays && (
-                  <ContractTable
-                    formValues={formValues}
-                    setFormValues={setFormValues}
-                    setModalOpen={setModalOpen}
-                    setModalContent={setModalContent}
-                    getStaffData={getStaffData}
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <MyCard title="Staff Info" cardwidth={800}>
+          {/* <StaffFormGrid
+            formValues={formValues}
+            handleInputChange={handleInputChange}
+            editing={editing}
+          /> */}
+          <Grid pb={20} pt={10}>
+            {inputFields.map((field) => (
+              <Grid.Col span={4} key={field.name}>
+                {field.type === 'text' && (
+                  <TextInput
+                    label={field.label}
+                    placeholder={field.label}
+                    name={field.name}
+                    onChange={handleInputChange}
+                    disabled={!editing}
+                    value={formValues[field.name]}
                   />
                 )}
-              </Grid>
-              <Card.Section
-                bg="indigo.2"
-                py="md"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                }}
-              >
-                <Button
-                  type="submit"
-                  maw={250}
-                  radius="md"
-                  color="blue"
-                  disabled={!editing || submitting}
-                >
-                  Save
-                </Button>
-                <Button
-                  type="button"
-                  maw={250}
-                  radius="md"
-                  color="cyan"
-                  disabled={!editing || submitting}
-                  onClick={getStaffData}
-                >
-                  test
-                </Button>
-              </Card.Section>
-            </MyCard>
-          </form>
-          <MyModal
-            open={modalOpen}
-            onClose={handleModalClose}
-            msg={modalContent}
-          />
-          <Code>{JSON.stringify(formValues, null, 2)}</Code>{' '}
-        </>
-      ) : null}
+              </Grid.Col>
+            ))}
+            {publicHolidays && <MantineReactTable table={table} />}
+          </Grid>
+          <Card.Section
+            bg="indigo.2"
+            py="md"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <Button
+              type="submit"
+              maw={250}
+              radius="md"
+              color="blue"
+              disabled={!editing || submitting}
+            >
+              Save
+            </Button>
+            <Button
+              type="button"
+              maw={250}
+              radius="md"
+              color="cyan"
+              disabled={!editing || submitting}
+              onClick={getStaffData}
+            >
+              test
+            </Button>
+          </Card.Section>
+        </MyCard>
+      </form>
+      <button onClick={handleFormToggle}>Open Form</button>
+      <CreateContractForm
+        open={createModalOpen}
+        onClose={handleFormToggle}
+        onSubmit={handleCreateNewContract}
+        staff={staff}
+        modalcallback={{ setModalOpen, setModalContent }}
+      />
+      <MyModal open={modalOpen} onClose={handleModalClose} msg={modalContent} />
+
+      <Code>{JSON.stringify(formValues, null, 2)}</Code>
       {/* <Code>{JSON.stringify(publicHolidays)}</Code>
       <Code>{JSON.stringify(calendarEvents)}</Code> */}
     </Layout>
