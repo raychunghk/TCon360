@@ -33,6 +33,7 @@ import {
   clearAllState,
   setUser,
   setStaff,
+  setBasepath,
 } from 'pages/reducers/calendarReducer';
 import { PublicHolidaysContext } from 'pages/_app';
 import { setPublicHolidays } from 'pages/reducers/calendarReducer';
@@ -63,6 +64,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
       destroyCookie(null, 'token');
       dispatch(setUser(null));
       dispatch(clearAllState());
+      dispatch(setBasepath(basepath));
       // handleSignout();
     } else {
       if (session?.user) {

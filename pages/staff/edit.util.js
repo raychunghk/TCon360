@@ -69,16 +69,6 @@ export const inputFields = [
     type: 'text',
   },
   {
-    label: 'Department',
-    name: 'Department',
-    type: 'text',
-  },
-  {
-    label: 'Post unit',
-    name: 'PostUnit',
-    type: 'text',
-  },
-  {
     label: 'Manager name',
     name: 'ManagerName',
     type: 'text',
@@ -93,6 +83,16 @@ export const inputFields = [
     name: 'ManagerEmail',
     type: 'text',
     subtype: 'email',
+  },
+  {
+    label: 'Department',
+    name: 'Department',
+    type: 'text',
+  },
+  {
+    label: 'Post unit',
+    name: 'PostUnit',
+    type: 'text',
   },
 
   {
@@ -141,11 +141,12 @@ export const staffModel = {
   StaffName: '',
   AgentName: '',
   StaffCategory: '',
-  Department: '',
-  PostUnit: '',
   ManagerName: '',
   ManagerTitle: '',
   ManagerEmail: '',
+  Department: '',
+  PostUnit: '',
+
   contracts: [
     {
       id: null,

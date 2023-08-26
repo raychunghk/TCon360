@@ -13,7 +13,7 @@ const initialState = {
   publicHolidays: [],
   formType: null,
   selectedDatesCount: 0,
-  basepath: '',
+  basepath: null,
   authtoken: '',
   user: null,
   staffVacation: { total: 0, used: 0, balance: 0 },

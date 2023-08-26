@@ -14,6 +14,8 @@ import {
   Modal,
   Switch,
   NumberInput,
+  Header,
+  Group,
   useMantineTheme,
   Stack,
   Flex,
@@ -42,6 +44,7 @@ import {
   setUser,
   setStaff,
   setPublicHolidays,
+  setBasepath,
 } from 'pages/reducers/calendarReducer';
 import { useForm } from '@mantine/form';
 import { Param } from '@nestjs/common';
@@ -113,6 +116,7 @@ export default function EditStaff() {
 
   useEffect(() => {
     getStaffData();
+    dispatch(setBasepath(basepath));
     setDatepickerPlDay(publicHolidays);
   }, [publicHolidays]);
   const handleModalClose = () => {
@@ -123,13 +127,13 @@ export default function EditStaff() {
     {
       accessorKey: 'id',
       header: 'ID',
-      size: 60,
+      size: 80,
       enableEditing: false,
     },
     {
       accessorKey: 'ContractStartDate',
-      header: 'Contract Start Date',
-
+      header: <div style={{ whiteSpace: 'pre-line' }}>Contract start date</div>,
+      size: 150,
       Edit: (param) =>
         createEditDateColumn(
           param,
@@ -145,8 +149,8 @@ export default function EditStaff() {
     },
     {
       accessorKey: 'ContractEndDate',
-      header: 'Contract End Date',
-
+      header: <div style={{ whiteSpace: 'pre-line' }}>Contract end date</div>,
+      size: 150,
       Edit: (param) =>
         createEditDateColumn(
           param,
@@ -162,7 +166,7 @@ export default function EditStaff() {
 
     {
       accessorKey: 'AnnualLeave',
-      header: 'Annual leave',
+      header: <div style={{ whiteSpace: 'pre-line' }}>Annual leaves</div>,
       size: 100,
 
       Edit: (param) => AnnualLeaveEditor(param, formValues, setFormValues),
@@ -170,7 +174,7 @@ export default function EditStaff() {
     },
     {
       accessorKey: 'IsActive',
-      header: 'Is Active',
+      header: 'Status',
       size: 100,
       enableEditing: true,
       Cell: (param) => (
@@ -201,40 +205,6 @@ export default function EditStaff() {
         setModalContent(contractResponse.data.message);
         setModalOpen(true);
       }
-      // if (contract.length > 0) {
-      //   const contractStartDate = contract[0].ContractStartDate;
-      //   const contractEndDate = contract[0].ContractEndDate;
-
-      //   const updatecontract = {
-      //     ContractStartDate:
-      //       typeof contractStartDate === 'string'
-      //         ? new Date(contractStartDate)
-      //         : contractStartDate,
-      //     ContractEndDate:
-      //       typeof contractEndDate === 'string'
-      //         ? new Date(contractEndDate)
-      //         : contractEndDate,
-      //     AnnualLeave: contract[0].AnnualLeave,
-      //     IsActive: contract[0].IsActive,
-      //   };
-      //   console.log('update value from formvalues', updatecontract);
-
-      //   const contractResponse = await axios.put(apiurl, updatecontract);
-      //   if (contractResponse.status === 200) {
-      //     // Call getStaffData() to refresh the staff data
-      //     setModalContent('Staff contract updated successfully');
-      //     setModalOpen(true);
-      //     await getStaffData();
-      //   } else {
-      //     // Display error message using Mantine modal
-      //     setModalContent(contractResponse.data.message);
-      //     setModalOpen(true);
-      //   }
-      // }
-      // Handle the response and perform necessary actions
-      // ...
-
-      // Exit editing mode
     } catch (error) {
       // Handle error
       setModalContent(error.message);
@@ -265,14 +235,20 @@ export default function EditStaff() {
       enableColumnResizing: true,
       enableEditing: true,
       renderTopToolbarCustomActions: () => (
-        <Button
-          color="secondary"
-          variant="filled"
-          onClick={() => setCreateModalOpen(true)}
-        >
-          Create New Account
-        </Button>
+        <Group height={{ base: 45, md: 50 }} p="sx">
+          <Button
+            color="secondary"
+            variant="filled"
+            onClick={() => setCreateModalOpen(true)}
+          >
+            Create New Account
+          </Button>
+          <Text fw={500}>Manage Staff Contract Period and Annual Leaves</Text>
+        </Group>
       ),
+      mantineTableBodyCellProps: {
+        sx: { padding: '0.35rem 0.5rem !Important', textAlign: 'left' },
+      },
       mantineEditTextInputProps: ({ cell }) => ({
         onBlur: (event) => {},
       }),
@@ -438,6 +414,8 @@ export default function EditStaff() {
         open={createModalOpen}
         onClose={handleFormToggle}
         onSubmit={handleCreateNewContract}
+        staff={staff}
+        modalcallback={{ setModalOpen, setModalContent }}
       />
       <MyModal open={modalOpen} onClose={handleModalClose} msg={modalContent} />
 

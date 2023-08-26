@@ -1,46 +1,87 @@
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Grid,
   Col,
-  TextInput,
   NumberInput,
   Switch,
   Dialog,
   Paper,
   Container,
+  Text,
+  Code,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import MyCard from 'components/MyCard';
 import { excludeHoliday } from 'components/util/leaverequest.util';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 interface CreateModalProps {
   onClose: () => void;
   onSubmit: () => void;
   open: boolean;
+  staff: any;
+  modalcallback: any;
 }
 export default function createContractForm({
   open,
   onClose,
   onSubmit,
+  staff,
+  modalcallback,
 }: CreateModalProps) {
-  const { register, handleSubmit } = useForm();
-  const [contract, setContract] = useState([
-    {
-      id: null,
-      ContractStartDate: new Date(),
-      ContractEndDate: new Date(),
-      AnnualLeave: 0,
-      IsActive: false,
-    },
-  ]);
+  const { basepath } = useSelector((state) => ({
+    basepath: state.calendar.basepath,
+  }));
 
-  const submit = (data) => {
+  const { register, handleSubmit } = useForm();
+  const [contract, setContract] = useState({
+    id: null,
+    ContractStartDate: new Date(),
+    ContractEndDate: new Date(),
+    AnnualLeave: 0,
+    IsActive: false,
+    staff,
+  });
+  useEffect(() => {
+    console.log('staff', staff);
+    if (staff) setContract({ ...contract, staffId: staff.id, staff });
+  }, [staff, basepath]);
+
+  const submit = async (data) => {
     // Handle form submission
     console.log(data);
     console.log(contract);
-    onClose();
-    onSubmit();
+    console.log('basepath', basepath);
+    try {
+      const response = await axios.post(
+        `${basepath}/api/staff/createcontract`,
+        {
+          ContractStartDate: contract.ContractStartDate,
+          ContractEndDate: contract.ContractEndDate,
+          AnnualLeave: contract.AnnualLeave,
+          staffId: staff.id,
+          IsActive: contract.IsActive,
+        },
+      );
+      if (response.status >= 200 && response.status < 300) {
+        console.log('New contract created:', response.data);
+        // Handle successful response
+        modalcallback.setModalOpen(true);
+        modalcallback.setModalContent('New Contract Created!');
+        onClose();
+        onSubmit();
+        // Handle successful response
+      } else {
+        throw new Error('Failed to create contract');
+      }
+
+      // console.log('New contract created:', response.data);
+    } catch (error) {
+      console.error('Error creating contract:', error);
+      // Handle error
+    }
   };
   const handleDateInputSelect = (date, stateobj) => {
     console.log('handle date input select', date);
@@ -60,6 +101,10 @@ export default function createContractForm({
       [event.target.name]: val,
     });
   };
+  if (!staff) {
+    return <Text>...Loading</Text>;
+  }
+
   return (
     <>
       <Dialog opened={open} size={'500px'} mah={'900px'} withBorder={true}>
@@ -98,14 +143,23 @@ export default function createContractForm({
                     name="annualLeave"
                     label="Annual Leave"
                     required
-                    onChange={handleInputChange}
+                    onChange={(_annauleave) => {
+                      setContract({ ...contract, AnnualLeave: _annauleave });
+                    }}
                   />
                 </Col>
                 <Col span={6}>
+                  <Text>Is Active</Text>
                   <Switch
                     name="isActive"
                     label="Is Active"
-                    onChange={handleInputChange}
+                    onChange={(evt) => {
+                      console.log('event?', evt);
+                      setContract({
+                        ...contract,
+                        IsActive: evt.target.checked,
+                      });
+                    }}
                   />
                 </Col>
               </Grid>
@@ -113,6 +167,7 @@ export default function createContractForm({
             <button type="submit">Submit</button>
           </MyCard>
         </form>
+        <Code>{JSON.stringify(contract, null, 2)}</Code>
       </Dialog>
     </>
   );

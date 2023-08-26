@@ -19,7 +19,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { StaffService } from './service/staff.service';
-import { Prisma, Staff } from '@prisma/client';
+import { Prisma, Staff, StaffContract } from '@prisma/client';
 //import LeaveRequestService from '../leaverequest/service/leaverequest.service';
 import { StaffFilesService } from '../shared/staffFiles.service';
 import { createReadStream } from 'fs';
@@ -114,6 +114,13 @@ export class StaffController {
       console.log(error);
       throw error;
     }
+  }
+
+  @Post('createcontract')
+  async createContract(
+    @Body() contract: Prisma.StaffContractUncheckedCreateInput,
+  ) {
+    return this.staffService.createContract(contract);
   }
   @Get('download/:id')
   async download(@Param('id') staffFileId: number, @Res() res: Response) {

@@ -16,7 +16,33 @@ import { UpdateStaffDto } from 'src/customDto/customDTOs';
 @Injectable()
 export class StaffService {
   constructor(@Inject(PrismaService) private prisma: PrismaService) {}
+  private readonly logger = new Logger(StaffService.name);
 
+  async createContract(contract: Prisma.StaffContractUncheckedCreateInput) {
+    try {
+      const staffId = contract.staffId; // Retrieve the staffId from the contract object
+
+       await this.prisma.staffContract.updateMany({
+      where: {
+        staffId: staffId,
+        IsActive: true, // Only update active contracts
+      },
+      data: {
+        IsActive: false,
+      },
+    });
+      const createdContract = await this.prisma.staffContract.create({
+        data: {
+          ...contract,
+        },
+      });
+      this.logger.log('New staff contract created:', createdContract);
+      return createdContract;
+    } catch (error) {
+      this.logger.error('Error creating staff contract:', error);
+      throw error;
+    }
+  }
   async updateStaffContract(
     id: number,
     updateStaffContractDto: Prisma.StaffContractUpdateInput,
