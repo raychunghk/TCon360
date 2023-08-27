@@ -28,6 +28,7 @@ import axios from 'axios';
 
 import { Provider } from 'react-redux';
 import { store } from './reducers/store';
+import { ModalsProvider } from '@mantine/modals';
 
 // Create a context for publicholidays
 export const PublicHolidaysContext = createContext(null);
@@ -120,9 +121,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               theme={{ colorScheme: 'light' }}
               withGlobalStyles
               withNormalizeCSS
-            >  
-              <Component {...pageProps} basepath={basepath} token={token} />
-              <Notifications />
+            >
+              {' '}
+              <ModalsProvider>
+                <Component {...pageProps} basepath={basepath} token={token} />
+                <Notifications />
+              </ModalsProvider>
             </MantineProvider>
           </PublicHolidaysContext.Provider>
         </ColorSchemeProvider>

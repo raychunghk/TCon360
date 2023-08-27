@@ -21,7 +21,7 @@ import {
   NumberInput,
 } from '@mantine/core';
 import bg from 'public/images/loginbg1.webp';
-import StaffFormGrid from '../../components/StaffFormGrid';
+
 import Head from 'next/head';
 import { basepath } from '/global';
 import Link from 'next/link';
@@ -86,6 +86,19 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function SignupPage() {
+  interface iStaffModel {
+    StaffName: string;
+    AgentName: string;
+    StaffCategory: string;
+    Department: string;
+    PostUnit: string;
+    ManagerName: string;
+    ManagerTitle: string;
+    ManagerEmail: string;
+    ContractStartDate: String | null;
+    ContractEndDate: String | null;
+    AnnualLeave: String;
+  }
   const staffModel = {
     StaffName: '',
     AgentName: '',
@@ -94,17 +107,10 @@ export default function SignupPage() {
     PostUnit: '',
     ManagerName: '',
     ManagerTitle: '',
-    ManagerEmail: 'manager@1.com',
-    contracts: {
-      create: [
-        {
-          ContractStartDate: null,
-          ContractEndDate: null,
-          AnnualLeave: 10,
-          IsActive: true,
-        },
-      ],
-    },
+    ManagerEmail: '',
+    ContractStartDate: null,
+    ContractEndDate: null,
+    AnnualLeave: 10,
   };
 
   const [formValues, setFormValues] = useState(staffModel);
@@ -127,10 +133,15 @@ export default function SignupPage() {
         return;
       }
     }
+    const errors = await form.validate();
+    console.log('set active step error', errors);
+    if (form.validate().hasErrors) {
+      return;
+    }
     setActive((current) => {
-      if (form.validate().hasErrors) {
-        return current;
-      }
+      // if (form.validate().hasErrors) {
+      //   return current;
+      // }
       return current < 3 ? current + 1 : current;
     });
   };
@@ -156,16 +167,16 @@ export default function SignupPage() {
 
   const form = useForm({
     initialValues: { ...formValues, username, password, email },
-    validate: async (values) => {
+    validate: (values) => {
       if (active === 0) {
-        const isValid = await validateStep0(values.username, values.email);
-        if (!isValid) {
-          return {
-            username: 'Username or email already exists',
-            email: 'Username or email already exists',
-          };
-        }
-        return {
+        // const isValid = await validateStep0(values.username, values.email);
+        // if (!isValid) {
+        //   return {
+        //     username: 'Username or email already exists',
+        //     email: 'Username or email already exists',
+        //   };
+        // }
+        const rtn = {
           username:
             values.username.trim().length < 6
               ? 'Username must include at least 6 characters'
@@ -176,8 +187,9 @@ export default function SignupPage() {
               : null,
           email: /^\S+@\S+$/.test(values.email) ? null : 'Invalid email',
         };
+        return rtn;
       } else if (active === 1) {
-        const errors: Partial<StaffModel> = {};
+        const errors: Partial<iStaffModel> = {};
         if (!values.StaffName) {
           errors.StaffName = 'Staff Name is required';
         }
@@ -193,20 +205,17 @@ export default function SignupPage() {
         if (!values.PostUnit) {
           errors.PostUnit = 'Post Unit is required';
         }
-
-        if (!values.contracts[0].AnnualLeave) {
+        if (!values.AnnualLeave) {
           errors.AnnualLeave = 'AnnualLeave is required';
         }
-        if (
-          values.contracts[0].ContractEndDate <=
-          values.contracts[0].ContractStartDate
-        ) {
+        if (values.ContractEndDate <= values.ContractStartDate) {
           errors.ContractEndDate =
             'Contract end date should be later than Contract start date';
         }
+        console.log(`error on step ${active}`, errors);
         return errors;
       } else if (active === 2) {
-        const errors: Partial<StaffModel> = {};
+        const errors: Partial<iStaffModel> = {};
 
         if (!values.ManagerName) {
           errors.ManagerName = 'Manager Name is required';
@@ -464,21 +473,21 @@ export default function SignupPage() {
                         label: 'Contract Start Date',
                         placeholder: 'Contract Start Date',
                         name: 'ContractStartDate',
-                        value: formValues.contracts[0].ContractStartDate,
+                        value: formValues.ContractStartDate,
                         type: 'datetime', // Add a type property to identify datetime inputs
                       },
                       {
                         label: 'Contract End Date',
                         placeholder: 'Contract End Date',
                         name: 'ContractEndDate',
-                        value: formValues.contracts[0].ContractEndDate,
+                        value: formValues.ContractEndDate,
                         type: 'datetime', // Add a type property to identify datetime inputs
                       },
                       {
                         label: 'Total Annual Leave',
                         placeholder: 'Total Annual Leave',
                         name: 'AnnualLeave',
-                        value: formValues.contracts[0].AnnualLeave,
+                        value: formValues.AnnualLeave,
                         type: 'number',
                       },
                     ].map(({ label, placeholder, name, value, type }) => (

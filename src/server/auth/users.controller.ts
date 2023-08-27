@@ -13,6 +13,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { Prisma, User } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
+import { signupUserDTO } from 'src/customDto/customDTOs';
 
 interface LoginDto {
   identifier: string;
@@ -55,7 +56,7 @@ export class UsersController {
   }
   @Post('user/signup')
   //async signUp(@Request() req) {
-  async signUp(@Body() user: Prisma.UserCreateInput) {
+  async signUp(@Body() user: signupUserDTO) {
     //const user = req.body;
 
     try {

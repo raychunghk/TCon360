@@ -23,13 +23,15 @@ interface CreateModalProps {
   open: boolean;
   staff: any;
   modalcallback: any;
+  setCreateModalOpen: any;
 }
-export default function createContractForm({
+export default function CreateContractForm({
   open,
   onClose,
   onSubmit,
   staff,
   modalcallback,
+  setCreateModalOpen,
 }: CreateModalProps) {
   const { basepath } = useSelector((state) => ({
     basepath: state.calendar.basepath,
@@ -70,7 +72,8 @@ export default function createContractForm({
         // Handle successful response
         modalcallback.setModalOpen(true);
         modalcallback.setModalContent('New Contract Created!');
-        onClose();
+        //onClose();
+        setCreateModalOpen(!open);
         onSubmit();
         // Handle successful response
       } else {
@@ -167,7 +170,7 @@ export default function createContractForm({
             <button type="submit">Submit</button>
           </MyCard>
         </form>
-        <Code>{JSON.stringify(contract, null, 2)}</Code>
+        {/* <Code>{JSON.stringify(contract, null, 2)}</Code> */}
       </Dialog>
     </>
   );

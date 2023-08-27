@@ -54,4 +54,22 @@ export class UpdateStaffDto {
   @IsInt()
   contractId?: number | null;
 }
- 
+export class signupUserDTO {
+  email: string;
+  password: string;
+  username: string;
+  staff: {
+    StaffName: string;
+    AgentName: string;
+    StaffCategory: string;
+    Department: string;
+    PostUnit: string;
+    ManagerName: string;
+    ManagerTitle: string;
+    ManagerEmail: string;
+    ContractStartDate: string;
+    ContractEndDate: string;
+    AnnualLeave: number;
+  };
+  staffId: number | null;
+}

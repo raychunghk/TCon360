@@ -4,44 +4,18 @@ import { useForm as useHookForm } from 'react-hook-form';
 import { parseCookies } from 'nookies';
 import axios from 'axios';
 import Head from 'next/head';
-import {
-  TextInput,
-  Grid,
-  Button,
-  Text,
-  Code,
-  Card,
-  Modal,
-  Switch,
-  NumberInput,
-  Header,
-  Group,
-  useMantineTheme,
-  Stack,
-  Flex,
-  Title,
-  Paper,
-} from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { TextInput, Grid, Button, Text, Code, Card } from '@mantine/core';
+
 import { useRouter } from 'next/router';
-import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+
 import Layout from '../../components/layout';
 import MyCard from '../../components/MyCard';
-import {
-  MantineReactTable,
-  useMantineReactTable,
-  type MRT_ColumnDef,
-  type MRT_Row,
-  type MRT_TableOptions,
-  MRT_EditActionButtons,
-} from 'mantine-react-table';
+
 import MyModal from '../../components/MyModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { basepath } from '/global';
 import UserStyle from '../../styles/User.module.css';
 import {
-  clearAllState,
-  setUser,
   setStaff,
   setPublicHolidays,
   setBasepath,
@@ -50,20 +24,9 @@ import { useForm } from '@mantine/form';
 import { Param } from '@nestjs/common';
 import { usePublicHolidays } from './usePublicHolidays';
 import { format } from 'date-fns';
-import EditIsActiveCell, {
-  AnnualLeaveEditor,
-  DateCell,
-  EditContractModalContent,
-  createEditDateColumn,
-  inputFields,
-  staffModel,
-} from './edit.util';
-import {
-  excludeHoliday,
-  myRenderDay,
-  setDatepickerPlDay,
-} from 'components/util/leaverequest.util';
-import CreateContractForm from './createContractForm';
+import { inputFields, staffModel } from './edit.util';
+import { setDatepickerPlDay } from 'components/util/leaverequest.util';
+
 import ContractTable from './ContractTable';
 require('dotenv').config();
 

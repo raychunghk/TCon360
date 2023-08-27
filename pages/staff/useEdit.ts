@@ -5,7 +5,7 @@ import {
   MRT_TableInstance,
 } from 'mantine-react-table';
 import { useState } from 'react';
-
+//https://github.com/KevinVandy/mantine-react-table/discussions/8?sort=new?sort=new
 type MantineTableCellProps<TData extends Record<string, any>> = {
   cell: MRT_Cell<TData>;
   column: MRT_Column<TData>;

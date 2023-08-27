@@ -21,16 +21,17 @@ export class StaffService {
   async createContract(contract: Prisma.StaffContractUncheckedCreateInput) {
     try {
       const staffId = contract.staffId; // Retrieve the staffId from the contract object
-
-      await this.prisma.staffContract.updateMany({
-        where: {
-          staffId: staffId,
-          IsActive: true, // Only update active contracts
-        },
-        data: {
-          IsActive: false,
-        },
-      });
+      if (contract.IsActive) {
+        await this.prisma.staffContract.updateMany({
+          where: {
+            staffId: staffId,
+            IsActive: true, // Only update active contracts
+          },
+          data: {
+            IsActive: false,
+          },
+        });
+      }
       const createdContract = await this.prisma.staffContract.create({
         data: {
           ...contract,
@@ -98,6 +99,15 @@ export class StaffService {
       return new PrismaClient();
     } else {
       return this.prisma;
+    }
+  }
+
+  async deleteContract(id: number): Promise<void> {
+    try {
+      await this.prisma.staffContract.delete({ where: { id } });
+    } catch (error) {
+      Logger.log('error', error);
+      throw new NotFoundException('Contract not found');
     }
   }
   async getStaffById(_id: number): Promise<Staff> {

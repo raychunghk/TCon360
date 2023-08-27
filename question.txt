@@ -1,69 +1,56 @@
-use this mantine-react-table column config as reference.
 
-create another config object for the column "ContractStartDate Date()"
+The object is a payload data 
 
-The datatype is date object, 
-render the "Edit" using DatePickerInput , render "Cell" using <Text> and use datefns to format the date as "yyyy-MMM-dd"
-
-column config:
+ generate a interface type accordingly.
 ```
 {
-      accessorKey: 'AnnualLeave',
-      header: 'Annual leave',
-      size: 100,
+  email: "2@2.com",
+  password: "admin",
+  username: "222222",
+  staff: {
+    StaffName: "sdf",
+    AgentName: "111111",
+    StaffCategory: "sdf",
+    Department: "sdf",
+    PostUnit: "TS3",
+    ManagerName: "sdf",
+    ManagerTitle: "1",
+    ManagerEmail: "1@a.com",
+    ContractStartDate: "2023-07-31T16:00:00.000Z",
+    ContractEndDate: "2023-08-30T16:00:00.000Z",
+    AnnualLeave: 10,
+  },
+}
+```
+The destructure and extract and assign value to 3 objects according to below prisma models 
+```
+model Staff {
+  id            Int    @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName   String
+  ManagerTitle  String
+  ManagerEmail  String}
 
-      Edit: (param) => {
-        const { renderedCellValue, cell, table, column, row } = param;
-        const editingRow = table.getState().editingRow;
-        const cellval = param.cell.getValue();
-        if (editingRow !== null && row.id == editingRow.id) {
-          return (
-            <>
-              <NumberInput
-                value={cellval}
-                onChange={(newValue) => {
-                  const updatedFormValues = { ...formValues };
-                  const updatedContracts = [...updatedFormValues.contracts]; // Create a copy of the contracts array
-                  updatedContracts[row.index] = {
-                    ...updatedContracts[row.index],
-                    AnnualLeave: Number(newValue),
-                  }; // Update the specific contract object
-                  updatedFormValues.contracts = updatedContracts; // Replace the contracts array in the formValues object
-                  setFormValues(updatedFormValues);
-                }}
-                // Add any additional props or styling as needed
-              />
-            </>
-          );
-        }
 
-        return <Text>{renderedCellValue}</Text>;
-      },
+model StaffContract {
+  id                Int      @id @default(autoincrement())
+  ContractStartDate DateTime
+  ContractEndDate   DateTime
+  AnnualLeave       Int
+  IsActive Boolean @default(false) // New field to indicate the active contract
+}
 
-
-    ```
-
-    state val:
-    ```
-     const staffModel = {
-    StaffName: '',
-    AgentName: '',
-    StaffCategory: '',
-    Department: '',
-    PostUnit: '',
-    ManagerName: '',
-    ManagerTitle: '',
-    ManagerEmail: '',
-    contracts: [
-      {
-        id: null,
-        ContractStartDate: new Date(),
-        ContractEndDate: new Date(),
-        AnnualLeave: 0,
-        IsActive: false,
-      },
-    ],
-    userId: '',
-    id: null,
-  };
-  const [formValues, setFormValues] = useState(staffModel);
+model User {
+  id            String      @id @default(cuid())
+  username      String?     @unique
+  name          String? <--use staffname
+  email         String?     @unique
+ 
+ 
+  password      String
+}
+```

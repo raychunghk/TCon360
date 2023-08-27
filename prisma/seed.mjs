@@ -115,19 +115,9 @@ SELECT
   sc.AnnualLeave,
   sc.id AS contractId 
 FROM Staff AS s
-LEFT JOIN (
-  SELECT
-    staffId,
-    ContractStartDate,
-    ContractEndDate,
-    AnnualLeave,
-    id
-  FROM StaffContract
-  WHERE IsActive = 1
-  ORDER BY ContractStartDate
-  LIMIT 1
-) AS sc ON s.id = sc.staffId;
-
+LEFT JOIN StaffContract AS sc ON s.id = sc.staffId
+WHERE  sc.IsActive = 1
+ORDER BY sc.ContractStartDate
     `;
   await createView(viewname, createViewSQL);
 }

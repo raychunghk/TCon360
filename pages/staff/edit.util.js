@@ -168,9 +168,7 @@ export function DateCell({ cell }) {
 export function createEditDateColumn(
   param,
   columnKey,
-  label,
-  formValues,
-  setFormValues,
+
   excludeHoliday,
   myRenderDay,
 ) {
@@ -196,7 +194,7 @@ export function createEditDateColumn(
         size="xs"
         value={new Date(value)}
         withCellSpacing={false}
-        excludeDate={excludeHoliday}
+        // excludeDate={excludeHoliday}
         renderDay={myRenderDay}
         // dropdownType="modal"
         style={{ zIndex: 9999 }}
@@ -212,67 +210,6 @@ export function createEditDateColumn(
   );
 }
 
-export function createEditDateColumn2(
-  param,
-  columnKey,
-  label,
-  formValues,
-  setFormValues,
-  excludeHoliday,
-  myRenderDay,
-) {
-  const { renderedCellValue, cell, table, column, row } = param;
-  const [dateVal, setDateVal] = useState(null);
-
-  const cellval = cell.getValue();
-  useEffect(() => {
-    if (cellval instanceof Date) {
-      setDateVal(cellval);
-    } else {
-      setDateVal(new Date(cellval));
-    }
-  }, [cellval]);
-
-  return (
-    <>
-      <DatePickerInput
-        valueFormat="DD-MM-YYYY"
-        name={columnKey}
-        firstDayOfWeek={0}
-        size="xs"
-        value={dateVal}
-        withCellSpacing={false}
-        excludeDate={excludeHoliday}
-        renderDay={myRenderDay}
-        // dropdownType="modal"
-        style={{ zIndex: 9999 }}
-        onChange={(newValue) => {
-          const updatedFormValues = { ...formValues };
-          const updatedContracts = [...updatedFormValues.contracts];
-          const newDate = new Date(newValue);
-          // setVal(newDate);
-          setDateVal(newDate);
-          if (isNaN(newDate.getTime())) {
-            // Casting failed, set the value to the error message
-            updatedContracts[row.index] = {
-              ...updatedContracts[row.index],
-              [columnKey]: 'Invalid date',
-            };
-          } else {
-            updatedContracts[row.index] = {
-              ...updatedContracts[row.index],
-              [columnKey]: newDate,
-            };
-          }
-          updatedFormValues.contracts = updatedContracts;
-
-          setFormValues(updatedFormValues);
-        }}
-        // Add any additional props or styling as needed
-      />
-    </>
-  );
-}
 export default function EditIsActiveCell(param, formValues, setFormValues) {
   const { cell } = param;
   const [cellval, setCellValue] = useState(cell.getValue());
@@ -296,7 +233,7 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
           size="md"
           label={cellval ? 'Active' : 'Inactive'}
           thumbIcon={
-            cellval ? (
+            value ? (
               <IconCheck
                 size="0.8rem"
                 color={theme.colors.teal[theme.fn.primaryShade()]}
@@ -315,3 +252,29 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
     </>
   );
 }
+export  function EditContractModalContent(params, subject = 'Edit Contract Detail') {
+    const { internalEditComponents, table, row } = params;
+
+    return (
+      <Paper style={{ height: '360px' }}>
+        <Title order={5}>{subject}</Title>
+        <Grid gutter="md">
+          {internalEditComponents.map((component, index) =>
+            index === 0 ? null : (
+              <Grid.Col span={6} key={index} mt={'10px'}>
+                {component.props.cell.column.columnDef.header}
+                {component}
+              </Grid.Col>
+            ),
+          )}
+        </Grid>
+        <Flex
+          justify="flex-end"
+          mt={'30px'}
+          style={{ position: 'absolute', bottom: '20px', right: '20px' }}
+        >
+          <MRT_EditActionButtons row={row} table={table} variant="text" />
+        </Flex>
+      </Paper>
+    );
+  }

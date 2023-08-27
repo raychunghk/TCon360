@@ -1,4 +1,15 @@
-import { Button, Flex, Grid, Group, Paper, Text, Title } from '@mantine/core';
+import {
+  Button,
+  Flex,
+  Grid,
+  Group,
+  Paper,
+  Text,
+  Title,
+  Tooltip,
+  ActionIcon,
+} from '@mantine/core';
+import { ModalsProvider, modals } from '@mantine/modals';
 import { useSelector } from 'react-redux';
 import EditIsActiveCell, {
   AnnualLeaveEditor,
@@ -15,6 +26,7 @@ import {
 } from 'mantine-react-table';
 import axios from 'axios';
 import CreateContractForm from './createContractForm';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 
 export default function ContractTable({
   formValues,
@@ -55,9 +67,7 @@ export default function ContractTable({
             createEditDateColumn(
               param,
               'ContractStartDate',
-              'Contract Start Date',
-              formValues,
-              setFormValues,
+
               excludeHoliday,
               myRenderDay,
             ),
@@ -74,10 +84,7 @@ export default function ContractTable({
             createEditDateColumn(
               param,
               'ContractEndDate',
-              'Contract End Date',
-              formValues,
-              setFormValues,
-              excludeHoliday,
+
               myRenderDay,
             ),
           Cell: DateCell,
@@ -142,33 +149,55 @@ export default function ContractTable({
     // Handle saving the edited row here
   };
 
-  function EditContractModalContent(params, subject = 'Edit Contract Detail') {
-    const { internalEditComponents, table, row } = params;
+  const openDeleteConfirmModal = (row) => {
+    modals.openConfirmModal({
+      title: 'Are you sure you want to delete this contract record?',
+      opend: true,
+      children: (
+        <Text>
+          Are you sure you want to delete Contrat: {row.original.id} ? This
+          action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
 
-    return (
-      <Paper style={{ height: '360px' }}>
-        <Title order={5}>{subject}</Title>
-        <Grid gutter="md">
-          {internalEditComponents.map((component, index) =>
-            index === 0 ? null : (
-              <Grid.Col span={6} key={index} mt={'10px'}>
-                {component.props.cell.column.columnDef.header}
-                {component}
-              </Grid.Col>
-            ),
-          )}
-        </Grid>
-        <Flex
-          justify="flex-end"
-          mt={'30px'}
-          style={{ position: 'absolute', bottom: '20px', right: '20px' }}
-        >
-          <MRT_EditActionButtons row={row} table={table} variant="text" />
-        </Flex>
-      </Paper>
-    );
-  }
+      onConfirm: () => {
+        deletecontract(row.original.id);
+      },
+    });
+  };
+  const deletecontract = async (contractId) => {
+    // const { values, exitEditingMode } = row;
+    // const contractId = values.id;
 
+    try {
+      // Send a request to delete the contract
+      //const apiurl = `${basepath}/api/staff/deletecontract/${contractId}`;
+      //const response = await axios.delete(apiurl);
+      // const response = await fetch(apiUrl, {
+      //   method: 'GET',
+      // });
+      // const url = `${basepath}/api/staff/hello/${contractId}`;
+      const apiUrl = `${basepath}/api/staff/contract/${contractId}`;
+      const response = await axios.delete(apiUrl);
+      console.log('response', response);
+      if (response.status === 200) {
+        // Call getStaffData() to refresh the staff data
+        setModalContent('Staff contract deleted successfully');
+        setModalOpen(true);
+        await getStaffData();
+      } else {
+        // Display error message using Mantine modal
+        setModalContent(response.data.message);
+        setModalOpen(true);
+      }
+    } catch (error) {
+      // Handle error
+      setModalContent(error.message);
+      setModalOpen(true);
+    }
+  };
   const table =
     publicHolidays &&
     useMantineReactTable({
@@ -211,6 +240,28 @@ export default function ContractTable({
           minHeight: '200px',
         },
       },
+      renderRowActions: ({ row, table }) => {
+        const IsActive = row.original.IsActive;
+        return (
+          <Flex gap="sx">
+            <Tooltip label="Edit">
+              <ActionIcon onClick={() => table.setEditingRow(row)}>
+                <IconEdit />
+              </ActionIcon>
+            </Tooltip>
+            {!IsActive && (
+              <Tooltip label="Delete">
+                <ActionIcon
+                  color="red"
+                  onClick={() => openDeleteConfirmModal(row)}
+                >
+                  <IconTrash />
+                </ActionIcon>
+              </Tooltip>
+            )}
+          </Flex>
+        );
+      },
       // displayColumnDefOptions: {
       //   'mrt-row-actions': {
       //     header: 'Edit', //change "Actions" to "Edit"
@@ -246,10 +297,9 @@ export default function ContractTable({
         onSubmit={handleCreateNewContract}
         staff={staff}
         modalcallback={{ setModalOpen, setModalContent }}
-        editing={editing}
         setCreateModalOpen={setCreateModalOpen}
       />{' '}
-      <button onClick={handleFormToggle}>Open Form</button>
+      {/* <button onClick={handleFormToggle}>Open Form</button> */}
     </>
   );
 }

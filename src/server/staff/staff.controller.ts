@@ -69,6 +69,18 @@ export class StaffController {
       return { error: 'Failed to update contracts' };
     }
   }
+
+  @Get('hello/:id')
+  getHello(@Param('id') id: string): string {
+    this.staffService.deleteContract(parseInt(id));
+    return `hello ${id}`;
+  }
+  @Delete('contract/:cid')
+  async deleteContract3(@Param('cid') cid: string) {
+    const id = parseInt(cid);
+    return this.staffService.deleteContract(id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
