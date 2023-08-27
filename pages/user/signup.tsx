@@ -146,7 +146,22 @@ export default function SignupPage() {
     });
   };
   //let publicholidays;
-  useEffect(() => {}, []);
+  useEffect(() => {
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        nextStep();
+      }
+    }
+
+    // Add event listener to form inputs
+    document.addEventListener('keypress', handleKeyPress);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('keypress', handleKeyPress);
+    };
+  }, []);
   // const nextStep = () =>
   //   setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
