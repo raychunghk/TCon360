@@ -1,4 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
+import {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 import { useRouter } from 'next/router';
 import { useSession, SessionProvider } from 'next-auth/react';
 import UserStyle from '../../styles/User.module.css';
@@ -19,6 +25,7 @@ import {
   Notification,
   Stepper,
   NumberInput,
+  Kbd,
 } from '@mantine/core';
 import bg from 'public/images/loginbg1.webp';
 
@@ -36,6 +43,7 @@ import {
 import Signupcard from '../../components/Signupcard';
 import { handleLoginSuccess } from './handleLoginSuccess';
 import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 import {
   excludeHoliday,
   myRenderDay,
@@ -123,6 +131,13 @@ export default function SignupPage() {
   const [active, setActive] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
+  const inputRefs = useRef([]);
+  const publicholidays = useContext(PublicHolidaysContext);
+
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  const mainpage = '/';
+
   const nextStep = async () => {
     if (active === 0) {
       const isValid = await validateStep0(
@@ -139,46 +154,48 @@ export default function SignupPage() {
       return;
     }
     setActive((current) => {
-      // if (form.validate().hasErrors) {
-      //   return current;
-      // }
       return current < 3 ? current + 1 : current;
     });
   };
-  //let publicholidays;
-  useEffect(() => {
-    function handleKeyPress(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        nextStep();
-      }
-    }
-
-    // Add event listener to form inputs
-    document.addEventListener('keypress', handleKeyPress);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      document.removeEventListener('keypress', handleKeyPress);
-    };
-  }, []);
-  // const nextStep = () =>
-  //   setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
 
-  const { data: session, status } = useSession();
-  const loading = status === 'loading';
-  const mainpage = '/';
-  const publicholidays = useContext(PublicHolidaysContext);
+  useEffect(() => {
+    if (active >= 1) {
+      inputRefs.current[0]?.focus();
+    }
+  }, [active]);
+  const Step1inputFields = [
+    {
+      component: TextInput,
+      label: 'Email Address',
+      placeholder: 'username@department.gov.hk',
+      value: email,
+      onChange: (event) => setEmail(event.target.value),
+      name: 'email',
+    },
+    {
+      component: TextInput,
+      label: 'User Name',
+      placeholder: 'User Name',
+      value: username,
+      onChange: (event) => setUsername(event.target.value),
+      name: 'username',
+    },
+    {
+      component: PasswordInput,
+      label: 'Password',
+      placeholder: 'Your Password',
+      value: password,
+      onChange: (event) => setPassword(event.target.value),
+      name: 'password',
+    },
+  ];
 
+  useHotkeys([['mod+Enter', nextStep]]);
   setPublicHolidays(publicholidays);
-  console.log('publicholidays?', publicholidays);
+
   const maxAge = process.env.TOKEN_MAX_AGE;
-  console.log('_maxage?', maxAge);
-  console.log(maxAge);
-  console.log('formValues');
-  console.log(formValues);
 
   const form = useForm({
     initialValues: { ...formValues, username, password, email },
@@ -251,17 +268,6 @@ export default function SignupPage() {
     },
   });
 
-  useEffect(() => {
-    const getStaffData = async () => {
-      try {
-        setEditing(true);
-      } catch (error) {
-        console.error('Failed to fetch staff data:', error);
-      }
-    };
-
-    getStaffData();
-  }, []);
   const handleInputChange = (event) => {
     console.log(form);
     console.log('handle change');
@@ -314,6 +320,7 @@ export default function SignupPage() {
   if (loading) {
     return <p>Loading...</p>;
   }
+  const formKeydown = () => {};
   const handleStepClick = (stepIndex) => {
     // Perform validation before switching to Step 1
     console.log('stepIndex', stepIndex);
@@ -360,6 +367,10 @@ export default function SignupPage() {
       return false;
     }
   };
+
+  //const onKeyDown = useHotkeys([['mod+Enter', nextStep]]);
+  const hotkeyConfig = [['mod+Enter', nextStep]];
+
   return (
     <>
       <Head>
@@ -401,37 +412,29 @@ export default function SignupPage() {
                     Enter login details
                   </Title>
                   <Grid pb={10} pt={10}>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Email address"
-                        placeholder="username@department.gov.hk"
-                        size="md"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        {...form.getInputProps('email')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Username"
-                        placeholder="Username"
-                        size="md"
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
-                        {...form.getInputProps('username')}
-                      />{' '}
-                    </Grid.Col>
-                    <Grid.Col span={12}>
-                      <PasswordInput
-                        label="Password"
-                        placeholder="Your password"
-                        size="md"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        {...form.getInputProps('password')}
-                      />
-                    </Grid.Col>
+                    {Step1inputFields.map((field, index) => {
+                      const InputComponent = field.component;
+                      const autoFocus = active === 0 && index === 0;
+                      return (
+                        <Grid.Col span={6} key={field.name}>
+                          <InputComponent
+                            label={field.label}
+                            placeholder={field.placeholder}
+                            size="md"
+                            value={field.value}
+                            onChange={field.onChange}
+                            onKeyDown={getHotkeyHandler(hotkeyConfig)}
+                            {...form.getInputProps(field.name)}
+                            ref={(ref) => {
+                              inputRefs.current[index] = ref;
+                            }}
+                            autoFocus={autoFocus}
+                          />
+                        </Grid.Col>
+                      );
+                    })}
                   </Grid>
+
                   {errorMessage && (
                     <Notification
                       color="red"
@@ -505,44 +508,57 @@ export default function SignupPage() {
                         value: formValues.AnnualLeave,
                         type: 'number',
                       },
-                    ].map(({ label, placeholder, name, value, type }) => (
-                      <Grid.Col span={6}>
-                        {type === 'datetime' ? (
-                          <DatePickerInput
-                            clearable
-                            label={label}
-                            placeholder={placeholder}
-                            name={name}
-                            onChange={handleInputChange} // Replace with appropriate handler
-                            value={value}
-                            valueFormat="DD-MM-YYYY"
-                            firstDayOfWeek={0}
-                            {...form.getInputProps(name)}
-                            excludeDate={excludeHoliday}
-                            renderDay={myRenderDay}
-                          />
-                        ) : type === 'number' ? (
-                          <NumberInput
-                            label={label}
-                            placeholder={placeholder}
-                            name={name}
-                            onChange={handleInputChange} // Replace with appropriate handler
-                            value={value}
-                            min={0}
-                            {...form.getInputProps(name)}
-                          />
-                        ) : (
-                          <TextInput
-                            label={label}
-                            placeholder={placeholder}
-                            name={name}
-                            onChange={handleInputChange}
-                            value={value}
-                            {...form.getInputProps(name)}
-                          />
-                        )}
-                      </Grid.Col>
-                    ))}
+                    ].map(
+                      ({ label, placeholder, name, value, type }, index) => (
+                        <Grid.Col span={6}>
+                          {type === 'datetime' ? (
+                            <DatePickerInput
+                              clearable
+                              label={label}
+                              placeholder={placeholder}
+                              name={name}
+                              onChange={handleInputChange} // Replace with appropriate handler
+                              value={value}
+                              valueFormat="DD-MM-YYYY"
+                              firstDayOfWeek={0}
+                              {...form.getInputProps(name)}
+                              excludeDate={excludeHoliday}
+                              renderDay={myRenderDay}
+                              ref={(ref) => {
+                                inputRefs.current[index] = ref;
+                              }}
+                            />
+                          ) : type === 'number' ? (
+                            <NumberInput
+                              label={label}
+                              placeholder={placeholder}
+                              name={name}
+                              onChange={handleInputChange} // Replace with appropriate handler
+                              value={value}
+                              min={0}
+                              onKeyDown={getHotkeyHandler(hotkeyConfig)}
+                              {...form.getInputProps(name)}
+                              ref={(ref) => {
+                                inputRefs.current[index] = ref;
+                              }}
+                            />
+                          ) : (
+                            <TextInput
+                              label={label}
+                              placeholder={placeholder}
+                              name={name}
+                              onChange={handleInputChange}
+                              value={value}
+                              onKeyDown={getHotkeyHandler(hotkeyConfig)}
+                              {...form.getInputProps(name)}
+                              ref={(ref) => {
+                                inputRefs.current[index] = ref;
+                              }}
+                            />
+                          )}
+                        </Grid.Col>
+                      ),
+                    )}
                   </Grid>
                 </Paper>
               </Stepper.Step>
@@ -574,15 +590,19 @@ export default function SignupPage() {
                         name: 'ManagerEmail',
                         value: formValues.ManagerEmail,
                       },
-                    ].map(({ label, placeholder, name, value }) => (
+                    ].map(({ label, placeholder, name, value }, index) => (
                       <Grid.Col span={6}>
                         <TextInput
                           label={label}
                           placeholder={placeholder}
                           name={name}
                           onChange={handleInputChange}
+                          onKeyDown={getHotkeyHandler(hotkeyConfig)}
                           value={value}
                           {...form.getInputProps(name)}
+                          ref={(ref) => {
+                            inputRefs.current[index] = ref;
+                          }}
                         />
                       </Grid.Col>
                     ))}
@@ -681,7 +701,7 @@ export default function SignupPage() {
               )}
               {active !== 3 && (
                 <Button variant="light" onClick={nextStep}>
-                  Next step
+                  Next step (Ctrl+Enter)
                 </Button>
               )}
               {active === 3 && (
