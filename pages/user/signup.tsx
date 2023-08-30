@@ -707,18 +707,12 @@ export default function SignupPage() {
               {active === 3 && (
                 <>
                   <Button type="submit">Sign Up</Button>
-                  {/* <Checkbox label="Keep me logged in" size="md" /> */}
+         
                 </>
               )}
             </Group>
 
-            {/* <Button fullWidth mt="xl" size="md" onClick={handleSubmit}>
-              Sign Up
-            </Button> */}
-            {/* <Checkbox label="Keep me logged in" mt="xl" size="md" />
-            <Button fullWidth mt="xl" size="md" type="submit">
-              Sign Up
-            </Button> */}
+         
             <Text align="center" mt="md">
               Already have an account?{' '}
               <Anchor<'a'> href={`${basepath}/login`} weight={700}>

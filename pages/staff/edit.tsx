@@ -1,3 +1,4 @@
+import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
 import createContractForm from './createContractForm';
 import { useForm as useHookForm } from 'react-hook-form';
@@ -20,12 +21,13 @@ import {
   setPublicHolidays,
   setBasepath,
 } from 'pages/reducers/calendarReducer';
-import { useForm } from '@mantine/form';
+import { useForm, yupResolver } from '@mantine/form';
 import { Param } from '@nestjs/common';
-import { usePublicHolidays } from './usePublicHolidays';
+//import { usePublicHolidays } from '. /usePublicHolidays';
+import { usePublicHolidays } from 'components/util/usePublicHolidays';
+import { setDatepickerPlDay } from 'components/util/leaverequest.util';
 import { format } from 'date-fns';
 import { inputFields, staffModel } from './edit.util';
-import { setDatepickerPlDay } from 'components/util/leaverequest.util';
 
 import ContractTable from './ContractTable';
 require('dotenv').config();
@@ -44,7 +46,7 @@ export default function EditStaff() {
   const [formValues, setFormValues] = useState(staffModel);
   const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
-
+  const [errors, setErrors] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('Sucess');
   const { register, handleSubmit, reset } = useHookForm();
@@ -69,6 +71,7 @@ export default function EditStaff() {
         console.log(_staff);
         setFormValues(_staff);
         setEditing(true);
+        form.setValues(_staff);
         dispatch(setStaff(_staff));
       }
     } catch (error) {
@@ -98,16 +101,36 @@ export default function EditStaff() {
       ...formValues,
       [event.target.name]: val,
     });
+    form.setValues({
+      ...formValues,
+      [event.target.name]: val,
+    });
   };
 
-  const onSubmit = async () => {
+  const onSubmit = (values) => {
+    console.log('values para', values);
+    console.log('form errors', form.errors);
+    console.log('form is valid', form.isValid());
+    console.log('submit values', form.values);
+  };
+  const submitform = async () => {
     setSubmitting(true);
-
-    const headers = {
-      Authorization: `Bearer ${tokenCookie}`,
-    };
-
+    console.log('form errors', form.errors);
+    console.log('form is valid', form.isValid());
+    console.log('submit values', form.values);
+    console.log('formvalues', formValues);
     try {
+      await validationSchema.validate(formValues, { abortEarly: false });
+      // Submit the form or perform other actions
+
+      // if (validateResult.hasErrors) {
+      //   setSubmitting(false);
+      //   return;
+      // } else {
+      const headers = {
+        Authorization: `Bearer ${tokenCookie}`,
+      };
+
       const response = await axios.put(
         `${basepath}/api/staff/${formValues.id}`,
         formValues,
@@ -122,39 +145,54 @@ export default function EditStaff() {
       } else {
         console.error('Failed to update staff record:', response);
       }
-    } catch (error) {
-      console.error('Failed to update staff record:', error);
+      setErrors({});
+    } catch (err) {
+      console.error('Failed to update staff record:', err);
+      const newErrors = {};
+      err.inner.forEach((error) => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      setSubmitting(false);
     }
 
     setSubmitting(false);
   };
+  const validationSchema = Yup.object().shape({
+    StaffName: Yup.string().required('Name of Staff is required'),
+    AgentName: Yup.string().required('Name of T-contractor is required'),
+    StaffCategory: Yup.string().required('Staff category is required'),
+    ManagerName: Yup.string().required('Manager name is required'),
+    ManagerTitle: Yup.string().required('Manager title is required'),
+    ManagerEmail: Yup.string()
+      .email('Invalid email format')
+      .required('Manager email is required'),
+    Department: Yup.string().required('Department is required'),
+    PostUnit: Yup.string().required('Post unit is required'),
+  });
 
   const form = useForm({
     initialValues: { ...formValues },
-    validate: (values) => {
-      const errors = {};
+    validateInputOnBlur: true,
+    validate: yupResolver(validationSchema),
+    // validate: (values) => {
+    //   const errors = {};
 
-      inputFields.forEach((field) => {
-        if (!values[field.name]) {
-          errors[field.name] = `${field.label} is required`;
-        } else if (field.type === 'number' && values[field.name] <= 0) {
-          errors[field.name] = `${field.label} must be greater than 0`;
-        } else if (
-          field.type === 'text' &&
-          field.subtype === 'email' &&
-          !/^\S+@\S+$/.test(values[field.name])
-        ) {
-          errors[field.name] = 'Invalid email format';
-        }
-      });
-
-      // if (values.ContractEndDate <= values.ContractStartDate) {
-      //   errors.ContractEndDate =
-      //     'Contract end date should be later than Contract start date';
-      // }
-
-      return errors;
-    },
+    //   inputFields.forEach((field) => {
+    //     if (!values[field.name]) {
+    //       errors[field.name] = `${field.label} is required`;
+    //     } else if (field.type === 'number' && values[field.name] <= 0) {
+    //       errors[field.name] = `${field.label} must be greater than 0`;
+    //     } else if (
+    //       field.type === 'text' &&
+    //       field.subtype === 'email' &&
+    //       !/^\S+@\S+$/.test(values[field.name])
+    //     ) {
+    //       errors[field.name] = 'Invalid email format';
+    //     }
+    //   });
+    //   return errors;
+    // },
   });
   if (!user) {
     //router.push('/');
@@ -166,19 +204,20 @@ export default function EditStaff() {
       </Head>
       {user ? (
         <>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(submitform)}>
+            {/* <form onSubmit={form.onSubmit((values) => submitform(values))}> */}
             <MyCard title="Staff Info" cardwidth={800}>
               <Grid pb={20} pt={10}>
-                {inputFields.map((field) => (
+                {inputFields.map((field, id) => (
                   <Grid.Col span={4} key={field.name}>
                     {field.type === 'text' && (
                       <TextInput
                         label={field.label}
                         placeholder={field.label}
                         name={field.name}
-                        onChange={handleInputChange}
-                        disabled={!editing}
                         value={formValues[field.name]}
+                        onChange={handleInputChange}
+                        error={errors[field.name]}
                       />
                     )}
                   </Grid.Col>
@@ -190,6 +229,7 @@ export default function EditStaff() {
                     setModalOpen={setModalOpen}
                     setModalContent={setModalContent}
                     getStaffData={getStaffData}
+                    edting={editing}
                   />
                 )}
               </Grid>

@@ -34,7 +34,7 @@ export const ampmOptions = [
     label: 'PM',
   },
 ];
-export const ampmOptionsEnd = [
+export const ampmOptionsEndNoDate = [
   {
     value: 'NA',
     label: 'N/A',
@@ -48,7 +48,16 @@ export const ampmOptionsEnd = [
     label: 'AM',
   },
 ];
-
+export const ampmOptionsEnd = [
+  {
+    value: 'AMPM',
+    label: 'Whole day',
+  },
+  {
+    value: 'AM',
+    label: 'AM',
+  },
+];
 const dayStyle = {
   backgroundColor: '#de3184',
   color: 'white',
@@ -204,8 +213,8 @@ export const isPublicHoliday = (date) => {
   const _plday = getPublicHolidays();
   const event = _plday.find((e) => e.StartDate === formattedDate);
   if (event) {
-  //  console.log('event public holiday?');
-   // console.log(event);
+    //  console.log('event public holiday?');
+    // console.log(event);
   }
   return event;
 };
@@ -213,8 +222,7 @@ export const isPublicHoliday = (date) => {
 export const getSummaryByDate = (date) => {
   // const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   const event = isPublicHoliday(date);
- // console.log('event');
-  //console.log(event);
+
   return event ? event.Summary : 'Week End';
 };
 export const myRenderDay = (date) => {
@@ -232,9 +240,9 @@ export const excludeHoliday = (date) => {
   if (date) {
     const isWeekendDay = isWeekend(date);
     const formattedDate = format(date, 'M/d/yyyy');
-    // console.log('formattereddate');
-    //  console.log(formattedDate);
-    const _publicholidays = useContext(PublicHolidaysContext);
+
+    //const _publicholidays = useContext(PublicHolidaysContext);
+    const _publicholidays = getPublicHolidays();
     const isHoliday = _publicholidays.some(
       (holiday) => holiday.StartDate === formattedDate,
     );

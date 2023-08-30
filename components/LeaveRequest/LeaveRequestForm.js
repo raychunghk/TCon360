@@ -1,3 +1,4 @@
+import * as Yup from 'yup';
 import { getToken } from 'next-auth/jwt';
 import { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,8 +17,8 @@ import {
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
-import MyCard from '../../components/MyCard';
-
+import MyCard from 'components/MyCard';
+import { usePublicHolidays } from 'components/util/usePublicHolidays';
 import MyModal from '../../components/MyModal';
 import { format, parseISO, isWeekend } from 'date-fns';
 import { basepath } from '/global';
@@ -34,6 +35,7 @@ import {
   getNextWorkingDate,
   ampmOptions,
   ampmOptionsEnd,
+  ampmOptionsEndNoDate,
   leaveTypes,
 } from '../../components/util/leaverequest.util';
 import {
@@ -42,8 +44,6 @@ import {
   IconCalendarUp,
   IconFileSpreadsheet,
 } from '@tabler/icons-react';
-
-import { PublicHolidaysContext } from '../../pages/_app';
 
 //export default function LeaveRequestForm({ staff, publicholidays }) {
 
@@ -72,11 +72,10 @@ export default function LeaveRequestForm({
 
   console.log('leave Request ID?', leaveRequestId);
 
-  const _publicholidays = useContext(PublicHolidaysContext);
-  const publicholidays = _publicholidays;
-  setPublicHolidays(publicholidays);
+  const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
+  setPublicHolidays(publicHolidays);
   console.log('_public holiday?');
-  console.log(publicholidays);
+  console.log(publicHolidays);
   const title =
     formType === 'create' ? 'Create Leave Request' : 'Edit Leave Request';
   const theme = useMantineTheme();
@@ -84,11 +83,8 @@ export default function LeaveRequestForm({
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
   const [staff, setStaff] = useState(null);
-  const {
-    formState: { errors },
-    reset,
-    handleSubmit,
-  } = useForm();
+  const [errors, setErrors] = useState({});
+  const { reset, handleSubmit } = useForm();
   const newLeaveRequest = {
     title: LeaveRequestPeriod?.title ?? null,
     leavePeriodStart: LeaveRequestPeriod?.start ?? null,
@@ -104,10 +100,10 @@ export default function LeaveRequestForm({
     helper: null,
 
     leaveType: 'vacation',
-    leavePurpose,
+    leavePurpose: 'Vacation',
   };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
-  console.log('publicholidays', publicholidays);
+  console.log('publicHolidays', publicHolidays);
 
   const handleModalClose = () => {
     setModalOpen(false);
@@ -276,6 +272,20 @@ export default function LeaveRequestForm({
 
     setSubmitting(false);
   };
+
+  const validationSchema = Yup.object().shape({
+    leavePurpose: Yup.string().required('Leave Request is required'),
+    leaveType: Yup.string().required('Leave Type is required'),
+    leavePeriodStart: Yup.date().required('Leave period start is required'),
+    AMPMStart: Yup.string().required(
+      'Leave start: AM/PM/Whole day is required',
+    ),
+    // leavePeriodEnd: Yup.date().required('Leave period end is required'),
+    // AMPMEnd: Yup.string().required('Leave end: AM/PM/Whole day is required'),
+    staffSignDate: Yup.date().required('Staff sign date is required'),
+    dateOfReturn: Yup.date().required('Date of Return is required'),
+  });
+
   const onSubmit = async (e) => {
     setSubmitting(true);
 
@@ -287,16 +297,18 @@ export default function LeaveRequestForm({
       AMPMStart: leaveRequest.AMPMStart,
       leaveDays: leaveRequest.leaveDays,
       dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
-      staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
+      //staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
+      staffSignDate: leaveRequest.staffSignDate,
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
-      
+
       contractId: staff.contractId,
     };
     console.log('newdata: ', newData);
     //console.log('original leave start');
     //console.log(leaveRequest.leavePeriodStart);
     try {
+      await validationSchema.validate(leaveRequest, { abortEarly: false });
       const response = await axios[formType === 'create' ? 'post' : 'put'](
         `${basepath}/api/leaverequest/`,
         newData,
@@ -316,14 +328,20 @@ export default function LeaveRequestForm({
         setLeaveRequest({
           ..._data,
         });
+        setErrors({});
         if (fetchEvents) {
           await fetchEvents();
         }
       } else {
         console.error('Failed to create leave request:', response);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      const newErrors = {};
+      err.inner.forEach((error) => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      console.error('err submiting form ', err);
       // Handle error
     }
     setSubmitting(false);
@@ -345,7 +363,25 @@ export default function LeaveRequestForm({
       setLeaveRequest(stateobj);
     }
   };
+  const dtPickerProps = {
+    valueFormat: 'DD-MM-YYYY',
+    firstDayOfWeek: 0,
+    excludeDate: excludeHoliday,
+    renderDay: myRenderDay,
+  };
+  function getDatePickerProps(fieldName) {
+    const dtPickerProps = {
+      valueFormat: 'DD-MM-YYYY',
+      firstDayOfWeek: 0,
+      excludeDate: excludeHoliday,
+      renderDay: myRenderDay,
+      name: fieldName,
+      error: errors[fieldName],
+      value: leaveRequest[fieldName],
+    };
 
+    return dtPickerProps;
+  }
   return (
     <>
       <Head>
@@ -392,7 +428,7 @@ export default function LeaveRequestForm({
               <TextInput
                 id="leavePurpose"
                 name="leavePurpose"
-                label="Leave purpose(optional)"
+                label="Leave purpose"
                 value={leaveRequest.leavePurpose}
                 onChange={(event) => {
                   const updatedLeaveRequest = {
@@ -422,22 +458,14 @@ export default function LeaveRequestForm({
                 clearable
                 label="Leave period start"
                 required
-                name="leavePeriodStart"
-                value={leaveRequest.leavePeriodStart}
                 onChange={(_date) =>
                   handleLeaveStartSelect(_date, {
                     ...leaveRequest,
                     leavePeriodStart: _date,
                   })
                 }
-                valueFormat="DD-MM-YYYY"
-                firstDayOfWeek={0}
-                excludeDate={excludeHoliday}
-                renderDay={myRenderDay}
+                {...getDatePickerProps('leavePeriodStart')}
               />
-              {errors.leavePeriodStart && (
-                <span className="error">Leave period start is required</span>
-              )}{' '}
             </Grid.Col>
             <Grid.Col span={6}>
               <Select
@@ -456,7 +484,6 @@ export default function LeaveRequestForm({
             <Grid.Col span={6}>
               <DatePickerInput
                 label="Leave period end"
-                value={leaveRequest.leavePeriodEnd}
                 minDate={
                   new Date(
                     new Date(leaveRequest.leavePeriodStart).getTime() +
@@ -471,16 +498,17 @@ export default function LeaveRequestForm({
                 }
                 clearable
                 disabled={!leaveRequest.leavePeriodStart}
-                valueFormat="DD-MM-YYYY"
-                firstDayOfWeek={0}
-                excludeDate={excludeHoliday}
-                renderDay={myRenderDay}
+                {...getDatePickerProps('leavePeriodEnd')}
               />
             </Grid.Col>
             <Grid.Col span={6}>
               <Select
                 label="Leave end: AM/PM/Whole day"
-                data={ampmOptionsEnd}
+                data={
+                  leaveRequest.leavePeriodEnd
+                    ? ampmOptionsEnd
+                    : ampmOptionsEndNoDate
+                }
                 value={leaveRequest.AMPMEnd}
                 defaultValue="AMPM"
                 onChange={(value) =>
@@ -510,7 +538,6 @@ export default function LeaveRequestForm({
                 label="Staff sign date"
                 clearable
                 placeholder="Staff sign date"
-                name="staffSignDate"
                 onChange={(_date) =>
                   handleDateInputSelect(_date, {
                     ...leaveRequest,
@@ -519,25 +546,20 @@ export default function LeaveRequestForm({
                     helper: null,
                   })
                 }
-                value={leaveRequest.staffSignDate}
                 defaultDate={new Date()}
+                disabled={!leaveRequest.leavePeriodStart}
                 defaultValue={new Date()}
-                valueFormat="DD-MM-YYYY"
-                firstDayOfWeek={0}
-                excludeDate={excludeHoliday}
-                renderDay={myRenderDay}
+                {...getDatePickerProps('staffSignDate')}
               />
             </Grid.Col>
             <Grid.Col span={6}>
               <DatePickerInput
                 clearable
-                name="dateOfReturn"
+                // name="dateOfReturn"
                 label="Date of Return"
-                value={leaveRequest.dateOfReturn}
-                valueFormat="DD-MM-YYYY"
-                firstDayOfWeek={0}
-                excludeDate={excludeHoliday}
-                renderDay={myRenderDay}
+                disabled={!leaveRequest.leavePeriodStart}
+                // {...dtPickerProps}
+                {...getDatePickerProps('dateOfReturn')}
               />
             </Grid.Col>
             <Grid.Col span={6} display={Flex}>
