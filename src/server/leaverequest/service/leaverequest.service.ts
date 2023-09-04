@@ -35,8 +35,18 @@ export class LeaveRequestService {
     });
     return createdLeaveRequest;
   }
-  getFilePath(filename: string) {
-    return path.resolve(`${__dirname}/../../../../timesheet/${filename}`);
+  // getFilePath(filename: string) {
+  //   return path.resolve(`${__dirname}/../../../../timesheet/${filename}`);
+  // }
+  getFilePath(fileName: string): string {
+    // return path.join(__dirname, '../../timesheet', fileName);
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const rootPath = isDevelopment
+      ? path.resolve('.')
+      : path.resolve(__dirname, '..', '..', '..', '..');
+    const filePath = path.join(rootPath, 'timesheet', fileName);
+    console.log('get file path file name', filePath);
+    return filePath;
   }
   private formatdate(_date): string {
     if (_date) return format(new Date(_date), 'dd/MM/yyyy');
@@ -226,7 +236,7 @@ export class LeaveRequestService {
           );
           console.log('chargable days:');
           console.log(cday);
-          
+
           const rtn = await this.prisma.calendarVacation.create({
             data: {
               VacationDate: element,

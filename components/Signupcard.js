@@ -33,14 +33,12 @@ const SignupCard = ({ title, cols }) => {
       </Card.Section>
 
       <Grid style={{ fontSize: '0.9rem' }} mt={10}>
-        {cols.map(({ label, value, span, valspan }) => (
+        {cols.map(({ label, value, span, valspan }, id) => (
           <>
             <Grid.Col span={span} key={label}>
               <strong>{label}</strong>
             </Grid.Col>
-            <Grid.Col span={valspan} key={label}>
-              {value}
-            </Grid.Col>
+            <Grid.Col span={valspan}>{value}</Grid.Col>
           </>
         ))}
       </Grid>

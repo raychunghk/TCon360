@@ -32,6 +32,7 @@ import {
   // setSelectedDatesCount,
 } from 'pages/reducers/calendarReducer';
 
+
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -70,6 +71,8 @@ export default function LoginPage(props) {
   const dispatch = useDispatch();
   const { classes } = useStyles();
   const router = useRouter();
+    
+  const basepath = router.basePath;
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [loginStatus, setLoginStatus] = useState(null); // add login status state variable
@@ -106,7 +109,8 @@ export default function LoginPage(props) {
   const handleLogin = async (event) => {
     event.preventDefault();
     open();
-    const response = await fetch('/absproxy/5000/api/user/login', {
+    const loginURL = `${basepath}/api/user/login`;
+    const response = await fetch(loginURL, {
       // the URL of your Nest.js API endpoint
       method: 'POST',
       headers: {

@@ -28,6 +28,7 @@ import { AdminModule } from './admin/admin.module';
 
 //import redisStore from 'cache-manager-redis-store';
 import * as redisStore from 'cache-manager-redis-store';
+import { basepath } from 'global';
 @Module({
   /* should pass a NEXT.js server instance
       as the argument to `forRootAsync` */
@@ -49,7 +50,7 @@ import * as redisStore from 'cache-manager-redis-store';
       driver: ApolloDriver,
       emitSchemaFile: true,
       validate: false,
-      path: '/absproxy/5000/graphql',
+      path: `${basepath}/graphql`,
       authChecker: ({ context }, roles) => {
         return true;
       },

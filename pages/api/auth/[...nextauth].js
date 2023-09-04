@@ -4,7 +4,6 @@ import { parseCookies, setCookie } from 'nookies';
 import CredentialsProvider from 'next-auth/providers/credentials';
 // import Providers from "next-auth/providers"
 export const authOptions = {
-  // basePath: '/absproxy/5000/api/auth',
   baseUrl: 'https://code2.raygor.cc/absproxy/5000',
   providers: [
     {
@@ -163,7 +162,6 @@ export const authOptions = {
     jwt: true,
     maxAge: parseInt(process.env.TOKEN_MAX_AGE),
   },
-  // basePath: '/absproxy/5000',
 };
 function logCallback(context, description, ...args) {
   const prefixedDescription = `${context} callback: ${description}`;

@@ -7,6 +7,9 @@ import {
   Req,
   Request,
   UseGuards,
+  Logger,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -81,8 +84,14 @@ export class UsersController {
       );
       return { accessToken };
     } catch (error) {
+      Logger.error('Signup error', error);
       console.log(error);
-      throw error;
+      //console.log(error);
+      throw new HttpException(
+        'An error occurred',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      //throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     // Handle sign-up logic here
   }

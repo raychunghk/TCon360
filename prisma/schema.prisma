@@ -110,17 +110,31 @@ model CalendarVacation {
   leaveRequest LeaveRequest @relation(fields: [LeaveRequestId], references: [id], onDelete: Cascade)
 }
 
-model TimeSheet {
-  id                  Int                 @id @unique @default(autoincrement())
-  StartDate           DateTime
-  EndDate             DateTime
-  TSCalendarID        Int
-  TimeSheetFileName   String?
-  TotalChargeableDay  Decimal             @default(0)
-  TotalChargeableHour Decimal             @default(0)
-  TotalOTHour         Decimal
-  calendar            TimeSheetCalendar[]
-}
+// model TimeSheetCalendar {
+//   id             Int       @id @default(autoincrement())
+//   DayID          Int
+//   CalendarDate   DateTime
+//   TimeSheetID    Int
+//   ChargeableDay  Decimal
+//   ChargeableHour Decimal
+//   Training       Decimal   @default(0)
+//   Vacation       Decimal   @default(0)
+//   PublicHoliday  Decimal   @default(0)
+//   WeekEnd        Decimal   @default(0)
+//   Others         Decimal   @default(0)
+//   timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
+// }
+// model TimeSheet {
+//   id                  Int                 @id @unique @default(autoincrement())
+//   StartDate           DateTime
+//   EndDate             DateTime
+//   TSCalendarID        Int
+//   TimeSheetFileName   String?
+//   TotalChargeableDay  Decimal             @default(0)
+//   TotalChargeableHour Decimal             @default(0)
+//   TotalOTHour         Decimal
+//   calendar            TimeSheetCalendar[]
+// }
 
 model Staff {
   id            Int    @id @default(autoincrement())
@@ -180,21 +194,6 @@ model staffFiles {
   staffId      Int
   LeaveRequest LeaveRequest[]
   staff        Staff          @relation(fields: [staffId], references: [id])
-}
-
-model TimeSheetCalendar {
-  id             Int       @id @default(autoincrement())
-  DayID          Int
-  CalendarDate   DateTime
-  TimeSheetID    Int
-  ChargeableDay  Decimal
-  ChargeableHour Decimal
-  Training       Decimal   @default(0)
-  Vacation       Decimal   @default(0)
-  PublicHoliday  Decimal   @default(0)
-  WeekEnd        Decimal   @default(0)
-  Others         Decimal   @default(0)
-  timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.

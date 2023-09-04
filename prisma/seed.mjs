@@ -65,7 +65,9 @@ async function createViewCalendarIfNotExists() {
         END AS HolidaySummary,
         V.LeaveRequestId,
         LR.staffId,
-        LR.contractId
+       CASE WHEN LR.contractId is null THEN 0 
+       ELSE LR.contractId 
+       END as contractId
       FROM
         CalendarMaster C
       LEFT JOIN

@@ -19,6 +19,7 @@ import {
   Title,
   Text,
   Anchor,
+  LoadingOverlay,
   Group,
   Grid,
   Divider,
@@ -30,7 +31,7 @@ import {
 import bg from 'public/images/loginbg1.webp';
 
 import Head from 'next/head';
-import { basepath } from '/global';
+
 import Link from 'next/link';
 import {
   useForm,
@@ -53,6 +54,7 @@ import { PublicHolidaysContext } from 'pages/_app';
 import { useDispatch, useSelector } from 'react-redux';
 import { UtilsContext } from 'components/util/utilCtx';
 import axios from 'axios';
+import { IconX } from '@tabler/icons';
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -122,20 +124,23 @@ export default function SignupPage() {
   };
 
   const [formValues, setFormValues] = useState(staffModel);
-  const [editing, setEditing] = useState(false);
+
+  const [loading, setLoading] = useState(false); // State to handle loading overlay
   const router = useRouter();
+  const basepath = router.basePath;
   const { classes } = useStyles();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [active, setActive] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
+  const [signUpError, setsignUpError] = useState('');
   const dispatch = useDispatch();
   const inputRefs = useRef([]);
   const publicholidays = useContext(PublicHolidaysContext);
 
   const { data: session, status } = useSession();
-  const loading = status === 'loading';
+  const sessionLoading = status === 'loading';
   const mainpage = '/';
 
   const nextStep = async () => {
@@ -153,9 +158,13 @@ export default function SignupPage() {
     if (form.validate().hasErrors) {
       return;
     }
+
     setActive((current) => {
       return current < 3 ? current + 1 : current;
     });
+    if (active === 3) {
+      handleSubmit(form.values);
+    }
   };
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
@@ -281,7 +290,7 @@ export default function SignupPage() {
   async function handleSubmit(form) {
     // event.preventDefault();
     console.log('form?', form);
-
+    setLoading(true);
     const { email, password, username, ...staff } = form;
     const user = { email, password, username, staff };
     setFormValues({ ...staff });
@@ -311,13 +320,19 @@ export default function SignupPage() {
         window.scrollTo(0, 0);
       } else {
         console.error('Error signing up:', response.statusText);
+        setsignUpError('Fail to Signup:Server error');
+        setLoading(false);
+        return;
       }
     } catch (error) {
-      console.log(error);
+      setsignUpError('Fail to Signup:Server error');
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
-  if (loading) {
+  if (sessionLoading) {
     return <p>Loading...</p>;
   }
   const formKeydown = () => {};
@@ -611,7 +626,19 @@ export default function SignupPage() {
               </Stepper.Step>
               <Stepper.Completed>
                 <Paper shadow="sm" p="md" withBorder>
+                  <LoadingOverlay visible={loading} overlayBlur={2} />
                   <Title order={2}>Please review the signup info:</Title>
+                  {signUpError && (
+                    <Notification
+                      icon={<IconX size="1.2rem" />}
+                      withBorder
+                      color="red"
+                      radius="md"
+                      title="Error"
+                    >
+                      {signUpError}
+                    </Notification>
+                  )}
                   <Signupcard
                     title="User Information"
                     cols={[
@@ -707,12 +734,10 @@ export default function SignupPage() {
               {active === 3 && (
                 <>
                   <Button type="submit">Sign Up</Button>
-         
                 </>
               )}
             </Group>
 
-         
             <Text align="center" mt="md">
               Already have an account?{' '}
               <Anchor<'a'> href={`${basepath}/login`} weight={700}>
