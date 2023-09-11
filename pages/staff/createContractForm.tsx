@@ -11,6 +11,8 @@ import {
   Container,
   Text,
   Code,
+  Modal,
+  Button,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import MyCard from 'components/MyCard';
@@ -110,68 +112,83 @@ export default function CreateContractForm({
 
   return (
     <>
-      <Dialog opened={open} size={'500px'} mah={'900px'} withBorder={true}>
+      {/* <Dialog
+        opened={open}
+        size={'500px'}
+        mah={'900px'}
+        onClose={onClose}
+        withBorder={true}
+        withCloseButton
+      > */}
+      <Modal
+        opened={open}
+        title="Create Contract Term"
+        onClose={function (): void {
+          setCreateModalOpen(!open);
+        }}
+      >
         <form method="post" onSubmit={handleSubmit(submit)}>
-          <MyCard title="Create new staff contract">
-            <Container h={'380px'}>
-              <Grid gutter="md" py={20} mah={'500px'}>
-                <Col span={6}>
-                  <DatePickerInput
-                    name="contractStartDate"
-                    label="Contract Start Date"
-                    required
-                    onChange={(_date) =>
-                      handleDateInputSelect(_date, {
-                        ...contract,
-                        ContractStartDate: _date,
-                      })
-                    }
-                  />
-                </Col>
-                <Col span={6}>
-                  <DatePickerInput
-                    name="contractEndDate"
-                    label="Contract End Date"
-                    required
-                    onChange={(_date) =>
-                      handleDateInputSelect(_date, {
-                        ...contract,
-                        ContractEndDate: _date,
-                      })
-                    }
-                  />
-                </Col>
-                <Col span={6}>
-                  <NumberInput
-                    name="annualLeave"
-                    label="Annual Leave"
-                    required
-                    onChange={(_annauleave) => {
-                      setContract({ ...contract, AnnualLeave: _annauleave });
-                    }}
-                  />
-                </Col>
-                <Col span={6}>
-                  <Text>Is Active</Text>
-                  <Switch
-                    name="isActive"
-                    label="Is Active"
-                    onChange={(evt) => {
-                      console.log('event?', evt);
-                      setContract({
-                        ...contract,
-                        IsActive: evt.target.checked,
-                      });
-                    }}
-                  />
-                </Col>
-              </Grid>
-            </Container>
-            <button type="submit">Submit</button>
-          </MyCard>
+          <Container h={'380px'}>
+            <Grid gutter="md" py={20} mah={'500px'}>
+              <Col span={6}>
+                <DatePickerInput
+                  name="contractStartDate"
+                  label="Contract Start Date"
+                  required
+                  onChange={(_date) =>
+                    handleDateInputSelect(_date, {
+                      ...contract,
+                      ContractStartDate: _date,
+                    })
+                  }
+                />
+              </Col>
+              <Col span={6}>
+                <DatePickerInput
+                  name="contractEndDate"
+                  label="Contract End Date"
+                  required
+                  onChange={(_date) =>
+                    handleDateInputSelect(_date, {
+                      ...contract,
+                      ContractEndDate: _date,
+                    })
+                  }
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  name="annualLeave"
+                  label="Annual Leave"
+                  required
+                  onChange={(_annauleave) => {
+                    setContract({ ...contract, AnnualLeave: _annauleave });
+                  }}
+                />
+              </Col>
+              <Col span={6}>
+                <Text>Is Active</Text>
+                <Switch
+                  name="isActive"
+                  label="Is Active"
+                  onChange={(evt) => {
+                    console.log('event?', evt);
+                    setContract({
+                      ...contract,
+                      IsActive: evt.target.checked,
+                    });
+                  }}
+                />
+              </Col>
+            </Grid>
+          </Container>
+          <Button type="submit" color="secondary" variant="filled">
+            Submit
+          </Button>
         </form>
-        {/* <Code>{JSON.stringify(contract, null, 2)}</Code> */}
-      </Dialog>
+      </Modal>
+      {/* <Code>{JSON.stringify(contract, null, 2)}</Code> */}
+      {/* </Dialog> */}
     </>
   );
 }

@@ -211,14 +211,15 @@ export default function ContractTable({
       onEditingRowCancel: handleEditRowCancel,
       enableColumnResizing: true,
       enableEditing: true,
-      renderTopToolbarCustomActions: () => (
+      renderTopToolbarCustomActions: ({ table }) => (
         <Group h={{ base: 45, md: 50 }} p="sx">
           <Button
             color="secondary"
             variant="filled"
-            onClick={() => setCreateModalOpen(true)}
+            onClick={(e) => handleFormToggle(e)}
+            //     onClick={() => table.setCreatingRow(true)}
           >
-            Create New Account
+            Create New Contract
           </Button>
           <Text fw={500}>Manage Staff Contract Period and Annual Leaves</Text>
         </Group>
