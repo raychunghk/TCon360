@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEdit } from './useEdit';
 import axios from 'axios';
+import * as Yup from 'yup';
 import {
   // MantineReactTable,
   // useMantineReactTable,
@@ -191,7 +192,7 @@ export function createEditDateColumn(
         valueFormat="DD-MM-YYYY"
         name={columnKey}
         firstDayOfWeek={0}
-        size="xs"
+        size="sm"
         value={new Date(value)}
         withCellSpacing={false}
         // excludeDate={excludeHoliday}
@@ -229,14 +230,15 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
           onChange={(event) => {
             handleOnChange(event.currentTarget.checked);
           }}
-          color="teal"
+          onLabel={'Active'}
+          offLabel={'InActive'}
+          color="blue"
           size="md"
-          label={cellval ? 'Active' : 'Inactive'}
           thumbIcon={
             value ? (
               <IconCheck
                 size="0.8rem"
-                color={theme.colors.teal[theme.fn.primaryShade()]}
+                color={theme.colors.blue[theme.fn.primaryShade()]}
                 stroke={3}
               />
             ) : (
@@ -252,29 +254,48 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
     </>
   );
 }
-export  function EditContractModalContent(params, subject = 'Edit Contract Detail') {
-    const { internalEditComponents, table, row } = params;
+export function EditContractModalContent(
+  params,
+  subject = 'Edit Contract Detail',
+) {
+  const { internalEditComponents, table, row } = params;
+  //console.log(internalEditComponents);
+  return (
+    <Paper style={{ height: '450px' }}>
+      <Title order={5}>{subject}</Title>
+      <Grid gutter="md">
+        {internalEditComponents.map((component, index) =>
+          index === 0 ? null : (
+            <Grid.Col span={6} key={index} mt={'10px'}>
+              {component.props.cell.column.columnDef.header}
+              {component}
+            </Grid.Col>
+          ),
+        )}
+      </Grid>
+      <Flex
+        justify="flex-end"
+        mt={'30px'}
+        style={{ position: 'absolute', bottom: '20px', right: '20px' }}
+      >
+        <MRT_EditActionButtons row={row} table={table} variant="text" />
+      </Flex>
+    </Paper>
+  );
+}
 
-    return (
-      <Paper style={{ height: '360px' }}>
-        <Title order={5}>{subject}</Title>
-        <Grid gutter="md">
-          {internalEditComponents.map((component, index) =>
-            index === 0 ? null : (
-              <Grid.Col span={6} key={index} mt={'10px'}>
-                {component.props.cell.column.columnDef.header}
-                {component}
-              </Grid.Col>
-            ),
-          )}
-        </Grid>
-        <Flex
-          justify="flex-end"
-          mt={'30px'}
-          style={{ position: 'absolute', bottom: '20px', right: '20px' }}
-        >
-          <MRT_EditActionButtons row={row} table={table} variant="text" />
-        </Flex>
-      </Paper>
-    );
-  }
+export const validationSchema = Yup.object().shape({
+  id: Yup.number().nullable(),
+  ContractStartDate: Yup.date().required('Contract start date is required'),
+  ContractEndDate: Yup.date()
+    .min(
+      Yup.ref('ContractStartDate'),
+      'Contract end date must be greater than contract start date',
+    )
+    .required('Contract end date is required'),
+  AnnualLeave: Yup.number()
+    .positive('Annual leave must be a positive number')
+    .integer('Annual leave must be an integer')
+    .required('Annual leave is required'),
+  IsActive: Yup.boolean().required('IsActive is required'),
+});

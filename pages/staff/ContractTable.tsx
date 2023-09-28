@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   ActionIcon,
+  useMantineTheme,
 } from '@mantine/core';
 import { ModalsProvider, modals } from '@mantine/modals';
 import { useSelector } from 'react-redux';
@@ -16,6 +17,7 @@ import EditIsActiveCell, {
   DateCell,
   EditContractModalContent,
   createEditDateColumn,
+  validationSchema,
 } from './edit.util';
 import { excludeHoliday, myRenderDay } from 'components/util/leaverequest.util';
 import { useEffect, useState } from 'react';
@@ -42,9 +44,11 @@ export default function ContractTable({
     publicHolidays: state.calendar.publicHolidays,
     basepath: state.calendar.basepath,
   }));
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [columns, setColumns] = useState([]);
   const [originalContracts, setOriginalContracts] = useState([]);
@@ -127,6 +131,7 @@ export default function ContractTable({
       //const apiurl = `${basepath}/api/staff/updatecontracts`;
 
       const contract = formValues.contracts.filter((f) => f.id === values.id);
+      await validationSchema.validate(contract, { abortEarly: false });
       //const contractResponse = await axios.put(apiurl, formValues.contracts);
       const contractResponse = await axios.put(apiurl, values);
       if (contractResponse.status === 200) {
@@ -139,9 +144,15 @@ export default function ContractTable({
         setModalContent(contractResponse.data.message);
         setModalOpen(true);
       }
-    } catch (error) {
+      setErrors({});
+    } catch (err) {
       // Handle error
-      setModalContent(error.message);
+      const newErrors = {};
+      err.inner.forEach((error) => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      setModalContent(err.message);
       setModalOpen(true);
     }
     exitEditingMode();
@@ -152,7 +163,7 @@ export default function ContractTable({
   const openDeleteConfirmModal = (row) => {
     modals.openConfirmModal({
       title: 'Are you sure you want to delete this contract record?',
-      opend: true,
+
       children: (
         <Text>
           Are you sure you want to delete Contrat: {row.original.id} ? This

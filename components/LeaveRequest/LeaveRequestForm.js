@@ -20,6 +20,7 @@ import axios from 'axios';
 import MyCard from 'components/MyCard';
 import { usePublicHolidays } from 'components/util/usePublicHolidays';
 import MyModal from '../../components/MyModal';
+
 import { format, parseISO, isWeekend } from 'date-fns';
 import { basepath } from '/global';
 import Head from 'next/head';
@@ -126,6 +127,13 @@ export default function LeaveRequestForm({
       setLeaveRequest({ ...leaveRequest, staffId: session.user.staff.id });
     }
   }, [session]);
+  const getTextinputProps = (fieldName) => {
+    return {
+      name: fieldName,
+      id: fieldName,
+      error: errors[fieldName],
+    };
+  };
 
   useEffect(() => {
     if (formType === 'edit') {
@@ -382,6 +390,7 @@ export default function LeaveRequestForm({
 
     return dtPickerProps;
   }
+
   return (
     <>
       <Head>
@@ -426,8 +435,10 @@ export default function LeaveRequestForm({
             </Grid.Col>
             <Grid.Col span={6}>
               <TextInput
-                id="leavePurpose"
-                name="leavePurpose"
+                // id="leavePurpose"
+                // name="leavePurpose"
+                // error={errors['leavePurpose']}
+                {...getTextinputProps('leavePurpose')}
                 label="Leave purpose"
                 value={leaveRequest.leavePurpose}
                 onChange={(event) => {
@@ -526,8 +537,7 @@ export default function LeaveRequestForm({
             </Grid.Col>
             <Grid.Col span={6}>
               <TextInput
-                id="leaveDays"
-                name="leaveDays"
+                {...getTextinputProps('leaveDays')}
                 label="Leave Days"
                 value={leaveRequest.leaveDays}
                 readOnly

@@ -11,14 +11,20 @@ import {
   Container,
   Text,
   Code,
+  Title,
   Modal,
   Button,
+  useMantineTheme,
+  Flex,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import MyCard from 'components/MyCard';
 import { excludeHoliday } from 'components/util/leaverequest.util';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { validationSchema } from './edit.util';
+import { IconCheck, IconX } from '@tabler/icons-react';
+
 interface CreateModalProps {
   onClose: () => void;
   onSubmit: () => void;
@@ -38,7 +44,7 @@ export default function CreateContractForm({
   const { basepath } = useSelector((state) => ({
     basepath: state.calendar.basepath,
   }));
-
+  const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
   const [contract, setContract] = useState({
     id: null,
@@ -52,13 +58,14 @@ export default function CreateContractForm({
     console.log('staff', staff);
     if (staff) setContract({ ...contract, staffId: staff.id, staff });
   }, [staff, basepath]);
-
+  const theme = useMantineTheme();
   const submit = async (data) => {
     // Handle form submission
     console.log(data);
     console.log(contract);
     console.log('basepath', basepath);
     try {
+      await validationSchema.validate(contract, { abortEarly: false });
       const response = await axios.post(
         `${basepath}/api/staff/createcontract`,
         {
@@ -77,14 +84,20 @@ export default function CreateContractForm({
         //onClose();
         setCreateModalOpen(!open);
         onSubmit();
+        setErrors({});
         // Handle successful response
       } else {
         throw new Error('Failed to create contract');
       }
 
       // console.log('New contract created:', response.data);
-    } catch (error) {
-      console.error('Error creating contract:', error);
+    } catch (err) {
+      const newErrors = {};
+      err.inner.forEach((error) => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      console.error('Error creating contract:', err);
       // Handle error
     }
   };
@@ -109,7 +122,17 @@ export default function CreateContractForm({
   if (!staff) {
     return <Text>...Loading</Text>;
   }
+  function getDatePickerProps(fieldName) {
+    const dtPickerProps = {
+      valueFormat: 'DD-MM-YYYY',
+      firstDayOfWeek: 0,
 
+      name: fieldName,
+      error: errors[fieldName],
+    };
+
+    return dtPickerProps;
+  }
   return (
     <>
       {/* <Dialog
@@ -122,7 +145,7 @@ export default function CreateContractForm({
       > */}
       <Modal
         opened={open}
-        title="Create Contract Term"
+        title={<Title order={4}>Create Contract Term</Title>}
         onClose={function (): void {
           setCreateModalOpen(!open);
         }}
@@ -132,9 +155,9 @@ export default function CreateContractForm({
             <Grid gutter="md" py={20} mah={'500px'}>
               <Col span={6}>
                 <DatePickerInput
-                  name="contractStartDate"
                   label="Contract Start Date"
                   required
+                  {...getDatePickerProps('ContractStartDate')}
                   onChange={(_date) =>
                     handleDateInputSelect(_date, {
                       ...contract,
@@ -145,15 +168,22 @@ export default function CreateContractForm({
               </Col>
               <Col span={6}>
                 <DatePickerInput
-                  name="contractEndDate"
                   label="Contract End Date"
                   required
+                  {...getDatePickerProps('ContractEndDate')}
+                  minDate={
+                    new Date(
+                      new Date(contract.ContractStartDate).getTime() +
+                        24 * 60 * 60 * 1000,
+                    )
+                  }
                   onChange={(_date) =>
                     handleDateInputSelect(_date, {
                       ...contract,
                       ContractEndDate: _date,
                     })
                   }
+                  disabled={!contract.ContractStartDate}
                 />
               </Col>
               <Col span={6}>
@@ -169,8 +199,11 @@ export default function CreateContractForm({
               <Col span={6}>
                 <Text>Is Active</Text>
                 <Switch
-                  name="isActive"
-                  label="Is Active"
+                  name="IsActive"
+                  onLabel={'Active'}
+                  offLabel={'InActive'}
+                  color="blue"
+                  size="lg"
                   onChange={(evt) => {
                     console.log('event?', evt);
                     setContract({
@@ -178,17 +211,41 @@ export default function CreateContractForm({
                       IsActive: evt.target.checked,
                     });
                   }}
+                  thumbIcon={
+                    contract.IsActive ? (
+                      <IconCheck
+                        size="0.8rem"
+                        color={theme.colors.blue[theme.fn.primaryShade()]}
+                        stroke={3}
+                      />
+                    ) : (
+                      <IconX
+                        size="0.8rem"
+                        color={theme.colors.red[theme.fn.primaryShade()]}
+                        stroke={3}
+                      />
+                    )
+                  }
                 />
               </Col>
             </Grid>
           </Container>
-          <Button type="submit" color="secondary" variant="filled">
-            Submit
-          </Button>
+
+          <Flex justify="flex-end" align="center" direction="row" wrap="wrap">
+            <Button
+              variant="subtle"
+              mr={8}
+              onClick={() => setCreateModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" color="secondary" variant="filled">
+              Submit
+            </Button>
+          </Flex>
         </form>
       </Modal>
       {/* <Code>{JSON.stringify(contract, null, 2)}</Code> */}
-      {/* </Dialog> */}
     </>
   );
 }
