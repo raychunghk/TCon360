@@ -52,6 +52,7 @@ export default function ContractTable({
   const [saving, setSaving] = useState(false);
   const [columns, setColumns] = useState([]);
   const [originalContracts, setOriginalContracts] = useState([]);
+  const [minDate, setMinDate] = useState(null);
   useEffect(() => {
     if (formValues) {
       const newColumns = [
@@ -72,7 +73,6 @@ export default function ContractTable({
               param,
               'ContractStartDate',
 
-              excludeHoliday,
               myRenderDay,
             ),
 
@@ -131,7 +131,7 @@ export default function ContractTable({
       //const apiurl = `${basepath}/api/staff/updatecontracts`;
 
       const contract = formValues.contracts.filter((f) => f.id === values.id);
-      await validationSchema.validate(contract, { abortEarly: false });
+      //await validationSchema.validate(contract, { abortEarly: false });
       //const contractResponse = await axios.put(apiurl, formValues.contracts);
       const contractResponse = await axios.put(apiurl, values);
       if (contractResponse.status === 200) {
@@ -274,17 +274,7 @@ export default function ContractTable({
           </Flex>
         );
       },
-      // displayColumnDefOptions: {
-      //   'mrt-row-actions': {
-      //     header: 'Edit', //change "Actions" to "Edit"
-      //     //use a text button instead of a icon button
-      //     Cell: ({ row, table }) => (
-      //       <Button onClick={() => table.setEditingRow(row)}>
-      //         Edit Customer
-      //       </Button>
-      //     ),
-      //   },
-      // },
+
       state: {
         isLoading: loading,
         isSaving: saving,
@@ -305,13 +295,12 @@ export default function ContractTable({
       <MantineReactTable table={table} />{' '}
       <CreateContractForm
         open={createModalOpen}
-        onClose={handleFormToggle}
+        //  onClose={handleFormToggle}
         onSubmit={handleCreateNewContract}
         staff={staff}
         modalcallback={{ setModalOpen, setModalContent }}
         setCreateModalOpen={setCreateModalOpen}
-      />{' '}
-      {/* <button onClick={handleFormToggle}>Open Form</button> */}
+      />
     </>
   );
 }

@@ -25,8 +25,12 @@ import {
 } from '@mantine/core';
 import { format } from 'date-fns';
 import { DatePickerInput } from '@mantine/dates';
-
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setContractStartDate,
+  setContractEndDate,
+} from 'pages/reducers/calendarReducer';
 
 export function useFetchStaff(staffId) {
   const [staff, setStaff] = useState(null);
@@ -123,7 +127,16 @@ export function AnnualLeaveEditor(param, formValues, setFormValues) {
   //   setLeaveVal(cellval);
   // }, [cellval]);
 
-  return <NumberInput value={value} onChange={handleOnChange} />;
+  return (
+    <NumberInput
+      value={value}
+      onChange={handleOnChange}
+      required
+      min={0}
+      max={200}
+      clampBehavior="strict"
+    />
+  );
 }
 
 export const staffModel = {
@@ -170,11 +183,17 @@ export function createEditDateColumn(
   param,
   columnKey,
 
-  excludeHoliday,
   myRenderDay,
+
+  //  setMindate,
 ) {
   const { renderedCellValue, cell, table, column, row } = param;
   const { value, handleOnChange, handleBlur } = useEdit(param);
+  const { contractStartDate, contractEndDate } = useSelector((state) => ({
+    contractStartDate: state.calendar.contractStartDate,
+    contractEndDate: state.calendar.contractEndDate,
+  }));
+  const dispatch = useDispatch();
   // const [dateVal, setDateVal] = useState(null);
 
   // const cellval = cell.getValue();
@@ -185,13 +204,33 @@ export function createEditDateColumn(
   //     setDateVal(new Date(cellval));
   //   }
   // }, [cellval]);
+  console.log('columnKey', columnKey);
+  function getEditDatePickerProps(fieldName) {
+    const dtPickerProps = {
+      valueFormat: 'DD-MM-YYYY',
+      firstDayOfWeek: 0,
+
+      name: fieldName,
+      //    error: errors[fieldName],
+    };
+
+    return dtPickerProps;
+  }
+  const columnid = column.id;
+  const isContractEndDate = column.id === 'ContractEndDate';
+  const isContractStartDate = column.id === 'ContractStartDate';
+  const _mindate = isContractEndDate
+    ? new Date(new Date(contractStartDate).getTime() + 24 * 60 * 60 * 1000)
+    : null;
+  if (isContractEndDate) console.log('_mindate', _mindate);
 
   return (
     <>
       <DatePickerInput
-        valueFormat="DD-MM-YYYY"
-        name={columnKey}
-        firstDayOfWeek={0}
+        // valueFormat="DD-MM-YYYY"
+        //name={columnKey}
+        ///firstDayOfWeek={0}
+        {...getEditDatePickerProps('ContractStartDate')}
         size="sm"
         value={new Date(value)}
         withCellSpacing={false}
@@ -199,10 +238,18 @@ export function createEditDateColumn(
         renderDay={myRenderDay}
         // dropdownType="modal"
         style={{ zIndex: 9999 }}
-        onChange={(newValue) => {
+        minDate={_mindate}
+        onChange={async (newValue) => {
           const newDate = new Date(newValue);
-
+          console.log('onchange param', param);
+          if (isContractStartDate) {
+            await dispatch(setContractStartDate(newDate));
+          }
+          if (isContractEndDate) {
+            await dispatch(setContractEndDate(newDate));
+          }
           handleOnChange(newDate);
+          //  setMindate(newDate);
           //setFormValues(updatedFormValues);
         }}
         // Add any additional props or styling as needed

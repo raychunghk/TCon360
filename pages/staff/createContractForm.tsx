@@ -26,7 +26,7 @@ import { validationSchema } from './edit.util';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
 interface CreateModalProps {
-  onClose: () => void;
+  // onClose: () => void;
   onSubmit: () => void;
   open: boolean;
   staff: any;
@@ -35,7 +35,7 @@ interface CreateModalProps {
 }
 export default function CreateContractForm({
   open,
-  onClose,
+  //onClose,
   onSubmit,
   staff,
   modalcallback,

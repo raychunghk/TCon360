@@ -17,6 +17,8 @@ const initialState = {
   authtoken: '',
   user: null,
   staffVacation: { total: 0, used: 0, balance: 0 },
+  contractStartDate: null,
+  contractEndDate: null,
 };
 
 export const calendarSlice = createSlice({
@@ -74,6 +76,12 @@ export const calendarSlice = createSlice({
     setstaffVacation: (state, action) => {
       state.staffVacation = action.payload;
     },
+    setContractStartDate: (state, action) => {
+      state.contractStartDate = action.payload;
+    },
+    setContractEndDate: (state, action) => {
+      state.contractEndDate = action.payload;
+    },
 
     clearAllState: () => {
       return initialState;
@@ -100,6 +108,8 @@ export const {
   setUser,
   clearAllState,
   setstaffVacation,
+  setContractStartDate,
+  setContractEndDate,
 } = calendarSlice.actions;
 
 export const calendarReducer = calendarSlice.reducer;

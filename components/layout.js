@@ -47,8 +47,8 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
   const { classes } = useStyles();
-
   const dispatch = useDispatch();
+
   const handleSignout = () => {
     destroyCookie(null, 'token');
     dispatch(clearAllState());
