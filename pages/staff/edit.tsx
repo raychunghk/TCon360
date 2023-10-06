@@ -204,7 +204,7 @@ export default function EditStaff() {
       </Head>
       {user ? (
         <>
-          <form onSubmit={handleSubmit(submitform)}>
+          <form name='frmHeader' onSubmit={handleSubmit(submitform)}>
             {/* <form onSubmit={form.onSubmit((values) => submitform(values))}> */}
             <MyCard title="Staff Info" cardwidth={800}>
               <Grid pb={20} pt={10}>

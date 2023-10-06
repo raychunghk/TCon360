@@ -169,7 +169,8 @@
     "typegraphql-nestjs": "^0.6.0",
     "winston": "^3.8.2",
     "xlsx": "^0.18.5",
-    "yup": "^1.2.0"
+    "yup": "^1.2.0",
+    "zustand": "^4.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",

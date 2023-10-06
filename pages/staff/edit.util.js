@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useEdit } from './useEdit';
 import axios from 'axios';
 import * as Yup from 'yup';
+import useStore from '../reducers/zstore';
 import {
   // MantineReactTable,
   // useMantineReactTable,
@@ -134,7 +135,8 @@ export function AnnualLeaveEditor(param, formValues, setFormValues) {
       required
       min={0}
       max={200}
-      clampBehavior="strict"
+
+      //  clampBehavior="strict"
     />
   );
 }
@@ -179,39 +181,17 @@ export function DateCell({ cell }) {
   return <Text>{val}</Text>;
 }
 
-export function createEditDateColumn(
-  param,
-  columnKey,
-
-  myRenderDay,
-
-  //  setMindate,
-) {
+export function CreateEditDateColumn({ param, columnKey, myRenderDay, error }) {
   const { renderedCellValue, cell, table, column, row } = param;
   const { value, handleOnChange, handleBlur } = useEdit(param);
-  const { contractStartDate, contractEndDate } = useSelector((state) => ({
-    contractStartDate: state.calendar.contractStartDate,
-    contractEndDate: state.calendar.contractEndDate,
-  }));
-  const dispatch = useDispatch();
-  // const [dateVal, setDateVal] = useState(null);
 
-  // const cellval = cell.getValue();
-  // useEffect(() => {
-  //   if (cellval instanceof Date) {
-  //     setDateVal(cellval);
-  //   } else {
-  //     setDateVal(new Date(cellval));
-  //   }
-  // }, [cellval]);
-  console.log('columnKey', columnKey);
+  const dispatch = useDispatch();
+
   function getEditDatePickerProps(fieldName) {
     const dtPickerProps = {
       valueFormat: 'DD-MM-YYYY',
       firstDayOfWeek: 0,
-
       name: fieldName,
-      //    error: errors[fieldName],
     };
 
     return dtPickerProps;
@@ -219,40 +199,56 @@ export function createEditDateColumn(
   const columnid = column.id;
   const isContractEndDate = column.id === 'ContractEndDate';
   const isContractStartDate = column.id === 'ContractStartDate';
-  const _mindate = isContractEndDate
-    ? new Date(new Date(contractStartDate).getTime() + 24 * 60 * 60 * 1000)
-    : null;
-  if (isContractEndDate) console.log('_mindate', _mindate);
+  const constractStartDate = useStore((state) => state.constractStartDate);
+  const constractEndDate = useStore((state) => state.constractEndDate);
+  const contractStartMaxDate = useStore((state) => state.contractStartMaxDate);
+  const contractEndMinDate = useStore((state) => state.contractEndMinDate);
+  const setContractStartDate = useStore((state) => state.setContractStartDate);
+  const setContractEndDate = useStore((state) => state.setContractEndDate);
+  const setContractStartMaxDate = useStore(
+    (state) => state.setContractStartMaxDate,
+  );
+  const setContractEndMinDate = useStore(
+    (state) => state.setContractEndMinDate,
+  );
 
+  useEffect(() => {
+    if (isContractStartDate && !constractStartDate) {
+      setContractStartDate(new Date(value));
+      setContractEndMinDate(new Date(value));
+    }
+    if (isContractEndDate && !constractEndDate) {
+      setContractEndDate(new Date(value));
+      setContractStartMaxDate(new Date(value));
+    }
+  }, [constractStartDate, constractEndDate, value]);
+
+  if (isContractEndDate) console.log('contractEndMinDate', contractEndMinDate);
   return (
     <>
       <DatePickerInput
-        // valueFormat="DD-MM-YYYY"
-        //name={columnKey}
         ///firstDayOfWeek={0}
         {...getEditDatePickerProps('ContractStartDate')}
         size="sm"
+        error={error}
         value={new Date(value)}
         withCellSpacing={false}
         // excludeDate={excludeHoliday}
         renderDay={myRenderDay}
-        // dropdownType="modal"
         style={{ zIndex: 9999 }}
-        minDate={_mindate}
+        minDate={isContractEndDate && contractEndMinDate}
+        maxDate={isContractStartDate && contractStartMaxDate}
         onChange={async (newValue) => {
           const newDate = new Date(newValue);
           console.log('onchange param', param);
           if (isContractStartDate) {
-            await dispatch(setContractStartDate(newDate));
+            setContractStartDate(newDate);
           }
           if (isContractEndDate) {
-            await dispatch(setContractEndDate(newDate));
+            setContractEndDate(newDate);
           }
           handleOnChange(newDate);
-          //  setMindate(newDate);
-          //setFormValues(updatedFormValues);
         }}
-        // Add any additional props or styling as needed
       />
     </>
   );

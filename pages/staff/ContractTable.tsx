@@ -16,7 +16,7 @@ import EditIsActiveCell, {
   AnnualLeaveEditor,
   DateCell,
   EditContractModalContent,
-  createEditDateColumn,
+  CreateEditDateColumn,
   validationSchema,
 } from './edit.util';
 import { excludeHoliday, myRenderDay } from 'components/util/leaverequest.util';
@@ -68,14 +68,14 @@ export default function ContractTable({
             <div style={{ whiteSpace: 'pre-line' }}>Contract start date</div>
           ),
           size: 150,
-          Edit: (param) =>
-            createEditDateColumn(
-              param,
-              'ContractStartDate',
-
-              myRenderDay,
-            ),
-
+          Edit: (param) => (
+            <CreateEditDateColumn
+              param={param}
+              columnKey={'ContractStartDate'} // Fixed the prop name to "columnKey"
+              myRenderDay={myRenderDay}
+              error={errors?.ContractStartDate}
+            />
+          ),
           Cell: DateCell,
         },
         {
@@ -84,13 +84,20 @@ export default function ContractTable({
             <div style={{ whiteSpace: 'pre-line' }}>Contract end date</div>
           ),
           size: 150,
-          Edit: (param) =>
-            createEditDateColumn(
-              param,
-              'ContractEndDate',
+          Edit: (param) => (
+            <CreateEditDateColumn
+              param={param}
+              columnKey={'ContractEndDate'} // Fixed the prop name to "columnKey"
+              myRenderDay={myRenderDay}
+              error={errors?.ContractEndDate}
+            />
+          ),
+          // CreateEditDateColumn(
+          //   param,
+          //   'ContractEndDate',
 
-              myRenderDay,
-            ),
+          //   myRenderDay,
+          // ),
           Cell: DateCell,
         },
 
@@ -292,7 +299,7 @@ export default function ContractTable({
   };
   return (
     <>
-      <MantineReactTable table={table} />{' '}
+      <MantineReactTable table={table} />
       <CreateContractForm
         open={createModalOpen}
         //  onClose={handleFormToggle}
@@ -300,6 +307,7 @@ export default function ContractTable({
         staff={staff}
         modalcallback={{ setModalOpen, setModalContent }}
         setCreateModalOpen={setCreateModalOpen}
+        
       />
     </>
   );

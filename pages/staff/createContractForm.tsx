@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { validationSchema } from './edit.util';
 import { IconCheck, IconX } from '@tabler/icons-react';
-
+import { myRenderDay } from 'components/util/leaverequest.util';
 interface CreateModalProps {
   // onClose: () => void;
   onSubmit: () => void;
@@ -48,8 +48,8 @@ export default function CreateContractForm({
   const { register, handleSubmit } = useForm();
   const [contract, setContract] = useState({
     id: null,
-    ContractStartDate: new Date(),
-    ContractEndDate: new Date(),
+    ContractStartDate: null,
+    ContractEndDate: null,
     AnnualLeave: 0,
     IsActive: false,
     staff,
@@ -59,12 +59,15 @@ export default function CreateContractForm({
     if (staff) setContract({ ...contract, staffId: staff.id, staff });
   }, [staff, basepath]);
   const theme = useMantineTheme();
-  const submit = async (data) => {
+
+  const submitContract = async () => {
+    event.stopPropagation();
     // Handle form submission
-    console.log(data);
+    //console.log(data);
     console.log(contract);
     console.log('basepath', basepath);
     try {
+      setErrors({});
       await validationSchema.validate(contract, { abortEarly: false });
       const response = await axios.post(
         `${basepath}/api/staff/createcontract`,
@@ -98,6 +101,9 @@ export default function CreateContractForm({
       });
       setErrors(newErrors);
       console.error('Error creating contract:', err);
+      modalcallback.setModalContent('Error');
+      modalcallback.setModalOpen(false);
+      return;
       // Handle error
     }
   };
@@ -135,14 +141,6 @@ export default function CreateContractForm({
   }
   return (
     <>
-      {/* <Dialog
-        opened={open}
-        size={'500px'}
-        mah={'900px'}
-        onClose={onClose}
-        withBorder={true}
-        withCloseButton
-      > */}
       <Modal
         opened={open}
         title={<Title order={4}>Create Contract Term</Title>}
@@ -150,12 +148,17 @@ export default function CreateContractForm({
           setCreateModalOpen(!open);
         }}
       >
-        <form method="post" onSubmit={handleSubmit(submit)}>
+        <form
+          method="post"
+          name="frmCreateContract"
+          onSubmit={handleSubmit(submit)}
+        >
           <Container h={'380px'}>
             <Grid gutter="md" py={20} mah={'500px'}>
               <Col span={6}>
                 <DatePickerInput
                   label="Contract Start Date"
+                  renderDay={myRenderDay}
                   required
                   {...getDatePickerProps('ContractStartDate')}
                   onChange={(_date) =>
@@ -169,6 +172,7 @@ export default function CreateContractForm({
               <Col span={6}>
                 <DatePickerInput
                   label="Contract End Date"
+                  renderDay={myRenderDay}
                   required
                   {...getDatePickerProps('ContractEndDate')}
                   minDate={
@@ -190,6 +194,7 @@ export default function CreateContractForm({
                 <NumberInput
                   name="annualLeave"
                   label="Annual Leave"
+                  error={errors['AnnualLeave']}
                   required
                   onChange={(_annauleave) => {
                     setContract({ ...contract, AnnualLeave: _annauleave });
@@ -235,11 +240,18 @@ export default function CreateContractForm({
             <Button
               variant="subtle"
               mr={8}
-              onClick={() => setCreateModalOpen(false)}
+              onClick={() => {
+                setErrors({});
+                setCreateModalOpen(false);
+              }}
             >
               Cancel
             </Button>
-            <Button type="submit" color="secondary" variant="filled">
+            <Button
+              onClick={() => submitContract()}
+              color="secondary"
+              variant="filled"
+            >
               Submit
             </Button>
           </Flex>
