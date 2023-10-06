@@ -118,7 +118,7 @@ export const inputFields = [
     type: 'number',
   },
 ];
-export function AnnualLeaveEditor(param, formValues, setFormValues) {
+export function AnnualLeaveEditor({ param, formValues, setFormValues, error }) {
   const { renderedCellValue, cell, table, column, row } = param;
   // const [leaveVal, setLeaveVal] = useState(cell.getValue());
   // const editingRow = table.getState().editingRow;
@@ -127,7 +127,7 @@ export function AnnualLeaveEditor(param, formValues, setFormValues) {
   // useEffect(() => {
   //   setLeaveVal(cellval);
   // }, [cellval]);
-
+  //console.log(error);
   return (
     <NumberInput
       value={value}
@@ -135,7 +135,7 @@ export function AnnualLeaveEditor(param, formValues, setFormValues) {
       required
       min={0}
       max={200}
-
+      error={error?.AnnualLeave}
       //  clampBehavior="strict"
     />
   );
@@ -179,79 +179,6 @@ export function DateCell({ cell }) {
     val = error.message;
   }
   return <Text>{val}</Text>;
-}
-
-export function CreateEditDateColumn({ param, columnKey, myRenderDay, error }) {
-  const { renderedCellValue, cell, table, column, row } = param;
-  const { value, handleOnChange, handleBlur } = useEdit(param);
-
-  const dispatch = useDispatch();
-
-  function getEditDatePickerProps(fieldName) {
-    const dtPickerProps = {
-      valueFormat: 'DD-MM-YYYY',
-      firstDayOfWeek: 0,
-      name: fieldName,
-    };
-
-    return dtPickerProps;
-  }
-  const columnid = column.id;
-  const isContractEndDate = column.id === 'ContractEndDate';
-  const isContractStartDate = column.id === 'ContractStartDate';
-  const constractStartDate = useStore((state) => state.constractStartDate);
-  const constractEndDate = useStore((state) => state.constractEndDate);
-  const contractStartMaxDate = useStore((state) => state.contractStartMaxDate);
-  const contractEndMinDate = useStore((state) => state.contractEndMinDate);
-  const setContractStartDate = useStore((state) => state.setContractStartDate);
-  const setContractEndDate = useStore((state) => state.setContractEndDate);
-  const setContractStartMaxDate = useStore(
-    (state) => state.setContractStartMaxDate,
-  );
-  const setContractEndMinDate = useStore(
-    (state) => state.setContractEndMinDate,
-  );
-
-  useEffect(() => {
-    if (isContractStartDate && !constractStartDate) {
-      setContractStartDate(new Date(value));
-      setContractEndMinDate(new Date(value));
-    }
-    if (isContractEndDate && !constractEndDate) {
-      setContractEndDate(new Date(value));
-      setContractStartMaxDate(new Date(value));
-    }
-  }, [constractStartDate, constractEndDate, value]);
-
-  if (isContractEndDate) console.log('contractEndMinDate', contractEndMinDate);
-  return (
-    <>
-      <DatePickerInput
-        ///firstDayOfWeek={0}
-        {...getEditDatePickerProps('ContractStartDate')}
-        size="sm"
-        error={error}
-        value={new Date(value)}
-        withCellSpacing={false}
-        // excludeDate={excludeHoliday}
-        renderDay={myRenderDay}
-        style={{ zIndex: 9999 }}
-        minDate={isContractEndDate && contractEndMinDate}
-        maxDate={isContractStartDate && contractStartMaxDate}
-        onChange={async (newValue) => {
-          const newDate = new Date(newValue);
-          console.log('onchange param', param);
-          if (isContractStartDate) {
-            setContractStartDate(newDate);
-          }
-          if (isContractEndDate) {
-            setContractEndDate(newDate);
-          }
-          handleOnChange(newDate);
-        }}
-      />
-    </>
-  );
 }
 
 export default function EditIsActiveCell(param, formValues, setFormValues) {
@@ -338,6 +265,7 @@ export const validationSchema = Yup.object().shape({
     .required('Contract end date is required'),
   AnnualLeave: Yup.number()
     .positive('Annual leave must be a positive number')
+    .nonNullable('Annual leave cannot be null')
     .integer('Annual leave must be an integer')
     .required('Annual leave is required'),
   IsActive: Yup.boolean().required('IsActive is required'),

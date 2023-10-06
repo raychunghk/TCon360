@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
-import createContractForm from './createContractForm';
+import createContractForm from './CreateContractForm';
 import { useForm as useHookForm } from 'react-hook-form';
 import { parseCookies } from 'nookies';
 import axios from 'axios';
@@ -204,7 +204,7 @@ export default function EditStaff() {
       </Head>
       {user ? (
         <>
-          <form name='frmHeader' onSubmit={handleSubmit(submitform)}>
+          <form name="frmHeader" onSubmit={handleSubmit(submitform)}>
             {/* <form onSubmit={form.onSubmit((values) => submitform(values))}> */}
             <MyCard title="Staff Info" cardwidth={800}>
               <Grid pb={20} pt={10}>

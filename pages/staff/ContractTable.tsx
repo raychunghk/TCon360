@@ -16,7 +16,6 @@ import EditIsActiveCell, {
   AnnualLeaveEditor,
   DateCell,
   EditContractModalContent,
-  CreateEditDateColumn,
   validationSchema,
 } from './edit.util';
 import { excludeHoliday, myRenderDay } from 'components/util/leaverequest.util';
@@ -27,8 +26,9 @@ import {
   useMantineReactTable,
 } from 'mantine-react-table';
 import axios from 'axios';
-import CreateContractForm from './createContractForm';
+import CreateContractForm from './CreateContractForm';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { ContractDatePicker } from './ContractDatePicker';
 
 export default function ContractTable({
   formValues,
@@ -69,7 +69,7 @@ export default function ContractTable({
           ),
           size: 150,
           Edit: (param) => (
-            <CreateEditDateColumn
+            <ContractDatePicker
               param={param}
               columnKey={'ContractStartDate'} // Fixed the prop name to "columnKey"
               myRenderDay={myRenderDay}
@@ -85,19 +85,14 @@ export default function ContractTable({
           ),
           size: 150,
           Edit: (param) => (
-            <CreateEditDateColumn
+            <ContractDatePicker
               param={param}
               columnKey={'ContractEndDate'} // Fixed the prop name to "columnKey"
               myRenderDay={myRenderDay}
               error={errors?.ContractEndDate}
             />
           ),
-          // CreateEditDateColumn(
-          //   param,
-          //   'ContractEndDate',
 
-          //   myRenderDay,
-          // ),
           Cell: DateCell,
         },
 
@@ -106,7 +101,14 @@ export default function ContractTable({
           header: <div style={{ whiteSpace: 'pre-line' }}>Annual leaves</div>,
           size: 100,
 
-          Edit: (param) => AnnualLeaveEditor(param, formValues, setFormValues),
+          Edit: (param) => (
+            <AnnualLeaveEditor
+              param={param}
+              formValues={formValues}
+              setFormValues={setFormValues}
+              error={errors}
+            />
+          ),
           enableEditing: true,
         },
         {
@@ -135,35 +137,36 @@ export default function ContractTable({
     try {
       // Submit the contract to the API
       const apiurl = `${basepath}/api/staff/contract/${values.id}`;
-      //const apiurl = `${basepath}/api/staff/updatecontracts`;
 
-      const contract = formValues.contracts.filter((f) => f.id === values.id);
-      //await validationSchema.validate(contract, { abortEarly: false });
+      //const contract = formValues.contracts.filter((f) => f.id === values.id);
+      await validationSchema.validate(values, { abortEarly: false });
       //const contractResponse = await axios.put(apiurl, formValues.contracts);
+
       const contractResponse = await axios.put(apiurl, values);
       if (contractResponse.status === 200) {
         // Call getStaffData() to refresh the staff data
         setModalContent('Staff contract updated successfully');
         setModalOpen(true);
         await getStaffData();
+        exitEditingMode();
+        setSaving(false);
+        setErrors({});
       } else {
-        // Display error message using Mantine modal
         setModalContent(contractResponse.data.message);
         setModalOpen(true);
       }
-      setErrors({});
     } catch (err) {
       // Handle error
+      console.log(err);
       const newErrors = {};
       err.inner.forEach((error) => {
         newErrors[error.path] = error.message;
       });
       setErrors(newErrors);
-      setModalContent(err.message);
-      setModalOpen(true);
+      //setModalContent(err.message);
+      //setModalOpen(true);
     }
-    exitEditingMode();
-    setSaving(false);
+
     // Handle saving the edited row here
   };
 
@@ -306,8 +309,7 @@ export default function ContractTable({
         onSubmit={handleCreateNewContract}
         staff={staff}
         modalcallback={{ setModalOpen, setModalContent }}
-        setCreateModalOpen={setCreateModalOpen}
-        
+        stateCreateModalOpen={{ createModalOpen, setCreateModalOpen }}
       />
     </>
   );

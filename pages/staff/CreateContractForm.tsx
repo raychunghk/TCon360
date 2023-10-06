@@ -31,7 +31,7 @@ interface CreateModalProps {
   open: boolean;
   staff: any;
   modalcallback: any;
-  setCreateModalOpen: any;
+  stateCreateModalOpen: any;
 }
 export default function CreateContractForm({
   open,
@@ -39,25 +39,30 @@ export default function CreateContractForm({
   onSubmit,
   staff,
   modalcallback,
-  setCreateModalOpen,
+  stateCreateModalOpen,
 }: CreateModalProps) {
   const { basepath } = useSelector((state) => ({
     basepath: state.calendar.basepath,
   }));
   const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
-  const [contract, setContract] = useState({
+  const initialState = {
     id: null,
     ContractStartDate: null,
     ContractEndDate: null,
     AnnualLeave: 0,
     IsActive: false,
     staff,
-  });
+  };
+  const [contract, setContract] = useState(initialState);
   useEffect(() => {
     console.log('staff', staff);
     if (staff) setContract({ ...contract, staffId: staff.id, staff });
   }, [staff, basepath]);
+  useEffect(() => {
+    setContract(initialState);
+  }, [stateCreateModalOpen.createModalOpen]);
+
   const theme = useMantineTheme();
 
   const submitContract = async () => {
@@ -85,7 +90,7 @@ export default function CreateContractForm({
         modalcallback.setModalOpen(true);
         modalcallback.setModalContent('New Contract Created!');
         //onClose();
-        setCreateModalOpen(!open);
+        stateCreateModalOpen.setCreateModalOpen(!open);
         onSubmit();
         setErrors({});
         // Handle successful response
@@ -148,11 +153,7 @@ export default function CreateContractForm({
           setCreateModalOpen(!open);
         }}
       >
-        <form
-          method="post"
-          name="frmCreateContract"
-          onSubmit={handleSubmit(submit)}
-        >
+        <form method="post" name="frmCreateContract">
           <Container h={'380px'}>
             <Grid gutter="md" py={20} mah={'500px'}>
               <Col span={6}>
@@ -167,6 +168,13 @@ export default function CreateContractForm({
                       ContractStartDate: _date,
                     })
                   }
+                  maxDate={
+                    contract.ContractEndDate &&
+                    new Date(
+                      new Date(contract.ContractEndDate).getTime() -
+                        24 * 60 * 60 * 1000,
+                    )
+                  }
                 />
               </Col>
               <Col span={6}>
@@ -176,6 +184,7 @@ export default function CreateContractForm({
                   required
                   {...getDatePickerProps('ContractEndDate')}
                   minDate={
+                    contract.ContractStartDate &&
                     new Date(
                       new Date(contract.ContractStartDate).getTime() +
                         24 * 60 * 60 * 1000,
@@ -242,7 +251,8 @@ export default function CreateContractForm({
               mr={8}
               onClick={() => {
                 setErrors({});
-                setCreateModalOpen(false);
+                setContract(initialState);
+                stateCreateModalOpen.setCreateModalOpen(false);
               }}
             >
               Cancel
