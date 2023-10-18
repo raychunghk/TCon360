@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useStore from 'pages/reducers/zstore';
 
 export default function HeaderPopover({}) {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export default function HeaderPopover({}) {
   const handleOpen = () => {
     setOpenedPop(true);
   };
-
+  const activeContract = useStore((state) => state.activeContract);
   const handleClose = () => {
     setOpenedPop(false);
   };
@@ -47,17 +48,19 @@ export default function HeaderPopover({}) {
       { label: 'Manager Email:', value: staff.ManagerEmail },
       {
         label: 'Contract Start Date:',
-        value: formatDate(staff.ContractStartDate),
+        value: formatDate(activeContract.ContractStartDate),
       },
       {
         label: 'Contract End Date:',
-        value: formatDate(staff.ContractEndDate),
+        value: formatDate(activeContract.ContractEndDate),
       },
       {
         label: 'Annual Leave:',
-        value: `Total: ${staff.AnnualLeave}`,
-        subValue: `Balance: ${staffVacation.balance}`,
-        subValue2: `Used: ${staffVacation.used}`,
+        value: `Total: ${activeContract.AnnualLeave}`,
+        subValue2: `Available: ${
+          activeContract.AnnualLeave - staffVacation.used
+        }`,
+        subValue: `Used: ${staffVacation.used}`,
       },
     ]);
   }

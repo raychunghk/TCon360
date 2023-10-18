@@ -28,7 +28,7 @@ import { usePublicHolidays } from 'components/util/usePublicHolidays';
 import { setDatepickerPlDay } from 'components/util/leaverequest.util';
 import { format } from 'date-fns';
 import { inputFields, staffModel } from './edit.util';
-
+import useStore from 'pages/reducers/zstore';
 import ContractTable from './ContractTable';
 require('dotenv').config();
 
@@ -51,7 +51,7 @@ export default function EditStaff() {
   const [modalContent, setModalContent] = useState('Sucess');
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
-
+  const setActiveContract = useStore((state) => state.setActiveContract);
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
@@ -73,6 +73,10 @@ export default function EditStaff() {
         setEditing(true);
         form.setValues(_staff);
         dispatch(setStaff(_staff));
+        const activeContract = _staff.contracts.filter(
+          (contract) => contract.IsActive === true,
+        );
+        setActiveContract(activeContract ? activeContract[0] : null);
       }
     } catch (error) {
       console.error('Failed to fetch staff data:', error);
@@ -121,12 +125,7 @@ export default function EditStaff() {
     console.log('formvalues', formValues);
     try {
       await validationSchema.validate(formValues, { abortEarly: false });
-      // Submit the form or perform other actions
 
-      // if (validateResult.hasErrors) {
-      //   setSubmitting(false);
-      //   return;
-      // } else {
       const headers = {
         Authorization: `Bearer ${tokenCookie}`,
       };
@@ -175,24 +174,6 @@ export default function EditStaff() {
     initialValues: { ...formValues },
     validateInputOnBlur: true,
     validate: yupResolver(validationSchema),
-    // validate: (values) => {
-    //   const errors = {};
-
-    //   inputFields.forEach((field) => {
-    //     if (!values[field.name]) {
-    //       errors[field.name] = `${field.label} is required`;
-    //     } else if (field.type === 'number' && values[field.name] <= 0) {
-    //       errors[field.name] = `${field.label} must be greater than 0`;
-    //     } else if (
-    //       field.type === 'text' &&
-    //       field.subtype === 'email' &&
-    //       !/^\S+@\S+$/.test(values[field.name])
-    //     ) {
-    //       errors[field.name] = 'Invalid email format';
-    //     }
-    //   });
-    //   return errors;
-    // },
   });
   if (!user) {
     //router.push('/');
@@ -273,8 +254,6 @@ export default function EditStaff() {
           <Code>{JSON.stringify(formValues, null, 2)}</Code>{' '}
         </>
       ) : null}
-      {/* <Code>{JSON.stringify(publicHolidays)}</Code>
-      <Code>{JSON.stringify(calendarEvents)}</Code> */}
     </Layout>
   );
 }

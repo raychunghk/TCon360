@@ -25,6 +25,7 @@ import axios from 'axios';
 import { validationSchema } from './edit.util';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { myRenderDay } from 'components/util/leaverequest.util';
+import useStore from 'pages/reducers/zstore';
 interface CreateModalProps {
   // onClose: () => void;
   onSubmit: () => void;
@@ -46,6 +47,10 @@ export default function CreateContractForm({
   }));
   const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
+
+  const nextContractStartDate = useStore(
+    (state) => state.nextContractStartDate,
+  );
   const initialState = {
     id: null,
     ContractStartDate: null,
@@ -61,6 +66,15 @@ export default function CreateContractForm({
   }, [staff, basepath]);
   useEffect(() => {
     setContract(initialState);
+  }, [nextContractStartDate]);
+  useEffect(() => {
+    if (nextContractStartDate) {
+      const nextStartDate = new Date(nextContractStartDate);
+
+      setContract({ ...contract, ContractStartDate: nextStartDate });
+    } else {
+      setContract({ ...contract, ContractStartDate: null });
+    }
   }, [stateCreateModalOpen.createModalOpen]);
 
   const theme = useMantineTheme();
@@ -112,9 +126,19 @@ export default function CreateContractForm({
       // Handle error
     }
   };
-  const handleDateInputSelect = (date, stateobj) => {
+  const handleDateInputSelect = async (date, stateobj) => {
     console.log('handle date input select', date);
-
+    if (errors.ContractEndDate || errors.ContractStartDate) {
+      try {
+        await validationSchema.validate(contract, { abortEarly: false });
+      } catch (error) {
+        const newErrors = {};
+        error.inner.forEach((error) => {
+          newErrors[error.path] = error.message;
+        });
+        setErrors(newErrors);
+      }
+    }
     setContract(stateobj);
   };
   const handleInputChange = (event) => {
@@ -150,7 +174,7 @@ export default function CreateContractForm({
         opened={open}
         title={<Title order={4}>Create Contract Term</Title>}
         onClose={function (): void {
-          setCreateModalOpen(!open);
+          stateCreateModalOpen.setCreateModalOpen(!open);
         }}
       >
         <form method="post" name="frmCreateContract">
@@ -162,6 +186,7 @@ export default function CreateContractForm({
                   renderDay={myRenderDay}
                   required
                   {...getDatePickerProps('ContractStartDate')}
+                  value={contract.ContractStartDate}
                   onChange={(_date) =>
                     handleDateInputSelect(_date, {
                       ...contract,

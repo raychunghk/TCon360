@@ -35,9 +35,12 @@ import {
   setStaff,
   setBasepath,
 } from 'pages/reducers/calendarReducer';
+import { useStaffData } from 'components/useStaffData';
 import { PublicHolidaysContext } from 'pages/_app';
 import { setPublicHolidays } from 'pages/reducers/calendarReducer';
+import { useShallow } from 'zustand/shallow';
 export const siteTitle = 'NxTime';
+import useStore from 'pages/reducers/zstore';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const _publicholidays = useContext(PublicHolidaysContext);
@@ -45,10 +48,17 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   setPublicHolidays(publicholidays);
 
   const [opened, setOpened] = useState(false);
+
   const { data: session } = useSession();
   const { classes } = useStyles();
   const dispatch = useDispatch();
-
+  // const [setActiveContract] = useStore(
+  //   useShallow((state) => [state.setActiveContract]),
+  // );
+  //const setActiveContract = useStore((state) => state.setActiveContract);
+  const [setActiveContract] = useStore(
+    useShallow((state) => [state.setActiveContract]),
+  );
   const handleSignout = () => {
     destroyCookie(null, 'token');
     dispatch(clearAllState());
@@ -58,7 +68,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     user: state.calendar.user,
     staff: state.calendar.staff,
   }));
-
+  const { activeStaff, activeContract } = useStaffData();
   useEffect(() => {
     if (!session) {
       destroyCookie(null, 'token');
@@ -69,10 +79,24 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     } else {
       if (session?.user) {
         dispatch(setUser(session.user));
-        if (!staff) dispatch(setStaff(session.user.staff));
+        if (!staff) {
+          if (activeStaff) {
+            dispatch(setStaff(activeStaff));
+            setActiveContract(activeContract);
+          } else {
+            const _stf = session.user.staff;
+            dispatch(setStaff(_stf));
+            setActiveContract({
+              ContractStartDate: _stf.ContractStartDate,
+              ContractEndDate: _stf.ContractEndDate,
+              AnnualLeave: _stf.AnnualLeave,
+              id: _stf.contractId,
+            });
+          }
+        }
       }
     }
-  }, [session]);
+  }, [session, activeStaff]);
 
   const buttonStyles = (theme) => ({
     display: 'block',

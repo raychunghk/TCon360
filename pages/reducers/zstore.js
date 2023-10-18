@@ -6,6 +6,21 @@ const useStore = create((set) => ({
   contractStartMaxDate: null,
   contractEndMinDate: null,
   editErrors: null,
+  nextContractStartDate: null,
+  activeContract: null,
+  activeStaff: null,
+  setActiveContract: (contract) =>
+    set((state) => ({
+      activeContract: contract,
+    })),
+  setActiveStaff: (staff) =>
+    set((state) => ({
+      activeStaff: staff,
+    })),
+  setNextContractStartDate: (date) =>
+    set((state) => ({
+      nextContractStartDate: date,
+    })),
   setEditErrors: (error) =>
     set((state) => ({
       editErrors: error,

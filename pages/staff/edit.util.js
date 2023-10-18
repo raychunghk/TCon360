@@ -118,11 +118,12 @@ export const inputFields = [
     type: 'number',
   },
 ];
-export function AnnualLeaveEditor({ param, formValues, setFormValues, error }) {
+export function AnnualLeaveEditor({ param, formValues, setFormValues }) {
   const { renderedCellValue, cell, table, column, row } = param;
   // const [leaveVal, setLeaveVal] = useState(cell.getValue());
   // const editingRow = table.getState().editingRow;
   // const cellval = cell.getValue();
+  const editErrors = useStore((state) => state.editErrors);
   const { value, handleOnChange, handleBlur } = useEdit(param);
   // useEffect(() => {
   //   setLeaveVal(cellval);
@@ -135,7 +136,7 @@ export function AnnualLeaveEditor({ param, formValues, setFormValues, error }) {
       required
       min={0}
       max={200}
-      error={error?.AnnualLeave}
+      error={editErrors?.AnnualLeave}
       //  clampBehavior="strict"
     />
   );
@@ -263,10 +264,16 @@ export const validationSchema = Yup.object().shape({
       'Contract end date must be greater than contract start date',
     )
     .required('Contract end date is required'),
+  // AnnualLeave: Yup.number()
+  //   .positive('Annual leave must be a positive number')
+  //   .nonNullable('Annual leave cannot be null')
+  //   .integer('Annual leave must be an integer')
+  //   .required('Annual leave is required'),
   AnnualLeave: Yup.number()
+    .typeError('Annual leave is required')
     .positive('Annual leave must be a positive number')
-    .nonNullable('Annual leave cannot be null')
     .integer('Annual leave must be an integer')
     .required('Annual leave is required'),
+  IsActive: Yup.boolean().required('IsActive is required'),
   IsActive: Yup.boolean().required('IsActive is required'),
 });

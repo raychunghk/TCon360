@@ -29,7 +29,9 @@ import axios from 'axios';
 import CreateContractForm from './CreateContractForm';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { ContractDatePicker } from './ContractDatePicker';
-
+import useStore from 'pages/reducers/zstore';
+import { format } from 'date-fns';
+import { useShallow } from 'zustand/shallow';
 export default function ContractTable({
   formValues,
   setFormValues,
@@ -44,7 +46,6 @@ export default function ContractTable({
     publicHolidays: state.calendar.publicHolidays,
     basepath: state.calendar.basepath,
   }));
-
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -52,7 +53,21 @@ export default function ContractTable({
   const [saving, setSaving] = useState(false);
   const [columns, setColumns] = useState([]);
   const [originalContracts, setOriginalContracts] = useState([]);
-  const [minDate, setMinDate] = useState(null);
+  const [maxContractEndDate, setMaxContractEndDate] = useState(null);
+  /* const setEditErrors = useStore((state) => state.setEditErrors);
+  const setNextContractStartDate = useStore(
+    (state) => state.setNextContractStartDate,
+  );*/
+  /* const { setEditErrors, setNextContractStartDate } = useStore(
+    (state) => ({ amount: state.setEditErrors, title: state.setNextContractStartDate }),
+    shallow
+  )*/
+  const [setEditErrors, setNextContractStartDate] = useStore(
+    useShallow((state) => [
+      state.setEditErrors,
+      state.setNextContractStartDate,
+    ]),
+  );
   useEffect(() => {
     if (formValues) {
       const newColumns = [
@@ -106,7 +121,6 @@ export default function ContractTable({
               param={param}
               formValues={formValues}
               setFormValues={setFormValues}
-              error={errors}
             />
           ),
           enableEditing: true,
@@ -123,9 +137,26 @@ export default function ContractTable({
         },
       ];
 
+      // var _maxContractEndDate = formValues.contracts
+      //   .map(function (contract) {
+      //     return contract.ContractEndDate;
+      //   })
+      //   .max();
+
+      const _maxContractEndDate = Math.max(
+        ...formValues.contracts.map(function (contract) {
+          return new Date(contract.ContractEndDate).getTime();
+        }),
+      );
+
+      if (_maxContractEndDate) {
+        const maxContractEndDate = new Date(_maxContractEndDate);
+        maxContractEndDate.setDate(maxContractEndDate.getDate() + 1);
+        setNextContractStartDate(maxContractEndDate);
+      }
       setColumns(newColumns);
     }
-  }, [editing, basepath]);
+  }, [editing, basepath, formValues.contracts]);
 
   const handleEditRowCancel = async (rowEditEvent) => {
     console.log('roweditEvent', rowEditEvent);
@@ -155,6 +186,7 @@ export default function ContractTable({
         setModalContent(contractResponse.data.message);
         setModalOpen(true);
       }
+      setEditErrors({});
     } catch (err) {
       // Handle error
       console.log(err);
@@ -162,22 +194,29 @@ export default function ContractTable({
       err.inner.forEach((error) => {
         newErrors[error.path] = error.message;
       });
+
       setErrors(newErrors);
+      setEditErrors(newErrors);
+      setSaving(false);
       //setModalContent(err.message);
       //setModalOpen(true);
     }
-
+    setSaving(false);
     // Handle saving the edited row here
   };
 
   const openDeleteConfirmModal = (row) => {
     modals.openConfirmModal({
-      title: 'Are you sure you want to delete this contract record?',
+      title: <Title order={4}> Delete contract</Title>,
 
       children: (
         <Text>
-          Are you sure you want to delete Contrat: {row.original.id} ? This
-          action cannot be undone.
+          Are you sure to delete the contract for the period?:
+          <p>
+            {format(new Date(row.original.ContractStartDate), 'dd-MMM-yyyy')} to{' '}
+            {format(new Date(row.original.ContractEndDate), 'dd-MMM-yyyy')}{' '}
+          </p>
+          This action cannot be undone.
         </Text>
       ),
       labels: { confirm: 'Delete', cancel: 'Cancel' },
@@ -303,14 +342,15 @@ export default function ContractTable({
   return (
     <>
       <MantineReactTable table={table} />
-      <CreateContractForm
-        open={createModalOpen}
-        //  onClose={handleFormToggle}
-        onSubmit={handleCreateNewContract}
-        staff={staff}
-        modalcallback={{ setModalOpen, setModalContent }}
-        stateCreateModalOpen={{ createModalOpen, setCreateModalOpen }}
-      />
+      {createModalOpen && (
+        <CreateContractForm
+          open={createModalOpen}
+          onSubmit={handleCreateNewContract}
+          staff={staff}
+          modalcallback={{ setModalOpen, setModalContent }}
+          stateCreateModalOpen={{ createModalOpen, setCreateModalOpen }}
+        />
+      )}
     </>
   );
 }
