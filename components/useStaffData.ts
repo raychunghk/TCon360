@@ -7,8 +7,10 @@ import { basepath } from '/global';
 //import { useDispatch, useSelector } from 'react-redux';import { useShallow } from 'zustand/shallow';
 import useStore from 'pages/reducers/zstore';
 interface StaffData {
+  activeUser: any;
   activeStaff: any;
   activeContract: any;
+  isAuthenticated: boolean;
 }
 
 export function useStaffData(): StaffData {
@@ -20,7 +22,10 @@ export function useStaffData(): StaffData {
   //const dispatch = useDispatch();
   const cookies = parseCookies();
   const [activeStaff, setActiveStaff] = useState(null);
+  const [activeUser, setActiveUser] = useState(null);
   const [activeContract, setActiveContract] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const tokenCookie = cookies.token;
 
   //  const [activeContract, setActiveContract] = useStore(
@@ -41,7 +46,10 @@ export function useStaffData(): StaffData {
       });
 
       if ([200, 201].includes(response.status)) {
-        const _staff = response.data.staff[0];
+        setIsAuthenticated(true);
+        const _user = response.data;
+        setActiveUser(_user);
+        const _staff = _user.staff[0];
         // activeStaff = _staff;
         console.log(_staff);
         setActiveStaff(_staff);
@@ -53,6 +61,8 @@ export function useStaffData(): StaffData {
         );
 
         setActiveContract(_activeContract ? _activeContract[0] : null);
+      } else {
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('Failed to fetch staff data:', error);
@@ -60,7 +70,7 @@ export function useStaffData(): StaffData {
   };
 
   useEffect(() => {
-    fetchData();
+    if (tokenCookie) fetchData();
   }, []);
 
   const refreshFormValues = async () => {
@@ -68,7 +78,9 @@ export function useStaffData(): StaffData {
   };
 
   return {
+    activeUser,
     activeStaff,
     activeContract,
+    isAuthenticated,
   };
 }

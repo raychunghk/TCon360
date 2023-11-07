@@ -27,14 +27,59 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     return user;
   }
+  // async getUserWithStaffAndContract(userId: string) {
+  //   try {
+  //     const nestedObject = await this.prisma.user.findUnique({
+  //       where: { id: userId },
+  //       include: {
+  //         staff: {
+  //           include: {
+  //             contracts: true,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     return nestedObject;
+  //   } catch (error) {
+  //     console.log('Error retrieving nested object:', error);
+  //   }
+  // }
+
   async getUserWithStaffAndContract(userId: string) {
     try {
       const nestedObject = await this.prisma.user.findUnique({
         where: { id: userId },
-        include: {
+
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          email: true,
+          emailVerified: true,
+          image: true,
           staff: {
-            include: {
-              contracts: true,
+            select: {
+              id: true,
+              StaffName: true,
+              AgentName: true,
+              StaffCategory: true,
+              Department: true,
+              PostUnit: true,
+              ManagerName: true,
+              ManagerTitle: true,
+              ManagerEmail: true,
+              userId: true,
+              contracts: {
+                select: {
+                  id: true,
+                  ContractStartDate: true,
+                  ContractEndDate: true,
+                  AnnualLeave: true,
+                  staffId: true,
+                  IsActive: true,
+                },
+              },
             },
           },
         },

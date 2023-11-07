@@ -118,7 +118,7 @@ export default function LeaveRequestForm({
     Authorization: `Bearer ${tokenCookie}`,
   };
 
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   useEffect(() => {
     console.log('session?', session);
     if (session?.user) {

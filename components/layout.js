@@ -27,7 +27,7 @@ import {
 } from '@mantine/core';
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
-import { destroyCookie } from 'nookies';
+import { destroyCookie, parseCookies } from 'nookies';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   clearAllState,
@@ -59,8 +59,19 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const [setActiveContract] = useStore(
     useShallow((state) => [state.setActiveContract]),
   );
+  const clearAllCookies = () => {
+    const cookies = parseCookies(); // Get all cookies
+    const cookieNames = Object.keys(cookies);
+
+    destroyCookie({}, 'token', { path: '/' }); // Remove each cookie
+
+    console.log('Cookienames', cookieNames);
+    const cookies2 = parseCookies();
+    console.log('cookies2', cookies2);
+  };
   const handleSignout = () => {
-    destroyCookie(null, 'token');
+    //destroyCookie(null, 'token');
+    clearAllCookies();
     dispatch(clearAllState());
     signOut();
   };
@@ -68,36 +79,64 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     user: state.calendar.user,
     staff: state.calendar.staff,
   }));
-  const { activeStaff, activeContract } = useStaffData();
+  const { activeUser, activeStaff, activeContract, isAuthenticated } =
+    useStaffData();
+  // useEffect(() => {
+  //   if (!session) {
+  //     destroyCookie(null, 'token');
+  //     dispatch(setUser(null));
+  //     dispatch(clearAllState());
+  //     dispatch(setBasepath(basepath));
+  //     // handleSignout();
+  //   } else {
+  //     if (session?.user) {
+  //       dispatch(setUser(session.user));
+  //       if (!staff) {
+  //         if (activeStaff) {
+  //           dispatch(setStaff(activeStaff));
+  //           setActiveContract(activeContract);
+  //         } else {
+  //           const _stf = session.user.staff;
+  //           dispatch(setStaff(_stf));
+  //           setActiveContract({
+  //             ContractStartDate: _stf.ContractStartDate,
+  //             ContractEndDate: _stf.ContractEndDate,
+  //             AnnualLeave: _stf.AnnualLeave,
+  //             id: _stf.contractId,
+  //           });
+  //         }
+  //       }
+  //     }
+  //   }
+  // }, [session, activeStaff]);
   useEffect(() => {
-    if (!session) {
+    if (!isAuthenticated) {
       destroyCookie(null, 'token');
       dispatch(setUser(null));
       dispatch(clearAllState());
       dispatch(setBasepath(basepath));
       // handleSignout();
     } else {
-      if (session?.user) {
-        dispatch(setUser(session.user));
+      if (activeUser) {
+        dispatch(setUser(activeUser));
         if (!staff) {
           if (activeStaff) {
             dispatch(setStaff(activeStaff));
             setActiveContract(activeContract);
-          } else {
-            const _stf = session.user.staff;
-            dispatch(setStaff(_stf));
-            setActiveContract({
-              ContractStartDate: _stf.ContractStartDate,
-              ContractEndDate: _stf.ContractEndDate,
-              AnnualLeave: _stf.AnnualLeave,
-              id: _stf.contractId,
-            });
+            // } else {
+            //   const _stf = session.user.staff;
+            //   dispatch(setStaff(_stf));
+            //   setActiveContract({
+            //     ContractStartDate: _stf.ContractStartDate,
+            //     ContractEndDate: _stf.ContractEndDate,
+            //     AnnualLeave: _stf.AnnualLeave,
+            //     id: _stf.contractId,
+            //   });
           }
         }
       }
     }
   }, [session, activeStaff]);
-
   const buttonStyles = (theme) => ({
     display: 'block',
     width: '115px',

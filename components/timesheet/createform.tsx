@@ -13,10 +13,10 @@ import {
   createStyles,
 } from '@mantine/core';
 import { IconTableExport } from '@tabler/icons-react';
-import { useSession } from 'next-auth/react';
+//import { useSession } from 'next-auth/react';
 import { basepath } from '/global';
 import MyCard from '../MyCard';
-import { CSSProperties } from 'react';
+//import { CSSProperties } from 'react';
 import download from 'downloadjs';
 import { createUseStyles } from 'react-jss';
 import styles from './mp.module.css';
@@ -32,7 +32,6 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState(false);
   const [monthValue, setMonthValue] = useState(new Date());
-  const { data: session, status } = useSession();
 
   const { classes } = useStyles();
   const onSubmit = async (event) => {

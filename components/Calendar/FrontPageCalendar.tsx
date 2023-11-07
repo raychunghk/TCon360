@@ -37,6 +37,7 @@ import {
 } from './calendar.util';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import CustomView from './customeView';
+import { useStaffData } from 'components/useStaffData';
 
 export function FrontPageCalendar() {
   const dispatch = useDispatch();
@@ -137,7 +138,7 @@ export function FrontPageCalendar() {
       }
     }
   }
-
+  const { activeStaff, activeContract, isAuthenticated } = useStaffData();
   const { data: session, status } = useSession();
   useEffect(() => {
     if (session) {

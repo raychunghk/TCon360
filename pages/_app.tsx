@@ -10,12 +10,7 @@ import {
 } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
-import {
-  SessionProvider,
-  SessionProviderProps,
-  // getSession,
-  // useSession,
-} from 'next-auth/react';
+import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 import { basePath } from 'src/shared/constants/env';
 import { parseCookies } from 'nookies';
 import session from 'express-session';
