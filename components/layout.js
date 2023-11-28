@@ -28,6 +28,7 @@ import {
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
+import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   clearAllState,
@@ -41,8 +42,12 @@ import { setPublicHolidays } from 'pages/reducers/calendarReducer';
 import { useShallow } from 'zustand/shallow';
 export const siteTitle = 'NxTime';
 import useStore from 'pages/reducers/zstore';
+import useTokenExpiration from './useTokenExpiration';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
+
+  useTokenExpiration();
+
   const _publicholidays = useContext(PublicHolidaysContext);
   const publicholidays = _publicholidays;
   setPublicHolidays(publicholidays);
@@ -69,11 +74,13 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     const cookies2 = parseCookies();
     console.log('cookies2', cookies2);
   };
+  const router = useRouter();
   const handleSignout = () => {
     //destroyCookie(null, 'token');
     clearAllCookies();
     dispatch(clearAllState());
-    signOut();
+    router.push('/login');
+    //signOut();
   };
   const { user, staff } = useSelector((state) => ({
     user: state.calendar.user,
@@ -226,7 +233,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                       }
                     >
                       <Text size="sm" color="black">
-                        Logout
+                        Sign out
                       </Text>
                     </Button>
                   </>
@@ -273,7 +280,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
         </Footer>
       }
     >
-      {children}
+      {user ? children : null}
     </AppShell>
   );
 }

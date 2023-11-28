@@ -32,7 +32,6 @@ import {
   // setSelectedDatesCount,
 } from 'pages/reducers/calendarReducer';
 
-
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -71,7 +70,7 @@ export default function LoginPage(props) {
   const dispatch = useDispatch();
   const { classes } = useStyles();
   const router = useRouter();
-    
+
   const basepath = router.basePath;
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
@@ -81,8 +80,7 @@ export default function LoginPage(props) {
     const data = await response.json();
     const token = data.accessToken;
     const _maxAge = process.env.TOKEN_MAX_AGE;
-    console.log('_maxage in handleLoginSuccess');
-    console.log(_maxAge);
+    console.log('_maxage in handleLoginSuccess', _maxAge);
     // set the user's session token in localStorage
     setCookie(null, 'token', token, {
       maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
