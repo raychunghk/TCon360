@@ -30,7 +30,7 @@ import {
   getBusinessDays,
   formatResponseDate,
   adjustTimeZoneVal,
-  setPublicHolidays,
+  // setPublicHolidays,
   excludeHoliday,
   myRenderDay,
   getNextWorkingDate,
@@ -46,7 +46,7 @@ import {
   IconFileSpreadsheet,
 } from '@tabler/icons-react';
 
-//export default function LeaveRequestForm({ staff, publicholidays }) {
+import useStore from 'pages/reducers/zstore';
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context);
@@ -73,17 +73,21 @@ export default function LeaveRequestForm({
 
   console.log('leave Request ID?', leaveRequestId);
 
-  const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
-  setPublicHolidays(publicHolidays);
-  console.log('_public holiday?');
-  console.log(publicHolidays);
+  //const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
+  const { publicHolidays, setPublicHolidays, setActiveContract } = useStore();
+  //setPublicHolidays(publicHolidays);
+  console.log('_public holiday?', publicHolidays);
+
   const title =
     formType === 'create' ? 'Create Leave Request' : 'Edit Leave Request';
   const theme = useMantineTheme();
   const [submitting, setSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
-  const [staff, setStaff] = useState(null);
+  //const [staff, setStaff] = useState(null);
+
+  const { activeStaff, activeContract } = useStore();
+  const staff = activeStaff;
   const [errors, setErrors] = useState({});
   const { reset, handleSubmit } = useForm();
   const newLeaveRequest = {
@@ -104,7 +108,6 @@ export default function LeaveRequestForm({
     leavePurpose: 'Vacation',
   };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
-  console.log('publicHolidays', publicHolidays);
 
   const handleModalClose = () => {
     setModalOpen(false);
@@ -119,11 +122,12 @@ export default function LeaveRequestForm({
   };
 
   const { data: session } = useSession();
+  //const activeContract = useStore((state) => state.activeContract);
   useEffect(() => {
     console.log('session?', session);
     if (session?.user) {
-      console.log(session.user.staff);
-      setStaff(session.user.staff);
+      //console.log(session.user.staff);
+      //setStaff(session.user.staff);
       setLeaveRequest({ ...leaveRequest, staffId: session.user.staff.id });
     }
   }, [session]);
@@ -296,6 +300,9 @@ export default function LeaveRequestForm({
 
   const onSubmit = async (e) => {
     setSubmitting(true);
+    const state = useStore.getState(); // Access the entire store state
+
+    console.log('all zustand states:', state); // Print the state object to the console
 
     const newData = {
       // staffId: parseInt(leaveRequest.staffId),
@@ -310,7 +317,7 @@ export default function LeaveRequestForm({
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
 
-      contractId: staff.contractId,
+      contractId: activeContract.id,
     };
     console.log('newdata: ', newData);
     //console.log('original leave start');

@@ -9,6 +9,17 @@ const useStore = create((set) => ({
   nextContractStartDate: null,
   activeContract: null,
   activeStaff: null,
+  activeUser: null,
+  userStatus: null,
+  publicHolidays: null,
+  setPublicHolidays: (_publicholidays) =>
+    set((state) => ({
+      publicHolidays: _publicholidays,
+    })),
+  setUserStatus: (status) =>
+    set((state) => ({
+      userStatus: status,
+    })),
   setActiveContract: (contract) =>
     set((state) => ({
       activeContract: contract,
@@ -16,6 +27,10 @@ const useStore = create((set) => ({
   setActiveStaff: (staff) =>
     set((state) => ({
       activeStaff: staff,
+    })),
+  setActiveUser: (user) =>
+    set((state) => ({
+      activeUser: user,
     })),
   setNextContractStartDate: (date) =>
     set((state) => ({
@@ -48,6 +63,19 @@ const useStore = create((set) => ({
         new Date(date).getTime() + 24 * 60 * 60 * 1000,
       ),
     }),
+  clearAllState: () =>
+    set(() => ({
+      contractStartDate: null,
+      contractEndDate: null,
+      contractStartMaxDate: null,
+      contractEndMinDate: null,
+      editErrors: null,
+      nextContractStartDate: null,
+      activeContract: null,
+      activeStaff: null,
+      activeUser: null,
+      userStatus: null,
+    })),
 }));
 
 export default useStore;

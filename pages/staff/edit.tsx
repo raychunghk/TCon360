@@ -30,19 +30,21 @@ import { format } from 'date-fns';
 import { inputFields, staffModel } from './edit.util';
 import useStore from 'pages/reducers/zstore';
 import ContractTable from './ContractTable';
+import { useStaffData } from 'components/useStaffData';
 require('dotenv').config();
 
 export default function EditStaff() {
   const { staff, user, staffVacation, calendarEvents } = useSelector(
     (state) => ({
       staff: state.calendar.staff,
-      user: state.calendar.user,
+      // user: state.calendar.user,
       staffVacation: state.calendar.staffVacation,
       //  publicHolidays: state.calendar.publicHolidays,
       calendarEvents: state.calendar.calendarEvents,
     }),
   );
-
+  const { activeUser, activeStaff, activeContract, isAuthenticated } =
+    useStaffData();
   const [formValues, setFormValues] = useState(staffModel);
   const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -175,7 +177,7 @@ export default function EditStaff() {
     validateInputOnBlur: true,
     validate: yupResolver(validationSchema),
   });
-  if (!user) {
+  if (!activeUser) {
     //router.push('/');
   }
   return (
@@ -183,7 +185,7 @@ export default function EditStaff() {
       <Head>
         <title>Edit Staff Information</title>
       </Head>
-      {user ? (
+      {activeUser ? (
         <>
           <form name="frmHeader" onSubmit={handleSubmit(submitform)}>
             {/* <form onSubmit={form.onSubmit((values) => submitform(values))}> */}

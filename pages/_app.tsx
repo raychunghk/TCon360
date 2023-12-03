@@ -1,4 +1,4 @@
-import { format, parseISO, isWeekend } from 'date-fns';
+import { format, parseISO, isWeekend, differenceInSeconds } from 'date-fns';
 import { useState, createContext, useEffect } from 'react';
 import NextApp, { AppProps, AppContext } from 'next/app';
 import { getCookie, setCookie } from 'cookies-next';
@@ -12,7 +12,7 @@ import { Notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
 import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 import { basePath } from 'src/shared/constants/env';
-import { parseCookies } from 'nookies';
+import { destroyCookie, parseCookies } from 'nookies';
 import session from 'express-session';
 interface CustomSessionProviderProps extends SessionProviderProps {
   token: string;
@@ -24,6 +24,10 @@ import axios from 'axios';
 import { Provider } from 'react-redux';
 import { store } from './reducers/store';
 import { ModalsProvider } from '@mantine/modals';
+import useStore from './reducers/zstore';
+import { useShallow } from 'zustand/shallow';
+import useTokenExpiration from 'components/useTokenExpiration';
+import { usePublicHolidays } from 'components/util/usePublicHolidays';
 
 // Create a context for publicholidays
 export const PublicHolidaysContext = createContext(null);
@@ -31,7 +35,7 @@ export const PublicHolidaysContext = createContext(null);
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
 
-  const title = pageProps.title;
+  const title = pageProps.title || 'NxTime - T Contractor Timesheet Manager';
   const basepath = props.router.basePath;
 
   const cookies = parseCookies();
@@ -40,15 +44,38 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
     props.colorScheme,
   );
-  const [publicholidays, setPublicHolidays] = useState([]);
+  //const [publicholidays, setPublicHolidays] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log('props?');
-  console.log(props);
+  const [
+    activeContract,
+    setActiveContract,
+    activeStaff,
+    setActiveStaff,
+    activeUser,
+    setActiveUser,
+    userStatus,
 
-  console.log('base path?');
-  console.log(basepath);
+    setPublicHolidays,
+  ] = useStore(
+    useShallow((state) => [
+      state.activeContract,
+      state.setActiveContract,
+      state.activeStaff,
+      state.setActiveStaff,
+      state.activeUser,
+      state.setActiveUser,
+      state.userStatus,
+
+      state.setPublicHolidays,
+    ]),
+  );
+
+  console.log('props?', props);
+
+  //console.log('base path?', basepath);
+
   const router = useRouter();
-  console.log('router path name?' + router.pathname);
+  //console.log('router path name?' + router.pathname);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme =
@@ -58,31 +85,31 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
       maxAge: 60 * 60 * 24 * 30,
     });
   };
-  useEffect(() => {
-    const loadPublicHolidays = async () => {
-      try {
-        const response = await axios.get(
-          `${basepath}/api/timesheet/publicholidays`,
-        );
-        const data = response.data;
-        const formattedPublicHolidays = data.map((holiday) => ({
-          Summary: holiday.Summary,
+  const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
+  // useEffect(() => {
+  //   const loadPublicHolidays = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${basepath}/api/timesheet/publicholidays`,
+  //       );
+  //       const data = response.data;
+  //       const formattedPublicHolidays = data.map((holiday) => ({
+  //         Summary: holiday.Summary,
 
-          StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
-        }));
-        console.log('formatted public holidays?');
-        console.log(formattedPublicHolidays);
-        setPublicHolidays(formattedPublicHolidays);
-        setIsLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    loadPublicHolidays();
-  }, []);
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  //         StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
+  //       }));
+  //       console.log('formatted public holidays?', formattedPublicHolidays);
+
+  //       setPublicHolidays(formattedPublicHolidays);
+  //       setIsLoading(false);
+  //     } catch (error) {
+  //       console.error('error', error);
+  //     }
+  //   };
+  //   loadPublicHolidays();
+  // }, []);
+  useTokenExpiration();
+
   return (
     <Provider store={store}>
       <SessionProvider
@@ -92,7 +119,8 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         {...(null as CustomSessionProviderProps)}
       >
         <Head>
-          <title>{title ? title : 'Mantine next example'}</title>
+          <title>{title}</title>
+
           <meta
             name="viewport"
             content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -111,19 +139,19 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
         >
-          <PublicHolidaysContext.Provider value={publicholidays}>
-            <MantineProvider
-              theme={{ colorScheme: 'light' }}
-              withGlobalStyles
-              withNormalizeCSS
-            >
-              {' '}
-              <ModalsProvider>
-                <Component {...pageProps} basepath={basepath} token={token} />
-                <Notifications />
-              </ModalsProvider>
-            </MantineProvider>
-          </PublicHolidaysContext.Provider>
+          {/* <PublicHolidaysContext.Provider value={publicHolidays}> */}
+          <MantineProvider
+            theme={{ colorScheme: 'light' }}
+            withGlobalStyles
+            withNormalizeCSS
+          >
+            {' '}
+            <ModalsProvider>
+              <Component {...pageProps} basepath={basepath} token={token} />
+              <Notifications />
+            </ModalsProvider>
+          </MantineProvider>
+          {/* </PublicHolidaysContext.Provider> */}
         </ColorSchemeProvider>
       </SessionProvider>
     </Provider>
@@ -134,8 +162,8 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
 
   const pageProps = { session, ...appProps.pageProps } || {}; // Extract pageProps object
-  console.log('sesson in _app.tsx');
-  console.log(session);
+  console.log('sesson in _app.tsx', session);
+
   console.log('basePath' + basePath);
 
   return {

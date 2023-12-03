@@ -102,47 +102,47 @@ export function FrontPageCalendar() {
   const apiurl = `${basepath}/api/timesheet/calendar`;
 
   async function fetchEvents() {
-    if (session) {
-      try {
-        const cookies = parseCookies();
-        const _token = cookies.token;
-        console.log('_token?', _token);
-        if (!_token) {
-          const { accessToken } = session;
-          console.log(accessToken);
-        }
-        const headers = {
-          Authorization: `Bearer ${_token}`,
-        };
-        const response = await axios.get(apiurl, {
-          headers,
-        });
-        if ([200, 201].includes(response.status)) {
-          const events = await response.data;
-          //          console.log('gettting calendar', events);
+    // if (session) {
+    try {
+      const cookies = parseCookies();
+      const _token = cookies.token;
+      console.log('_token?', _token);
+      if (!_token) {
+        return;
+      }
+      const headers = {
+        Authorization: `Bearer ${_token}`,
+      };
+      const response = await axios.get(apiurl, {
+        headers,
+      });
+      if ([200, 201].includes(response.status)) {
+        const events = await response.data;
+        //          console.log('gettting calendar', events);
 
-          console.log('calendar event length', calendarEvents.length);
+        console.log('calendar event length', calendarEvents.length);
 
-          if (events.length != calendarEvents.length) {
-            await dispatch(setCalendarEvents(events));
-          }
-        } else {
-          console.error('Failed to fetch events:', response);
+        if (events.length != calendarEvents.length) {
+          await dispatch(setCalendarEvents(events));
         }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          handleSignout();
-        } else {
-          console.error('Error! Failed to fetch events:', error);
-        }
+      } else {
+        console.error('Failed to fetch events:', response);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        handleSignout();
+      } else {
+        console.error('Error! Failed to fetch events:', error);
       }
     }
+    // }
   }
   const { activeStaff, activeContract, isAuthenticated } = useStaffData();
   const { data: session, status } = useSession();
   useEffect(() => {
-    if (session) {
-      const sessionexpirydate = new Date(session.expires);
+    //if (session) {
+    if (activeStaff) {
+      /*const sessionexpirydate = new Date(session.expires);
       const cookies = parseCookies();
       if (cookies.token) {
         setCookie(null, 'token', cookies.token, {
@@ -153,7 +153,7 @@ export function FrontPageCalendar() {
 
       const _tkn = session?.token;
       console.log('token???', _tkn);
-
+ */
       fetchEvents();
     }
   }, [session]);

@@ -37,8 +37,8 @@ import {
   setBasepath,
 } from 'pages/reducers/calendarReducer';
 import { useStaffData } from 'components/useStaffData';
-import { PublicHolidaysContext } from 'pages/_app';
-import { setPublicHolidays } from 'pages/reducers/calendarReducer';
+//import { PublicHolidaysContext } from 'pages/_app';
+//import { setPublicHolidays } from 'pages/reducers/calendarReducer';
 import { useShallow } from 'zustand/shallow';
 export const siteTitle = 'NxTime';
 import useStore from 'pages/reducers/zstore';
@@ -46,24 +46,22 @@ import useTokenExpiration from './useTokenExpiration';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
 
-  useTokenExpiration();
-
-  const _publicholidays = useContext(PublicHolidaysContext);
+  /*const _publicholidays = useContext(PublicHolidaysContext);
   const publicholidays = _publicholidays;
-  setPublicHolidays(publicholidays);
+  */
+  //setPublicHolidays(publicholidays);
 
   const [opened, setOpened] = useState(false);
 
   const { data: session } = useSession();
   const { classes } = useStyles();
   const dispatch = useDispatch();
+
+  //const setActiveContract = useStore((state) => state.setActiveContract);
   // const [setActiveContract] = useStore(
   //   useShallow((state) => [state.setActiveContract]),
   // );
-  //const setActiveContract = useStore((state) => state.setActiveContract);
-  const [setActiveContract] = useStore(
-    useShallow((state) => [state.setActiveContract]),
-  );
+  //const { publicHolidays, setPublicHolidays, setActiveContract } = useStore();
   const clearAllCookies = () => {
     const cookies = parseCookies(); // Get all cookies
     const cookieNames = Object.keys(cookies);
@@ -72,7 +70,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
 
     console.log('Cookienames', cookieNames);
     const cookies2 = parseCookies();
-    console.log('cookies2', cookies2);
+    console.log('validate if cookie deleted:cookies2', cookies2);
   };
   const router = useRouter();
   const handleSignout = () => {
@@ -82,68 +80,31 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     router.push('/login');
     //signOut();
   };
+  /*
   const { user, staff } = useSelector((state) => ({
     user: state.calendar.user,
     staff: state.calendar.staff,
-  }));
-  const { activeUser, activeStaff, activeContract, isAuthenticated } =
+  }));*/
+  const { activeUser, activeStaff, activeContract, isAuthenticated, status } =
     useStaffData();
-  // useEffect(() => {
-  //   if (!session) {
-  //     destroyCookie(null, 'token');
-  //     dispatch(setUser(null));
-  //     dispatch(clearAllState());
-  //     dispatch(setBasepath(basepath));
-  //     // handleSignout();
-  //   } else {
-  //     if (session?.user) {
-  //       dispatch(setUser(session.user));
-  //       if (!staff) {
-  //         if (activeStaff) {
-  //           dispatch(setStaff(activeStaff));
-  //           setActiveContract(activeContract);
-  //         } else {
-  //           const _stf = session.user.staff;
-  //           dispatch(setStaff(_stf));
-  //           setActiveContract({
-  //             ContractStartDate: _stf.ContractStartDate,
-  //             ContractEndDate: _stf.ContractEndDate,
-  //             AnnualLeave: _stf.AnnualLeave,
-  //             id: _stf.contractId,
-  //           });
-  //         }
-  //       }
-  //     }
-  //   }
-  // }, [session, activeStaff]);
+
+  console.log('user?', activeUser);
+  console.log('activestaff?', activeStaff);
+  //useTokenExpiration();
+
   useEffect(() => {
-    if (!isAuthenticated) {
-      destroyCookie(null, 'token');
-      dispatch(setUser(null));
-      dispatch(clearAllState());
-      dispatch(setBasepath(basepath));
-      // handleSignout();
-    } else {
-      if (activeUser) {
-        dispatch(setUser(activeUser));
-        if (!staff) {
-          if (activeStaff) {
-            dispatch(setStaff(activeStaff));
-            setActiveContract(activeContract);
-            // } else {
-            //   const _stf = session.user.staff;
-            //   dispatch(setStaff(_stf));
-            //   setActiveContract({
-            //     ContractStartDate: _stf.ContractStartDate,
-            //     ContractEndDate: _stf.ContractEndDate,
-            //     AnnualLeave: _stf.AnnualLeave,
-            //     id: _stf.contractId,
-            //   });
-          }
-        }
+    if (status === 'authenticated') {
+      dispatch(setUser(activeUser));
+
+      if (activeStaff) {
+        dispatch(setStaff(activeStaff));
       }
     }
-  }, [session, activeStaff]);
+  }, [activeStaff]);
+  if (status === 'loading') {
+    //return <p>Loading...</p>;
+  }
+
   const buttonStyles = (theme) => ({
     display: 'block',
     width: '115px',
@@ -157,18 +118,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           : theme.colors.gray[0],
     },
   });
-  const buttonStyles2 = {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: '#F0F4F8', // Light grey-blue background
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s ease, color 0.2s ease',
 
-    '&:hover': {
-      backgroundColor: '#C0C7D1', // Deeper background color on hover
-    },
-  };
   return (
     <AppShell
       padding={contentpadding}
@@ -216,7 +166,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
               </Group>
 
               <Group position="right">
-                {user ? (
+                {activeUser ? (
                   <>
                     <HeaderPopover></HeaderPopover>
                     <Button
@@ -266,7 +216,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
           </div>
         </Header>
       }
-      navbar={user ? <AppShellNavBar opened={opened} /> : null}
+      navbar={activeUser ? <AppShellNavBar opened={opened} /> : null}
       footer={
         <Footer height={28}>
           <Flex
@@ -280,7 +230,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
         </Footer>
       }
     >
-      {user ? children : null}
+      {activeUser ? children : null}
     </AppShell>
   );
 }

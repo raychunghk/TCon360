@@ -1,8 +1,9 @@
 import { format, parseISO, isWeekend } from 'date-fns';
 import { useContext } from 'react';
-import { UtilsContext } from './utilCtx';
-import { useDispatch, useSelector } from 'react-redux';
-import { PublicHolidaysContext } from 'pages/_app';
+//import { UtilsContext } from './utilCtx';
+//import { useDispatch, useSelector } from 'react-redux';
+//import { PublicHolidaysContext } from 'pages/_app';
+import useStore from 'pages/reducers/zstore';
 let arrPublicHoliday;
 export function setPublicHolidays(holidays) {
   arrPublicHoliday = holidays;
@@ -196,16 +197,21 @@ export function getNextWorkingDatex(date) {
   return nextWorkingDate;
 }
 const getPublicHolidays = () => {
-  if (arrPublicHoliday === null) {
-    // Assuming `publicHolidays` is the React Redux state
-    const { publicHolidays } = useSelector((state) => ({
-      publicHolidays: state.calendar.publicHolidays,
-    }));
-    return publicHolidays;
-  } else {
-    return arrPublicHoliday;
-  }
+  const state = useStore.getState();
+  //zustand api call method when getting state outside of comonents.
+  return state.publicHolidays;
 };
+// const getPublicHolidays = () => {
+//   if (arrPublicHoliday === null) {
+//     // Assuming `publicHolidays` is the React Redux state
+//     const { publicHolidays } = useSelector((state) => ({
+//       publicHolidays: state.calendar.publicHolidays,
+//     }));
+//     return publicHolidays;
+//   } else {
+//     return arrPublicHoliday;
+//   }
+// };
 export const isPublicHoliday = (date) => {
   const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   //const _publicholidays = useContext(PublicHolidaysContext);
@@ -247,10 +253,7 @@ export const excludeHoliday = (date) => {
       (holiday) => holiday.StartDate === formattedDate,
     );
     const rtn = isWeekendDay || isHoliday;
-    // if (rtn) {
-    //   console.log('this is holiday');
-    //   console.log(date);
-    // }
+
     return rtn;
   } else {
     return null;

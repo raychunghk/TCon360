@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import NextAuth from 'next-auth';
 import { parseCookies, setCookie } from 'nookies';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { format, parseISO } from 'date-fns';
 // import Providers from "next-auth/providers"
 export const authOptions = {
   baseUrl: 'https://code2.raygor.cc/absproxy/5000',
@@ -99,11 +100,11 @@ export const authOptions = {
 
       if (token.hasOwnProperty('exp')) {
         const expdate = new Date(token.exp * 1000 + 5000);
-        logJwtCallback('token expiry date', expdate);
         logJwtCallback('now compared with expdate');
+        logJwtCallback('token expiry date', expdate);
 
         const now = new Date().getTime() / 1000;
-        logJwtCallback('now', now);
+        logJwtCallback(`token expiry:${expdate} datevs now:${now} `);
 
         if (token.hasOwnProperty('exp') && now < token.exp) {
           logJwtCallback('New date is earlier than token expiration');
@@ -116,14 +117,22 @@ export const authOptions = {
     },
 
     async session({ session, token, user }) {
+      const formatDate = (dateString) => {
+        if (dateString) {
+          const date = parseISO(dateString);
+          const formattedDate = format(date, 'yyyy-MMM-dd');
+          return formattedDate;
+        }
+      };
       const logSessionCallback = (description, ...args) =>
         logCallback('session callback:', description, ...args);
 
       const cookies = parseCookies();
       logSessionCallback('session?', session);
       logSessionCallback('token?', token);
-      logSessionCallback('user in session?', { user });
-      logSessionCallback('now', new Date().getTime() / 1000);
+      //logSessionCallback('user in session?', { user });
+      const _now = new Date().getTime() / 1000;
+      logSessionCallback('formatted now:', formatDate(_now));
 
       if (token.hasOwnProperty('exp')) {
         const expdate = new Date(token.exp * 1000);

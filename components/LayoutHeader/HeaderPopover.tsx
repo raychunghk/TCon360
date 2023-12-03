@@ -24,7 +24,8 @@ export default function HeaderPopover({}) {
   const handleOpen = () => {
     setOpenedPop(true);
   };
-  const activeContract = useStore((state) => state.activeContract);
+  const { activeStaff, activeContract, activeUser } = useStore();
+  //const activeContract = useStore((state) => state.activeContract);
   const handleClose = () => {
     setOpenedPop(false);
   };
@@ -38,14 +39,14 @@ export default function HeaderPopover({}) {
   };
   function setUfields() {
     setuserFields([
-      { label: 'Staff Name:', value: staff.StaffName },
-      { label: 'Agent Name:', value: staff.AgentName },
-      { label: 'Staff Category:', value: staff.StaffCategory },
-      { label: 'Department:', value: staff.Department },
-      { label: 'Post Unit:', value: staff.PostUnit },
-      { label: 'Manager Name:', value: staff.ManagerName },
-      { label: 'Manager Title:', value: staff.ManagerTitle },
-      { label: 'Manager Email:', value: staff.ManagerEmail },
+      { label: 'Staff Name:', value: activeStaff.StaffName },
+      { label: 'Agent Name:', value: activeStaff.AgentName },
+      { label: 'Staff Category:', value: activeStaff.StaffCategory },
+      { label: 'Department:', value: activeStaff.Department },
+      { label: 'Post Unit:', value: activeStaff.PostUnit },
+      { label: 'Manager Name:', value: activeStaff.ManagerName },
+      { label: 'Manager Title:', value: activeStaff.ManagerTitle },
+      { label: 'Manager Email:', value: activeStaff.ManagerEmail },
       {
         label: 'Contract Start Date:',
         value: formatDate(activeContract.ContractStartDate),
@@ -99,7 +100,7 @@ export default function HeaderPopover({}) {
               marginRight: '0.5rem',
             }}
           />
-          {user?.name}
+          {activeUser?.name}
         </Button>
       </Popover.Target>
       <Popover.Dropdown

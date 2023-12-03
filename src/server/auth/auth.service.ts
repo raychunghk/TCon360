@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload } from './jwtpayload.interface';
 import { StaffService } from '../staff/service/staff.service';
 import { signupUserDTO } from 'src/customDto/customDTOs';
+import { differenceInSeconds, format } from 'date-fns';
 
 @Injectable()
 export class AuthService {
@@ -182,12 +183,12 @@ export class AuthService {
         staff: user.viewStaff,
       };
       const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
-      console.log(tokenage);
+      console.log('creating token on server , token page in seconds', tokenage);
       const options = {
         expiresIn: `${tokenage}m`, // token expires in 1 minute
       };
-      console.log('jwt options');
-      console.log(options);
+      console.log('jwt options', options);
+
       token = this.jwtService.sign(payload, options);
 
       // Verify the token
@@ -196,16 +197,18 @@ export class AuthService {
       // Print the decoded token
       console.log('just signed in decoded token in nest.js');
       console.log(decoded);
-      console.log('now?');
-      console.log(new Date());
+      console.log('now?', new Date());
 
       const iat = new Date(decoded['iat'] * 1000);
 
       console.log('Token iat  on:', iat);
-      const expDate = new Date(decoded['exp'] * 1000);
+      const expDate = decoded['exp'] * 1000;
 
-      console.log('Token expires on:', expDate);
-      // Access the payload
+      const formattedExpDate = format(expDate, 'yyyy-MM-dd hh:mm:ss');
+      console.log('formattedExpDate:', formattedExpDate); // Output: 2023-02-06 07:12:17
+
+      const timeToExpInSeconds = differenceInSeconds(expDate, Date.now());
+      console.log('time to expire from now (seconds):', timeToExpInSeconds);
     } catch (error) {
       console.log('error', error);
       throw error;

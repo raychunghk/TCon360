@@ -10,7 +10,6 @@ const initialState = {
   customTitle: '',
   calendarEvents: [],
   currentStart: new Date(),
-  publicHolidays: [],
   formType: null,
   selectedDatesCount: 0,
   basepath: null,
@@ -34,9 +33,7 @@ export const calendarSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
-    setPublicHolidays: (state, action) => {
-      state.publicHolidays = action.payload;
-    },
+
     setLeaveRequestId: (state, action) => {
       state.leaveRequestId = action.payload;
     },
@@ -103,7 +100,7 @@ export const {
   setFormType,
   setSelectedDatesCount,
   setAuthtoken,
-  setPublicHolidays,
+
   setBasepath,
   setUser,
   clearAllState,

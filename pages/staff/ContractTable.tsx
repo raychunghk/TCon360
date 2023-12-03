@@ -40,11 +40,11 @@ export default function ContractTable({
   getStaffData,
   edting,
 }) {
-  const { staff, user, publicHolidays, basepath } = useSelector((state) => ({
+  const { staff, user, basepath } = useSelector((state) => ({
     staff: state.calendar.staff,
     user: state.calendar.user,
-    publicHolidays: state.calendar.publicHolidays,
     basepath: state.calendar.basepath,
+    //publicHolidays: state.calendar.publicHolidays,
   }));
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -62,10 +62,17 @@ export default function ContractTable({
     (state) => ({ amount: state.setEditErrors, title: state.setNextContractStartDate }),
     shallow
   )*/
-  const [setEditErrors, setNextContractStartDate] = useStore(
+  const [
+    setEditErrors,
+    setNextContractStartDate,
+    publicHolidays,
+    setPublicHolidays,
+  ] = useStore(
     useShallow((state) => [
       state.setEditErrors,
       state.setNextContractStartDate,
+      state.publicHolidays,
+      state.setPublicHolidays,
     ]),
   );
   useEffect(() => {

@@ -57,20 +57,7 @@ const data = [
     color: 'teal',
     label: 'Time Sheet',
     link: '/timesheet/create',
-    // child: [
-    //   // {
-    //   //   icon: <IconEyeglass size={defaultIconSize} />,
-    //   //   color: 'blue',
-    //   //   label: 'View',
-    //   //   link: '/timesheet',
-    //   // },
-    //   {
-    //     icon: <IconCalendarPlus size={defaultIconSize} />,
-    //     color: 'blue',
-    //     label: 'Create',
-    //     link: '/timesheet/create',
-    //   },
-    // ],
+   
   },
   {
     icon: <IconUserEdit size={'1.5rem'} color="blue" />,
