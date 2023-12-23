@@ -10,21 +10,26 @@ export default function HeaderPopover({}) {
   const dispatch = useDispatch();
   const [openedPop, setOpenedPop] = useState(false);
   const [userFields, setuserFields] = useState(null);
-  const { staff, user, staffVacation } = useSelector((state) => ({
-    staff: state.calendar.staff,
+  const { user } = useSelector((state) => ({
     user: state.calendar.user,
-    staffVacation: state.calendar.staffVacation,
   }));
+  const {
+    activeStaff,
+    activeContract,
+    activeUser,
+    staffVacation,
+    setStaffVacation,
+  } = useStore();
+
   useEffect(() => {
-    setUfields();
-  }, [staff, staffVacation]);
+    if (staffVacation) setUfields();
+  }, [activeStaff, staffVacation]);
   useEffect(() => {
     setUfields();
   }, []);
   const handleOpen = () => {
     setOpenedPop(true);
   };
-  const { activeStaff, activeContract, activeUser } = useStore();
   //const activeContract = useStore((state) => state.activeContract);
   const handleClose = () => {
     setOpenedPop(false);
@@ -59,9 +64,9 @@ export default function HeaderPopover({}) {
         label: 'Annual Leave:',
         value: `Total: ${activeContract.AnnualLeave}`,
         subValue2: `Available: ${
-          activeContract.AnnualLeave - staffVacation.used
+          staffVacation ? activeContract.AnnualLeave - staffVacation.used : 0
         }`,
-        subValue: `Used: ${staffVacation.used}`,
+        subValue: `Used: ${staffVacation ? staffVacation.used : 0}`,
       },
     ]);
   }

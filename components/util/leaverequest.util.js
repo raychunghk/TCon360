@@ -132,10 +132,13 @@ export function getBusinessDays(startDate, endDate) {
   return businessDays;
 }
 export function adjustTimeZoneVal(dateval) {
-  if (dateval)
-    return new Date(
+  if (dateval) {
+    const rtnval = new Date(
       dateval.getTime() - dateval.getTimezoneOffset() * 60000,
     ).toISOString();
+    console.log('adjustTimeZoneVal', rtnval);
+    return rtnval;
+  }
 }
 export function getNextWorkingDate(date) {
   const dayOfWeek = date.getDay();

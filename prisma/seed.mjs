@@ -200,7 +200,19 @@ async function createViewEventsIfNotExists() {
       LEFT JOIN
         PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
       LEFT JOIN
-        LeaveRequest LR ON LR.leavePeriodStart = CalendarDate
+        LeaveRequest LR ON 
+        datetime(
+    leavePeriodStart / 1000,
+    'unixepoch',
+    'localtime',
+    'start of day'
+) = datetime(
+    CalendarDate / 1000,
+    'unixepoch',
+    'localtime',
+    'start of day'
+)
+       
       WHERE
         HolidaySummary IS NOT NULL;
   `;

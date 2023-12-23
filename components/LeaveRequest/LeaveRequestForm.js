@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
-import { getToken } from 'next-auth/jwt';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { parseCookies } from 'nookies';
 import {
@@ -18,7 +17,7 @@ import {
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import MyCard from 'components/MyCard';
-import { usePublicHolidays } from 'components/util/usePublicHolidays';
+
 import MyModal from '../../components/MyModal';
 
 import { format, parseISO, isWeekend } from 'date-fns';
@@ -30,7 +29,6 @@ import {
   getBusinessDays,
   formatResponseDate,
   adjustTimeZoneVal,
-  // setPublicHolidays,
   excludeHoliday,
   myRenderDay,
   getNextWorkingDate,
@@ -51,8 +49,8 @@ import useStore from 'pages/reducers/zstore';
 export async function getServerSideProps(context) {
   const session = await getServerSession(context);
   const staff = session.staff;
-  console.log(' in server staff');
-  console.log(staff);
+  console.log(' in server staff', staff);
+
   return {
     props: {
       staff,
@@ -70,12 +68,12 @@ export default function LeaveRequestForm({
   leavePurpose,
 }) {
   console.log('form type?', formType);
-
   console.log('leave Request ID?', leaveRequestId);
+  console.log('leave purpose?', leavePurpose);
 
-  //const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
-  const { publicHolidays, setPublicHolidays, setActiveContract } = useStore();
-  //setPublicHolidays(publicHolidays);
+  const { publicHolidays, activeUser, activeStaff, activeContract } =
+    useStore();
+
   console.log('_public holiday?', publicHolidays);
 
   const title =
@@ -86,7 +84,7 @@ export default function LeaveRequestForm({
   const [modalMsg, setModalMsg] = useState('');
   //const [staff, setStaff] = useState(null);
 
-  const { activeStaff, activeContract } = useStore();
+  //  const { activeStaff, activeContract } = useStore();
   const staff = activeStaff;
   const [errors, setErrors] = useState({});
   const { reset, handleSubmit } = useForm();
@@ -105,7 +103,7 @@ export default function LeaveRequestForm({
     helper: null,
 
     leaveType: 'vacation',
-    leavePurpose: 'Vacation',
+    leavePurpose: leavePurpose ? leavePurpose : 'Vacation',
   };
   const [leaveRequest, setLeaveRequest] = useState(newLeaveRequest);
 
@@ -122,15 +120,14 @@ export default function LeaveRequestForm({
   };
 
   const { data: session } = useSession();
-  //const activeContract = useStore((state) => state.activeContract);
+
   useEffect(() => {
     console.log('session?', session);
-    if (session?.user) {
-      //console.log(session.user.staff);
+    if (activeUser) {
       //setStaff(session.user.staff);
-      setLeaveRequest({ ...leaveRequest, staffId: session.user.staff.id });
+      setLeaveRequest({ ...leaveRequest, staffId: activeStaff.id });
     }
-  }, [session]);
+  }, [activeUser]);
   const getTextinputProps = (fieldName) => {
     return {
       name: fieldName,
@@ -204,7 +201,6 @@ export default function LeaveRequestForm({
       }
       if (AMPMStart === 'AM') {
         _ampmstart = 'AMPM';
-        //AMPMStart = _ampmstart;
       }
       const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
       const startIsPM = AMPMStart === 'PM';
@@ -252,7 +248,6 @@ export default function LeaveRequestForm({
     leaveRequest.leavePeriodEnd,
   ]);
 
-  const updateOnClick = async (e) => {};
   const deleteOnClick = async (e) => {
     leaveRequestId = leaveRequest.id;
     setSubmitting(true);
@@ -305,14 +300,13 @@ export default function LeaveRequestForm({
     console.log('all zustand states:', state); // Print the state object to the console
 
     const newData = {
-      // staffId: parseInt(leaveRequest.staffId),
       leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
       leavePeriodEnd: adjustTimeZoneVal(leaveRequest.leavePeriodEnd),
       AMPMEnd: leaveRequest.AMPMEnd,
       AMPMStart: leaveRequest.AMPMStart,
       leaveDays: leaveRequest.leaveDays,
       dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
-      //staffSignDate: adjustTimeZoneVal(leaveRequest.staffSignDate),
+
       staffSignDate: leaveRequest.staffSignDate,
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
@@ -320,8 +314,7 @@ export default function LeaveRequestForm({
       contractId: activeContract.id,
     };
     console.log('newdata: ', newData);
-    //console.log('original leave start');
-    //console.log(leaveRequest.leavePeriodStart);
+
     try {
       await validationSchema.validate(leaveRequest, { abortEarly: false });
       const response = await axios[formType === 'create' ? 'post' : 'put'](
@@ -361,7 +354,65 @@ export default function LeaveRequestForm({
     }
     setSubmitting(false);
   };
+  const updateOnClick = async () => {
+    setSubmitting(true);
+    const state = useStore.getState(); // Access the entire store state
 
+    console.log('all Zustand states:', state); // Print the state object to the console
+
+    const newData = {
+      leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
+      leavePeriodEnd: adjustTimeZoneVal(leaveRequest.leavePeriodEnd),
+      AMPMEnd: leaveRequest.AMPMEnd,
+      AMPMStart: leaveRequest.AMPMStart,
+      leaveDays: leaveRequest.leaveDays,
+      dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
+      staffSignDate: leaveRequest.staffSignDate,
+      leavePurpose: leaveRequest.leavePurpose,
+      leaveType: leaveRequest.leaveType,
+      contractId: activeContract.id,
+    };
+    console.log('newData:', newData);
+
+    try {
+      await validationSchema.validate(leaveRequest, { abortEarly: false });
+      const response = await axios.put(
+        `${basepath}/api/leaverequest/${leaveRequest.id}`,
+        newData,
+        {
+          headers: headers,
+        },
+      );
+
+      if ([200, 201].includes(response.status)) {
+        setModalMsg('Leave Record Updated Successfully');
+        setModalOpen(true);
+        reset();
+
+        let _data = formatResponseDate(response.data);
+        console.log('responseData:', _data);
+
+        setLeaveRequest({
+          ..._data,
+        });
+        setErrors({});
+        if (fetchEvents) {
+          await fetchEvents();
+        }
+      } else {
+        console.error('Failed to update leave request:', response);
+      }
+    } catch (err) {
+      const newErrors = {};
+      err.inner.forEach((error) => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      console.error('Error submitting form:', err);
+      // Handle error
+    }
+    setSubmitting(false);
+  };
   const disabledDates = {
     daysOfWeek: [0, 6], // 0 is Sunday, 6 is Saturday
   };
@@ -442,9 +493,6 @@ export default function LeaveRequestForm({
             </Grid.Col>
             <Grid.Col span={6}>
               <TextInput
-                // id="leavePurpose"
-                // name="leavePurpose"
-                // error={errors['leavePurpose']}
                 {...getTextinputProps('leavePurpose')}
                 label="Leave purpose"
                 value={leaveRequest.leavePurpose}
@@ -572,10 +620,8 @@ export default function LeaveRequestForm({
             <Grid.Col span={6}>
               <DatePickerInput
                 clearable
-                // name="dateOfReturn"
                 label="Date of Return"
                 disabled={!leaveRequest.leavePeriodStart}
-                // {...dtPickerProps}
                 {...getDatePickerProps('dateOfReturn')}
               />
             </Grid.Col>

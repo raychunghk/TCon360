@@ -15,7 +15,7 @@ const initialState = {
   basepath: null,
   authtoken: '',
   user: null,
-  staffVacation: { total: 0, used: 0, balance: 0 },
+
   contractStartDate: null,
   contractEndDate: null,
 };
@@ -70,9 +70,7 @@ export const calendarSlice = createSlice({
     setSelectedDatesCount: (state, action) => {
       state.selectedDatesCount = action.payload;
     },
-    setstaffVacation: (state, action) => {
-      state.staffVacation = action.payload;
-    },
+
     setContractStartDate: (state, action) => {
       state.contractStartDate = action.payload;
     },

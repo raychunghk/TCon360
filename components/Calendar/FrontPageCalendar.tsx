@@ -12,19 +12,17 @@ import styles from './calendar.module.css';
 import { useDisclosure, useInputState } from '@mantine/hooks';
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { signOut, useSession } from 'next-auth/react';
-
+import useStore from 'pages/reducers/zstore';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setOpen,
   setClose,
   setLeaveRequestId,
-  setLeaveRequestPeriod,
+  //setLeaveRequestPeriod,
   // setLeavePurpose,
-  setStaff,
   setChargeableDays,
   //setCustomTitle,
-  setCalendarEvents,
-  setstaffVacation,
+  //setCalendarEvents,
   clearAllState,
   // setFormType,
   // setSelectedDatesCount,
@@ -48,33 +46,33 @@ export function FrontPageCalendar() {
   };
   const {
     opened,
-    leaveRequestId,
-    LeaveRequestPeriod,
-    chargeableDays,
+    //leaveRequestId,
+    //LeaveRequestPeriod,
+    //chargeableDays,
     //   customTitle,
-    calendarEvents,
-    user,
-    staffVacation,
+    // calendarEvents,
+    // user,
+
     //  currentStart,
     //  formType,
     //  selectedDatesCount,
     //  leavePurpose,
-    staff,
+    // staff,
     //  session,
   } = useSelector((state) => ({
     opened: state.calendar.opened,
-    leaveRequestId: state.calendar.leaveRequestId,
-    LeaveRequestPeriod: state.calendar.LeaveRequestPeriod,
-    chargeableDays: state.calendar.chargeableDays,
-    customTitle: state.calendar.customTitle,
-    calendarEvents: state.calendar.calendarEvents,
-    user: state.calendar.user,
-    staffVacation: state.calendar.staffVacation,
+    //leaveRequestId: state.calendar.leaveRequestId,
+    //LeaveRequestPeriod: state.calendar.LeaveRequestPeriod,
+    //chargeableDays: state.calendar.chargeableDays,
+    //  customTitle: state.calendar.customTitle,
+    // calendarEvents: state.calendar.calendarEvents,
+    //user: state.calendar.user,
+
     //  currentStart: state.calendar.currentStart,
     //  formType: state.calendar.formType,
     //  selectedDatesCount: state.calendar.selectedDatesCount,
     //  leavePurpose: state.calendar.leavePurpose,
-    staff: state.calendar.staff,
+    //staff: state.calendar.staff,
     //  session: state.calendar.session,
   }));
 
@@ -87,14 +85,27 @@ export function FrontPageCalendar() {
   };
 
   const setLeaveRequestPeriodAction = (period) => {
-    dispatch(setLeaveRequestPeriod(period));
+    //dispatch(setLeaveRequestPeriod(period));
+    setLeaveRequestPeriod(period);
+    period;
   };
   const [leavePurpose, setleavePurpose] = useState(null);
   //fconst [staff, setStaff] = useState(null);
 
   const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
-
+  const {
+    staffVacation,
+    LeaveRequestPeriod,
+    setLeaveRequestPeriod,
+    setStaffVacation,
+    calendarEvents,
+    setCalendarEvents,
+    chargeableDays,
+    setChargeableDays,
+    leaveRequestId,
+    setLeaveRequestId,
+  } = useStore();
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
   const [customTitle, setCustomTitle] = useState('');
@@ -123,7 +134,8 @@ export function FrontPageCalendar() {
         console.log('calendar event length', calendarEvents.length);
 
         if (events.length != calendarEvents.length) {
-          await dispatch(setCalendarEvents(events));
+          //await dispatch(setCalendarEvents(events));
+          await setCalendarEvents(events);
         }
       } else {
         console.error('Failed to fetch events:', response);
@@ -137,34 +149,30 @@ export function FrontPageCalendar() {
     }
     // }
   }
-  const { activeStaff, activeContract, isAuthenticated } = useStaffData();
+  const { activeStaff, activeContract, isAuthenticated, activeUser } =
+    useStaffData();
   const { data: session, status } = useSession();
+  // useEffect(() => {
+  //   //if (session) {
+  //   if (activeStaff) {
+
+  //     fetchEvents();
+  //   }
+  // }, [session]);
   useEffect(() => {
     //if (session) {
     if (activeStaff) {
-      /*const sessionexpirydate = new Date(session.expires);
-      const cookies = parseCookies();
-      if (cookies.token) {
-        setCookie(null, 'token', cookies.token, {
-          expires: sessionexpirydate,
-          path: '/',
-        });
-      }
-
-      const _tkn = session?.token;
-      console.log('token???', _tkn);
- */
       fetchEvents();
     }
-  }, [session]);
+  }, []);
   useEffect(() => {
     // Calculate total chargeable days whenever calendar events or date changes
     // const currentDate = new Date();
     setTitle(CurrentStart);
   }, [calendarEvents, CurrentStart]);
   useEffect(() => {
-    if (user) {
-      setVacationSummary(user, calendarEvents);
+    if (activeUser) {
+      setVacationSummary(activeUser, calendarEvents);
     }
   }, [calendarEvents]);
 
@@ -184,7 +192,8 @@ export function FrontPageCalendar() {
     console.log(e.event);
 
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
-    dispatch(setLeaveRequestId(_leaveRequestid));
+    //dispatch(setLeaveRequestId(_leaveRequestid));
+    setLeaveRequestId(_leaveRequestid);
     console.log('leave request props?', e.event.extendedProps.result);
 
     if (_leaveRequestid) {
@@ -219,8 +228,8 @@ export function FrontPageCalendar() {
       return;
     }
 
-    const ContractStartDate = new Date(_user.staff.ContractStartDate);
-    const ContractEndDate = new Date(_user.staff.ContractEndDate);
+    const ContractStartDate = new Date(activeContract.ContractStartDate);
+    const ContractEndDate = new Date(activeContract.ContractEndDate);
 
     const vacationEvents = _events.filter((event) => {
       const evt = event.extendedProps.result;
@@ -237,7 +246,7 @@ export function FrontPageCalendar() {
         (_leaveperiodend !== null || _leaveperiodstart > ContractStartDate)
       );
     });
-
+    console.log('vacation events', vacationEvents);
     const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
       const evt = event.extendedProps.result;
       const _end = new Date(event.end);
@@ -272,15 +281,19 @@ export function FrontPageCalendar() {
       return sum + evt.leaveDays;
     }, 0);
 
-    dispatch(
-      setstaffVacation({
-        total: _user.staff.AnnualLeave,
-        used: vacationLeaveDays,
-        balance: _user.staff.AnnualLeave - vacationLeaveDays,
-      }),
-    );
-
     console.log('vacationleavedays', vacationLeaveDays);
+    // dispatch(
+    //   setStaffVacation({
+    //     total: activeContract.AnnualLeave,
+    //     used: vacationLeaveDays,
+    //     balance: activeContract.AnnualLeave - vacationLeaveDays,
+    //   }),
+    // );
+    setStaffVacation({
+      total: activeContract.AnnualLeave,
+      used: vacationLeaveDays,
+      balance: activeContract.AnnualLeave - vacationLeaveDays,
+    });
   }
   function setTitle(newDate = new Date()) {
     // setCurrentStart(newDate);
@@ -296,7 +309,7 @@ export function FrontPageCalendar() {
     );
 
     const _dateRange = `${formattedFirstDay} to ${formattedLastDay}`;
-    if (!user) {
+    if (!activeUser) {
       setCustomTitle(_dateRange);
       return;
     }
@@ -322,7 +335,8 @@ export function FrontPageCalendar() {
     const _customTitle = `${_dateRange} (chargable days: ${_chargeableDays})`;
     setCustomTitle(_customTitle);
     // Update the state with the calculated chargeable days
-    dispatch(setChargeableDays(_chargeableDays));
+    //dispatch(setChargeableDays(_chargeableDays));
+    setChargeableDays(_chargeableDays);
     // Your logic here...
   }
   const handleDateSelect = (selectInfo) => {
@@ -351,7 +365,8 @@ export function FrontPageCalendar() {
     if (_leavePurpose) {
       setleavePurpose(_leavePurpose);
       setFormType('create');
-      dispatch(setLeaveRequestId(0));
+      //dispatch(setLeaveRequestId(0));
+      setLeaveRequestId(0);
       open();
     }
   };
@@ -411,7 +426,7 @@ export function FrontPageCalendar() {
           },
           cv: {
             component: (props) => (
-              <CustomView {...props} userStaff={user?.staff} />
+              <CustomView {...props} userStaff={activeStaff} />
             ),
             buttonText: 'Leave Requests',
             events: calendarEvents,

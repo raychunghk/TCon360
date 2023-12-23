@@ -16,11 +16,7 @@ import MyModal from '../../components/MyModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { basepath } from '/global';
 import UserStyle from '../../styles/User.module.css';
-import {
-  setStaff,
-  setPublicHolidays,
-  setBasepath,
-} from 'pages/reducers/calendarReducer';
+//import { setBasepath } from 'pages/reducers/calendarReducer';
 import { useForm, yupResolver } from '@mantine/form';
 import { Param } from '@nestjs/common';
 //import { usePublicHolidays } from '. /usePublicHolidays';
@@ -34,15 +30,11 @@ import { useStaffData } from 'components/useStaffData';
 require('dotenv').config();
 
 export default function EditStaff() {
-  const { staff, user, staffVacation, calendarEvents } = useSelector(
-    (state) => ({
-      staff: state.calendar.staff,
-      // user: state.calendar.user,
-      staffVacation: state.calendar.staffVacation,
-      //  publicHolidays: state.calendar.publicHolidays,
-      calendarEvents: state.calendar.calendarEvents,
-    }),
-  );
+  // const { staff, user, staffVacation } = useSelector((state) => ({
+  //   staff: state.calendar.staff,
+  //   // user: state.calendar.user,
+  //   staffVacation: state.calendar.staffVacation,
+  // }));
   const { activeUser, activeStaff, activeContract, isAuthenticated } =
     useStaffData();
   const [formValues, setFormValues] = useState(staffModel);
@@ -53,7 +45,8 @@ export default function EditStaff() {
   const [modalContent, setModalContent] = useState('Sucess');
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
-  const setActiveContract = useStore((state) => state.setActiveContract);
+  //const setActiveContract = useStore((state) => state.setActiveContract);
+  const { setActiveContract, setActiveStaff, setBasepath } = useStore();
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
@@ -74,7 +67,8 @@ export default function EditStaff() {
         setFormValues(_staff);
         setEditing(true);
         form.setValues(_staff);
-        dispatch(setStaff(_staff));
+        //  dispatch(setStaff(_staff));
+        setActiveStaff(_staff);
         const activeContract = _staff.contracts.filter(
           (contract) => contract.IsActive === true,
         );
@@ -88,7 +82,7 @@ export default function EditStaff() {
 
   useEffect(() => {
     getStaffData();
-    dispatch(setBasepath(basepath));
+    setBasepath(basepath);
     setDatepickerPlDay(publicHolidays);
   }, [publicHolidays]);
   const handleModalClose = () => {

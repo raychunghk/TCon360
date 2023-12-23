@@ -13,19 +13,6 @@ const useStore = create((set) => ({
   userStatus: null,
   publicHolidays: null,
   staffVacation: { total: 0, used: 0, balance: 0 },
-  leaveRequestId: null,
-  LeaveRequestPeriod: null,
-  leavePurpose: null,
-  staff: null,
-  chargeableDays: 0,
-  customTitle: '',
-  calendarEvents: [],
-  currentStart: new Date(),
-  formType: null,
-  selectedDatesCount: 0,
-  authtoken: '',
-  basepath: null,
-  user: null,
   setStaffVacation: (vacation) =>
     set((state) => ({
       staffVacation: vacation,
@@ -70,69 +57,17 @@ const useStore = create((set) => ({
         : null,
     })),
   setContractStartMaxDate: (date) =>
-    set((state) => ({
+    set({
       contractStartMaxDate: new Date(
         new Date(date).getTime() - 24 * 60 * 60 * 1000,
       ),
-    })),
+    }),
   setContractEndMinDate: (date) =>
-    set((state) => ({
+    set({
       contractEndMinDate: new Date(
         new Date(date).getTime() + 24 * 60 * 60 * 1000,
       ),
-    })),
-  setLeaveRequestId: (id) =>
-    set((state) => ({
-      leaveRequestId: id,
-    })),
-  setLeaveRequestPeriod: (period) =>
-    set((state) => ({
-      LeaveRequestPeriod: period,
-    })),
-  setLeavePurpose: (purpose) =>
-    set((state) => ({
-      leavePurpose: purpose,
-    })),
-  setStaff: (staff) =>
-    set((state) => ({
-      staff: staff,
-    })),
-  setChargeableDays: (days) =>
-    set((state) => ({
-      chargeableDays: days,
-    })),
-  setCustomTitle: (title) =>
-    set((state) => ({
-      customTitle: title,
-    })),
-  setCalendarEvents: (events) =>
-    set((state) => ({
-      calendarEvents: events,
-    })),
-  setCurrentStart: (start) =>
-    set((state) => ({
-      currentStart: start,
-    })),
-  setFormType: (type) =>
-    set((state) => ({
-      formType: type,
-    })),
-  setSelectedDatesCount: (count) =>
-    set((state) => ({
-      selectedDatesCount: count,
-    })),
-  setAuthtoken: (token) =>
-    set((state) => ({
-      authtoken: token,
-    })),
-  setBasepath: (path) =>
-    set((state) => ({
-      basepath: path,
-    })),
-  setUser: (user) =>
-    set((state) => ({
-      user: user,
-    })),
+    }),
   clearAllState: () =>
     set(() => ({
       contractStartDate: null,
@@ -145,21 +80,6 @@ const useStore = create((set) => ({
       activeStaff: null,
       activeUser: null,
       userStatus: null,
-      publicHolidays: null,
-      staffVacation: { total: 0, used: 0, balance: 0 },
-      leaveRequestId: null,
-      LeaveRequestPeriod: null,
-      leavePurpose: null,
-      staff: null,
-      chargeableDays: 0,
-      customTitle: '',
-      calendarEvents: [],
-      currentStart: new Date(),
-      formType: null,
-      selectedDatesCount: 0,
-      authtoken: '',
-      basepath: null,
-      user: null,
     })),
 }));
 

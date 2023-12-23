@@ -8,7 +8,6 @@ import {
   Post,
   Put,
   Res,
-  StreamableFile,
   UseInterceptors,
   NotFoundException,
   InternalServerErrorException,
@@ -46,6 +45,25 @@ export class LeaveRequestController {
     const contractId = user.viewStaff[0].contractId;
     Logger.log('staffid', staffId);
     Logger.log('leaveRequestData', leaveRequestData);
+    if (typeof leaveRequestData.leavePeriodStart === 'string') {
+      leaveRequestData.leavePeriodStart = new Date(
+        leaveRequestData.leavePeriodStart,
+      );
+    }
+
+    if (leaveRequestData.leavePeriodStart instanceof Date) {
+      leaveRequestData.leavePeriodStart.setHours(0, 0, 0, 0);
+    }
+    if (typeof leaveRequestData.leavePeriodEnd === 'string') {
+      leaveRequestData.leavePeriodEnd = new Date(
+        leaveRequestData.leavePeriodEnd,
+      );
+    }
+
+    if (leaveRequestData.leavePeriodEnd instanceof Date) {
+      leaveRequestData.leavePeriodEnd.setHours(0, 0, 0, 0);
+    }
+
     const attributeName = 'contractId';
     if (leaveRequestData.hasOwnProperty(attributeName)) {
       delete leaveRequestData[attributeName];
@@ -59,17 +77,27 @@ export class LeaveRequestController {
     Logger.log('create result', leaveRequest);
 
     return leaveRequest;
-    // return {
-    //   leavePeriodStart: leaveRequest.leavePeriodStart,
-    //   leavePeriodEnd: leaveRequest.leavePeriodEnd,
-    //   AMPMStart: leaveRequest.AMPMStart,
-    //   AMPMEnd: leaveRequest.AMPMEnd,
-    //   leaveDays: leaveRequest.leaveDays,
-    //   dateOfReturn: leaveRequest.dateOfReturn,
-    //   staffSignDate: leaveRequest.staffSignDate,
-    //   staffId: leaveRequest.staffId,
-    //   fileID: leaveRequest.fileId
-    // }
+  }
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() data: LeaveRequest,
+  ): Promise<LeaveRequest> {
+    try {
+      console.log('update leave request data', data);
+      // Strip the time value from leavePeriodStart
+      if (data.leavePeriodStart) {
+        data.leavePeriodStart.setHours(0, 0, 0, 0);
+      }
+      if (data.leavePeriodEnd) {
+        data.leavePeriodEnd.setHours(0, 0, 0, 0);
+      }
+
+      const rtn = this.leaveRequestService.update({ id: +id, data });
+      return rtn;
+    } catch (error) {
+      console.log('error updating leave request:', error);
+    }
   }
   @Post('/staff/:staffId')
   async createLeaveRequest2(@Body() leaveRequestData) {
@@ -83,14 +111,6 @@ export class LeaveRequestController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<LeaveRequest> {
     return this.leaveRequestService.findOne(+id);
-  }
-
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() data: LeaveRequest,
-  ): Promise<LeaveRequest> {
-    return this.leaveRequestService.update({ id: +id, data });
   }
 
   @Delete(':id')

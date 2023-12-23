@@ -96,9 +96,9 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     if (status === 'authenticated') {
       dispatch(setUser(activeUser));
 
-      if (activeStaff) {
-        dispatch(setStaff(activeStaff));
-      }
+      // if (activeStaff) {
+      //   dispatch(setStaff(activeStaff));
+      // }
     }
   }, [activeStaff]);
   if (status === 'loading') {

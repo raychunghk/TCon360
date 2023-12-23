@@ -33,32 +33,32 @@ import {
   setContractEndDate,
 } from 'pages/reducers/calendarReducer';
 
-export function useFetchStaff(staffId) {
-  const [staff, setStaff] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// export function useFetchStaff(staffId) {
+//   const [staff, setStaff] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function fetchStaff() {
-      try {
-        setLoading(true);
-        setError(null);
+//   useEffect(() => {
+//     async function fetchStaff() {
+//       try {
+//         setLoading(true);
+//         setError(null);
 
-        const response = await axios.get(`/api/staff/${staffId}`);
+//         const response = await axios.get(`/api/staff/${staffId}`);
 
-        setStaff(response.data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
+//         setStaff(response.data);
+//       } catch (err) {
+//         setError(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     }
 
-    fetchStaff();
-  }, [staffId]);
+//     fetchStaff();
+//   }, [staffId]);
 
-  return { staff, loading, error };
-}
+//   return { staff, loading, error };
+// }
 export const inputFields = [
   {
     label: 'Name of Staff',
