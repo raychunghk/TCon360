@@ -86,12 +86,12 @@ export class LeaveRequestController {
     try {
       console.log('update leave request data', data);
       // Strip the time value from leavePeriodStart
-      if (data.leavePeriodStart) {
+      /* if (data.leavePeriodStart) {
         data.leavePeriodStart.setHours(0, 0, 0, 0);
       }
       if (data.leavePeriodEnd) {
         data.leavePeriodEnd.setHours(0, 0, 0, 0);
-      }
+      }*/
 
       const rtn = this.leaveRequestService.update({ id: +id, data });
       return rtn;

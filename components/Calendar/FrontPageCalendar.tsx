@@ -105,6 +105,7 @@ export function FrontPageCalendar() {
     setChargeableDays,
     leaveRequestId,
     setLeaveRequestId,
+    isEventUpdated,
   } = useStore();
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
@@ -133,7 +134,7 @@ export function FrontPageCalendar() {
 
         console.log('calendar event length', calendarEvents.length);
 
-        if (events.length != calendarEvents.length) {
+        if (isEventUpdated || events.length != calendarEvents.length) {
           //await dispatch(setCalendarEvents(events));
           await setCalendarEvents(events);
         }

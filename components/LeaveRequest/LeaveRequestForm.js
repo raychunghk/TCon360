@@ -71,8 +71,14 @@ export default function LeaveRequestForm({
   console.log('leave Request ID?', leaveRequestId);
   console.log('leave purpose?', leavePurpose);
 
-  const { publicHolidays, activeUser, activeStaff, activeContract } =
-    useStore();
+  const {
+    publicHolidays,
+    activeUser,
+    activeStaff,
+    activeContract,
+    isEventUpdated,
+    setIsEventUpdated,
+  } = useStore();
 
   console.log('_public holiday?', publicHolidays);
 
@@ -397,6 +403,7 @@ export default function LeaveRequestForm({
         });
         setErrors({});
         if (fetchEvents) {
+          setIsEventUpdated(true);
           await fetchEvents();
         }
       } else {

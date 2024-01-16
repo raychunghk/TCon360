@@ -4,7 +4,7 @@ import path from 'path';
 import argon2 from 'argon2';
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
-
+import * as mydata from './database/mypersonal';
 const prisma = new PrismaClient();
 async function main() {
   //await gencalendar();
@@ -290,14 +290,14 @@ async function genStaffInfo() {
 
     const stf = await prisma.staff.create({
       data: {
-        StaffName: 'Chung Wai Man',
-        AgentName: 'Seamatch Asia Limited',
-        StaffCategory: 'CAP/CSA',
-        Department: 'ArchSD',
-        PostUnit: 'TS3',
-        ManagerName: 'Mr Anthony WONG',
-        ManagerEmail: 'wongyf3@archsd.gov.hk',
-        ManagerTitle: 'PSM/TS33',
+        StaffName: mydata.StaffName,
+        AgentName: mydata.AgentName,
+        StaffCategory: mydata.StaffCategory,
+        Department: mydata.Department,
+        PostUnit: mydata.PostUnit,
+        ManagerName: mydata.ManagerName,
+        ManagerEmail: mydata.ManagerEmail,
+        ManagerTitle: mydata.ManagerTitle,
         user: { connect: { id: u.id } },
         contracts: {
           create: [
@@ -306,12 +306,6 @@ async function genStaffInfo() {
               ContractEndDate: new Date(2024, 2, 31),
               AnnualLeave: 12,
               IsActive: true,
-            },
-            {
-              ContractStartDate: new Date(2024, 3, 1),
-              ContractEndDate: new Date(2025, 2, 31),
-              AnnualLeave: 15,
-              IsActive: false,
             },
           ],
         },
