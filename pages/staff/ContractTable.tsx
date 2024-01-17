@@ -31,7 +31,8 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { ContractDatePicker } from './ContractDatePicker';
 import useStore from 'pages/reducers/zstore';
 import { format } from 'date-fns';
-import { useShallow } from 'zustand/shallow';
+
+import { useShallow } from 'zustand/react/shallow';
 export default function ContractTable({
   formValues,
   setFormValues,

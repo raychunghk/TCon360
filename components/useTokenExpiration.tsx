@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { parseCookies, destroyCookie } from 'nookies';
 import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import useStore from 'pages/reducers/zstore';
-import { useShallow } from 'zustand/shallow';
+//import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 
 export default function useTokenExpiration() {
   const router = useRouter();

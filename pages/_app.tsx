@@ -25,7 +25,7 @@ import { Provider } from 'react-redux';
 import { store } from './reducers/store';
 import { ModalsProvider } from '@mantine/modals';
 import useStore from './reducers/zstore';
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import useTokenExpiration from 'components/useTokenExpiration';
 import { usePublicHolidays } from 'components/util/usePublicHolidays';
 

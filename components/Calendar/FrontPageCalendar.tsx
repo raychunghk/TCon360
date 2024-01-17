@@ -44,36 +44,8 @@ export function FrontPageCalendar() {
     dispatch(clearAllState());
     signOut();
   };
-  const {
-    opened,
-    //leaveRequestId,
-    //LeaveRequestPeriod,
-    //chargeableDays,
-    //   customTitle,
-    // calendarEvents,
-    // user,
-
-    //  currentStart,
-    //  formType,
-    //  selectedDatesCount,
-    //  leavePurpose,
-    // staff,
-    //  session,
-  } = useSelector((state) => ({
+  const { opened } = useSelector((state) => ({
     opened: state.calendar.opened,
-    //leaveRequestId: state.calendar.leaveRequestId,
-    //LeaveRequestPeriod: state.calendar.LeaveRequestPeriod,
-    //chargeableDays: state.calendar.chargeableDays,
-    //  customTitle: state.calendar.customTitle,
-    // calendarEvents: state.calendar.calendarEvents,
-    //user: state.calendar.user,
-
-    //  currentStart: state.calendar.currentStart,
-    //  formType: state.calendar.formType,
-    //  selectedDatesCount: state.calendar.selectedDatesCount,
-    //  leavePurpose: state.calendar.leavePurpose,
-    //staff: state.calendar.staff,
-    //  session: state.calendar.session,
   }));
 
   const open = () => {
@@ -406,6 +378,8 @@ export function FrontPageCalendar() {
         selectable={true}
         // selectAllow={() => true}
         // initialView="timeGrid"
+        //weekNumbers={true}
+        //weekNumbersWithinDays={false}
         initialView="dayGridMonth"
         selectAllow={(selectinfo) =>
           handleSelectAllow(selectinfo, calendarEvents)

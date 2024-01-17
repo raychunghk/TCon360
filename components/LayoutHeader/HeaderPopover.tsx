@@ -1,5 +1,6 @@
 import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
-import { IconSquareRoundedX, IconUser } from '@tabler/icons';
+//import { IconSquareRoundedX, IconUser } from '@tabler/icons';
+import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React from 'react';
 import { useState, useEffect } from 'react';
