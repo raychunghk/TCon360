@@ -119,7 +119,9 @@ export const authOptions = {
     async session({ session, token, user }) {
       const formatDate = (dateString) => {
         if (dateString) {
-          const date = parseISO(dateString);
+          const date = parseISO(dateString + '');
+          console.log('parsing date date string:', dateString);
+          console.log('parsing date date:', date);
           const formattedDate = format(date, 'yyyy-MMM-dd');
           return formattedDate;
         }
@@ -131,8 +133,14 @@ export const authOptions = {
       logSessionCallback('session?', session);
       logSessionCallback('token?', token);
       //logSessionCallback('user in session?', { user });
-      const _now = new Date().getTime() / 1000;
-      logSessionCallback('formatted now:', formatDate(_now));
+      //const _now = new Date().getTime() / 1000;
+      const _now = new Date();
+      const formattedDate = _now.toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+      logSessionCallback('formatted now:', formattedDate);
 
       if (token.hasOwnProperty('exp')) {
         const expdate = new Date(token.exp * 1000);
