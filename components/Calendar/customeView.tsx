@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { Card, Text, Container } from '@mantine/core';
 import { format } from 'date-fns';
 
@@ -6,7 +5,6 @@ export default function CustomView({ userStaff, ...props }) {
   console.log('user staff:', userStaff);
   console.log('props', props);
 
-  //const staff = useSelector((state) => state.calendar.staff);
   const evtdef = props.eventStore.defs;
 
   const publicholidays = Object.values(evtdef)

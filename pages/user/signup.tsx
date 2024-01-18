@@ -51,7 +51,7 @@ import {
   setPublicHolidays,
 } from 'components/util/leaverequest.util';
 import { PublicHolidaysContext } from 'pages/_app';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { UtilsContext } from 'components/util/utilCtx';
 import axios from 'axios';
 import { IconX } from '@tabler/icons';

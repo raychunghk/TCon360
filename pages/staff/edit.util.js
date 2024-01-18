@@ -27,7 +27,7 @@ import {
 import { format } from 'date-fns';
 import { DatePickerInput } from '@mantine/dates';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { useDispatch, useSelector } from 'react-redux';
+
 import {
   setContractStartDate,
   setContractEndDate,

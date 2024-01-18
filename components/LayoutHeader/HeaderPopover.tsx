@@ -4,16 +4,13 @@ import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
 import useStore from 'pages/reducers/zstore';
 
 export default function HeaderPopover({}) {
-  const dispatch = useDispatch();
   const [openedPop, setOpenedPop] = useState(false);
   const [userFields, setuserFields] = useState(null);
-  const { user } = useSelector((state) => ({
-    user: state.calendar.user,
-  }));
+
   const {
     activeStaff,
     activeContract,
@@ -78,7 +75,6 @@ export default function HeaderPopover({}) {
       position="bottom"
       withArrow
       shadow="md"
-      gutter={10}
       opened={openedPop}
       onClose={handleClose}
     >

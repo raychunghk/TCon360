@@ -45,7 +45,8 @@ import {
 } from '@tabler/icons-react';
 
 import useStore from 'pages/reducers/zstore';
-
+import { useShallow } from 'zustand/react/shallow';
+import useUIStore from 'pages/reducers/useUIStore';
 export async function getServerSideProps(context) {
   const session = await getServerSession(context);
   const staff = session.staff;
@@ -64,22 +65,17 @@ export default function LeaveRequestForm({
   onDeleteEvent,
   onClose,
   LeaveRequestPeriod,
-  fetchEvents,
   leavePurpose,
 }) {
   console.log('form type?', formType);
   console.log('leave Request ID?', leaveRequestId);
   console.log('leave purpose?', leavePurpose);
 
-  const {
-    publicHolidays,
-    activeUser,
-    activeStaff,
-    activeContract,
-    isEventUpdated,
-    setIsEventUpdated,
-  } = useStore();
-
+  const { publicHolidays, activeUser, activeStaff, activeContract } =
+    useStore();
+  const [isEventUpdated, setIsEventUpdated] = useUIStore(
+    useShallow((state) => [state.isEventUpdated, state.setIsEventUpdated]),
+  );
   console.log('_public holiday?', publicHolidays);
 
   const title =
@@ -273,7 +269,9 @@ export default function LeaveRequestForm({
         reset();
 
         console.log('Delete Response', formatResponseDate(response.data));
+
         await onDeleteEvent(leaveRequestId);
+        await setIsEventUpdated(true);
       } else {
         console.error('Failed to create leave request:', response);
       }
@@ -343,9 +341,7 @@ export default function LeaveRequestForm({
           ..._data,
         });
         setErrors({});
-        if (fetchEvents) {
-          await fetchEvents();
-        }
+        setIsEventUpdated(true);
       } else {
         console.error('Failed to create leave request:', response);
       }
@@ -402,10 +398,9 @@ export default function LeaveRequestForm({
           ..._data,
         });
         setErrors({});
-        if (fetchEvents) {
-          setIsEventUpdated(true);
-          await fetchEvents();
-        }
+
+        await setIsEventUpdated(true);
+        // await fetchEvents();
       } else {
         console.error('Failed to update leave request:', response);
       }

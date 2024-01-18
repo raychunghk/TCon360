@@ -29,7 +29,7 @@ import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   clearAllState,
   setUser,
@@ -39,7 +39,7 @@ import {
 import { useStaffData } from 'components/useStaffData';
 //import { PublicHolidaysContext } from 'pages/_app';
 //import { setPublicHolidays } from 'pages/reducers/calendarReducer';
-import { useShallow } from 'zustand/shallow';
+
 export const siteTitle = 'NxTime';
 import useStore from 'pages/reducers/zstore';
 import useTokenExpiration from './useTokenExpiration';
@@ -80,11 +80,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     router.push('/login');
     //signOut();
   };
-  /*
-  const { user, staff } = useSelector((state) => ({
-    user: state.calendar.user,
-    staff: state.calendar.staff,
-  }));*/
+
   const { activeUser, activeStaff, activeContract, isAuthenticated, status } =
     useStaffData();
 

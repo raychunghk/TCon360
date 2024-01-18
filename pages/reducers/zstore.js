@@ -26,11 +26,7 @@ const useStore = create((set) => ({
   authtoken: '',
   basepath: null,
   user: null,
-  isEventUpdated: false,
-  setIsEventUpdated: (evtupdated) =>
-    set((state) => ({
-      isEventUpdated: evtupdated,
-    })),
+
   setStaffVacation: (vacation) =>
     set((state) => ({
       staffVacation: vacation,

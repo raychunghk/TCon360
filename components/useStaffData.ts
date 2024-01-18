@@ -5,7 +5,7 @@ import { parseCookies } from 'nookies';
 import { basepath } from '/global';
 //import { useDispatch, useSelector } from 'react-redux';import { useShallow } from 'zustand/shallow';
 import useStore from 'pages/reducers/zstore';
-//import { useShallow } from 'zustand/shallow';
+ 
 import { useShallow } from 'zustand/react/shallow';
 interface StaffData {
   activeUser: any;
@@ -16,12 +16,6 @@ interface StaffData {
 }
 
 export function useStaffData(): StaffData {
-  // const { staff } = useSelector((state) => ({
-  //   staff: state.calendar.staff,
-  // }));
-  //const [formValues, setFormValues] = useState({});
-  //const [editing, setEditing] = useState(false);
-  //const dispatch = useDispatch();
   const cookies = parseCookies();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);

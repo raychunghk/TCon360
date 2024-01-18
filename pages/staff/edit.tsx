@@ -13,7 +13,7 @@ import Layout from '../../components/layout';
 import MyCard from '../../components/MyCard';
 
 import MyModal from '../../components/MyModal';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { basepath } from '/global';
 import UserStyle from '../../styles/User.module.css';
 //import { setBasepath } from 'pages/reducers/calendarReducer';

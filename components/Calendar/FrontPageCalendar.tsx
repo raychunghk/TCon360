@@ -1,4 +1,4 @@
-import { Button, Drawer } from '@mantine/core';
+import { Button, Drawer, Text } from '@mantine/core';
 
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
@@ -13,6 +13,7 @@ import { useDisclosure, useInputState } from '@mantine/hooks';
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { signOut, useSession } from 'next-auth/react';
 import useStore from 'pages/reducers/zstore';
+import useUIStore from 'pages/reducers/useUIStore';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setOpen,
@@ -36,49 +37,52 @@ import {
 import timeGridPlugin from '@fullcalendar/timegrid';
 import CustomView from './customeView';
 import { useStaffData } from 'components/useStaffData';
+import { useShallow } from 'zustand/react/shallow';
 
 export function FrontPageCalendar() {
   const dispatch = useDispatch();
+
   const handleSignout = () => {
     destroyCookie(null, 'token');
     dispatch(clearAllState());
     signOut();
   };
-  const { opened } = useSelector((state) => ({
-    opened: state.calendar.opened,
-  }));
+  // const { opened } = useSelector((state) => ({
+  //   opened: state.calendar.opened,
+  // }));
 
-  const open = () => {
-    dispatch(setOpen());
-  };
+  // const open = () => {
+  //   dispatch(setOpen());
+  // };
 
-  const close = () => {
-    dispatch(setClose());
-  };
+  // const close = () => {
+  //   dispatch(setClose());
+  // };
 
   const setLeaveRequestPeriodAction = (period) => {
-    //dispatch(setLeaveRequestPeriod(period));
     setLeaveRequestPeriod(period);
     period;
   };
   const [leavePurpose, setleavePurpose] = useState(null);
-  //fconst [staff, setStaff] = useState(null);
 
   const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
+  const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
   const {
-    staffVacation,
     LeaveRequestPeriod,
     setLeaveRequestPeriod,
     setStaffVacation,
-    calendarEvents,
+
     setCalendarEvents,
-    chargeableDays,
+    calendarEvents,
     setChargeableDays,
     leaveRequestId,
     setLeaveRequestId,
-    isEventUpdated,
   } = useStore();
+
+  const [isEventUpdated, setIsEventUpdated] = useUIStore(
+    useShallow((state) => [state.isEventUpdated, state.setIsEventUpdated]),
+  );
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
   const [customTitle, setCustomTitle] = useState('');
@@ -86,7 +90,6 @@ export function FrontPageCalendar() {
   const apiurl = `${basepath}/api/timesheet/calendar`;
 
   async function fetchEvents() {
-    // if (session) {
     try {
       const cookies = parseCookies();
       const _token = cookies.token;
@@ -102,12 +105,10 @@ export function FrontPageCalendar() {
       });
       if ([200, 201].includes(response.status)) {
         const events = await response.data;
-        //          console.log('gettting calendar', events);
 
         console.log('calendar event length', calendarEvents.length);
 
         if (isEventUpdated || events.length != calendarEvents.length) {
-          //await dispatch(setCalendarEvents(events));
           await setCalendarEvents(events);
         }
       } else {
@@ -120,40 +121,46 @@ export function FrontPageCalendar() {
         console.error('Error! Failed to fetch events:', error);
       }
     }
-    // }
   }
   const { activeStaff, activeContract, isAuthenticated, activeUser } =
     useStaffData();
   const { data: session, status } = useSession();
-  // useEffect(() => {
-  //   //if (session) {
-  //   if (activeStaff) {
 
-  //     fetchEvents();
-  //   }
-  // }, [session]);
   useEffect(() => {
-    //if (session) {
     if (activeStaff) {
       fetchEvents();
     }
   }, []);
   useEffect(() => {
-    // Calculate total chargeable days whenever calendar events or date changes
-    // const currentDate = new Date();
-    setTitle(CurrentStart);
-  }, [calendarEvents, CurrentStart]);
-  useEffect(() => {
-    if (activeUser) {
-      setVacationSummary(activeUser, calendarEvents);
+    if (isEventUpdated) {
+      fetchEvents();
+      setIsEventUpdated(false);
     }
-  }, [calendarEvents]);
+  }, [isEventUpdated]);
+
+  useEffect(() => {
+    // Calculate total chargeable days whenever calendar events or date changes
+    if (calendarEvents.length > 0) {
+      setTitle(CurrentStart);
+      if (activeUser) {
+        setVacationSummary(activeUser, calendarEvents);
+      }
+    }
+  }, [calendarEvents, CurrentStart]);
+
+  if (calendarEvents.length < 1) {
+    return <Text>Loading...</Text>;
+  }
+
+  // useEffect(() => {
+
+  // }, [calendarEvents]);
 
   const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
       calendarRef.current.getApi().getEventById(eventId).remove();
-      fetchEvents();
+      //fetchEvents();
     } catch (error) {
       console.log('error', error);
       throw error;
@@ -165,13 +172,13 @@ export function FrontPageCalendar() {
     console.log(e.event);
 
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
-    //dispatch(setLeaveRequestId(_leaveRequestid));
+
     setLeaveRequestId(_leaveRequestid);
     console.log('leave request props?', e.event.extendedProps.result);
 
     if (_leaveRequestid) {
       setFormType('edit');
-      open();
+      setDrawerOpen();
     }
   };
 
@@ -210,9 +217,7 @@ export function FrontPageCalendar() {
       const _leaveperiodend = evt.leavePeriodEnd
         ? new Date(evt.leavePeriodEnd)
         : null;
-      // return (
-      //   evt.LeaveRequestId !== null && _leaveperiodstart <= ContractEndDate
-      // );
+
       return (
         evt.LeaveRequestId !== null &&
         _leaveperiodstart <= ContractEndDate &&
@@ -255,13 +260,7 @@ export function FrontPageCalendar() {
     }, 0);
 
     console.log('vacationleavedays', vacationLeaveDays);
-    // dispatch(
-    //   setStaffVacation({
-    //     total: activeContract.AnnualLeave,
-    //     used: vacationLeaveDays,
-    //     balance: activeContract.AnnualLeave - vacationLeaveDays,
-    //   }),
-    // );
+
     setStaffVacation({
       total: activeContract.AnnualLeave,
       used: vacationLeaveDays,
@@ -269,7 +268,6 @@ export function FrontPageCalendar() {
     });
   }
   function setTitle(newDate = new Date()) {
-    // setCurrentStart(newDate);
     const currentYear = newDate.getFullYear(); // Get the year
     const currentMonth = newDate.getMonth(); // Get the month
 
@@ -326,8 +324,6 @@ export function FrontPageCalendar() {
       end: leaveRequestPeriodEnd,
     });
 
-    //const selectedDate = arg.start;
-
     // Access the events data from the FullCalendar component
 
     // Iterate through the events to check if any events intersect with the selected date
@@ -340,22 +336,27 @@ export function FrontPageCalendar() {
       setFormType('create');
       //dispatch(setLeaveRequestId(0));
       setLeaveRequestId(0);
-      open();
+      //open();
+      setDrawerOpen();
     }
   };
 
   return (
     <>
-      <Drawer opened={opened} onClose={close} size={550} title="Leave Request">
+      <Drawer
+        opened={drawerOpened}
+        onClose={setDrawerClose}
+        size={550}
+        title="Leave Request"
+      >
         {/* Drawer content */}
         {formType && (
           <LeaveRequestForm
             formType={formType}
             leaveRequestId={leaveRequestId}
             onDeleteEvent={handleDeleteEvent} // pass the callback function
-            onClose={close}
+            onClose={setDrawerClose}
             LeaveRequestPeriod={LeaveRequestPeriod}
-            fetchEvents={fetchEvents}
             leavePurpose={leavePurpose}
           />
         )}
