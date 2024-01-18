@@ -271,7 +271,7 @@ export default function LeaveRequestForm({
         console.log('Delete Response', formatResponseDate(response.data));
 
         await onDeleteEvent(leaveRequestId);
-        await setIsEventUpdated(true);
+        //await setIsEventUpdated(true);
       } else {
         console.error('Failed to create leave request:', response);
       }

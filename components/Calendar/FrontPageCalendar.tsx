@@ -159,8 +159,9 @@ export function FrontPageCalendar() {
   const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
-      calendarRef.current.getApi().getEventById(eventId).remove();
-      //fetchEvents();
+      //calendarRef.current.getApi().getEventById(eventId).remove();
+      setIsEventUpdated(true);
+      // fetchEvents();
     } catch (error) {
       console.log('error', error);
       throw error;

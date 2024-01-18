@@ -146,6 +146,7 @@ export class TimesheetService {
     const monthName = months[month - 1]; // month index starts at 0
     return `${monthName}${year}`;
   }
+
   async makeTimeSheet(
     staffId: number,
     year: number,
@@ -166,7 +167,7 @@ export class TimesheetService {
 
     console.log(destPath);
     if (fs.existsSync(destPath)) {
-      console.log('Destination file already exists!');
+      console.log('TimeSheet :Destination file already exists!');
       fs.unlinkSync(destPath);
     }
 
@@ -194,15 +195,28 @@ export class TimesheetService {
       await this.writeStaffInfoJsonToExcel(stf, fieldmap, destPath);
 
       const objCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
+        distinct: ['CalendarDate'],
         where: {
           Year: year,
           Month: month,
+          OR: [{ staffId: staffId }, { staffId: null }],
         },
         orderBy: [
           {
             CalendarDate: 'asc',
           },
         ],
+        select: {
+          CalendarDate: true,
+          CalendarDateStr: true,
+          WeekDayName: true,
+          Year: true,
+          Month: true,
+          VacationChargable: true,
+          PublicHolidayChargable: true,
+          HolidaySummary: false,
+          staffId: true,
+        },
       });
       const firstdatecell = 20;
       const workbook = new ExcelJS.Workbook();
@@ -247,7 +261,11 @@ export class TimesheetService {
               holidayCell.value = one;
               isHoliday = 1;
             }
-            if (dt.LeaveRequestId && isHoliday == 0) {
+            //if (dt.VacationChargable > 0 && isHoliday == 0) {
+            if (
+              new Decimal(dt.VacationChargable).greaterThan(0) &&
+              isHoliday === 0
+            ) {
               const cellval = Number(1 - Number(dt.VacationChargable));
               cell.value = cellval;
               vacationLeaveCell.value = Number(dt.VacationChargable); //objCalendar.VacationChargable;
