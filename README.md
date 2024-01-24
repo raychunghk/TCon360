@@ -1,78 +1,81 @@
-<<<<<<< HEAD
-# NxTime
+# TCon360
 
-=======
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+TCon360 is a project that aims to provide a time management solution with a focus on productivity and efficiency. It offers a set of features and tools to help individuals and teams better manage their time and tasks.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Table of Contents
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Description
+## Introduction
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+In today's fast-paced world, effective time management is crucial for personal and professional success. TCon360 is designed to assist individuals and teams in optimizing their time and achieving their goals. Whether you're a student, freelancer, or working in a team, TCon360 provides a range of features to enhance your productivity.
+
+This repository contains the source code and documentation for TCon360. You can find the live demo and additional information on the [TCon360 GitHub Pages](https://raychunghk.github.io/TCon360).
+
+## Features
+
+- Task management: Easily create, organize, and prioritize tasks.
+- Time tracking: Track the time spent on tasks and projects.
+- Productivity analytics: Gain insights into your productivity patterns and identify areas for improvement.
+- Reminders and notifications: Set reminders and receive notifications for upcoming deadlines and important events.
+- Collaboration: Collaborate with team members, assign tasks, and track progress together.
+- Customization: Customize the appearance and settings to suit your preferences.
+- Integration: Integrate with popular productivity tools and services.
 
 ## Installation
 
-```bash
-$ npm install
-```
+To use TCon360 locally, follow these steps:
 
-## Running the app
+1. Clone the repository:
 
-```bash
-# development
-$ npm run start
+   ```bash
+   git clone https://github.com/raychunghk/TCon360.git
+   ```
 
-# watch mode
-$ npm run start:dev
+````
 
-# production mode
-$ npm run start:prod
-```
+2. Install the dependencies:
 
-## Test
+   ```bash
+   cd TCon360
+   npm install
+   ```
 
-```bash
-# unit tests
-$ npm run test
+3. Start the development server:
 
-# e2e tests
-$ npm run test:e2e
+   ```bash
+   npm start
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+4. Open your web browser and visit `http://localhost:3000` to access TCon360.
 
-## Support
+## Usage
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Once you have TCon360 up and running, you can start by creating an account and exploring the various features. Refer to the [documentation](https://raychunghk.github.io/TCon360/docs) for detailed instructions and usage examples.
 
-## Stay in touch
+## Contributing
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Contributions are welcome! If you'd like to contribute to TCon360, please follow these guidelines:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix: `git checkout -b feature/my-feature`.
+3. Commit your changes: `git commit -am 'Add a new feature'`.
+4. Push to the branch: `git push origin feature/my-feature`.
+5. Submit a pull request.
+
+Please ensure that your code adheres to the existing coding style and includes appropriate documentation and tests.
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
->>>>>>> master
+The TCon360 project is licensed under the GPL-3.0 License. See the [LICENSE](LICENSE) file for more information.
+
+```
+
+In this modified version, the project name throughout the README.md file has been changed to TCon360. Feel free to make any further adjustments as needed.
+```
+````

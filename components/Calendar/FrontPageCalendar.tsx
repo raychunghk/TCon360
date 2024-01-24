@@ -65,14 +65,15 @@ export function FrontPageCalendar() {
   };
   const [leavePurpose, setleavePurpose] = useState(null);
 
-  const [CurrentStart, setCurrentStart] = useState(new Date());
+  //const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
   const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
   const {
     LeaveRequestPeriod,
     setLeaveRequestPeriod,
     setStaffVacation,
-
+    currentStart,
+    setCurrentStart,
     setCalendarEvents,
     calendarEvents,
     setChargeableDays,
@@ -141,12 +142,12 @@ export function FrontPageCalendar() {
   useEffect(() => {
     // Calculate total chargeable days whenever calendar events or date changes
     if (calendarEvents.length > 0) {
-      setTitle(CurrentStart);
+      setTitle(currentStart);
       if (activeUser) {
         setVacationSummary(activeUser, calendarEvents);
       }
     }
-  }, [calendarEvents, CurrentStart]);
+  }, [calendarEvents, currentStart]);
 
   if (calendarEvents.length < 1) {
     return <Text>Loading...</Text>;
@@ -187,7 +188,9 @@ export function FrontPageCalendar() {
     if (calendarEvents.length == 0) {
       fetchEvents();
     }
-    setTitle(info.view.currentStart);
+    const currentStart = info.view.currentStart;
+    setCurrentStart(currentStart);
+    console.log(' handleMonthYearChange, current start?', currentStart);
   }
   const { isWeekend } = require('date-fns');
 

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 const useUIStore = create((set) => ({
   drawerOpened: false,
   isEventUpdated: false,
-
+  siteTitle: 'TCon360',
   setIsEventUpdated: (evtupdated) =>
     set((state) => ({
       isEventUpdated: evtupdated,

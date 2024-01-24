@@ -389,7 +389,7 @@ export default function SignupPage() {
   return (
     <>
       <Head>
-        <Title>NxTime - Create an account!</Title>
+        <Title>TCon360 - Create an account!</Title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

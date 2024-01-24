@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { MonthPicker } from '@mantine/dates';
@@ -20,6 +20,7 @@ import MyCard from '../MyCard';
 import download from 'downloadjs';
 import { createUseStyles } from 'react-jss';
 import styles from './mp.module.css';
+import useStore from 'pages/reducers/zstore';
 const useStyles = createStyles({
   monthButton: {
     width: '800px',
@@ -32,8 +33,17 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState(false);
   const [monthValue, setMonthValue] = useState(new Date());
-
+  const { currentStart, setCurrentStart } = useStore();
+  const [displayedYear, setDisplayedYear] = useState(
+    currentStart.getFullYear(),
+  );
   const { classes } = useStyles();
+  useEffect(() => {
+    console.log('current start?', currentStart);
+    setMonthValue(currentStart);
+    setDisplayedYear(currentStart.getFullYear());
+  }, [currentStart]);
+
   const onSubmit = async (event) => {
     setSubmitting(true);
     const year = monthValue.getFullYear();
@@ -70,6 +80,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
     if (fileid) {
       setfileid(null);
     }
+    console.log('handle month change', date);
     setMonthValue(date);
   };
   // CSS styles to reduce button width
@@ -89,6 +100,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
                 <MonthPicker
                   maxLevel="year"
                   value={monthValue}
+                  date={currentStart}
                   withCellSpacing={false}
                   onChange={handleMonthChange}
                   size={pickersize}

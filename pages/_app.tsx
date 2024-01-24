@@ -35,7 +35,7 @@ export const PublicHolidaysContext = createContext(null);
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
 
-  const title = pageProps.title || 'NxTime - T Contractor Timesheet Manager';
+  const title = pageProps.title || 'TCon360 - T Contractor Timesheet Manager';
   const basepath = props.router.basePath;
 
   const cookies = parseCookies();

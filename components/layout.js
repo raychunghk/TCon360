@@ -40,7 +40,7 @@ import { useStaffData } from 'components/useStaffData';
 //import { PublicHolidaysContext } from 'pages/_app';
 //import { setPublicHolidays } from 'pages/reducers/calendarReducer';
 
-export const siteTitle = 'NxTime';
+export const siteTitle = 'TCon360';
 import useStore from 'pages/reducers/zstore';
 import useTokenExpiration from './useTokenExpiration';
 export default function Layout({ children, home, contentpadding = '10px' }) {
@@ -156,7 +156,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                 <Title className={classes.title} align="center">
                   Welcome to{' '}
                   <Text inherit variant="gradient" component="span">
-                    NxTime - Timesheet and Leave Form manager
+                    {siteTitle} - Timesheet and Leave Form manager
                   </Text>
                 </Title>
               </Group>

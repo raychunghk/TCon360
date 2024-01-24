@@ -1,1 +1,1 @@
-export const siteTitle = 'NxTime'
+export const siteTitle = 'TCon360';
