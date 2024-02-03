@@ -83,6 +83,7 @@ export default function LeaveRequestForm({
   const theme = useMantineTheme();
   const [submitting, setSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [showAsError, setShowAsError] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
   //const [staff, setStaff] = useState(null);
 
@@ -111,6 +112,7 @@ export default function LeaveRequestForm({
 
   const handleModalClose = () => {
     setModalOpen(false);
+    setShowAsError(false);
     if (onClose) {
       onClose(); // Close the drawers
     }
@@ -310,11 +312,9 @@ export default function LeaveRequestForm({
       AMPMStart: leaveRequest.AMPMStart,
       leaveDays: leaveRequest.leaveDays,
       dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
-
       staffSignDate: leaveRequest.staffSignDate,
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
-
       contractId: activeContract.id,
     };
     console.log('newdata: ', newData);
@@ -330,29 +330,53 @@ export default function LeaveRequestForm({
       );
 
       if ([200, 201].includes(response.status)) {
-        setModalMsg('Leave Record Created Successfully');
-        setModalOpen(true);
-        reset();
+        if (response.data.error) {
+          // Handle the error
+          console.error('Failed to create leave request:', response.data.error);
+          setShowAsError(true);
+          setModalMsg(response.data.error);
+          setModalOpen(true);
+        } else {
+          setModalMsg('Leave Record Created Successfully');
+          setModalOpen(true);
+          reset();
 
-        let _data = formatResponseDate(response.data);
-        console.log('responsedata', _data);
+          let _data = formatResponseDate(response.data);
+          console.log('responsedata', _data);
 
-        setLeaveRequest({
-          ..._data,
-        });
-        setErrors({});
-        setIsEventUpdated(true);
+          setLeaveRequest({
+            ..._data,
+          });
+          setErrors({});
+          setIsEventUpdated(true);
+        }
       } else {
         console.error('Failed to create leave request:', response);
       }
     } catch (err) {
-      const newErrors = {};
+      /*const newErrors = {};
       err.inner.forEach((error) => {
         newErrors[error.path] = error.message;
       });
       setErrors(newErrors);
       console.error('err submiting form ', err);
-      // Handle error
+   */
+      if (err.response) {
+        // Handle backend validation errors
+        const errorData = err.response.data;
+        const newErrors = {};
+
+        Object.keys(errorData).forEach((key) => {
+          newErrors[key] = errorData[key].join(', ');
+        });
+
+        setErrors(newErrors);
+      } else {
+        // Handle other errors
+        console.error('Error creating leave request:', err);
+        setModalMsg('Failed to create leave request');
+        setModalOpen(true);
+      }
     }
     setSubmitting(false);
   };
@@ -709,7 +733,12 @@ export default function LeaveRequestForm({
           </Card.Section>
         </MyCard>
       </form>
-      <MyModal open={modalOpen} onClose={handleModalClose} msg={modalMsg} />
+      <MyModal
+        open={modalOpen}
+        onClose={handleModalClose}
+        msg={modalMsg}
+        isError={showAsError}
+      />
     </>
   );
 }

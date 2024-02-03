@@ -264,7 +264,7 @@ async function genStaffInfo() {
       type: argon2.argon2id,
     });
     const user = {
-      username: 'raychung',
+      username: 'tcon360',
       name: 'Ray Chung',
       email: 'mannchung@gmail.com',
       password: hashedPassword,

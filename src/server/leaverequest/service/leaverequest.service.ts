@@ -63,6 +63,45 @@ export class LeaveRequestService {
     return dateArray;
   }
 
+  async validateCreateLeaveRequest(
+    staffId: number,
+    contractId: number,
+    data: Prisma.LeaveRequestCreateInput,
+  ) {
+    const dateArr = this.getDateArray(
+      data.leavePeriodStart,
+      data.leavePeriodEnd,
+    );
+    console.log('dateArr?', data);
+
+    const vacationDates = await this.prisma.calendarVacation.findMany({
+      where: {
+        leaveRequest: {
+          staffId: staffId,
+          contractId: contractId,
+        },
+      },
+      select: {
+        VacationDate: true,
+      },
+    });
+
+    // Check if any of the dates in the leave request overlap with existing vacation dates
+    const overlappingDates = dateArr.filter((date) => {
+      return vacationDates.some((vacationDate) => {
+        return date.getTime() === vacationDate.VacationDate.getTime();
+      });
+    });
+
+    // If there are any overlapping dates, throw an error
+    if (overlappingDates.length > 0) {
+      throw new Error(
+        `The following dates overlap with existing vacation dates: ${overlappingDates.map(
+          (date) => date.toLocaleDateString(),
+        )}`,
+      );
+    }
+  }
   async createword(
     staffId: number,
     contractId: number,

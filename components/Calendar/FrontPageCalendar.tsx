@@ -153,16 +153,11 @@ export function FrontPageCalendar() {
     return <Text>Loading...</Text>;
   }
 
-  // useEffect(() => {
-
-  // }, [calendarEvents]);
-
   const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
       //calendarRef.current.getApi().getEventById(eventId).remove();
       setIsEventUpdated(true);
-      // fetchEvents();
     } catch (error) {
       console.log('error', error);
       throw error;
@@ -307,7 +302,7 @@ export function FrontPageCalendar() {
     console.log('total leave days ', leaveDays);
 
     const _chargeableDays = totalDaysInMonth - leaveDays;
-    const _customTitle = `${_dateRange} (chargable days: ${_chargeableDays})`;
+    const _customTitle = `${_dateRange} (Chargable days: ${_chargeableDays})`;
     setCustomTitle(_customTitle);
     // Update the state with the calculated chargeable days
     //dispatch(setChargeableDays(_chargeableDays));

@@ -69,14 +69,25 @@ export class LeaveRequestController {
       delete leaveRequestData[attributeName];
     }
     //const leaveRequest = await this.leaveRequestService.create(parseInt(staffId), leaveRequestData);
-    const leaveRequest = await this.leaveRequestService.createword(
-      staffId,
-      contractId,
-      leaveRequestData,
-    );
-    Logger.log('create result', leaveRequest);
+    //const leaveRequest = await this.leaveRequestService.createword(
+    try {
+      await this.leaveRequestService.validateCreateLeaveRequest(
+        staffId,
+        contractId,
+        leaveRequestData,
+      );
+      const leaveRequest = await this.leaveRequestService.createword(
+        staffId,
+        contractId,
+        leaveRequestData,
+      );
+      Logger.log('create result', leaveRequest);
 
-    return leaveRequest;
+      return leaveRequest;
+    } catch (error) {
+      // Return the error to the frontend
+      return { error: error.message };
+    }
   }
   @Put(':id')
   async update(

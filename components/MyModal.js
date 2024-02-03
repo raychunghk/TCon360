@@ -1,30 +1,38 @@
 // Modal.js
 
-import { useState } from "react";
-import { Modal, Text, Button, Center } from "@mantine/core";
+import { useState } from 'react';
+import { Modal, Text, Button, Center } from '@mantine/core';
 
-export default function MyModal({ open, onClose, msg }) {
+export default function MyModal({ open, onClose, msg, isError = false }) {
+  const title = isError ? 'Failed' : 'Success';
+  const subjectColor = isError ? 'red.7' : 'indigo.4';
+  const _handleModalClose = () => {
+    isError = false;
+    if (onClose) {
+      onClose(); // Close the drawers
+    }
+  };
   return (
     <Modal.Root opened={open} onClose={onClose}>
       <Modal.Overlay />
       <Modal.Content>
-        <Modal.Header bg="indigo.4" c="white">
+        <Modal.Header bg={subjectColor} c="white">
           <Modal.Title>
             <Text fw={700} fz="md">
-              Success
-            </Text> 
-          </Modal.Title>  
-          <Modal.CloseButton bg="indigo.2" />    
-        </Modal.Header>   
+              {title}
+            </Text>
+          </Modal.Title>
+          <Modal.CloseButton bg="indigo.2" />
+        </Modal.Header>
         <Modal.Body>
           <Text mt="md">{msg}</Text>
           <Center>
-            <Button mt="md" onClick={onClose}>
-              Ok      
-            </Button>      
+            <Button mt="md" onClick={_handleModalClose}>
+              Ok
+            </Button>
           </Center>
         </Modal.Body>
-      </Modal.Content>      
+      </Modal.Content>
     </Modal.Root>
   );
 }
