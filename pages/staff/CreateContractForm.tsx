@@ -18,52 +18,48 @@ import {
   Flex,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import MyCard from 'components/MyCard';
+
 import { excludeHoliday } from 'components/util/leaverequest.util';
-import { useSelector } from 'react-redux';
+
 import axios from 'axios';
 import { validationSchema } from './edit.util';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { myRenderDay } from 'components/util/leaverequest.util';
 import useStore from 'pages/reducers/zstore';
 interface CreateModalProps {
-  // onClose: () => void;
   onSubmit: () => void;
   open: boolean;
-  staff: any;
+
   modalcallback: any;
   stateCreateModalOpen: any;
 }
 export default function CreateContractForm({
   open,
-  //onClose,
   onSubmit,
-  staff,
   modalcallback,
   stateCreateModalOpen,
 }: CreateModalProps) {
-  const { basepath } = useSelector((state) => ({
-    basepath: state.calendar.basepath,
-  }));
+  // const { basepath } = useSelector((state) => ({
+  //   basepath: state.calendar.basepath,
+  // }));
   const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
 
-  const nextContractStartDate = useStore(
-    (state) => state.nextContractStartDate,
-  );
+  const { nextContractStartDate, basepath, activeStaff } = useStore();
   const initialState = {
     id: null,
     ContractStartDate: null,
     ContractEndDate: null,
     AnnualLeave: 0,
     IsActive: false,
-    staff,
+    activeStaff,
   };
   const [contract, setContract] = useState(initialState);
   useEffect(() => {
-    console.log('staff', staff);
-    if (staff) setContract({ ...contract, staffId: staff.id, staff });
-  }, [staff, basepath]);
+    console.log('activeStaff', activeStaff);
+    if (activeStaff)
+      setContract({ ...contract, staffId: activeStaff.id, activeStaff });
+  }, [activeStaff, basepath]);
   useEffect(() => {
     setContract(initialState);
   }, [nextContractStartDate]);
@@ -94,7 +90,7 @@ export default function CreateContractForm({
           ContractStartDate: contract.ContractStartDate,
           ContractEndDate: contract.ContractEndDate,
           AnnualLeave: contract.AnnualLeave,
-          staffId: staff.id,
+          staffId: activeStaff.id,
           IsActive: contract.IsActive,
         },
       );
@@ -154,7 +150,7 @@ export default function CreateContractForm({
       [event.target.name]: val,
     });
   };
-  if (!staff) {
+  if (!activeStaff) {
     return <Text>...Loading</Text>;
   }
   function getDatePickerProps(fieldName) {

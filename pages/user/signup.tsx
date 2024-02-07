@@ -43,7 +43,7 @@ import {
 } from '@mantine/form';
 import Signupcard from '../../components/Signupcard';
 import { handleLoginSuccess } from './handleLoginSuccess';
-import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 import {
   excludeHoliday,
@@ -94,7 +94,7 @@ const useStyles = createStyles((theme) => ({
     marginRight: 'auto',
   },
 }));
-
+import useUIStore from 'pages/reducers/useUIStore';
 export default function SignupPage() {
   interface iStaffModel {
     StaffName: string;
@@ -138,7 +138,7 @@ export default function SignupPage() {
   const dispatch = useDispatch();
   const inputRefs = useRef([]);
   const publicholidays = useContext(PublicHolidaysContext);
-
+  const { siteTitle } = useUIStore();
   const { data: session, status } = useSession();
   const sessionLoading = status === 'loading';
   const mainpage = '/';
@@ -389,7 +389,7 @@ export default function SignupPage() {
   return (
     <>
       <Head>
-        <Title>TCon360 - Create an account!</Title>
+        <Title>{siteTitle} - Create an account!</Title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

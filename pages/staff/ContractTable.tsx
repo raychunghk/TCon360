@@ -11,7 +11,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { ModalsProvider, modals } from '@mantine/modals';
-import { useSelector } from 'react-redux';
+//import { useSelector } from 'react-redux';
 import EditIsActiveCell, {
   AnnualLeaveEditor,
   DateCell,
@@ -41,12 +41,13 @@ export default function ContractTable({
   getStaffData,
   edting,
 }) {
-  const { staff, user, basepath } = useSelector((state) => ({
+  /*const { staff, user, basepath } = useSelector((state) => ({
     staff: state.calendar.staff,
     user: state.calendar.user,
     basepath: state.calendar.basepath,
-    //publicHolidays: state.calendar.publicHolidays,
-  }));
+ 
+  }));*/
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -63,19 +64,14 @@ export default function ContractTable({
     (state) => ({ amount: state.setEditErrors, title: state.setNextContractStartDate }),
     shallow
   )*/
-  const [
+  const {
     setEditErrors,
     setNextContractStartDate,
     publicHolidays,
-    setPublicHolidays,
-  ] = useStore(
-    useShallow((state) => [
-      state.setEditErrors,
-      state.setNextContractStartDate,
-      state.publicHolidays,
-      state.setPublicHolidays,
-    ]),
-  );
+    //activeUser,
+    //activeContract,
+    basepath,
+  } = useStore();
   useEffect(() => {
     if (formValues) {
       const newColumns = [
@@ -177,9 +173,7 @@ export default function ContractTable({
       // Submit the contract to the API
       const apiurl = `${basepath}/api/staff/contract/${values.id}`;
 
-      //const contract = formValues.contracts.filter((f) => f.id === values.id);
       await validationSchema.validate(values, { abortEarly: false });
-      //const contractResponse = await axios.put(apiurl, formValues.contracts);
 
       const contractResponse = await axios.put(apiurl, values);
       if (contractResponse.status === 200) {
@@ -206,8 +200,6 @@ export default function ContractTable({
       setErrors(newErrors);
       setEditErrors(newErrors);
       setSaving(false);
-      //setModalContent(err.message);
-      //setModalOpen(true);
     }
     setSaving(false);
     // Handle saving the edited row here
@@ -236,17 +228,7 @@ export default function ContractTable({
     });
   };
   const deletecontract = async (contractId) => {
-    // const { values, exitEditingMode } = row;
-    // const contractId = values.id;
-
     try {
-      // Send a request to delete the contract
-      //const apiurl = `${basepath}/api/staff/deletecontract/${contractId}`;
-      //const response = await axios.delete(apiurl);
-      // const response = await fetch(apiUrl, {
-      //   method: 'GET',
-      // });
-      // const url = `${basepath}/api/staff/hello/${contractId}`;
       const apiUrl = `${basepath}/api/staff/contract/${contractId}`;
       const response = await axios.delete(apiUrl);
       console.log('response', response);
@@ -285,7 +267,6 @@ export default function ContractTable({
             color="secondary"
             variant="filled"
             onClick={(e) => handleFormToggle(e)}
-            //     onClick={() => table.setCreatingRow(true)}
           >
             Create New Contract
           </Button>
@@ -354,7 +335,6 @@ export default function ContractTable({
         <CreateContractForm
           open={createModalOpen}
           onSubmit={handleCreateNewContract}
-          staff={staff}
           modalcallback={{ setModalOpen, setModalContent }}
           stateCreateModalOpen={{ createModalOpen, setCreateModalOpen }}
         />

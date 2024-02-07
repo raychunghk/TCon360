@@ -1,8 +1,6 @@
 import { format, parseISO, isWeekend } from 'date-fns';
 import { useContext } from 'react';
-//import { UtilsContext } from './utilCtx';
-//import { useDispatch, useSelector } from 'react-redux';
-//import { PublicHolidaysContext } from 'pages/_app';
+
 import useStore from 'pages/reducers/zstore';
 let arrPublicHoliday;
 export function setPublicHolidays(holidays) {

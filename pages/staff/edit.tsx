@@ -30,11 +30,6 @@ import { useStaffData } from 'components/useStaffData';
 require('dotenv').config();
 
 export default function EditStaff() {
-  // const { staff, user, staffVacation } = useSelector((state) => ({
-  //   staff: state.calendar.staff,
-  //   // user: state.calendar.user,
-  //   staffVacation: state.calendar.staffVacation,
-  // }));
   const { activeUser, activeStaff, activeContract, isAuthenticated } =
     useStaffData();
   const [formValues, setFormValues] = useState(staffModel);

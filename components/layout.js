@@ -37,48 +37,31 @@ import {
   setBasepath,
 } from 'pages/reducers/calendarReducer';
 import { useStaffData } from 'components/useStaffData';
-//import { PublicHolidaysContext } from 'pages/_app';
-//import { setPublicHolidays } from 'pages/reducers/calendarReducer';
 
-export const siteTitle = 'TCon360';
+import useUIStore from 'pages/reducers/useUIStore';
 import useStore from 'pages/reducers/zstore';
 import useTokenExpiration from './useTokenExpiration';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
-
-  /*const _publicholidays = useContext(PublicHolidaysContext);
-  const publicholidays = _publicholidays;
-  */
-  //setPublicHolidays(publicholidays);
-
+  const { siteTitle } = useUIStore();
   const [opened, setOpened] = useState(false);
-
   const { data: session } = useSession();
   const { classes } = useStyles();
   const dispatch = useDispatch();
 
-  //const setActiveContract = useStore((state) => state.setActiveContract);
-  // const [setActiveContract] = useStore(
-  //   useShallow((state) => [state.setActiveContract]),
-  // );
-  //const { publicHolidays, setPublicHolidays, setActiveContract } = useStore();
   const clearAllCookies = () => {
     const cookies = parseCookies(); // Get all cookies
     const cookieNames = Object.keys(cookies);
-
     destroyCookie({}, 'token', { path: '/' }); // Remove each cookie
-
     console.log('Cookienames', cookieNames);
     const cookies2 = parseCookies();
     console.log('validate if cookie deleted:cookies2', cookies2);
   };
   const router = useRouter();
   const handleSignout = () => {
-    //destroyCookie(null, 'token');
     clearAllCookies();
     dispatch(clearAllState());
     router.push('/login');
-    //signOut();
   };
 
   const { activeUser, activeStaff, activeContract, isAuthenticated, status } =
@@ -91,10 +74,6 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   useEffect(() => {
     if (status === 'authenticated') {
       dispatch(setUser(activeUser));
-
-      // if (activeStaff) {
-      //   dispatch(setStaff(activeStaff));
-      // }
     }
   }, [activeStaff]);
   if (status === 'loading') {

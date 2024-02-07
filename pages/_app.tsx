@@ -19,7 +19,6 @@ interface CustomSessionProviderProps extends SessionProviderProps {
 }
 import { GlobalStyles } from '@mantine/core';
 import '../styles/styles.css';
-import axios from 'axios';
 
 import { Provider } from 'react-redux';
 import { store } from './reducers/store';
@@ -28,14 +27,16 @@ import useStore from './reducers/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import useTokenExpiration from 'components/useTokenExpiration';
 import { usePublicHolidays } from 'components/util/usePublicHolidays';
-
+import useUIStore from './reducers/useUIStore';
 // Create a context for publicholidays
 export const PublicHolidaysContext = createContext(null);
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
+  const { siteTitle } = useUIStore();
 
-  const title = pageProps.title || 'TCon360 - T Contractor Timesheet Manager';
+  const title =
+    pageProps.title || siteTitle + ' - T Contractor Timesheet Manager';
   const basepath = props.router.basePath;
 
   const cookies = parseCookies();
@@ -44,7 +45,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
     props.colorScheme,
   );
-  //const [publicholidays, setPublicHolidays] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [
     activeContract,
@@ -72,10 +73,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   console.log('props?', props);
 
-  //console.log('base path?', basepath);
-
   const router = useRouter();
-  //console.log('router path name?' + router.pathname);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme =
@@ -86,28 +84,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     });
   };
   const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
-  // useEffect(() => {
-  //   const loadPublicHolidays = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${basepath}/api/timesheet/publicholidays`,
-  //       );
-  //       const data = response.data;
-  //       const formattedPublicHolidays = data.map((holiday) => ({
-  //         Summary: holiday.Summary,
 
-  //         StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
-  //       }));
-  //       console.log('formatted public holidays?', formattedPublicHolidays);
-
-  //       setPublicHolidays(formattedPublicHolidays);
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       console.error('error', error);
-  //     }
-  //   };
-  //   loadPublicHolidays();
-  // }, []);
   useTokenExpiration();
 
   return (
@@ -126,7 +103,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             content="minimum-scale=1, initial-scale=1, width=device-width"
           />
           <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
-          <link rel="stylesheet" href={`${basepath}/styles/globals.css`} />
+          {/* <link rel="stylesheet" href={`${basepath}/styles/globals.css`} /> */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
           <link

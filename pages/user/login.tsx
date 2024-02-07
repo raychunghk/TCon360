@@ -19,19 +19,7 @@ import bg from 'public/images/loginbg1.webp';
 import { useState } from 'react';
 import { siteTitle } from 'components/util/label';
 //import { handleLoginSuccess } from './handleLoginSuccess';
-
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  // setLeavePurpose,
-
-  setAuthtoken,
-  setBasepath,
-
-  // setCurrentStart,
-  // setFormType,
-  // setSelectedDatesCount,
-} from 'pages/reducers/calendarReducer';
-
+import useStore from 'pages/reducers/zstore';
 const useStyles = createStyles((theme) => ({
   wrapper: {
     backgroundSize: 'cover',
@@ -67,10 +55,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function LoginPage(props) {
-  const dispatch = useDispatch();
   const { classes } = useStyles();
   const router = useRouter();
-
+  const { setAuthtoken } = useStore();
   const basepath = router.basePath;
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
@@ -79,20 +66,23 @@ export default function LoginPage(props) {
   async function handleLoginSuccess(response, router) {
     const data = await response.json();
     const token = data.accessToken;
+    setAuthtoken(token);
     const _maxAge = process.env.TOKEN_MAX_AGE;
     console.log('_maxage in handleLoginSuccess', _maxAge);
     // set the user's session token in localStorage
-    setCookie(null, 'token', token, {
+    await setCookie(null, 'token', token, {
       maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
       path: '/', // cookie path
     });
 
-    console.log('token cookie');
     const cookies = parseCookies();
     const tokenCookie = cookies.token;
-    console.log(tokenCookie);
-    dispatch(setAuthtoken(tokenCookie));
-    //setJwtToken(token);
+    console.log('token cookie', tokenCookie);
+    console.log(
+      'Token max age(process.env.TOKEN_MAX_AGE/cookies.maxAge):',
+      cookies.maxAge,
+    );
+
     const signInResult = await signIn('custom-provider', {
       token: tokenCookie,
       redirect: false,
