@@ -11,13 +11,7 @@ export default function HeaderPopover({}) {
   const [openedPop, setOpenedPop] = useState(false);
   const [userFields, setuserFields] = useState(null);
 
-  const {
-    activeStaff,
-    activeContract,
-    activeUser,
-    staffVacation,
-    setStaffVacation,
-  } = useStore();
+  const { activeStaff, activeContract, activeUser, staffVacation } = useStore();
 
   useEffect(() => {
     if (staffVacation) setUfields();

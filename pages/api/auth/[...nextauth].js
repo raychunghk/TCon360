@@ -104,7 +104,8 @@ export const authOptions = {
         logJwtCallback('token expiry date', expdate);
 
         const now = new Date().getTime() / 1000;
-        logJwtCallback(`token expiry:${expdate} datevs now:${now} `);
+        const _now = format(now, 'dd/MMM/yyyy HH:mm:ss');
+        logJwtCallback(`token expiry:${expdate} datevs now:${_now} `);
 
         if (token.hasOwnProperty('exp') && now < token.exp) {
           logJwtCallback('New date is earlier than token expiration');

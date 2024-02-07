@@ -48,6 +48,17 @@ model Session {
   user         User     @relation(fields: [userId], references: [id])
 }
 
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
 model User {
   id            String      @id @default(cuid())
   username      String?     @unique
@@ -68,15 +79,28 @@ model User {
   viewStaff     viewStaff[]
 }
 
-model VerificationRequest {
-  id         String   @id @default(cuid())
-  identifier String
-  token      String   @unique
-  expires    DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
 
-  @@unique([identifier, token])
+model Staff {
+  id            Int    @id @default(autoincrement())
+  StaffName     String
+  AgentName     String
+  StaffCategory String
+  Department    String
+  PostUnit      String
+  ManagerName   String
+  ManagerTitle  String
+  ManagerEmail  String
+
+  userId        String
+  contracts     StaffContract[] @relation("staffToContracts") // Updated field to represent multiple contracts
+  leaveRequests LeaveRequest[]
+  user          User            @relation(fields: [userId], references: [id])
+  staffFiles    staffFiles[]
 }
 
 // model Post {
@@ -108,50 +132,6 @@ model CalendarVacation {
   LeaveRequestId Int
 
   leaveRequest LeaveRequest @relation(fields: [LeaveRequestId], references: [id], onDelete: Cascade)
-}
-
-// model TimeSheetCalendar {
-//   id             Int       @id @default(autoincrement())
-//   DayID          Int
-//   CalendarDate   DateTime
-//   TimeSheetID    Int
-//   ChargeableDay  Decimal
-//   ChargeableHour Decimal
-//   Training       Decimal   @default(0)
-//   Vacation       Decimal   @default(0)
-//   PublicHoliday  Decimal   @default(0)
-//   WeekEnd        Decimal   @default(0)
-//   Others         Decimal   @default(0)
-//   timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
-// }
-// model TimeSheet {
-//   id                  Int                 @id @unique @default(autoincrement())
-//   StartDate           DateTime
-//   EndDate             DateTime
-//   TSCalendarID        Int
-//   TimeSheetFileName   String?
-//   TotalChargeableDay  Decimal             @default(0)
-//   TotalChargeableHour Decimal             @default(0)
-//   TotalOTHour         Decimal
-//   calendar            TimeSheetCalendar[]
-// }
-
-model Staff {
-  id            Int    @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName   String
-  ManagerTitle  String
-  ManagerEmail  String
-
-  userId        String
-  contracts     StaffContract[] @relation("staffToContracts") // Updated field to represent multiple contracts
-  leaveRequests LeaveRequest[]
-  user          User            @relation(fields: [userId], references: [id])
-  staffFiles    staffFiles[]
 }
 
 model StaffContract {
@@ -265,12 +245,6 @@ view ViewUserDetail {
   contractId        Int
 }
 
-model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
-}
-
 view viewStaff {
   StaffId           Int      @id
   StaffName         String
@@ -288,3 +262,29 @@ view viewStaff {
   contractId        Int
   user              User     @relation(fields: [userId], references: [id])
 }
+
+// model TimeSheetCalendar {
+//   id             Int       @id @default(autoincrement())
+//   DayID          Int
+//   CalendarDate   DateTime
+//   TimeSheetID    Int
+//   ChargeableDay  Decimal
+//   ChargeableHour Decimal
+//   Training       Decimal   @default(0)
+//   Vacation       Decimal   @default(0)
+//   PublicHoliday  Decimal   @default(0)
+//   WeekEnd        Decimal   @default(0)
+//   Others         Decimal   @default(0)
+//   timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
+// }
+// model TimeSheet {
+//   id                  Int                 @id @unique @default(autoincrement())
+//   StartDate           DateTime
+//   EndDate             DateTime
+//   TSCalendarID        Int
+//   TimeSheetFileName   String?
+//   TotalChargeableDay  Decimal             @default(0)
+//   TotalChargeableHour Decimal             @default(0)
+//   TotalOTHour         Decimal
+//   calendar            TimeSheetCalendar[]
+// }

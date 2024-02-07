@@ -10,18 +10,11 @@ import {
   Input,
   Tabs,
   Modal,
-  Button,
-  Grid,
-  Center,
-  Card,
-  CardSection,
-  Container,
 } from '@mantine/core';
 import Layout from '../../components/layout';
-import MyCard from '../../components/MyCard';
-import Head from 'next/head';
 
-import MyModal from '../../components/MyModal';
+import Head from 'next/head';
+import useStore from 'pages/reducers/zstore';
 import { parseCookies } from 'nookies';
 import UserStyle from '../../styles/User.module.css';
 import axios from 'axios';
@@ -34,6 +27,19 @@ const Admin = (props) => {
   const { basepath } = props;
   const [formValues, setFormValues] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const { activeUser } = useStore();
+
+  if (activeUser?.role?.name !== 'admin') {
+    return (
+      <Layout home>
+        <Head>
+          <title>Admin</title>
+        </Head>
+        <p>Sorry, you are not authorized to access this page.</p>
+      </Layout>
+    );
+  }
+
   const onSubmit = async () => {
     setSubmitting(true);
     const cookies = parseCookies();
@@ -41,7 +47,9 @@ const Admin = (props) => {
     const headers = {
       Authorization: `Bearer ${tokenCookie}`,
     };
-
+    useEffect(() => {
+      console.log('active user?', activeUser);
+    }, []);
     try {
       const response = await axios.put(
         `${basepath}/api/admin/${formValues.id}`,
@@ -73,14 +81,18 @@ const Admin = (props) => {
       <Tabs
         defaultValue="userManagement"
         onChange={handleTabChange}
-        style={{ width: '100%',height:'100%', }}
+        style={{ width: '100%', height: '100%' }}
       >
         <Tabs.List>
-          <Tabs.Tab value="userManagement" >User Management</Tabs.Tab>
+          <Tabs.Tab value="userManagement">User Management</Tabs.Tab>
           <Tabs.Tab value="calendarManagement">Calendar Management</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="userManagement" pt="xs"  style={{ width: '100%',height:'100%', }}>
+        <Tabs.Panel
+          value="userManagement"
+          pt="xs"
+          style={{ width: '100%', height: '100%' }}
+        >
           <UserManagementTab />
         </Tabs.Panel>
 
@@ -99,11 +111,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default Admin;
-function register(
-  arg0: string,
-  arg1: { required: boolean },
-): import('react').JSX.IntrinsicAttributes &
-  import('@mantine/core').TextInputProps &
-  import('react').RefAttributes<HTMLInputElement> {
-  throw new Error('Function not implemented.');
-}

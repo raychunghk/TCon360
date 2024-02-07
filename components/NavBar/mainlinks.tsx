@@ -26,6 +26,7 @@ import {
 } from '@mantine/core';
 import Link from 'next/link';
 import styles from './mainlinks.module.css';
+import useStore from 'pages/reducers/zstore';
 type LinkItemProps = {
   icon: React.ReactNode;
   color: string;
@@ -39,65 +40,7 @@ const iconSizeStyle = {
   fontSize: '1.125rem',
 };
 const defaultIconSize = '2rem';
-const data = [
-  {
-    icon: <IconHome2 size={defaultIconSize} />,
-    color: 'blue',
-    label: 'Home',
-    link: '/',
-  },
-  {
-    icon: <IconSunset2 size={defaultIconSize} />,
-    color: 'grape',
-    label: 'Leave Request',
-    link: '/leaverequest',
-  },
-  {
-    icon: <IconClock size={defaultIconSize} />,
-    color: 'teal',
-    label: 'Time Sheet',
-    link: '/timesheet/create',
-   
-  },
-  {
-    icon: <IconUserEdit size={'1.5rem'} color="blue" />,
-    color: 'teal',
-    label: 'User Profile',
-    link: '/staff/edit',
-    // child: [
-    //   // {
-    //   //   icon: <IconUserPlus size={defaultIconSize} />,
-    //   //   color: 'cyan.5',
-    //   //   label: 'Create Profile',
-    //   //   link: '/staff',
-    //   // },
-    //   {
-    //     icon: <IconUserEdit size={defaultIconSize} />,
-    //     color: 'cyan.5',
-    //     label: 'Edit Profile',
-    //     link: '/staff/edit',
-    //   },
-    // ],
-  },
-  {
-    icon: <IconSettings size={'1.5rem'} color="orange" />,
-    color: 'orange',
-    label: 'Settings',
-    link: '/admin',
-  },
-  // {
-  //   icon: <IconCalendarStats size={defaultIconSize} />,
-  //   color: 'violet',
-  //   label: 'Calendar',
-  //   link: '/calendar',
-  // },
-  // {
-  //   icon: <IconSunset2 size={defaultIconSize} />,
-  //   color: 'grape',
-  //   label: 'Leave Request',
-  //   link: '/leaverequest',
-  // },
-];
+
 function CustomLink({
   href,
   children,
@@ -158,6 +101,65 @@ function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
 
 // Use LinkItem component with CustomLink component as LinkComponent prop
 export default function MainLinks() {
+  const { activeUser } = useStore();
+
+  const data = [
+    {
+      icon: <IconHome2 size={defaultIconSize} />,
+      color: 'blue',
+      label: 'Home',
+      link: '/',
+    },
+    {
+      icon: <IconSunset2 size={defaultIconSize} />,
+      color: 'grape',
+      label: 'Leave Request',
+      link: '/leaverequest',
+    },
+    {
+      icon: <IconClock size={defaultIconSize} />,
+      color: 'teal',
+      label: 'Time Sheet',
+      link: '/timesheet/create',
+    },
+    {
+      icon: <IconUserEdit size={'1.5rem'} color="blue" />,
+      color: 'teal',
+      label: 'User Profile',
+      link: '/staff/edit',
+      // child: [
+      //   // {
+      //   //   icon: <IconUserPlus size={defaultIconSize} />,
+      //   //   color: 'cyan.5',
+      //   //   label: 'Create Profile',
+      //   //   link: '/staff',
+      //   // },
+      //   {
+      //     icon: <IconUserEdit size={defaultIconSize} />,
+      //     color: 'cyan.5',
+      //     label: 'Edit Profile',
+      //     link: '/staff/edit',
+      //   },
+      // ],
+    },
+
+    ...(activeUser?.role?.name === 'admin'
+      ? [
+          {
+            icon: <IconSettings size={'1.5rem'} color="orange" />,
+            color: 'orange',
+            label: 'Settings',
+            link: '/admin',
+          },
+        ]
+      : []),
+    // {
+    //   icon: <IconCalendarStats size={defaultIconSize} />,
+    //   color: 'violet',
+    //   label: 'Calendar',
+    //   link: '/calendar',
+    // },
+  ];
   return (
     <div>
       {data.map((item) => (

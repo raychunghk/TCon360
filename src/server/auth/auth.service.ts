@@ -183,7 +183,10 @@ export class AuthService {
         staff: user.viewStaff,
       };
       const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
-      console.log('creating token on server , token page in seconds', tokenage);
+      console.log(
+        'creating token on server , token max age in seconds',
+        tokenage,
+      );
       const options = {
         expiresIn: `${tokenage}m`, // token expires in 1 minute
       };

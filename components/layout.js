@@ -64,11 +64,10 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     router.push('/login');
   };
 
-  const { activeUser, activeStaff, activeContract, isAuthenticated, status } =
-    useStaffData();
+  const { activeUser, activeStaff, status } = useStaffData();
 
-  console.log('user?', activeUser);
-  console.log('activestaff?', activeStaff);
+  //console.log('activeUser?', activeUser);
+  //console.log('activestaff?', activeStaff);
   //useTokenExpiration();
 
   useEffect(() => {

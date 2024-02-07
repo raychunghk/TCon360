@@ -81,9 +81,7 @@ export function FrontPageCalendar() {
     setLeaveRequestId,
   } = useStore();
 
-  const [isEventUpdated, setIsEventUpdated] = useUIStore(
-    useShallow((state) => [state.isEventUpdated, state.setIsEventUpdated]),
-  );
+  const { isEventUpdated, setIsEventUpdated } = useUIStore();
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
   const [customTitle, setCustomTitle] = useState('');

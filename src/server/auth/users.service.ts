@@ -58,6 +58,12 @@ export class UsersService {
           email: true,
           emailVerified: true,
           image: true,
+          role: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
           staff: {
             select: {
               id: true,

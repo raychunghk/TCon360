@@ -38,6 +38,7 @@ export default function EditStaff() {
   const [errors, setErrors] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('Sucess');
+  const [showAsError, setShowAsError] = useState(false);
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   //const setActiveContract = useStore((state) => state.setActiveContract);
@@ -45,7 +46,6 @@ export default function EditStaff() {
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
-  const dispatch = useDispatch();
   const getStaffData = async () => {
     try {
       const headers = {
@@ -71,6 +71,22 @@ export default function EditStaff() {
       }
     } catch (error) {
       console.error('Failed to fetch staff data:', error);
+      if (error.response.status === 401) {
+        setModalContent('User Session Expired, logout in 10 seconds');
+        setModalOpen(true);
+        setShowAsError(true);
+        const timeout = setTimeout(() => {
+          // Token has expired, perform logout action
+          console.log(
+            'Logging out, now is:',
+            format(Date.now(), 'yyyy-MM-dd hh:mm:ss'),
+          );
+
+          router.push('/login'); // Redirect to the login page or any other appropriate route
+        }, 5 * 1000);
+
+        return () => clearTimeout(timeout);
+      }
     }
   };
   const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
@@ -241,6 +257,7 @@ export default function EditStaff() {
             open={modalOpen}
             onClose={handleModalClose}
             msg={modalContent}
+            isError={showAsError}
           />
           <Code>{JSON.stringify(formValues, null, 2)}</Code>{' '}
         </>
