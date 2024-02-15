@@ -14,20 +14,8 @@ import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { signOut, useSession } from 'next-auth/react';
 import useStore from 'pages/reducers/zstore';
 import useUIStore from 'pages/reducers/useUIStore';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  setOpen,
-  setClose,
-  setLeaveRequestId,
-  //setLeaveRequestPeriod,
-  // setLeavePurpose,
-  setChargeableDays,
-  //setCustomTitle,
-  //setCalendarEvents,
-  clearAllState,
-  // setFormType,
-  // setSelectedDatesCount,
-} from 'pages/reducers/calendarReducer';
+//import { useDispatch, useSelector } from 'react-redux';
+//import { clearAllState } from 'pages/reducers/calendarReducer';
 import {
   convertDateStringToDate,
   isPublicHoliday,
@@ -40,11 +28,12 @@ import { useStaffData } from 'components/useStaffData';
 import { useShallow } from 'zustand/react/shallow';
 
 export function FrontPageCalendar() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const handleSignout = () => {
     destroyCookie(null, 'token');
-    dispatch(clearAllState());
+    //   dispatch(clearAllState());
+    clearAllState();
     signOut();
   };
   // const { opened } = useSelector((state) => ({
@@ -79,6 +68,7 @@ export function FrontPageCalendar() {
     setChargeableDays,
     leaveRequestId,
     setLeaveRequestId,
+    clearAllState,
   } = useStore();
 
   const { isEventUpdated, setIsEventUpdated } = useUIStore();

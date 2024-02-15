@@ -28,10 +28,7 @@ import { format } from 'date-fns';
 import { DatePickerInput } from '@mantine/dates';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
-import {
-  setContractStartDate,
-  setContractEndDate,
-} from 'pages/reducers/calendarReducer';
+
 
 // export function useFetchStaff(staffId) {
 //   const [staff, setStaff] = useState(null);

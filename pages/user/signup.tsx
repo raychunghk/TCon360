@@ -51,7 +51,7 @@ import {
   setPublicHolidays,
 } from 'components/util/leaverequest.util';
 import { PublicHolidaysContext } from 'pages/_app';
-import { useDispatch } from 'react-redux';
+//import { useDispatch } from 'react-redux';
 import { UtilsContext } from 'components/util/utilCtx';
 import axios from 'axios';
 import { IconX } from '@tabler/icons';
@@ -135,7 +135,7 @@ export default function SignupPage() {
   const [active, setActive] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const [signUpError, setsignUpError] = useState('');
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const inputRefs = useRef([]);
   const publicholidays = useContext(PublicHolidaysContext);
   const { siteTitle } = useUIStore();
@@ -307,7 +307,7 @@ export default function SignupPage() {
 
       if (response.ok) {
         // router.push(mainpage);
-        await handleLoginSuccess(response, router, dispatch);
+        await handleLoginSuccess(response, router);
       } else if (response.status === 400) {
         // Display an error message and jump to stepper page 1
         const data = await response.json();

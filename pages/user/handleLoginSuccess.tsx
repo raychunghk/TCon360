@@ -1,18 +1,11 @@
 import { signIn } from 'next-auth/react';
 import { parseCookies, setCookie } from 'nookies';
-import {
-  // setLeavePurpose,
-
-  setAuthtoken,
-  setBasepath,
-
-  // setCurrentStart,
-  // setFormType,
-  // setSelectedDatesCount,
-} from 'pages/reducers/calendarReducer';
-export async function handleLoginSuccess(response, router, dispatch) {
+import useStore from 'pages/reducers/zstore';
+//import { setAuthtoken } from 'pages/reducers/calendarReducer';
+export async function handleLoginSuccess(response, router) {
   const data = await response.json();
   const token = data.accessToken;
+  const { setAuthtoken } = useStore();
   const _maxAge = process.env.TOKEN_MAX_AGE;
   console.log('_maxage in handleLoginSuccess');
   console.log(_maxAge);
@@ -26,16 +19,13 @@ export async function handleLoginSuccess(response, router, dispatch) {
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
   console.log(tokenCookie);
-  dispatch(setAuthtoken(tokenCookie));
+  setAuthtoken(tokenCookie);
+  //dispatch(setAuthtoken(tokenCookie));
   //setJwtToken(token);
   const signInResult = await signIn('custom-provider', {
     token: tokenCookie,
     redirect: false,
   });
-  /* if (signInResult.error) { // Handle Error on client side
-        console.log('sign in result')
-        console.log(signInResult)
-        console.log(signInResult.error)
-    }*/
+
   router.push('/'); // redirect to the dashboard page on successful login
 }

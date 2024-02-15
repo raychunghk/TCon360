@@ -29,13 +29,8 @@ import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
-import {
-  clearAllState,
-  setUser,
-  setStaff,
-  setBasepath,
-} from 'pages/reducers/calendarReducer';
+//import { useDispatch } from 'react-redux';
+//import { clearAllState, setUser } from 'pages/reducers/calendarReducer';
 import { useStaffData } from 'components/useStaffData';
 
 import useUIStore from 'pages/reducers/useUIStore';
@@ -44,10 +39,11 @@ import useTokenExpiration from './useTokenExpiration';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
+  const { clearAllState } = useStore();
   const [opened, setOpened] = useState(false);
   const { data: session } = useSession();
   const { classes } = useStyles();
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   const clearAllCookies = () => {
     const cookies = parseCookies(); // Get all cookies
@@ -60,7 +56,8 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const router = useRouter();
   const handleSignout = () => {
     clearAllCookies();
-    dispatch(clearAllState());
+    clearAllState();
+    //dispatch(clearAllState());
     router.push('/login');
   };
 
@@ -69,12 +66,12 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   //console.log('activeUser?', activeUser);
   //console.log('activestaff?', activeStaff);
   //useTokenExpiration();
-
+  /*
   useEffect(() => {
     if (status === 'authenticated') {
       dispatch(setUser(activeUser));
     }
-  }, [activeStaff]);
+  }, [activeStaff]);*/
   if (status === 'loading') {
     //return <p>Loading...</p>;
   }

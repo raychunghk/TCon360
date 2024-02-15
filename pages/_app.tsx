@@ -20,8 +20,8 @@ interface CustomSessionProviderProps extends SessionProviderProps {
 import { GlobalStyles } from '@mantine/core';
 import '../styles/styles.css';
 
-import { Provider } from 'react-redux';
-import { store } from './reducers/store';
+//import { Provider } from 'react-redux';
+//import { store } from './reducers/store';
 import { ModalsProvider } from '@mantine/modals';
 import useStore from './reducers/zstore';
 import { useShallow } from 'zustand/react/shallow';
@@ -88,50 +88,48 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   useTokenExpiration();
 
   return (
-    <Provider store={store}>
-      <SessionProvider
-        session={pageProps.session}
-        basePath={`${basepath}/api/auth`}
-        token={token}
-        {...(null as CustomSessionProviderProps)}
+    <SessionProvider
+      session={pageProps.session}
+      basePath={`${basepath}/api/auth`}
+      token={token}
+      {...(null as CustomSessionProviderProps)}
+    >
+      <Head>
+        <title>{title}</title>
+
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
+        <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
+        {/* <link rel="stylesheet" href={`${basepath}/styles/globals.css`} /> */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+
+      <ColorSchemeProvider
+        colorScheme={colorScheme}
+        toggleColorScheme={toggleColorScheme}
       >
-        <Head>
-          <title>{title}</title>
-
-          <meta
-            name="viewport"
-            content="minimum-scale=1, initial-scale=1, width=device-width"
-          />
-          <link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
-          {/* <link rel="stylesheet" href={`${basepath}/styles/globals.css`} /> */}
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-            rel="stylesheet"
-          />
-        </Head>
-
-        <ColorSchemeProvider
-          colorScheme={colorScheme}
-          toggleColorScheme={toggleColorScheme}
+        {/* <PublicHolidaysContext.Provider value={publicHolidays}> */}
+        <MantineProvider
+          theme={{ colorScheme: 'light' }}
+          withGlobalStyles
+          withNormalizeCSS
         >
-          {/* <PublicHolidaysContext.Provider value={publicHolidays}> */}
-          <MantineProvider
-            theme={{ colorScheme: 'light' }}
-            withGlobalStyles
-            withNormalizeCSS
-          >
-            {' '}
-            <ModalsProvider>
-              <Component {...pageProps} basepath={basepath} token={token} />
-              <Notifications />
-            </ModalsProvider>
-          </MantineProvider>
-          {/* </PublicHolidaysContext.Provider> */}
-        </ColorSchemeProvider>
-      </SessionProvider>
-    </Provider>
+          {' '}
+          <ModalsProvider>
+            <Component {...pageProps} basepath={basepath} token={token} />
+            <Notifications />
+          </ModalsProvider>
+        </MantineProvider>
+        {/* </PublicHolidaysContext.Provider> */}
+      </ColorSchemeProvider>
+    </SessionProvider>
   );
 }
 
