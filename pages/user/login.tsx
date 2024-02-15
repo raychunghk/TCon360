@@ -1,7 +1,6 @@
 import { parseCookies, setCookie } from 'nookies';
 import {
   Paper,
-  createStyles,
   TextInput,
   Container,
   PasswordInput,
@@ -20,42 +19,43 @@ import { useState } from 'react';
 import { siteTitle } from 'components/util/label';
 //import { handleLoginSuccess } from './handleLoginSuccess';
 import useStore from 'pages/reducers/zstore';
-const useStyles = createStyles((theme) => ({
-  wrapper: {
-    backgroundSize: 'cover',
-    backgroundImage: `url('${bg.src}')`,
-    height: '100vh',
-  },
-  form: {
-    borderRight: `1px solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-    }`,
-    maxWidth: 450,
-    paddingTop: 80,
-    height: '100vh',
-    marginLeft: 'auto', // set marginLeft to auto to align the Paper component to the right
-    [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-      maxWidth: '100%',
-    },
-    marginRight: '150px',
-  },
+import classes from './login.module.css';
+// const useStyles = createStyles((theme) => ({
+//   wrapper: {
+//     backgroundSize: 'cover',
+//     backgroundImage: `url('${bg.src}')`,
+//     height: '100vh',
+//   },
+//   form: {
+//     borderRight: `1px solid ${
+//       theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+//     }`,
+//     maxWidth: 450,
+//     paddingTop: 80,
+//     height: '100vh',
+//     marginLeft: 'auto', // set marginLeft to auto to align the Paper component to the right
+//     [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+//       maxWidth: '100%',
+//     },
+//     marginRight: '150px',
+//   },
 
-  title: {
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-  },
+//   title: {
+//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+//     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+//   },
 
-  logo: {
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    width: 120,
-    display: 'block',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-}));
+//   logo: {
+//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+//     width: 120,
+//     display: 'block',
+//     marginLeft: 'auto',
+//     marginRight: 'auto',
+//   },
+// }));
 
 export default function LoginPage(props) {
-  const { classes } = useStyles();
+  //const { classes } = useStyles();
   const router = useRouter();
   const { setAuthtoken } = useStore();
   const basepath = router.basePath;
@@ -122,17 +122,11 @@ export default function LoginPage(props) {
   return (
     <Container fluid className={classes.wrapper}>
       <Paper className={classes.form} radius={0} p={30}>
-        <Title
-          order={2}
-          className={classes.title}
-          align="center"
-          mt="md"
-          mb={50}
-        >
+        <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
           {siteTitle}
         </Title>
         {loginStatus && (
-          <Text color="red" fw={700} fz="md" align="center">
+          <Text color="red" fw={700} fz="md" ta="center">
             {loginStatus}
           </Text>
         )}{' '}
@@ -140,8 +134,10 @@ export default function LoginPage(props) {
         <form onSubmit={handleLogin}>
           <LoadingOverlay
             visible={visible}
-            overlayBlur={2}
-            transitionDuration={500}
+            overlayProps={{
+              blur: 2,
+            }}
+            transitionProps={{ duration: 500 }}
           />
           <TextInput
             label="Email address or username"
@@ -163,9 +159,9 @@ export default function LoginPage(props) {
             Login
           </Button>
         </form>
-        <Text align="center" mt="md">
+        <Text ta="center" mt="md">
           Don&apos;t have an account?{' '}
-          <Anchor<'a'> href="#" weight={700} onClick={handleSignupClick}>
+          <Anchor<'a'> href="#" fw={700} onClick={handleSignupClick}>
             Sign Up
           </Anchor>
         </Text>

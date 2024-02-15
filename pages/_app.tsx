@@ -3,11 +3,7 @@ import { useState, createContext, useEffect } from 'react';
 import NextApp, { AppProps, AppContext } from 'next/app';
 import { getCookie, setCookie } from 'cookies-next';
 import Head from 'next/head';
-import {
-  MantineProvider,
-  ColorScheme,
-  ColorSchemeProvider,
-} from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useRouter } from 'next/router';
 import { SessionProvider, SessionProviderProps } from 'next-auth/react';
@@ -17,7 +13,7 @@ import session from 'express-session';
 interface CustomSessionProviderProps extends SessionProviderProps {
   token: string;
 }
-import { GlobalStyles } from '@mantine/core';
+
 import '../styles/styles.css';
 
 //import { Provider } from 'react-redux';
@@ -31,7 +27,7 @@ import useUIStore from './reducers/useUIStore';
 // Create a context for publicholidays
 export const PublicHolidaysContext = createContext(null);
 
-export default function App(props: AppProps & { colorScheme: ColorScheme }) {
+export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const { siteTitle } = useUIStore();
 
@@ -41,10 +37,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   const cookies = parseCookies();
   const token = cookies.token;
-
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(
-    props.colorScheme,
-  );
 
   const [isLoading, setIsLoading] = useState(true);
   const [
@@ -75,14 +67,14 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   const router = useRouter();
 
-  const toggleColorScheme = (value?: ColorScheme) => {
-    const nextColorScheme =
-      value || (colorScheme === 'dark' ? 'light' : 'dark');
-    setColorScheme(nextColorScheme);
-    setCookie('mantine-color-scheme', nextColorScheme, {
-      maxAge: 60 * 60 * 24 * 30,
-    });
-  };
+  // const toggleColorScheme = (value?: ColorScheme) => {
+  //   const nextColorScheme =
+  //     value || (colorScheme === 'dark' ? 'light' : 'dark');
+  //   setColorScheme(nextColorScheme);
+  //   setCookie('mantine-color-scheme', nextColorScheme, {
+  //     maxAge: 60 * 60 * 24 * 30,
+  //   });
+  // };
   const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
 
   useTokenExpiration();
@@ -110,25 +102,24 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
           rel="stylesheet"
         />
       </Head>
-
+      {/* 
       <ColorSchemeProvider
         colorScheme={colorScheme}
         toggleColorScheme={toggleColorScheme}
+      > */}
+
+      <MantineProvider
+        theme={{ fontFamily: 'Open Sans' }}
+        defaultColorScheme="light"
       >
-        {/* <PublicHolidaysContext.Provider value={publicHolidays}> */}
-        <MantineProvider
-          theme={{ colorScheme: 'light' }}
-          withGlobalStyles
-          withNormalizeCSS
-        >
-          {' '}
-          <ModalsProvider>
-            <Component {...pageProps} basepath={basepath} token={token} />
-            <Notifications />
-          </ModalsProvider>
-        </MantineProvider>
-        {/* </PublicHolidaysContext.Provider> */}
-      </ColorSchemeProvider>
+        {' '}
+        <ModalsProvider>
+          <Component {...pageProps} basepath={basepath} token={token} />
+          <Notifications />
+        </ModalsProvider>
+      </MantineProvider>
+      {/* </PublicHolidaysContext.Provider> */}
+      {/* </ColorSchemeProvider> */}
     </SessionProvider>
   );
 }
