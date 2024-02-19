@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 import { basePath } from 'src/shared/constants/env';
 import { destroyCookie, parseCookies } from 'nookies';
+import '@mantine/dates/styles.css';
+import '@mantine/core/styles.css';
 import session from 'express-session';
 interface CustomSessionProviderProps extends SessionProviderProps {
   token: string;
@@ -16,7 +18,6 @@ interface CustomSessionProviderProps extends SessionProviderProps {
 
 import '../styles/styles.css';
 
-//import { Provider } from 'react-redux';
 //import { store } from './reducers/store';
 import { ModalsProvider } from '@mantine/modals';
 import useStore from './reducers/zstore';
@@ -108,10 +109,7 @@ export default function App(props: AppProps) {
         toggleColorScheme={toggleColorScheme}
       > */}
 
-      <MantineProvider
-        theme={{ fontFamily: 'Open Sans' }}
-        defaultColorScheme="light"
-      >
+      <MantineProvider theme={{ fontFamily: ' ' }} defaultColorScheme="light">
         {' '}
         <ModalsProvider>
           <Component {...pageProps} basepath={basepath} token={token} />

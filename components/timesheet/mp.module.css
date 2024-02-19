@@ -5,3 +5,7 @@
 .month-picker-buttons button {
   width: 50px; /* Adjust the width as needed */
 }
+.monthButton {
+  justify-content: center;
+  width: 800px;
+}

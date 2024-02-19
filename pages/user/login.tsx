@@ -14,12 +14,13 @@ import {
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { useDisclosure } from '@mantine/hooks';
-import bg from 'public/images/loginbg1.webp';
+//import bg from 'public/images/loginbg1.webp';
 import { useState } from 'react';
 import { siteTitle } from 'components/util/label';
 //import { handleLoginSuccess } from './handleLoginSuccess';
 import useStore from 'pages/reducers/zstore';
-import classes from './login.module.css';
+import * as classes from './login.css';
+import '@mantine/core/styles.css';
 // const useStyles = createStyles((theme) => ({
 //   wrapper: {
 //     backgroundSize: 'cover',
@@ -55,7 +56,6 @@ import classes from './login.module.css';
 // }));
 
 export default function LoginPage(props) {
-  //const { classes } = useStyles();
   const router = useRouter();
   const { setAuthtoken } = useStore();
   const basepath = router.basePath;

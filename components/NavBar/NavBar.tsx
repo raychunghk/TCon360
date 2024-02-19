@@ -1,23 +1,28 @@
-import { AppShell, Navbar } from '@mantine/core';
+import { AppShell, Flex } from '@mantine/core';
 import MainLinks from './mainlinks';
 import CreateTimesheetPage from '../timesheet/createform';
 export default function AppShellNavBar({ opened }) {
   return (
-    <Navbar
+    <AppShell.Navbar
       p="md"
-      hiddenBreakpoint="sm"
+      // hiddenBreakpoint="sm"
+
       hidden={!opened}
-      width={{ sm: 200, lg: 230 }}
+      w={{ sm: 200, lg: 230 }}
     >
-      <Navbar.Section>
+      <Flex
+        justify="flex-start"
+        align="flex-start"
+        direction="column"
+        wrap="wrap"
+        gap={{ base: 'sm', sm: 'lg' }}
+      >
         {/* Header with logo */}
         <CreateTimesheetPage pickersize="xs" />
-      </Navbar.Section>
-      <Navbar.Section grow mt="md">
+
         {/* Links sections */}
         <MainLinks />
-      </Navbar.Section>
-      <Navbar.Section>{/* Footer with user */}</Navbar.Section>
-    </Navbar>
+      </Flex>
+    </AppShell.Navbar>
   );
 }

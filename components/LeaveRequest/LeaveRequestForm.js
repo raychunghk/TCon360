@@ -663,7 +663,7 @@ export default function LeaveRequestForm({
                   <Button
                     component="a"
                     target="_blank"
-                    leftIcon={<IconFileSpreadsheet size={rem(18)} />}
+                    leftSection={<IconFileSpreadsheet size={rem(18)} />}
                     href={`${basepath}/api/staff/download/${leaveRequest.fileId}`}
                   >
                     Download Leave Form
@@ -697,7 +697,7 @@ export default function LeaveRequestForm({
                   type="submit"
                   fullWidth
                   loading={submitting}
-                  leftIcon={<IconCalendarPlus size={rem(18)} />}
+                  leftSection={<IconCalendarPlus size={rem(18)} />}
                   maw={250}
                   radius="md"
                 >
@@ -711,7 +711,7 @@ export default function LeaveRequestForm({
                     loading={submitting}
                     maw={250}
                     radius="md"
-                    leftIcon={<IconCalendarUp size={rem(18)} />}
+                    leftSection={<IconCalendarUp size={rem(18)} />}
                     onClick={updateOnClick}
                   >
                     Update
@@ -723,7 +723,7 @@ export default function LeaveRequestForm({
                     onClick={deleteOnClick}
                     variant="gradient"
                     gradient={{ from: 'orange', to: 'red' }}
-                    leftIcon={<IconCalendarX size={rem(18)} />}
+                    leftSection={<IconCalendarX size={rem(18)} />}
                   >
                     Delete
                   </Button>

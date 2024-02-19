@@ -1,3 +1,5 @@
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+const withVanillaExtract = createVanillaExtractPlugin();
 const dotenv = require('dotenv');
 dotenv.config();
 const _basepath = `/absproxy/5000`;
@@ -49,7 +51,7 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = withVanillaExtract(withBundleAnalyzer(nextConfig));
 /*
 module.exports = withBundleAnalyzer({
   reactStrictMode: false,

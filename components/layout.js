@@ -1,26 +1,25 @@
 import styles from './layout.module.css';
-import Head from 'next/head';
+//import '@mantine/core/styles.css';
 import linkstyle from './NavBar/mainlinks.module.css';
 import AppShellNavBar from '../components/NavBar/NavBar';
 import Link from 'next/link';
 import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
-import useStyles from '../styles/layout.styles';
 import { basepath } from '/global';
 import HeaderPopover from './LayoutHeader/HeaderPopover';
-
 import {
   Title,
   AppShell,
+  Center,
   ThemeIcon,
   Flex,
   Header,
   Footer,
   Text,
   Group,
+  Skeleton,
   MediaQuery,
   Burger,
-  ActionIcon,
   Button,
   UnstyledButton,
   useMantineTheme,
@@ -29,21 +28,19 @@ import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/router';
-//import { useDispatch } from 'react-redux';
-//import { clearAllState, setUser } from 'pages/reducers/calendarReducer';
+import { useDisclosure } from '@mantine/hooks';
 import { useStaffData } from 'components/useStaffData';
-
+import * as classes from './layout.css';
 import useUIStore from 'pages/reducers/useUIStore';
 import useStore from 'pages/reducers/zstore';
+
 import useTokenExpiration from './useTokenExpiration';
+import { child } from 'winston';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
   const { clearAllState } = useStore();
   const [opened, setOpened] = useState(false);
-  const { data: session } = useSession();
-  const { classes } = useStyles();
-  //const dispatch = useDispatch();
 
   const clearAllCookies = () => {
     const cookies = parseCookies(); // Get all cookies
@@ -57,21 +54,12 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const handleSignout = () => {
     clearAllCookies();
     clearAllState();
-    //dispatch(clearAllState());
+
     router.push('/login');
   };
 
   const { activeUser, activeStaff, status } = useStaffData();
 
-  //console.log('activeUser?', activeUser);
-  //console.log('activestaff?', activeStaff);
-  //useTokenExpiration();
-  /*
-  useEffect(() => {
-    if (status === 'authenticated') {
-      dispatch(setUser(activeUser));
-    }
-  }, [activeStaff]);*/
   if (status === 'loading') {
     //return <p>Loading...</p>;
   }
@@ -90,35 +78,32 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     },
   });
 
-  return (
-    <AppShell
-      padding={contentpadding}
-      styles={{
-        main: {
-          background:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0],
-        },
-      }}
-      navbarOffsetBreakpoint="sm"
-      asideOffsetBreakpoint="sm"
-      header={
-        <Header height={{ base: 45, md: 50 }} p="sx">
-          <div
-            style={{ display: 'flex', alignItems: 'center', height: '100%' }}
-          >
-            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+  //const [opened, { toggle }] = useDisclosure();
+  //return children;
+  if (true)
+    return (
+      <AppShell
+        header={{ height: 60 }}
+        footer={{ height: 30 }}
+        navbar={{
+          width: 300,
+          breakpoint: 'sm',
+          collapsed: { mobile: !opened },
+        }}
+        padding="md"
+      >
+        <AppShell.Header>
+          <Group justify="space-between" pl={15}>
+            <Group>
               <Burger
+                hiddenFrom="xs"
                 opened={opened}
                 onClick={() => setOpened((o) => !o)}
                 size="sm"
                 color={theme.colors.gray[6]}
                 mr="xl"
               />
-            </MediaQuery>
-            <Group position="apart" style={{ width: '100%' }} p="10px">
-              <Group position="left">
+              <Title className={classes.title} align="center" ml={5} mt={5}>
                 <Link href="/">
                   <Image
                     src={`${basepath}/favicon.svg`}
@@ -128,80 +113,69 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                     style={{ marginRight: '5px' }}
                   />
                 </Link>
-                <Title className={classes.title} align="center">
-                  Welcome to{' '}
-                  <Text inherit variant="gradient" component="span">
-                    {siteTitle} - Timesheet and Leave Form manager
-                  </Text>
-                </Title>
-              </Group>
-
-              <Group position="right">
-                {activeUser ? (
-                  <>
-                    <HeaderPopover></HeaderPopover>
-                    <Button
-                      onClick={() => handleSignout()}
-                      className={classes.buttonStyles}
-                      leftIcon={
-                        <IconLogout
-                          size="1.625rem"
-                          style={{
-                            color: '#7d022f', // Set the color to purple
-                            marginRight: '0.5rem',
-                          }}
-                        />
-                      }
-                    >
-                      <Text size="sm" color="black">
-                        Sign out
-                      </Text>
-                    </Button>
-                  </>
-                ) : (
-                  <Group>
-                    <Link href="/login" className={linkstyle.links}>
-                      <UnstyledButton sx={buttonStyles}>
-                        <Group>
-                          <ThemeIcon variant="light">
-                            <IconLogin />
-                          </ThemeIcon>
-                          <Text size="sm">Login</Text>
-                        </Group>
-                      </UnstyledButton>
-                    </Link>{' '}
-                    <Link href="/signup" className={linkstyle.links}>
-                      <UnstyledButton sx={buttonStyles}>
-                        <Group style={{ width: '150px' }}>
-                          <ThemeIcon variant="light">
-                            <IconLogin />
-                          </ThemeIcon>
-                          <Text size="sm">Signup</Text>
-                        </Group>
-                      </UnstyledButton>
-                    </Link>
-                  </Group>
-                )}
-              </Group>
+                Welcome to{' '}
+                <Text inherit variant="gradient" component="span">
+                  {siteTitle} - Timesheet and Leave Form manager
+                </Text>
+              </Title>
             </Group>
-          </div>
-        </Header>
-      }
-      navbar={activeUser ? <AppShellNavBar opened={opened} /> : null}
-      footer={
-        <Footer height={28}>
-          <Flex
-            direction={{ base: 'column', sm: 'row' }}
-            gap={{ base: 'sm', sm: '0.5g' }}
-            justify={{ sm: 'center' }}
-            className={styles.flex}
-          >
+            <Group justify="right" mr={15}>
+              {activeUser ? (
+                <>
+                  <HeaderPopover></HeaderPopover>
+                  <Button
+                    onClick={() => handleSignout()}
+                    className={classes.buttonStyles}
+                    leftSection={
+                      <IconLogout
+                        size="1.625rem"
+                        style={{
+                          color: '#7d022f', // Set the color to purple
+                          marginRight: '0.5rem',
+                        }}
+                      />
+                    }
+                  >
+                    <Text size="sm" fw={500}>
+                      Sign out
+                    </Text>
+                  </Button>
+                </>
+              ) : (
+                <Group>
+                  <Link href="/login" className={linkstyle.links}>
+                    <UnstyledButton sx={buttonStyles}>
+                      <Group>
+                        <ThemeIcon variant="light">
+                          <IconLogin />
+                        </ThemeIcon>
+                        <Text size="sm">Login</Text>
+                      </Group>
+                    </UnstyledButton>
+                  </Link>{' '}
+                  <Link href="/signup" className={linkstyle.links}>
+                    <UnstyledButton sx={buttonStyles}>
+                      <Group style={{ width: '150px' }}>
+                        <ThemeIcon variant="light">
+                          <IconLogin />
+                        </ThemeIcon>
+                        <Text size="sm">Signup</Text>
+                      </Group>
+                    </UnstyledButton>
+                  </Link>
+                </Group>
+              )}
+            </Group>
+          </Group>
+        </AppShell.Header>
+        {activeUser ? <AppShellNavBar opened={opened} /> : null}
+
+        <AppShell.Main> {activeUser ? children : null}</AppShell.Main>
+        <AppShell.Footer h={30}>
+          <Center h={30}>
             <div>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</div>
-          </Flex>
-        </Footer>
-      }
-    >
-      {activeUser ? children : null}
-    </AppShell>
-  );
+          </Center>
+        </AppShell.Footer>
+      </AppShell>
+    );
 }

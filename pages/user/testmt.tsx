@@ -13,7 +13,7 @@ function Demo() {
     validate: {
       name: isNotEmpty('Name is required'),
       email: isEmail('Invalid email'),
-       startDate: [
+      startDate: [
         (value) => {
           if (!isNotEmpty(value)) {
             return 'Start date is required';
@@ -76,7 +76,7 @@ function Demo() {
         {...form.getInputProps('endDate')}
       />
 
-      <Group position="right" mt="md">
+      <Group justify="right" mt="md">
         <Button type="submit">Submit</Button>
       </Group>
     </form>

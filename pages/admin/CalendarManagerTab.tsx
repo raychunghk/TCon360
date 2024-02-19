@@ -82,7 +82,11 @@ const CalendarManagementTab = () => {
             withArrow
             label="To generate calendar for the next 4 years and update public holiday database."
           >
-            <Button type="submit" color="blue" leftIcon={<IconCalendarEvent />}>
+            <Button
+              type="submit"
+              color="blue"
+              leftSection={<IconCalendarEvent />}
+            >
               Update Calendar Database
             </Button>
           </Tooltip>

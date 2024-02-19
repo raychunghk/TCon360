@@ -38,7 +38,7 @@
     "pages/leaverequest/index.jsx",
     "pages/_document.jsx",
     "pages/api/auth/[...nextauth].js",
-    "pages/user/signup.tsx",
+    "pages/user/good_signup.tsx",
     "components/Signupcard.js",
     "src/server/timesheet/service/timesheet.service.ts.nouse"
   ],

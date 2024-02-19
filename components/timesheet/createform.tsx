@@ -10,7 +10,7 @@ import {
   Text,
   Center,
   Group,
-  createStyles,
+  MantineSize,
 } from '@mantine/core';
 import { IconTableExport } from '@tabler/icons-react';
 //import { useSession } from 'next-auth/react';
@@ -21,12 +21,7 @@ import download from 'downloadjs';
 import { createUseStyles } from 'react-jss';
 import styles from './mp.module.css';
 import useStore from 'pages/reducers/zstore';
-const useStyles = createStyles({
-  monthButton: {
-    width: '800px',
-    justifyContent: 'center',
-  },
-});
+
 export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [modalOpen, setModalOpen] = useState(false);
   const { register, handleSubmit, reset } = useReactHookForm();
@@ -37,7 +32,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [displayedYear, setDisplayedYear] = useState(
     currentStart.getFullYear(),
   );
-  const { classes } = useStyles();
+
   useEffect(() => {
     console.log('current start?', currentStart);
     setMonthValue(currentStart);
@@ -96,7 +91,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
         <MyCard title={'Create TimeSheet'} cardwidth={250}>
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
-              <Group position="center">
+              <Group justify="center">
                 <MonthPicker
                   maxLevel="year"
                   value={monthValue}
@@ -109,12 +104,12 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
               </Group>
             </Grid.Col>
             <Grid.Col span={12}>
-              <Group position="center">
+              <Group justify="center">
                 {fileid && (
                   <Button
                     component="a"
                     target="_blank"
-                    leftIcon={<IconTableExport size="1rem" />}
+                    leftSection={<IconTableExport size="1rem" />}
                     href={`${basepath}/api/staff/download/${fileid}`}
                   >
                     Download TimeSheet
@@ -126,7 +121,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
           <Card.Section
             bg="indigo.2"
             py="md"
-            sx={{
+            style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

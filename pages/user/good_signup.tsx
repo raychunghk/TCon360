@@ -25,7 +25,7 @@ import {
   Stepper,
   NumberInput,
 } from '@mantine/core';
-
+import '@mantine/core/styles.css';
 import Head from 'next/head';
 
 import Link from 'next/link';
@@ -393,6 +393,7 @@ export default function SignupPage() {
         <Link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
       </Head>
       <Container fluid className={classes.wrapper}>
+        <DatePickerInput label="Pick date" placeholder="Pick date" />
         <form
           onSubmit={form.onSubmit((e) => {
             handleSubmit(e);
