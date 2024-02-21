@@ -15,7 +15,7 @@ import MyCard from '../../components/MyCard';
 import MyModal from '../../components/MyModal';
 //import { useDispatch } from 'react-redux';
 import { basepath } from '/global';
-import UserStyle from '../../styles/User.module.css';
+import commonstyle from '../../styles/common.module.css';
 //import { setBasepath } from 'pages/reducers/calendarReducer';
 import { useForm, yupResolver } from '@mantine/form';
 import { Param } from '@nestjs/common';
@@ -62,7 +62,7 @@ export default function EditStaff() {
         setFormValues(_staff);
         setEditing(true);
         form.setValues(_staff);
-        //  dispatch(setStaff(_staff));
+
         setActiveStaff(_staff);
         const activeContract = _staff.contracts.filter(
           (contract) => contract.IsActive === true,
@@ -224,7 +224,7 @@ export default function EditStaff() {
               <Card.Section
                 bg="indigo.2"
                 py="md"
-                sx={{
+                style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

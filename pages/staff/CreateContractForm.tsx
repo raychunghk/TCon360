@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Grid,
-  Col,
   NumberInput,
   Switch,
   Dialog,
@@ -39,9 +38,6 @@ export default function CreateContractForm({
   modalcallback,
   stateCreateModalOpen,
 }: CreateModalProps) {
-  // const { basepath } = useSelector((state) => ({
-  //   basepath: state.calendar.basepath,
-  // }));
   const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
 
@@ -176,7 +172,7 @@ export default function CreateContractForm({
         <form method="post" name="frmCreateContract">
           <Container h={'380px'}>
             <Grid gutter="md" py={20} mah={'500px'}>
-              <Col span={6}>
+              <Grid.Col span={6}>
                 <DatePickerInput
                   label="Contract Start Date"
                   renderDay={myRenderDay}
@@ -197,8 +193,8 @@ export default function CreateContractForm({
                     )
                   }
                 />
-              </Col>
-              <Col span={6}>
+              </Grid.Col>
+              <Grid.Col span={6}>
                 <DatePickerInput
                   label="Contract End Date"
                   renderDay={myRenderDay}
@@ -219,8 +215,8 @@ export default function CreateContractForm({
                   }
                   disabled={!contract.ContractStartDate}
                 />
-              </Col>
-              <Col span={6}>
+              </Grid.Col>
+              <Grid.Col span={6}>
                 <NumberInput
                   name="annualLeave"
                   label="Annual Leave"
@@ -230,8 +226,8 @@ export default function CreateContractForm({
                     setContract({ ...contract, AnnualLeave: _annauleave });
                   }}
                 />
-              </Col>
-              <Col span={6}>
+              </Grid.Col>
+              <Grid.Col span={6}>
                 <Text>Is Active</Text>
                 <Switch
                   name="IsActive"
@@ -262,7 +258,7 @@ export default function CreateContractForm({
                     )
                   }
                 />
-              </Col>
+              </Grid.Col>
             </Grid>
           </Container>
 

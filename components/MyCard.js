@@ -1,35 +1,34 @@
 import { Card, Text } from '@mantine/core';
-import UserStyle from '../styles/User.module.css';
+import commonstyle from '../styles/common.module.css';
+import cardStyles from './MyCard.module.css';
 function MyCard({ title, children, cardwidth = 500 }) {
   return (
     <Card
-      shadow="sm"
-      padding="lg"
-      radius="md"
-      maw={cardwidth}
+      miw={cardwidth}
       withBorder
-      sx={(theme) => ({
-        backgroundColor:
-          theme.colorScheme === 'dark'
-            ? theme.colors.dark[6]
-            : theme.colors.gray[0],
-        borderRadius: theme.radius.md,
-        '&:hover': {
-          backgroundColor:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[5]
-              : theme.colors.gray[1],
-        },
-      })}
+      className={cardStyles.mycard}
+      // style={{
+      //   backgroundColor:
+      //     theme.colorScheme === 'dark'
+      //       ? theme.colors.dark[6]
+      //       : theme.colors.gray[0],
+      //   borderRadius: theme.radius.md,
+      //   '&:hover': {
+      //     backgroundColor:
+      //       theme.colorScheme === 'dark'
+      //         ? theme.colors.dark[5]
+      //         : theme.colors.gray[1],
+      //   },
+      // }}
     >
       <Card.Section
-        className={UserStyle.mySection}
+        className={commonstyle.mySection}
         mah={60}
-        padding={15}
+        p={10}
         ta="center"
-        sx={{ padding: '10px', fontSize: '1rem' }}
+        fz={'1rem'}
       >
-        <Text weight={500}>{title}</Text>
+        <Text fw={500}>{title}</Text>
       </Card.Section>
 
       {children}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { MonthPicker } from '@mantine/dates';
 import {
@@ -13,12 +14,12 @@ import {
   MantineSize,
 } from '@mantine/core';
 import { IconTableExport } from '@tabler/icons-react';
-//import { useSession } from 'next-auth/react';
+
 import { basepath } from '/global';
 import MyCard from '../MyCard';
-//import { CSSProperties } from 'react';
+
 import download from 'downloadjs';
-import { createUseStyles } from 'react-jss';
+
 import styles from './mp.module.css';
 import useStore from 'pages/reducers/zstore';
 
@@ -82,13 +83,8 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
 
   return (
     <>
-      <style jsx global>{`
-        .mantine-MonthPicker-monthButton {
-          width: 70px !important;
-        }
-      `}</style>
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title={'Create TimeSheet'} cardwidth={250}>
+        <MyCard title={'Create TimeSheet'} cardwidth={225}>
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">

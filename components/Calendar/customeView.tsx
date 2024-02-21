@@ -22,8 +22,8 @@ export default function CustomView({ userStaff, ...props }) {
   // Render the events from all months together
   // Customize this component to meet your specific requirements
   return (
-    <Container padding="15px">
-      <Text size="lg" weight={500} style={{ marginBottom: '16px' }}>
+    <Container p="15px">
+      <Text size="lg" w={500} style={{ marginBottom: '16px' }}>
         Leave Request Summary
       </Text>
       {filteredEvents.map((event) => (
@@ -42,7 +42,7 @@ export default function CustomView({ userStaff, ...props }) {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Text
               size="lg"
-              weight={500}
+              w={500}
               style={{ marginRight: '8px', width: '18ch' }}
             >
               {event.HolidaySummary}
@@ -56,7 +56,7 @@ export default function CustomView({ userStaff, ...props }) {
             <Text size="sm" style={{ marginRight: '8px', width: '13ch' }}>
               {format(new Date(event.leavePeriodEnd), 'yyyy-MMM-d')}
             </Text>
-            <Text size="sm" color="blue" weight={700}>
+            <Text size="sm" color="blue" fw={700}>
               (No of days: {event.leaveDays})
             </Text>
           </div>

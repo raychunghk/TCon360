@@ -5,8 +5,9 @@ import { useEffect, useState, useRef } from 'react';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
-import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import LeaveRequestForm from 'components/LeaveRequest/LeaveRequestForm';
 import axios from 'axios';
 import styles from './calendar.module.css';
 import { useDisclosure, useInputState } from '@mantine/hooks';
@@ -14,22 +15,17 @@ import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { signOut, useSession } from 'next-auth/react';
 import useStore from 'pages/reducers/zstore';
 import useUIStore from 'pages/reducers/useUIStore';
-//import { useDispatch, useSelector } from 'react-redux';
-//import { clearAllState } from 'pages/reducers/calendarReducer';
+
 import {
   convertDateStringToDate,
   isPublicHoliday,
   handleSelectAllow,
   isSameDate,
 } from './calendar.util';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import CustomView from './customeView';
 import { useStaffData } from 'components/useStaffData';
-import { useShallow } from 'zustand/react/shallow';
 
 export function FrontPageCalendar() {
-  // const dispatch = useDispatch();
-
   const handleSignout = () => {
     destroyCookie(null, 'token');
     //   dispatch(clearAllState());
@@ -113,12 +109,37 @@ export function FrontPageCalendar() {
   }
   const { activeStaff, activeContract, isAuthenticated, activeUser } =
     useStaffData();
-  const { data: session, status } = useSession();
+  //  const { data: session, status } = useSession();
 
   useEffect(() => {
     if (activeStaff) {
       fetchEvents();
     }
+    // const observer = new MutationObserver(() => {
+    //   const styleElements = document.querySelectorAll(
+    //     'style[data-fullcalendar]',
+    //   );
+
+    //   if (styleElements.length > 1) {
+    //     console.log('more than two fullcalendar style is loaded');
+    //     const fcStyleElement = document.getElementById('fcstyle');
+
+    //     if (fcStyleElement) {
+    //       // Remove additional style elements
+    //       styleElements.forEach((element) => {
+    //         if (element !== fcStyleElement) {
+    //           element.remove();
+    //         }
+    //       });
+    //     }
+    //   }
+    // });
+
+    //observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      // observer.disconnect();
+    };
   }, []);
   useEffect(() => {
     if (isEventUpdated) {
@@ -144,7 +165,6 @@ export function FrontPageCalendar() {
   const handleDeleteEvent = async (eventId) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
-      //calendarRef.current.getApi().getEventById(eventId).remove();
       setIsEventUpdated(true);
     } catch (error) {
       console.log('error', error);
@@ -153,8 +173,7 @@ export function FrontPageCalendar() {
   };
 
   const fnEventclick = (e) => {
-    console.log('event click');
-    console.log(e.event);
+    console.log('event click', e.event);
 
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
 
@@ -211,7 +230,7 @@ export function FrontPageCalendar() {
         (_leaveperiodend !== null || _leaveperiodstart > ContractStartDate)
       );
     });
-    console.log('vacation events', vacationEvents);
+
     const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
       const evt = event.extendedProps.result;
       const _end = new Date(event.end);
@@ -220,18 +239,22 @@ export function FrontPageCalendar() {
         ? new Date(evt.leavePeriodEnd)
         : null;
 
+      // If the event ends before the contract start date, don't count it
       if (_end < ContractStartDate) {
         return sum;
       }
 
+      // If the event has no end date, count the full number of leave days
       if (!_leaveperiodend) {
         return sum + evt.leaveDays;
       }
 
+      // If the event end date is after the contract end date, count the number of leave days up to the contract end date
       if (ContractEndDate < _leaveperiodend) {
         return sum + getBusinessDays(_leaveperiodstart, ContractEndDate);
       }
 
+      // If the event start date is before the contract start date and the event end date is after the contract start date, count the number of leave days from the contract start date to the event end date
       if (
         _leaveperiodend > ContractStartDate &&
         _leaveperiodstart < ContractStartDate
@@ -239,14 +262,14 @@ export function FrontPageCalendar() {
         return sum + getBusinessDays(ContractStartDate, _leaveperiodend);
       }
 
+      // If the event end date is before the contract start date, don't count it
       if (_leaveperiodend < ContractStartDate) {
         return sum;
       }
 
+      // Otherwise, count the full number of leave days
       return sum + evt.leaveDays;
     }, 0);
-
-    console.log('vacationleavedays', vacationLeaveDays);
 
     setStaffVacation({
       total: activeContract.AnnualLeave,
@@ -293,9 +316,8 @@ export function FrontPageCalendar() {
     const _customTitle = `${_dateRange} (Chargable days: ${_chargeableDays})`;
     setCustomTitle(_customTitle);
     // Update the state with the calculated chargeable days
-    //dispatch(setChargeableDays(_chargeableDays));
+
     setChargeableDays(_chargeableDays);
-    // Your logic here...
   }
   const handleDateSelect = (selectInfo) => {
     console.log(selectInfo);
@@ -348,55 +370,57 @@ export function FrontPageCalendar() {
           />
         )}
       </Drawer>
+      <style data-fullcalendar id="fcstyle" />
+      <div className="calendar-container">
+        <FullCalendar
+          plugins={[
+            dayGridPlugin,
+            interactionPlugin,
+            listPlugin,
+            timeGridPlugin,
+          ]}
+          aspectRatio={2.3}
+          initialView="dayGridMonth"
+          ref={calendarRef}
+          headerToolbar={{
+            center: 'title',
+            start: 'dayGridMonth,cv',
 
-      <FullCalendar
-        ref={calendarRef}
-        headerToolbar={{
-          center: 'title',
-          start: 'dayGridMonth,cv',
-
-          end: 'prev,next today',
-        }}
-        titleFormat={() => customTitle}
-        plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
-        height={'100%'}
-        eventClick={fnEventclick}
-        aspectRatio={1.5}
-        events={calendarEvents}
-        selectable={true}
-        // selectAllow={() => true}
-        // initialView="timeGrid"
-        //weekNumbers={true}
-        //weekNumbersWithinDays={false}
-        initialView="dayGridMonth"
-        selectAllow={(selectinfo) =>
-          handleSelectAllow(selectinfo, calendarEvents)
-        }
-        datesSet={handleMonthYearChange}
-        select={handleDateSelect} // Specify callback function for date range selection
-        views={{
-          dayGridMonth: {
-            buttonText: 'Month',
-          },
-          listWeek: {
-            type: 'list',
-            //  duration: { weeks: 1 },
-            buttonText: 'List',
-          },
-          timeGridFourDay: {
-            type: 'timeGrid',
-            duration: { days: 365 },
-          },
-          cv: {
-            component: (props) => (
-              <CustomView {...props} userStaff={activeStaff} />
-            ),
-            buttonText: 'Leave Requests',
-            events: calendarEvents,
-            // Pass the events object to the custom view component
-          },
-        }}
-      />
+            end: 'prev,next today',
+          }}
+          titleFormat={() => customTitle}
+          eventClick={fnEventclick}
+          events={calendarEvents}
+          selectable={true}
+          selectAllow={(selectinfo) =>
+            handleSelectAllow(selectinfo, calendarEvents)
+          }
+          datesSet={handleMonthYearChange}
+          select={handleDateSelect} // Specify callback function for date range selection
+          views={{
+            dayGridMonth: {
+              buttonText: 'Month',
+            },
+            listWeek: {
+              type: 'list',
+              //  duration: { weeks: 1 },
+              buttonText: 'List',
+            },
+            timeGridFourDay: {
+              type: 'timeGrid',
+              duration: { days: 365 },
+            },
+            cv: {
+              component: (props) => (
+                <CustomView {...props} userStaff={activeStaff} />
+              ),
+              buttonText: 'Leave Requests',
+              events: calendarEvents,
+              // Pass the events object to the custom view component
+            },
+          }}
+        />
+      </div>
     </>
   );
 }

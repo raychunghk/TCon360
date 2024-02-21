@@ -25,8 +25,33 @@
   background-color: #f0f4f8;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
   padding: 0.5rem 1rem;
 }
+.clsSignupBtn {
+  display: block;
 
- 
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  color: var(--mantine-color-white);
+
+  &:hover {
+    background-color: var(--mantine-color-blue-4);
+    box-shadow: var(--mantine-shadow-sm);
+  }
+}
+/* const buttonStyles = (theme) => ({
+    display: 'block',
+    width: '115px',
+    padding: theme.spacing.xs,
+    borderRadius: theme.radius.sm,
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
+    },
+  }); */

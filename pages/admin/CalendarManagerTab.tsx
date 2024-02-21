@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { IconCalendarEvent } from '@tabler/icons';
 import axios from 'axios';
-import UserStyle from '/styles/User.module.css';
+import commonstyle from '/styles/common.module.css';
 import { basepath } from 'global';
 import MyModal from 'components/MyModal';
 
@@ -64,8 +64,8 @@ const CalendarManagementTab = () => {
     <Box maw={800} pos="relative">
       <LoadingOverlay visible={loading} overlayBlur={2} />
       <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Card.Section p="sm" className={UserStyle.adminSectionHeader}>
-          <Text size="xl" weight={700} color="white">
+        <Card.Section p="sm" className={commonstyle.adminSectionHeader}>
+          <Text size="xl" fw={700} color="white">
             Calendar Manager
           </Text>
         </Card.Section>

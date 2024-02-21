@@ -3,7 +3,6 @@ import {
   Flex,
   Grid,
   Group,
-  Paper,
   Text,
   Title,
   Tooltip,
@@ -11,7 +10,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { ModalsProvider, modals } from '@mantine/modals';
-//import { useSelector } from 'react-redux';
+
 import EditIsActiveCell, {
   AnnualLeaveEditor,
   DateCell,
@@ -274,7 +273,7 @@ export default function ContractTable({
         </Group>
       ),
       mantineTableBodyCellProps: {
-        sx: { padding: '0.35rem 0.5rem !Important', textAlign: 'left' },
+        style: { padding: '0.35rem 0.5rem !Important', textAlign: 'left' },
       },
       mantineEditTextInputProps: ({ cell }) => ({
         onBlur: (event) => {},
@@ -286,7 +285,7 @@ export default function ContractTable({
         },
       },
       mantineTableContainerProps: {
-        sx: {
+        style: {
           minHeight: '200px',
         },
       },

@@ -1,11 +1,12 @@
 import styles from './layout.module.css';
 //import '@mantine/core/styles.css';
 import linkstyle from './NavBar/mainlinks.module.css';
-import AppShellNavBar from '../components/NavBar/NavBar';
+import AppShellNavBar from './NavBar/AppShellNavBar';
 import Link from 'next/link';
 import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
 import { basepath } from '/global';
+import '@mantine/dates/styles.css';
 import HeaderPopover from './LayoutHeader/HeaderPopover';
 import {
   Title,
@@ -13,11 +14,8 @@ import {
   Center,
   ThemeIcon,
   Flex,
-  Header,
-  Footer,
   Text,
   Group,
-  Skeleton,
   MediaQuery,
   Burger,
   Button,
@@ -39,7 +37,7 @@ import { child } from 'winston';
 export default function Layout({ children, home, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
-  const { clearAllState } = useStore();
+  const { clearAllState, navbarwidth } = useStore();
   const [opened, setOpened] = useState(false);
 
   const clearAllCookies = () => {
@@ -61,7 +59,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
   const { activeUser, activeStaff, status } = useStaffData();
 
   if (status === 'loading') {
-    //return <p>Loading...</p>;
+    <p>Loading...</p>;
   }
 
   const buttonStyles = (theme) => ({
@@ -86,7 +84,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
         header={{ height: 60 }}
         footer={{ height: 30 }}
         navbar={{
-          width: 300,
+          width: navbarwidth,
           breakpoint: 'sm',
           collapsed: { mobile: !opened },
         }}
@@ -125,12 +123,12 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                   <HeaderPopover></HeaderPopover>
                   <Button
                     onClick={() => handleSignout()}
-                    className={classes.buttonStyles}
+                    className={styles.clsSignupBtn}
                     leftSection={
                       <IconLogout
                         size="1.625rem"
                         style={{
-                          color: '#7d022f', // Set the color to purple
+                          color: 'var(--mantine-color-orange-1)', // Set the color to purple
                           marginRight: '0.5rem',
                         }}
                       />
@@ -144,7 +142,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
               ) : (
                 <Group>
                   <Link href="/login" className={linkstyle.links}>
-                    <UnstyledButton sx={buttonStyles}>
+                    <UnstyledButton className={classes.buttonStyles}>
                       <Group>
                         <ThemeIcon variant="light">
                           <IconLogin />
@@ -154,7 +152,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                     </UnstyledButton>
                   </Link>{' '}
                   <Link href="/signup" className={linkstyle.links}>
-                    <UnstyledButton sx={buttonStyles}>
+                    <UnstyledButton className={styles.clsSignupBtn}>
                       <Group style={{ width: '150px' }}>
                         <ThemeIcon variant="light">
                           <IconLogin />

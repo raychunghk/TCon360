@@ -126,7 +126,7 @@ export default function HeaderPopover({}) {
             ? userFields.map((field, index) => (
                 <React.Fragment key={index}>
                   <Grid.Col span={5}>
-                    <Text align="right" size="sm" weight={500}>
+                    <Text align="right" size="sm" fw={500}>
                       {field.label}
                     </Text>
                   </Grid.Col>

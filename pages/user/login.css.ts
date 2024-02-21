@@ -7,7 +7,6 @@ export const wrapper = style({
   height: '100vh',
 });
 export const form = style({
-  borderRight: `1px solid black`,
   maxWidth: 450,
   paddingTop: 80,
   height: '100vh',

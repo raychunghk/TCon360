@@ -23,7 +23,7 @@ import MyModal from '../../components/MyModal';
 import { format, parseISO, isWeekend } from 'date-fns';
 import { basepath } from '/global';
 import Head from 'next/head';
-import { useForm as uForm } from 'react-hook-form';
+
 import { useSession } from 'next-auth/react';
 import {
   getBusinessDays,
@@ -442,7 +442,7 @@ export default function LeaveRequestForm({
   const disabledDates = {
     daysOfWeek: [0, 6], // 0 is Sunday, 6 is Saturday
   };
-
+  const btnSize = 18;
   const handleLeaveStartSelect = (date, stateobj) => {
     if (!stateobj.leavePeriodEnd) {
       stateobj.dateOfReturn = date;
@@ -483,18 +483,18 @@ export default function LeaveRequestForm({
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
-            <Col span={6}>
-              <Text weight={500}>Staff Name:</Text>{' '}
+            <Grid.Col span={6}>
+              <Text fw={500}>Staff Name:</Text>{' '}
               <Text>{staff && staff.StaffName}</Text>
-            </Col>
-            <Col span={6}>
-              <Text weight={500}>Agent Name:</Text>{' '}
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Text fw={500}>Agent Name:</Text>{' '}
               <Text>{staff && staff.AgentName}</Text>
-            </Col>
-            <Col span={6}>
-              <Text weight={500}>Staff Category:</Text>{' '}
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Text fw={500}>Staff Category:</Text>{' '}
               <Text>{staff && staff.StaffCategory}</Text>
-            </Col>
+            </Grid.Col>
 
             <Grid.Col span={12}>
               {leaveRequest.leavePeriodStart &&
@@ -663,7 +663,7 @@ export default function LeaveRequestForm({
                   <Button
                     component="a"
                     target="_blank"
-                    leftSection={<IconFileSpreadsheet size={rem(18)} />}
+                    leftSection={<IconFileSpreadsheet />}
                     href={`${basepath}/api/staff/download/${leaveRequest.fileId}`}
                   >
                     Download Leave Form
@@ -675,7 +675,7 @@ export default function LeaveRequestForm({
           <Card.Section
             bg="indigo.2"
             py="md"
-            sx={{
+            style={{
               display: 'flex',
               alignItems: 'center',
               gap: 'md',
@@ -683,7 +683,6 @@ export default function LeaveRequestForm({
               height: '100%',
             }}
           >
-            {' '}
             <Flex
               mih={50}
               gap="md"
@@ -697,7 +696,7 @@ export default function LeaveRequestForm({
                   type="submit"
                   fullWidth
                   loading={submitting}
-                  leftSection={<IconCalendarPlus size={rem(18)} />}
+                  leftSection={<IconCalendarPlus />}
                   maw={250}
                   radius="md"
                 >
@@ -711,7 +710,7 @@ export default function LeaveRequestForm({
                     loading={submitting}
                     maw={250}
                     radius="md"
-                    leftSection={<IconCalendarUp size={rem(18)} />}
+                    leftSection={<IconCalendarUp />}
                     onClick={updateOnClick}
                   >
                     Update
@@ -723,7 +722,7 @@ export default function LeaveRequestForm({
                     onClick={deleteOnClick}
                     variant="gradient"
                     gradient={{ from: 'orange', to: 'red' }}
-                    leftSection={<IconCalendarX size={rem(18)} />}
+                    leftSection={<IconCalendarX />}
                   >
                     Delete
                   </Button>

@@ -20,7 +20,7 @@ import Head from 'next/head';
 import { useState } from 'react';
 import MyModal from '../../components/MyModal';
 import { parseCookies } from 'nookies';
-import UserStyle from '../../styles/User.module.css';
+import commonstyle from '../../styles/common.module.css';
 import axios from 'axios';
 import { useForm as uForm } from 'react-hook-form';
 require('dotenv').config();
@@ -200,7 +200,7 @@ export default function User(props) {
           </Card.Section>
         </MyCard>
       </form>
-      <Text size="sm" weight={500} mt="xl">
+      <Text size="sm" fw={500} mt="xl">
         Form values:
       </Text>
       <Code block mt={3}>

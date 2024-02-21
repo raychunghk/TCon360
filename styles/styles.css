@@ -55,7 +55,8 @@ body {
   ) !important;*/
   background: linear-gradient(135deg, #ff8a00 0%, #f76b1c 100%);
   color: white;
-  border: none;
+  border: 1px solid !important;
+  border-color: #c7851b !important;
 }
 .fc-toolbar .fc-button:hover {
   background: #ff9933 !important;

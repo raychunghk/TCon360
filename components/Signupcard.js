@@ -1,5 +1,5 @@
 import { Card, Grid, Text } from '@mantine/core';
-import UserStyle from '../styles/User.module.css';
+import commonstyle from '../styles/common.module.css';
 const SignupCard = ({ title, cols }) => {
   return (
     <Card
@@ -23,13 +23,13 @@ const SignupCard = ({ title, cols }) => {
       })}
     >
       <Card.Section
-        className={UserStyle.tsSection}
+        className={commonstyle.tsSection}
         mah={55}
         p={8}
         ta="center"
         sx={{ padding: '8px', fontSize: '1rem' }}
       >
-        <Text weight={500}>{title}</Text>
+        <Text fw={500}>{title}</Text>
       </Card.Section>
 
       <Grid style={{ fontSize: '0.9rem' }} mt={10}>

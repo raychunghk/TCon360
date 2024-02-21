@@ -735,9 +735,9 @@ export default function SignupPage() {
               )}
             </Group>
 
-            <Text align="center" mt="md">
+            <Text justify="center" mt="md">
               Already have an account?{' '}
-              <Anchor<'a'> href={`${basepath}/login`} weight={700}>
+              <Anchor<'a'> href={`${basepath}/login`} fw={700}>
                 Login
               </Anchor>
             </Text>

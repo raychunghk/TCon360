@@ -9,8 +9,8 @@ import { useRouter } from 'next/router';
 import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 import { basePath } from 'src/shared/constants/env';
 import { destroyCookie, parseCookies } from 'nookies';
-import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import session from 'express-session';
 interface CustomSessionProviderProps extends SessionProviderProps {
   token: string;

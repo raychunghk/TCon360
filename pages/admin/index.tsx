@@ -16,7 +16,7 @@ import Layout from '../../components/layout';
 import Head from 'next/head';
 import useStore from 'pages/reducers/zstore';
 import { parseCookies } from 'nookies';
-import UserStyle from '../../styles/User.module.css';
+import commonstyle from '../../styles/common.module.css';
 import axios from 'axios';
 import { useForm as uForm } from 'react-hook-form';
 import UserManagementTab from './UserManagerTab';

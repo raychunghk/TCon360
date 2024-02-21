@@ -1,0 +1,10 @@
+.mySection {
+  background-color: rgb(255, 240, 104);
+}
+
+.tsSection {
+  background-color: #ccffcc;
+}
+.adminSectionHeader {
+  background: linear-gradient(to bottom, #00bcd4, #2196f3 80%, #42a5f5);
+}

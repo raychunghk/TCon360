@@ -44,9 +44,19 @@ const nextConfig = {
     path: `${_basepath}/_next/image`,
   },
   /* webpack5: true,*/
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false };
+  // webpack: (config) => {
+  //   config.resolve.fallback = { fs: false };
 
+  //   return config;
+  // },
+  webpack: (config, { dev, isServer }) => {
+    if (!isServer) {
+      config.resolve.alias['@emotion/react'] =
+        require.resolve('@emotion/react');
+      config.resolve.alias['@emotion/styled'] =
+        require.resolve('@emotion/styled');
+    }
+    config.resolve.fallback = { fs: false };
     return config;
   },
 };

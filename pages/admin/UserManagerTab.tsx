@@ -8,7 +8,7 @@ import {
   type MRT_TableOptions,
 } from 'mantine-react-table';
 import axios from 'axios';
-import UserStyle from '/styles/User.module.css';
+import commonstyle from '/styles/common.module.css';
 type UserRole = {
   userId: string;
   username?: string;
@@ -67,10 +67,13 @@ const UserManagementTab = () => {
       size: 150,
       enableEditing: false,
     },
-    { accessorKey: 'name', header: 'Name', size: 150 ,
-     mantineEditTextInputProps: {
-      error: validationErrors.name,
-      }
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      size: 150,
+      mantineEditTextInputProps: {
+        error: validationErrors.name,
+      },
     },
     {
       accessorKey: 'email',
@@ -93,7 +96,7 @@ const UserManagementTab = () => {
           }
         },
         required: true,
-        error: `${validationErrors?.email??''}`,
+        error: `${validationErrors?.email ?? ''}`,
         //remove any previous validation errors when user focuses on the input
       },
     },
@@ -130,13 +133,13 @@ const UserManagementTab = () => {
     // Validate user
     setValidationErrors({});
     const newValidationErrors = validateUser(values);
-     if (Object.values(newValidationErrors).some((error) => !!error)) {
+    if (Object.values(newValidationErrors).some((error) => !!error)) {
       setValidationErrors(newValidationErrors);
-        setSaving(false);
+      setSaving(false);
       return;
     }
     setValidationErrors({});
- 
+
     const _roleid = roles.filter((f) => f.name === values.roleName)[0].id;
     if (!values.hasOwnProperty('userId')) {
       // Insert the "roleId" property with a value
@@ -216,7 +219,7 @@ const UserManagementTab = () => {
       isSaving: saving,
     },
   });
- 
+
   function validateUser(val: UserRole) {
     const goodemail = validateEmail(val.email);
     if (!goodemail) {
@@ -224,15 +227,15 @@ const UserManagementTab = () => {
     }
     const rtn = {
       email: !goodemail ? 'Incorrect Email Format' : undefined,
-      name:!validateName(val.name)?'Invalid name':undefined,
+      name: !validateName(val.name) ? 'Invalid name' : undefined,
     };
     console.log('validation result:', rtn);
     return rtn;
   }
-    const validateName = (name: string) =>{
-      console.log('name length', name.length)
-      return  name.length>0;
-    }
+  const validateName = (name: string) => {
+    console.log('name length', name.length);
+    return name.length > 0;
+  };
   const validateEmail = (email: string) =>
     !!email.length &&
     email
@@ -254,8 +257,8 @@ const UserManagementTab = () => {
       withBorder
       style={{ width: '1300px', height: '93%' }}
     >
-      <Card.Section p="sm" mb="10px" className={UserStyle.adminSectionHeader}>
-        <Text size="xl" weight={700} color="white">
+      <Card.Section p="sm" mb="10px" className={commonstyle.adminSectionHeader}>
+        <Text size="xl" fw={700} color="white">
           User Manager
         </Text>
       </Card.Section>

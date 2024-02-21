@@ -1,0 +1,42 @@
+.mycard {
+  background-color: var(--mantine-color-orange-0);
+
+  border-radius: var(--mantine-radius-md);
+
+  max-width: var(--cardwidth, 400px);
+
+  box-shadow: var(
+    --mantine-shadow-sm,
+    0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px 0px rgba(0, 0, 0, 0.06)
+  );
+  &:hover {
+    background-color: var(--mantine-colors-gray-1, #fffef6);
+  }
+}
+
+/* // style={{
+      //   backgroundColor:
+      //     theme.colorScheme === 'dark'
+      //       ? theme.colors.dark[6]
+      //       : theme.colors.gray[0],
+      //   borderRadius: theme.radius.md,
+      //   '&:hover': {
+      //     backgroundColor:
+      //       theme.colorScheme === 'dark'
+      //         ? theme.colors.dark[5]
+      //         : theme.colors.gray[1],
+      //   },
+      // }} */
+
+/* backgroundColor:
+          theme.colorScheme === 'dark'
+            ? theme.colors.dark[6]
+            : theme.colors.gray[0],
+        borderRadius: theme.radius.md,
+        '&:hover': {
+          backgroundColor:
+            theme.colorScheme === 'dark'
+              ? theme.colors.dark[5]
+              : theme.colors.gray[1],
+        }, */
