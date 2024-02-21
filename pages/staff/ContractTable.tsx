@@ -1,16 +1,16 @@
 import {
   Button,
   Flex,
-  Grid,
   Group,
+  Box,
   Text,
   Title,
   Tooltip,
   ActionIcon,
-  useMantineTheme,
 } from '@mantine/core';
 import { ModalsProvider, modals } from '@mantine/modals';
 
+import 'mantine-react-table/styles.css';
 import EditIsActiveCell, {
   AnnualLeaveEditor,
   DateCell,
@@ -40,20 +40,13 @@ export default function ContractTable({
   getStaffData,
   edting,
 }) {
-  /*const { staff, user, basepath } = useSelector((state) => ({
-    staff: state.calendar.staff,
-    user: state.calendar.user,
-    basepath: state.calendar.basepath,
- 
-  }));*/
-
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [columns, setColumns] = useState([]);
-  const [originalContracts, setOriginalContracts] = useState([]);
+
   const [maxContractEndDate, setMaxContractEndDate] = useState(null);
   /* const setEditErrors = useStore((state) => state.setEditErrors);
   const setNextContractStartDate = useStore(
@@ -77,7 +70,7 @@ export default function ContractTable({
         {
           accessorKey: 'id',
           header: 'ID',
-          size: 80,
+          size: 105,
           enableEditing: false,
         },
         {
@@ -85,7 +78,7 @@ export default function ContractTable({
           header: (
             <div style={{ whiteSpace: 'pre-line' }}>Contract start date</div>
           ),
-          size: 150,
+          size: 155,
           Edit: (param) => (
             <ContractDatePicker
               param={param}
@@ -101,7 +94,7 @@ export default function ContractTable({
           header: (
             <div style={{ whiteSpace: 'pre-line' }}>Contract end date</div>
           ),
-          size: 150,
+          size: 155,
           Edit: (param) => (
             <ContractDatePicker
               param={param}
@@ -117,7 +110,7 @@ export default function ContractTable({
         {
           accessorKey: 'AnnualLeave',
           header: <div style={{ whiteSpace: 'pre-line' }}>Annual leaves</div>,
-          size: 100,
+          size: 130,
 
           Edit: (param) => (
             <AnnualLeaveEditor
@@ -131,7 +124,7 @@ export default function ContractTable({
         {
           accessorKey: 'IsActive',
           header: 'Status',
-          size: 100,
+          size: 120,
           enableEditing: true,
           Cell: (param) => (
             <Text>{param.cell.getValue() ? 'Active' : 'Inactive'}</Text>
@@ -171,9 +164,7 @@ export default function ContractTable({
     try {
       // Submit the contract to the API
       const apiurl = `${basepath}/api/staff/contract/${values.id}`;
-
       await validationSchema.validate(values, { abortEarly: false });
-
       const contractResponse = await axios.put(apiurl, values);
       if (contractResponse.status === 200) {
         // Call getStaffData() to refresh the staff data
@@ -251,6 +242,7 @@ export default function ContractTable({
     publicHolidays &&
     useMantineReactTable({
       columns,
+      displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
       data: formValues.contracts,
       createDisplayMode: 'row',
       editDisplayMode: 'modal',
@@ -260,10 +252,11 @@ export default function ContractTable({
       onEditingRowCancel: handleEditRowCancel,
       enableColumnResizing: true,
       enableEditing: true,
+      enableDensityToggle: true,
       renderTopToolbarCustomActions: ({ table }) => (
         <Group h={{ base: 45, md: 50 }} p="sx">
           <Button
-            color="secondary"
+            style={{ color: 'white' }}
             variant="filled"
             onClick={(e) => handleFormToggle(e)}
           >
@@ -275,24 +268,29 @@ export default function ContractTable({
       mantineTableBodyCellProps: {
         style: { padding: '0.35rem 0.5rem !Important', textAlign: 'left' },
       },
+
       mantineEditTextInputProps: ({ cell }) => ({
         onBlur: (event) => {},
       }),
       positionActionsColumn: 'last',
-      initialState: {
-        columnVisibility: {
-          'mrt-row-expand': false,
-        },
-      },
+      initialState: { density: 'xs' },
       mantineTableContainerProps: {
         style: {
           minHeight: '200px',
+          minWidth: '900px',
         },
       },
       renderRowActions: ({ row, table }) => {
         const IsActive = row.original.IsActive;
         return (
-          <Flex gap="sx">
+          <Box
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              gap: '3px',
+              width: '900px',
+            }}
+          >
             <Tooltip label="Edit">
               <ActionIcon onClick={() => table.setEditingRow(row)}>
                 <IconEdit />
@@ -308,7 +306,7 @@ export default function ContractTable({
                 </ActionIcon>
               </Tooltip>
             )}
-          </Flex>
+          </Box>
         );
       },
 

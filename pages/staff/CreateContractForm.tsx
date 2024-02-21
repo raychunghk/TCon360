@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -9,17 +8,15 @@ import {
   Paper,
   Container,
   Text,
-  Code,
   Title,
   Modal,
   Button,
   useMantineTheme,
   Flex,
+  rem,
 } from '@mantine/core';
+
 import { DatePickerInput } from '@mantine/dates';
-
-import { excludeHoliday } from 'components/util/leaverequest.util';
-
 import axios from 'axios';
 import { validationSchema } from './edit.util';
 import { IconCheck, IconX } from '@tabler/icons-react';
@@ -234,7 +231,7 @@ export default function CreateContractForm({
                   onLabel={'Active'}
                   offLabel={'InActive'}
                   color="blue"
-                  size="lg"
+                  size="xl"
                   onChange={(evt) => {
                     console.log('event?', evt);
                     setContract({
@@ -245,15 +242,15 @@ export default function CreateContractForm({
                   thumbIcon={
                     contract.IsActive ? (
                       <IconCheck
-                        size="0.8rem"
-                        color={theme.colors.blue[theme.fn.primaryShade()]}
-                        stroke={3}
+                        style={{ width: rem(16), height: rem(16) }}
+                        stroke={2.5}
+                        color={theme.colors.blue[6]}
                       />
                     ) : (
                       <IconX
-                        size="0.8rem"
-                        color={theme.colors.red[theme.fn.primaryShade()]}
-                        stroke={3}
+                        style={{ width: rem(16), height: rem(16) }}
+                        stroke={2.5}
+                        color={theme.colors.red[6]}
                       />
                     )
                   }
@@ -264,7 +261,8 @@ export default function CreateContractForm({
 
           <Flex justify="flex-end" align="center" direction="row" wrap="wrap">
             <Button
-              variant="subtle"
+              variant="light"
+              color="indigo"
               mr={8}
               onClick={() => {
                 setErrors({});
@@ -274,11 +272,7 @@ export default function CreateContractForm({
             >
               Cancel
             </Button>
-            <Button
-              onClick={() => submitContract()}
-              color="secondary"
-              variant="filled"
-            >
+            <Button onClick={() => submitContract()} variant="filled">
               Submit
             </Button>
           </Flex>

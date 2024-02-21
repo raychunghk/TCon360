@@ -1,5 +1,5 @@
 .mycard {
-  background-color: var(--mantine-color-orange-0);
+  background-color: var(--mantine-color-tomato-0);
 
   border-radius: var(--mantine-radius-md);
 
@@ -11,7 +11,7 @@
     0px 1px 2px 0px rgba(0, 0, 0, 0.06)
   );
   &:hover {
-    background-color: var(--mantine-colors-gray-1, #fffef6);
+    background-color: var(--mantine-color-gray-1, #fffef6);
   }
 }
 

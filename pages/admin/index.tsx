@@ -7,12 +7,11 @@ import {
   Code,
   Text,
   Stack,
-  Input,
   Tabs,
   Modal,
 } from '@mantine/core';
 import Layout from '../../components/layout';
-
+import { IconCalendarEvent, IconUser } from '@tabler/icons';
 import Head from 'next/head';
 import useStore from 'pages/reducers/zstore';
 import { parseCookies } from 'nookies';
@@ -84,8 +83,15 @@ const Admin = (props) => {
         style={{ width: '100%', height: '100%' }}
       >
         <Tabs.List>
-          <Tabs.Tab value="userManagement">User Management</Tabs.Tab>
-          <Tabs.Tab value="calendarManagement">Calendar Management</Tabs.Tab>
+          <Tabs.Tab value="userManagement" leftSection={<IconUser />}>
+            User Management
+          </Tabs.Tab>
+          <Tabs.Tab
+            value="calendarManagement"
+            leftSection={<IconCalendarEvent />}
+          >
+            Calendar Management
+          </Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel

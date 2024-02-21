@@ -194,7 +194,7 @@ export default function EditStaff() {
         <>
           <form name="frmHeader" onSubmit={handleSubmit(submitform)}>
             {/* <form onSubmit={form.onSubmit((values) => submitform(values))}> */}
-            <MyCard title="Staff Info" cardwidth={800}>
+            <MyCard title="Staff Info" cardwidth={850}>
               <Grid pb={20} pt={10}>
                 {inputFields.map((field, id) => (
                   <Grid.Col span={4} key={field.name}>

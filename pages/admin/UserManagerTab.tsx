@@ -1,5 +1,6 @@
+import 'mantine-react-table/styles.css';
 import { useMemo, useEffect, useState } from 'react';
-import { Text, Container, Paper, Card } from '@mantine/core';
+import { Text, Card } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -190,6 +191,7 @@ const UserManagementTab = () => {
 
   const table = useMantineReactTable({
     columns,
+    displayColumnDefOptions: { 'mrt-row-actions': { size: 200 } },
     data: userData,
     createDisplayMode: 'row', // ('modal', and 'custom' are also available)
     editDisplayMode: 'row', // ('modal', 'cell', 'table', and 'custom' are also available)
@@ -206,11 +208,12 @@ const UserManagementTab = () => {
         roleId: false,
         'mrt-row-expand': false, //hide row expand column by default
       },
+      density: 'xs',
     },
     enableRowNumbers: true,
     rowNumberMode: 'static', //default
     mantineTableContainerProps: {
-      sx: {
+      style: {
         minHeight: '500px',
       },
     },

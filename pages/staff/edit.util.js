@@ -23,39 +23,12 @@ import {
   Grid,
   Flex,
   Container,
+  rem,
 } from '@mantine/core';
 import { format } from 'date-fns';
 import { DatePickerInput } from '@mantine/dates';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
-
-
-// export function useFetchStaff(staffId) {
-//   const [staff, setStaff] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     async function fetchStaff() {
-//       try {
-//         setLoading(true);
-//         setError(null);
-
-//         const response = await axios.get(`/api/staff/${staffId}`);
-
-//         setStaff(response.data);
-//       } catch (err) {
-//         setError(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-
-//     fetchStaff();
-//   }, [staffId]);
-
-//   return { staff, loading, error };
-// }
 export const inputFields = [
   {
     label: 'Name of Staff',
@@ -201,19 +174,22 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
           onLabel={'Active'}
           offLabel={'InActive'}
           color="blue"
-          size="md"
+          style={{ fontSize: rem(18) }}
+          size="xl"
+          fz={'xl'}
           thumbIcon={
             value ? (
               <IconCheck
-                size="0.8rem"
-                color={theme.colors.blue[theme.fn.primaryShade()]}
-                stroke={3}
+                style={{ width: rem(16), height: rem(16) }}
+                stroke={2.5}
+                color={theme.colors.blue[6]}
               />
             ) : (
               <IconX
-                size="0.8rem"
-                color={theme.colors.red[theme.fn.primaryShade()]}
-                stroke={3}
+                //color={theme.colors.red[theme.fn.primaryShade()]}
+                style={{ width: rem(16), height: rem(16) }}
+                stroke={2.5}
+                color={theme.colors.red[6]}
               />
             )
           }
