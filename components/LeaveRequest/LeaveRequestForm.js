@@ -6,7 +6,6 @@ import {
   Button,
   TextInput,
   Grid,
-  Col,
   useMantineTheme,
   rem,
   Card,
@@ -85,9 +84,7 @@ export default function LeaveRequestForm({
   const [modalOpen, setModalOpen] = useState(false);
   const [showAsError, setShowAsError] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
-  //const [staff, setStaff] = useState(null);
 
-  //  const { activeStaff, activeContract } = useStore();
   const staff = activeStaff;
   const [errors, setErrors] = useState({});
   const { reset, handleSubmit } = useForm();
@@ -190,7 +187,7 @@ export default function LeaveRequestForm({
       leaveRequest;
     const startDate = new Date(leavePeriodStart);
     const endDate = leavePeriodEnd ? new Date(leavePeriodEnd) : null;
-    let days = 0;
+    let _leavedays = 0;
     let returnDate = null;
     let _ampmend = AMPMEnd;
     let _ampmstart = AMPMStart;
@@ -211,38 +208,39 @@ export default function LeaveRequestForm({
       const endIsAM = AMPMEnd === 'AM';
       const endIsPM = AMPMEnd === 'AMPM';
       if (startIsAM && endIsAM) {
-        days = getBusinessDays(startDate, endDate) - 0.5;
+        _leavedays = getBusinessDays(startDate, endDate) - 0.5;
         returnDate = endDate;
       } else if (startIsPM && endIsPM) {
-        days = getBusinessDays(startDate, endDate) - 0.5;
+        _leavedays = getBusinessDays(startDate, endDate) - 0.5;
         returnDate = getNextWorkingDate(endDate);
       } else if (startIsPM && endIsAM) {
-        days = getBusinessDays(startDate, endDate) - 1;
+        _leavedays = getBusinessDays(startDate, endDate) - 1;
         returnDate = endDate;
       } else if (startIsAM && endIsPM) {
-        days = getBusinessDays(startDate, endDate);
+        _leavedays = getBusinessDays(startDate, endDate);
         returnDate = getNextWorkingDate(endDate);
 
-        console.log(returnDate);
+        console.log('return date?', returnDate);
       }
     } else {
       _ampmend = 'NA';
       if (AMPMStart === 'AMPM') {
-        days = 1;
+        _leavedays = 1;
         returnDate = getNextWorkingDate(startDate);
       } else if (AMPMStart === 'AM') {
-        days = 0.5;
+        _leavedays = 0.5;
         returnDate = startDate;
       } else if (AMPMStart === 'PM') {
-        days = 0.5;
+        _leavedays = 0.5;
         returnDate = getNextWorkingDate(startDate);
       }
     }
+    console.log('leavedays?', _leavedays);
     setLeaveRequest((prevRequest) => ({
       ...prevRequest,
       AMPMEnd: _ampmend,
       AMPMStart: _ampmstart,
-      leaveDays: days,
+      leaveDays: _leavedays,
       dateOfReturn: returnDate,
     }));
   }, [
@@ -478,21 +476,21 @@ export default function LeaveRequestForm({
   return (
     <>
       <Head>
-        <title>Create new vacation request and download form</title>
+        <title>{title}</title>
       </Head>
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
             <Grid.Col span={6}>
-              <Text fw={500}>Staff Name:</Text>{' '}
+              <Text fw={500}>Staff Name:</Text>
               <Text>{staff && staff.StaffName}</Text>
             </Grid.Col>
             <Grid.Col span={6}>
-              <Text fw={500}>Agent Name:</Text>{' '}
+              <Text fw={500}>Agent Name:</Text>
               <Text>{staff && staff.AgentName}</Text>
             </Grid.Col>
             <Grid.Col span={6}>
-              <Text fw={500}>Staff Category:</Text>{' '}
+              <Text fw={500}>Staff Category:</Text>
               <Text>{staff && staff.StaffCategory}</Text>
             </Grid.Col>
 
@@ -502,8 +500,8 @@ export default function LeaveRequestForm({
                 leaveRequest.leavePeriodEnd &&
                 leaveRequest.AMPMEnd && (
                   <p>
-                    <label>Leave Period</label>
-                    <br />{' '}
+                    <Text fw={500}>Leave Period:</Text>
+
                     {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${
                       leaveRequest.AMPMStart === 'AMPM'
                         ? ''
@@ -513,9 +511,9 @@ export default function LeaveRequestForm({
                       'dd-MMM-yyyy',
                     )} ${
                       leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
-                    }`}{' '}
+                    }`}
                   </p>
-                )}{' '}
+                )}
             </Grid.Col>
             <Grid.Col span={6}>
               <TextInput

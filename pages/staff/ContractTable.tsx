@@ -7,6 +7,7 @@ import {
   Title,
   Tooltip,
   ActionIcon,
+  Code,
 } from '@mantine/core';
 import { ModalsProvider, modals } from '@mantine/modals';
 
@@ -60,8 +61,8 @@ export default function ContractTable({
     setEditErrors,
     setNextContractStartDate,
     publicHolidays,
-    //activeUser,
-    //activeContract,
+    nextContractStartDate,
+
     basepath,
   } = useStore();
   useEffect(() => {
@@ -332,7 +333,7 @@ export default function ContractTable({
         <CreateContractForm
           open={createModalOpen}
           onSubmit={handleCreateNewContract}
-          modalcallback={{ setModalOpen, setModalContent }}
+          modalCallback={{ setModalOpen, setModalContent }}
           stateCreateModalOpen={{ createModalOpen, setCreateModalOpen }}
         />
       )}

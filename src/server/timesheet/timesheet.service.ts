@@ -59,8 +59,8 @@ export class TimesheetService {
       const title = result.HolidaySummary
         ? result.HolidaySummary
         : result.LeaveRequestId
-        ? `Vacation ${result.LeaveRequestId}`
-        : null;
+          ? `Vacation ${result.LeaveRequestId}`
+          : null;
       const _start = result.leavePeriodStart.toISOString().substring(0, 10);
       const _end = result.leavePeriodEnd;
       const enddatestr = _end

@@ -1,6 +1,6 @@
 import { AppShell, Flex } from '@mantine/core';
 import MainLinks from './mainlinks';
-import CreateTimesheetPage from '../timesheet/createform';
+import CreateTimesheetPage from '../timesheet/CreateTimeSheet';
 import useStore from 'pages/reducers/zstore';
 export default function AppShellNavBar({ opened }) {
   const { navbarwidth } = useStore();

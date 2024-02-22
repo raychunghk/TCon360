@@ -42,7 +42,12 @@ export default function EditStaff() {
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   //const setActiveContract = useStore((state) => state.setActiveContract);
-  const { setActiveContract, setActiveStaff, setBasepath } = useStore();
+  const {
+    setActiveContract,
+    setActiveStaff,
+    setBasepath,
+    nextContractStartDate,
+  } = useStore();
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;

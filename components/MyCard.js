@@ -1,12 +1,12 @@
 import { Card, Text } from '@mantine/core';
 import commonstyle from '../styles/common.module.css';
-import cardStyles from './MyCard.module.css';
+
 function MyCard({ title, children, cardwidth = 500 }) {
   return (
     <Card
       miw={cardwidth}
       withBorder
-      className={cardStyles.mycard}
+      className={commonstyle.mycard}
       // style={{
       //   backgroundColor:
       //     theme.colorScheme === 'dark'
@@ -24,11 +24,12 @@ function MyCard({ title, children, cardwidth = 500 }) {
       <Card.Section
         className={commonstyle.mySection}
         mah={60}
-        p={10}
+        p={8}
         ta="center"
-        fz={'1rem'}
       >
-        <Text fw={500}>{title}</Text>
+        <Text fw={600} fz={'1.1rem'}>
+          {title}
+        </Text>
       </Card.Section>
 
       {children}

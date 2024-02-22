@@ -101,7 +101,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
                 color={theme.colors.gray[6]}
                 mr="xl"
               />
-              <Title className={classes.title} align="center" ml={5} mt={5}>
+              <Title className={classes.title} ta="center" ml={5} mt={5}>
                 <Link href="/">
                   <Image
                     src={`${basepath}/favicon.svg`}

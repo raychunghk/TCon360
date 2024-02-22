@@ -1,6 +1,6 @@
 import Layout from '../../components/layout';
 import Head from 'next/head';
-import CreateTimesheetPage from '../../components/timesheet/createform';
+import CreateTimesheetPage from '../../components/timesheet/CreateTimeSheet';
 import { useSession } from 'next-auth/react';
 export default function CreateTimesheet() {
   const { data: session, status } = useSession();

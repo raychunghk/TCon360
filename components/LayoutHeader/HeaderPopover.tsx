@@ -1,3 +1,4 @@
+import styles from '../layout.module.css';
 import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
 //import { IconSquareRoundedX, IconUser } from '@tabler/icons';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
@@ -74,43 +75,24 @@ export default function HeaderPopover({}) {
     >
       <Popover.Target>
         <Button
-          variant="link"
+          variant="filled"
+          color="indigo"
           onMouseEnter={handleOpen}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            color: 'white',
-            backgroundColor: '#15487E', // Subtle background color
-
-            textDecoration: 'none',
-            transition: 'background-color 0.2s ease, color 0.2s ease',
-            '&:hover': {
-              backgroundColor: 'transparent',
-              color: 'blue',
-            },
-          }}
+          className={styles.PopoverButton}
         >
           <IconUser
             size={18}
-            sx={{
+            style={{
               marginRight: '0.5rem',
             }}
           />
           {activeUser?.name}
         </Button>
       </Popover.Target>
-      <Popover.Dropdown
-        sx={(theme) => ({
-          background: ` linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e);`,
-          borderRadius: theme.radius.md,
-          color: 'white',
-          boxShadow: theme.shadows.md,
-          padding: theme.spacing.md,
-        })}
-      >
+      <Popover.Dropdown className={styles.PopoverDropdown}>
         <ActionIcon
           variant="filled"
-          size="xs"
+          size="md"
           style={{
             position: 'absolute',
             top: '5px',
@@ -119,14 +101,14 @@ export default function HeaderPopover({}) {
           }}
           onClick={handleClose}
         >
-          <IconSquareRoundedX />
+          <IconSquareRoundedX size="md" color="white" />
         </ActionIcon>
         <Grid gutter="sm">
           {userFields
             ? userFields.map((field, index) => (
                 <React.Fragment key={index}>
                   <Grid.Col span={5}>
-                    <Text align="right" size="sm" fw={500}>
+                    <Text ta="right" size="sm" fw={500}>
                       {field.label}
                     </Text>
                   </Grid.Col>

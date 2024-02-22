@@ -22,22 +22,22 @@ import { validationSchema } from './edit.util';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { myRenderDay } from 'components/util/leaverequest.util';
 import useStore from 'pages/reducers/zstore';
+
 interface CreateModalProps {
   onSubmit: () => void;
   open: boolean;
-
-  modalcallback: any;
+  modalCallback: any;
   stateCreateModalOpen: any;
 }
+
 export default function CreateContractForm({
   open,
   onSubmit,
-  modalcallback,
+  modalCallback,
   stateCreateModalOpen,
 }: CreateModalProps) {
   const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
-
   const { nextContractStartDate, basepath, activeStaff } = useStore();
   const initialState = {
     id: null,
@@ -46,20 +46,26 @@ export default function CreateContractForm({
     AnnualLeave: 0,
     IsActive: false,
     activeStaff,
+    staffId: 0,
   };
+
   const [contract, setContract] = useState(initialState);
+
   useEffect(() => {
-    console.log('activeStaff', activeStaff);
-    if (activeStaff)
+    if (activeStaff) {
       setContract({ ...contract, staffId: activeStaff.id, activeStaff });
+    }
   }, [activeStaff, basepath]);
+
   useEffect(() => {
-    setContract(initialState);
+    // setContract(initialState);
+    const nextStartDate = new Date(nextContractStartDate);
+    setContract({ ...contract, ContractStartDate: nextStartDate });
   }, [nextContractStartDate]);
+
   useEffect(() => {
     if (nextContractStartDate) {
       const nextStartDate = new Date(nextContractStartDate);
-
       setContract({ ...contract, ContractStartDate: nextStartDate });
     } else {
       setContract({ ...contract, ContractStartDate: null });
@@ -69,13 +75,14 @@ export default function CreateContractForm({
   const theme = useMantineTheme();
 
   const submitContract = async () => {
-    event.stopPropagation();
-    // Handle form submission
-    //console.log(data);
-    console.log(contract);
-    console.log('basepath', basepath);
     try {
       setErrors({});
+      //   id?: number;
+      // ContractStartDate: string | Date;
+      // ContractEndDate: string | Date;
+      // AnnualLeave: number;
+      // staffId: number;
+      // IsActive?: boolean;
       await validationSchema.validate(contract, { abortEarly: false });
       const response = await axios.post(
         `${basepath}/api/staff/createcontract`,
@@ -88,34 +95,28 @@ export default function CreateContractForm({
         },
       );
       if (response.status >= 200 && response.status < 300) {
-        console.log('New contract created:', response.data);
-        // Handle successful response
-        modalcallback.setModalOpen(true);
-        modalcallback.setModalContent('New Contract Created!');
-        //onClose();
+        modalCallback.setModalOpen(true);
+        modalCallback.setModalContent('New Contract Created!');
         stateCreateModalOpen.setCreateModalOpen(!open);
         onSubmit();
         setErrors({});
-        // Handle successful response
       } else {
         throw new Error('Failed to create contract');
       }
-
-      // console.log('New contract created:', response.data);
     } catch (err) {
-      const newErrors = {};
-      err.inner.forEach((error) => {
-        newErrors[error.path] = error.message;
-      });
-      setErrors(newErrors);
+      // const newErrors = {};
+      // err.inner.forEach((error) => {
+      //   newErrors[error.path] = error.message;
+      // });
+      setErrors(err);
       console.error('Error creating contract:', err);
-      modalcallback.setModalContent('Error');
-      modalcallback.setModalOpen(false);
+      modalCallback.setModalContent('Error');
+      modalCallback.setModalOpen(false);
       return;
-      // Handle error
     }
   };
-  const handleDateInputSelect = async (date, stateobj) => {
+
+  const handleDateInputSelect = async (date, stateObj) => {
     console.log('handle date input select', date);
     if (errors.ContractEndDate || errors.ContractStartDate) {
       try {
@@ -128,12 +129,12 @@ export default function CreateContractForm({
         setErrors(newErrors);
       }
     }
-    setContract(stateobj);
+    setContract(stateObj);
   };
+
   const handleInputChange = (event) => {
     let val = event.target.value;
 
-    // Check if the value is a valid date
     if (val instanceof Date) {
       val = new Date(val);
       val.setHours(0, 0, 0, 0);
@@ -143,19 +144,18 @@ export default function CreateContractForm({
       [event.target.name]: val,
     });
   };
+
   if (!activeStaff) {
     return <Text>...Loading</Text>;
   }
+
   function getDatePickerProps(fieldName) {
-    const dtPickerProps = {
+    return {
       valueFormat: 'DD-MM-YYYY',
       firstDayOfWeek: 0,
-
       name: fieldName,
       error: errors[fieldName],
     };
-
-    return dtPickerProps;
   }
   return (
     <>
@@ -220,7 +220,10 @@ export default function CreateContractForm({
                   error={errors['AnnualLeave']}
                   required
                   onChange={(_annauleave) => {
-                    setContract({ ...contract, AnnualLeave: _annauleave });
+                    setContract({
+                      ...contract,
+                      AnnualLeave: parseInt(_annauleave),
+                    });
                   }}
                 />
               </Grid.Col>

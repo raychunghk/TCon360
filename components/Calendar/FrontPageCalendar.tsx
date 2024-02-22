@@ -24,6 +24,7 @@ import {
 } from './calendar.util';
 import CustomView from './customeView';
 import { useStaffData } from 'components/useStaffData';
+import { getBusinessDays } from 'components/util/leaverequest.util';
 
 export function FrontPageCalendar() {
   const handleSignout = () => {
@@ -115,27 +116,6 @@ export function FrontPageCalendar() {
     if (activeStaff) {
       fetchEvents();
     }
-    // const observer = new MutationObserver(() => {
-    //   const styleElements = document.querySelectorAll(
-    //     'style[data-fullcalendar]',
-    //   );
-
-    //   if (styleElements.length > 1) {
-    //     console.log('more than two fullcalendar style is loaded');
-    //     const fcStyleElement = document.getElementById('fcstyle');
-
-    //     if (fcStyleElement) {
-    //       // Remove additional style elements
-    //       styleElements.forEach((element) => {
-    //         if (element !== fcStyleElement) {
-    //           element.remove();
-    //         }
-    //       });
-    //     }
-    //   }
-    // });
-
-    //observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       // observer.disconnect();
@@ -196,7 +176,7 @@ export function FrontPageCalendar() {
   }
   const { isWeekend } = require('date-fns');
 
-  const getBusinessDays = (startDate, endDate) => {
+  const getBusinessDaysx = (startDate, endDate) => {
     let count = 0;
     const current = new Date(startDate);
 

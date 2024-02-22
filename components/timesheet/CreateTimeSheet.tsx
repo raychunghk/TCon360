@@ -28,7 +28,8 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const { register, handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState(false);
-  const [monthValue, setMonthValue] = useState(new Date());
+  //const [monthValue, setMonthValue] = useState(new Date());
+  const [monthValue, setMonthValue] = useState<Date | null>(new Date());
   const { currentStart, setCurrentStart } = useStore();
   const [displayedYear, setDisplayedYear] = useState(
     currentStart.getFullYear(),
@@ -91,7 +92,6 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
                 <MonthPicker
                   maxLevel="year"
                   value={monthValue}
-                  date={currentStart}
                   withCellSpacing={false}
                   onChange={handleMonthChange}
                   size={pickersize}

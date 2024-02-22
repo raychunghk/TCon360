@@ -1485,75 +1485,75 @@
   dependencies:
     tslib "^2.4.0"
 
-"@fullcalendar/core@^6.1.10", "@fullcalendar/core@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-6.1.10.tgz#54eca62345243ec5b2f853102086da7200cd6f03"
-  integrity sha512-oTXGJSAGpCf1oY+CKp5qYjMHkJCPBkJ3SHitl63n8Q6xKeiwQ4EF6Au451euUovREwJpLmD1AyZrCnWmtB9AVg==
+"@fullcalendar/core@^6.1.10", "@fullcalendar/core@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-6.1.11.tgz#f9630e83ae977e774992507635b1e7af4c339d37"
+  integrity sha512-TjG7c8sUz+Vkui2FyCNJ+xqyu0nq653Ibe99A66LoW95oBo6tVhhKIaG1Wh0GVKymYiqAQN/OEdYTuj4ay27kA==
   dependencies:
     preact "~10.12.1"
 
-"@fullcalendar/daygrid@^6.1.10", "@fullcalendar/daygrid@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-6.1.10.tgz#1012907ac02993e9896dda08502109a85ca8c308"
-  integrity sha512-Z4GRm1IyHKgxXFTWGcEI0nTsvYOIkpE0aMt3/o3ER2SZkF+hfwcDFhtj0c9+WhMjXFIWYeoTnA9rUOY7Zl/nxA==
+"@fullcalendar/daygrid@^6.1.10", "@fullcalendar/daygrid@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-6.1.11.tgz#83a5d4a94c314cf3a14b06bebba03b1b40e6d2ba"
+  integrity sha512-hF5jJB7cgUIxWD5MVjj8IU407HISyLu7BWXcEIuTytkfr8oolOXeCazqnnjmRbnFOncoJQVstTtq6SIhaT32Xg==
 
-"@fullcalendar/interaction@^6.1.10", "@fullcalendar/interaction@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-6.1.10.tgz#9e99abd55d9f8072ad7f128e0b9fea931fbbff27"
-  integrity sha512-aZRlwCpmDasq2RNeWV0ub20Uevare9Cb6iMlxCacx0fhOC14H28G9d1FsduJIecInL84SPGwt5ItqAYMsWv7zw==
+"@fullcalendar/interaction@^6.1.10", "@fullcalendar/interaction@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-6.1.11.tgz#baa3beec8f5c489fb6904973b175a5f4797abdf3"
+  integrity sha512-ynOKjzuPwEAMgTQ6R/Z2zvzIIqG4p8/Qmnhi1q0vzPZZxSIYx3rlZuvpEK2WGBZZ1XEafDOP/LGfbWoNZe+qdg==
 
-"@fullcalendar/list@^6.1.10", "@fullcalendar/list@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/list/-/list-6.1.10.tgz#677b2530102cac16ee8beb6ccc7e1551d7225907"
-  integrity sha512-WE4vuSUCzol4tJd0ZP0cNxeyRPaZcsVVYs2I3qdf3OZQkXwDCdSyWEz0Hluf+XZWcZXt21aEYKlxRjwUpQcf4Q==
+"@fullcalendar/list@^6.1.10", "@fullcalendar/list@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/list/-/list-6.1.11.tgz#4cd23700ea48b382b37387e29a706f2da692e174"
+  integrity sha512-9Qx8uvik9pXD12u50FiHwNzlHv4wkhfsr+r03ycahW7vEeIAKCsIZGTkUfFP+96I5wHihrfLazu1cFQG4MPiuw==
 
-"@fullcalendar/multimonth@^6.1.10", "@fullcalendar/multimonth@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/multimonth/-/multimonth-6.1.10.tgz#3f0c84aec7b5b04ba35aa4b014b2db6d49bee53b"
-  integrity sha512-mLGEgD+sv8rNfKphyOCWRQapX7/nAvHgQmDTjuy4STlhHsddCYVmFlsSgF373ph1tXh41wAJUVdNO/pDmCvUfA==
+"@fullcalendar/multimonth@^6.1.10", "@fullcalendar/multimonth@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/multimonth/-/multimonth-6.1.11.tgz#8cca48378c52c1209ed7a45c5e5b37f95497f13b"
+  integrity sha512-7DbPC+AAlaKnquGVdw1Z85Q3nSZ4GZ1NcVIk4k7bLnqDlntwHPPsrDlSIzUWKcN0q5/u7jQHm4PU1m3LAl70Sg==
   dependencies:
-    "@fullcalendar/daygrid" "~6.1.10"
+    "@fullcalendar/daygrid" "~6.1.11"
 
-"@fullcalendar/premium-common@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/premium-common/-/premium-common-6.1.10.tgz#f9aa076a785663472cfdc209bd8eb41bdd402f36"
-  integrity sha512-j/TiVuy+i6vA+SUas2lvHlXuefbOqu5FDA1dCVIi4vuaFvxDY7OlmTRhgnfWbLwV8jlQg7GYadID6ajQil1BKQ==
+"@fullcalendar/premium-common@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/premium-common/-/premium-common-6.1.11.tgz#2a4c027db7caf38b55877843e7d70bb18d734fb5"
+  integrity sha512-3WsSizkGDJEu+AlgQlFXKI+/DYCYTRp0PQRz0vS63qKBEUsVzfSD0oi/7jCylZJlCUteIjbi4Hu1I2I5o6UHrQ==
 
 "@fullcalendar/react@^6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/react/-/react-6.1.10.tgz#f41d091be8516c9038485c6241fd74a4c13b7965"
-  integrity sha512-RVYevo5T4RUZzR8omlbnBwRCqVNJWKryzI0ZrFULyqIYggN6uPmMuB9GvbrTjDfKhsm438KQwwhJerg2lGh3xA==
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/react/-/react-6.1.11.tgz#93c81ace6c0559092112ef90d2e8ceb6d62a9a58"
+  integrity sha512-Og0Tv0OiglTFp+b++yRyEhAeWnAmKkMLQ3iS0eJE1KDEov6QqGkoO+dUG4x8zp2w55IJqzik/a9iHi0s3oQDbA==
 
 "@fullcalendar/resource-timeline@^6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/resource-timeline/-/resource-timeline-6.1.10.tgz#3314178de1e9a6c0f05012e5df51f6e3cacb3ead"
-  integrity sha512-KCwRrq//q4WUzD/BoqsINus4LsW7w8he11uQTdKTthGOfNTYDLZICnGFVC9dmM2Jg7tISjOkgLMZhclLyk29Tw==
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/resource-timeline/-/resource-timeline-6.1.11.tgz#28835790336ecae58a9279b1c97dff0571c560fb"
+  integrity sha512-RIQOwGxN8n2jSIOsEGUjzoGgdYDZq8t4sUvSUfnahGwyCesMqsYNmpA+58PFy/BHPIgxyvy8awH2CnjjSN7Uiw==
   dependencies:
-    "@fullcalendar/premium-common" "~6.1.10"
-    "@fullcalendar/scrollgrid" "~6.1.10"
-    "@fullcalendar/timeline" "~6.1.10"
+    "@fullcalendar/premium-common" "~6.1.11"
+    "@fullcalendar/scrollgrid" "~6.1.11"
+    "@fullcalendar/timeline" "~6.1.11"
 
-"@fullcalendar/scrollgrid@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/scrollgrid/-/scrollgrid-6.1.10.tgz#b5c856e7f4d75e1500b920e8a50cbe5f95448dc5"
-  integrity sha512-vl1lB5TmJvEXviqsqJRn97owv6wGpKZl+h9SsSd/49woA+ZXKr7swA5Ws6jYTd418mQfkjsUyn/hQBqiIEWzXA==
+"@fullcalendar/scrollgrid@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/scrollgrid/-/scrollgrid-6.1.11.tgz#4af5991feee85ecc8fecd0612654e9221f025418"
+  integrity sha512-GRhhU8ACHqgfxdMnP59VPThfNG3Stkp9zq1sLnI992g1fZQ+V2UhYvl5qhu3eEVSp2KTDPx4NaoR35cQGrC1Mw==
   dependencies:
-    "@fullcalendar/premium-common" "~6.1.10"
+    "@fullcalendar/premium-common" "~6.1.11"
 
-"@fullcalendar/timegrid@^6.1.10", "@fullcalendar/timegrid@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/timegrid/-/timegrid-6.1.10.tgz#4215e520924e441888edba9ac99ce816446d84b3"
-  integrity sha512-hFKyQXJaPbNyq1reZmvkCmM64O99krHoIcJAbDS+dntCm3FzZUcDtAcRKIbMiantHrezCG/1MEYk3m9e3aKvIQ==
+"@fullcalendar/timegrid@^6.1.10", "@fullcalendar/timegrid@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/timegrid/-/timegrid-6.1.11.tgz#76b2fc4446d1e97819a4395dab4f3a7e44c7a9eb"
+  integrity sha512-0seUHK/ferH89IeuCvV4Bib0zWjgK0nsptNdmAc9wDBxD/d9hm5Mdti0URJX6bDoRtsSfRDu5XsRcrzwoc+AUQ==
   dependencies:
-    "@fullcalendar/daygrid" "~6.1.10"
+    "@fullcalendar/daygrid" "~6.1.11"
 
-"@fullcalendar/timeline@~6.1.10":
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/timeline/-/timeline-6.1.10.tgz#2cfae3284cb4249b4204db701ddea633e0a6b06a"
-  integrity sha512-8Z6pkn/jQ/bFG4xxlYSKwUqkm8LvAKlZRK+Z1Ovn6DeAwhsXTMqHf4jHdpnCSDnVjyKJ3UrK1wBnM5V/NWCa7g==
+"@fullcalendar/timeline@~6.1.11":
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/timeline/-/timeline-6.1.11.tgz#f33be77cee8868ec50be747086c787f742042c2d"
+  integrity sha512-MGUEAHlFBWxpuhSWhZbHOtD9i+b8GZjqNV82MH+vwPHq1Jjqe8qj9Wby00vKikdWH+RuAB+IuiKjQaROEU0Ecw==
   dependencies:
-    "@fullcalendar/premium-common" "~6.1.10"
-    "@fullcalendar/scrollgrid" "~6.1.10"
+    "@fullcalendar/premium-common" "~6.1.11"
+    "@fullcalendar/scrollgrid" "~6.1.11"
 
 "@gar/promisify@^1.0.1":
   version "1.1.3"
@@ -2093,11 +2093,11 @@
     prism-react-renderer "^1.2.1"
 
 "@mantine/spotlight@^7.5.2":
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/@mantine/spotlight/-/spotlight-7.5.2.tgz#01a5c8f0dad23ecb632114dd3c1c5578b8a3aa2c"
-  integrity sha512-2z23INFOUAvtPpeiXaqJDCakKo1asCGzlyg1FJ3AByZOrGtyT1WY3tAo/0XXFaKh+dUmcj7HcQcEEobJL5QKzQ==
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/@mantine/spotlight/-/spotlight-7.5.3.tgz#835f1aab1399682091c59baee3ccb3638b88d27f"
+  integrity sha512-pPtR/+GIQPb5WiZf8owi2cuVox2eU5g2jVdbgcQnrYc19F3SDEke+huTkBVzvy595q5wx+H3wsZyDAOAKOhfaA==
   dependencies:
-    "@mantine/store" "7.5.2"
+    "@mantine/store" "7.5.3"
 
 "@mantine/ssr@6.0.21":
   version "6.0.21"
@@ -2106,11 +2106,6 @@
   dependencies:
     "@mantine/styles" "6.0.21"
     html-react-parser "1.4.12"
-
-"@mantine/store@7.5.2":
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/@mantine/store/-/store-7.5.2.tgz#adfea0d01d2ca572fe5fe1e43363cbccc18f97ef"
-  integrity sha512-au53HLLH/LfHLOR2Zb00TgG11xAXZNJb4jqsEhAr90axCIw6mlBDIAhbb+Yu6OwDaV7TscE/sonkUstmRjLh/w==
 
 "@mantine/store@7.5.3":
   version "7.5.3"
@@ -2126,9 +2121,9 @@
     csstype "3.0.9"
 
 "@mantine/tiptap@^7.5.2":
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/@mantine/tiptap/-/tiptap-7.5.2.tgz#80540260b5b61a6bdf308164c067d0a32140ff18"
-  integrity sha512-NoMdyayJ/I/Z0KJKLJMc+tWuq5Aghz0MSktMxB6TaMIgfdXhnJCwwAlq8LP0z4tXNPt74FTS4RbEEHu0+Go1FA==
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/@mantine/tiptap/-/tiptap-7.5.3.tgz#a43f0f3c06783361020535b12f215722171ffbd9"
+  integrity sha512-mCwW3Pe4fMGEc7NQBgfT/FO3IqHaSOCPj4bGfkw7U1uDp5u8SxR6pji0WlmpmYGN+NeEHH02vr6TazRnsqfdOg==
 
 "@mantine/utils@6.0.21":
   version "6.0.21"
@@ -2136,9 +2131,9 @@
   integrity sha512-33RVDRop5jiWFao3HKd3Yp7A9mEq4HAJxJPTuYm1NkdqX6aTKOQK7wT8v8itVodBp+sb4cJK6ZVdD1UurK/txQ==
 
 "@mantine/vanilla-extract@^7.5.2":
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/@mantine/vanilla-extract/-/vanilla-extract-7.5.2.tgz#1953d228c16d62ece96e00ff899ff9e2e45261b4"
-  integrity sha512-DcDgbZmWtSzyHELgEpug6kqidKd9qZwpKmAnlNez/ullyTyz9rrXr+cVjY/Pgi49SVtGCI8o3Fn6HyJUk5YZ9g==
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/@mantine/vanilla-extract/-/vanilla-extract-7.5.3.tgz#e6cedf1bec3151687ad28b6812738b9f449bf9db"
+  integrity sha512-1DQc6nHAFxo+gUsnG+r4uVG5PPowH0EYkXvEJZSAg1sbMpx3lEEMjhEtosf7d50S+OqJSSGzhysGTwzduY0K4w==
 
 "@mapbox/node-pre-gyp@^1.0.11":
   version "1.0.11"
@@ -3312,9 +3307,9 @@
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
 "@prisma/client@^5.9.1":
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-5.9.1.tgz#d92bd2f7f006e0316cb4fda9d73f235965cf2c64"
-  integrity sha512-caSOnG4kxcSkhqC/2ShV7rEoWwd3XrftokxJqOCMVvia4NYV/TPtJlS9C2os3Igxw/Qyxumj9GBQzcStzECvtQ==
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-5.10.2.tgz#e087b40a4de8e3171eb9cbf0a873465cd2068e17"
+  integrity sha512-ef49hzB2yJZCvM5gFHMxSFL9KYrIP9udpT5rYo0CsHD4P9IKj473MbhU1gjKKftiwWBTIyrt9jukprzZXazyag==
 
 "@prisma/debug@4.0.0":
   version "4.0.0"
@@ -3325,34 +3320,34 @@
     debug "4.3.4"
     strip-ansi "6.0.1"
 
-"@prisma/debug@5.9.1":
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-5.9.1.tgz#906274e73d3267f88b69459199fa3c51cd9511a3"
-  integrity sha512-yAHFSFCg8KVoL0oRUno3m60GAjsUKYUDkQ+9BA2X2JfVR3kRVSJFc/GpQ2fSORi4pSHZR9orfM4UC9OVXIFFTA==
+"@prisma/debug@5.10.2":
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-5.10.2.tgz#74be81d8969978f4d53c1b4e76d61f04bfbc3951"
+  integrity sha512-bkBOmH9dpEBbMKFJj8V+Zp8IZHIBjy3fSyhLhxj4FmKGb/UBSt9doyfA6k1UeUREsMJft7xgPYBbHSOYBr8XCA==
 
-"@prisma/engines-version@5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64":
-  version "5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64.tgz#54d2164f28d23e09d41cf9eb0bddbbe7f3aaa660"
-  integrity sha512-HFl7275yF0FWbdcNvcSRbbu9JCBSLMcurYwvWc8WGDnpu7APxQo2ONtZrUggU3WxLxUJ2uBX+0GOFIcJeVeOOQ==
+"@prisma/engines-version@5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9":
+  version "5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9.tgz#1502335d4d72d2014cb25b8ad8a740a3a13400ea"
+  integrity sha512-uCy/++3Jx/O3ufM+qv2H1L4tOemTNqcP/gyEVOlZqTpBvYJUe0tWtW0y3o2Ueq04mll4aM5X3f6ugQftOSLdFQ==
 
-"@prisma/engines@5.9.1":
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-5.9.1.tgz#767539afc6f193a182d0495b30b027f61f279073"
-  integrity sha512-gkdXmjxQ5jktxWNdDA5aZZ6R8rH74JkoKq6LD5mACSvxd2vbqWeWIOV0Py5wFC8vofOYShbt6XUeCIUmrOzOnQ==
+"@prisma/engines@5.10.2":
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-5.10.2.tgz#a4851d90f76ad6d22e783d5fd2e2e8c0640f1e81"
+  integrity sha512-HkSJvix6PW8YqEEt3zHfCYYJY69CXsNdhU+wna+4Y7EZ+AwzeupMnUThmvaDA7uqswiHkgm5/SZ6/4CStjaGmw==
   dependencies:
-    "@prisma/debug" "5.9.1"
-    "@prisma/engines-version" "5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64"
-    "@prisma/fetch-engine" "5.9.1"
-    "@prisma/get-platform" "5.9.1"
+    "@prisma/debug" "5.10.2"
+    "@prisma/engines-version" "5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9"
+    "@prisma/fetch-engine" "5.10.2"
+    "@prisma/get-platform" "5.10.2"
 
-"@prisma/fetch-engine@5.9.1":
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/@prisma/fetch-engine/-/fetch-engine-5.9.1.tgz#5d3b2c9af54a242e37b3f9561b59ab72f8e92818"
-  integrity sha512-l0goQOMcNVOJs1kAcwqpKq3ylvkD9F04Ioe1oJoCqmz05mw22bNAKKGWuDd3zTUoUZr97va0c/UfLNru+PDmNA==
+"@prisma/fetch-engine@5.10.2":
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/@prisma/fetch-engine/-/fetch-engine-5.10.2.tgz#a061f6727d395c7033b55f9c6e92f8741a70d5c5"
+  integrity sha512-dSmXcqSt6DpTmMaLQ9K8ZKzVAMH3qwGCmYEZr/uVnzVhxRJ1EbT/w2MMwIdBNq1zT69Rvh0h75WMIi0mrIw7Hg==
   dependencies:
-    "@prisma/debug" "5.9.1"
-    "@prisma/engines-version" "5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64"
-    "@prisma/get-platform" "5.9.1"
+    "@prisma/debug" "5.10.2"
+    "@prisma/engines-version" "5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9"
+    "@prisma/get-platform" "5.10.2"
 
 "@prisma/generator-helper@4.0.0":
   version "4.0.0"
@@ -3364,12 +3359,12 @@
     chalk "4.1.2"
     cross-spawn "7.0.3"
 
-"@prisma/get-platform@5.9.1":
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/@prisma/get-platform/-/get-platform-5.9.1.tgz#a66bb46ab4d30db786c84150ef074ab0aad4549e"
-  integrity sha512-6OQsNxTyhvG+T2Ksr8FPFpuPeL4r9u0JF0OZHUBI/Uy9SS43sPyAIutt4ZEAyqWQt104ERh70EZedkHZKsnNbg==
+"@prisma/get-platform@5.10.2":
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/@prisma/get-platform/-/get-platform-5.10.2.tgz#7af97b1d82e5574a474e3fbf6eaf04f4156bc535"
+  integrity sha512-nqXP6vHiY2PIsebBAuDeWiUYg8h8mfjBckHh6Jezuwej0QJNnjDiOq30uesmg+JXxGk99nqyG3B7wpcOODzXvg==
   dependencies:
-    "@prisma/debug" "5.9.1"
+    "@prisma/debug" "5.10.2"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -4620,29 +4615,29 @@
   dependencies:
     remove-accents "0.4.2"
 
-"@tanstack/react-table@8.11.8":
-  version "8.11.8"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.11.8.tgz#4eef4a2d91116ca51c8c9b2f00b455d8d99886c7"
-  integrity sha512-NEwvIq4iSiDQozEyvbdiSdCOiLa+g5xHmdEnvwDb98FObcK6YkBOkRrs/CNqrKdDy+/lqoIllIWHk+M80GW6+g==
+"@tanstack/react-table@8.12.0":
+  version "8.12.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.12.0.tgz#069210657f9f6c6c17584cc955a8ebb25b8642f8"
+  integrity sha512-LlEQ1Gpz4bfpiET+qmle4BhKDgKN3Y/sssc+O/wLqX8HRtjV+nhusYbllZlutZfMR8oeef83whKTj/VhaV8EeA==
   dependencies:
-    "@tanstack/table-core" "8.11.8"
+    "@tanstack/table-core" "8.12.0"
 
-"@tanstack/react-virtual@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.0.4.tgz#32a90aa6faa2eeebb5f4ca561d26bae9f3435e45"
-  integrity sha512-tiqKW/e2MJVCr7/pRUXulpkyxllaOclkHNfhKTo4pmHjJIqnhMfwIjc1Q1R0Un3PI3kQywywu/791c8z9u0qeA==
+"@tanstack/react-virtual@3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.1.2.tgz#eb62b73cc82e34860604cd3d682a17db590f3c45"
+  integrity sha512-qibmxtctgOZo2I+3Rw5GR9kXgaa15U5r3/idDY1ItUKW15UK7GhCfyIfE6qYuJ1fxQF6dJDsD8SbpPyuJgpxuA==
   dependencies:
-    "@tanstack/virtual-core" "3.0.0"
+    "@tanstack/virtual-core" "3.1.2"
 
-"@tanstack/table-core@8.11.8":
-  version "8.11.8"
-  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.11.8.tgz#7f46c31894249dbb57e43ad95c80e891236a895f"
-  integrity sha512-DECHvtq4YW4U/gqg6etup7ydt/RB1Bi1pJaMpHUXl65ooW1d71Nv7BzD66rUdHrBSNdyiW3PLTPUQlpXjAgDeA==
+"@tanstack/table-core@8.12.0":
+  version "8.12.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.12.0.tgz#ada34e17ca761fed99353b48e8cb7deacc971025"
+  integrity sha512-cq/ylWVrOwixmwNXQjgZaQw1Izf7+nPxjczum7paAnMtwPg1S2qRAJU+Jb8rEBUWm69voC/zcChmePlk2hc6ug==
 
-"@tanstack/virtual-core@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.0.0.tgz#637bee36f0cabf96a1d436887c90f138a7e9378b"
-  integrity sha512-SYXOBTjJb05rXa2vl55TTwO40A6wKu0R5i1qQwhJYNDIqaIGF7D0HsLw+pJAyi2OvntlEIVusx3xtbbgSUi6zg==
+"@tanstack/virtual-core@3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.1.2.tgz#ca76f28f826fbd3310f88c3cd355d9c4aba80abb"
+  integrity sha512-DATZJs8iejkIUqXZe6ruDAnjFo78BKnIIgqQZrc7CmEFqfLEN/TPD91n4hRfo6hpRB6xC00bwKxv7vdjFNEmOg==
 
 "@testing-library/dom@^9.0.0", "@testing-library/dom@^9.3.4":
   version "9.3.4"
@@ -7727,9 +7722,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 docxtemplater@^3.37.11:
-  version "3.45.0"
-  resolved "https://registry.yarnpkg.com/docxtemplater/-/docxtemplater-3.45.0.tgz#c3b2f995edaa74f8a72abebdcaacb3154f289a85"
-  integrity sha512-rsr8Jvj9Ss0aOHsbyUnY9WOxsHNmIlAR0/LMNfzM9H7Y4kdjFrfPMndHyQba52XTioonqe88pM7aqZC2X+uTbQ==
+  version "3.46.0"
+  resolved "https://registry.yarnpkg.com/docxtemplater/-/docxtemplater-3.46.0.tgz#d8e94841c63318cb1b763afb55ecdeb3e9822469"
+  integrity sha512-KZEy3icAm+Y+EtcAxomDXrjZq2HzzQdHVu+g0VQUttt0c7cMmTztNGJoWLmCTssCjOtGFePzRVwMQp8bewL0TQ==
   dependencies:
     "@xmldom/xmldom" "^0.8.10"
 
@@ -7798,10 +7793,15 @@ dotenv-expand@^10.0.0:
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-10.0.0.tgz#12605d00fb0af6d0a592e6558585784032e4ef37"
   integrity sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==
 
-dotenv@^16.0.0, dotenv@^16.0.3:
+dotenv@^16.0.0:
   version "16.4.4"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.4.tgz#a26e7bb95ebd36272ebb56edb80b826aecf224c1"
   integrity sha512-XvPXc8XAQThSjAbY6cQ/9PcBXmFoWuw1sQ3b8HqUCR6ziGXjkTi//kB9SWa2UwqlgdAIuRqAa/9hVljzPehbYg==
+
+dotenv@^16.0.3:
+  version "16.4.5"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
+  integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
 
 downloadjs@^1.4.7:
   version "1.4.7"
@@ -9150,16 +9150,16 @@ fstream@^1.0.12:
     rimraf "2"
 
 fullcalendar@^6.1.10:
-  version "6.1.10"
-  resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-6.1.10.tgz#d501481477680fb8ed6c48909e4bffb170da0638"
-  integrity sha512-JVka6cf3s90vKY221Xa2V8sq42J9SRYxbUILy+o2mIAzG4BqCNLPLr9uBTDtAf7eK3bNhqohnlofRzVBX0BPMw==
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-6.1.11.tgz#a46ac35dbf1f04047113274f2242198d9a221f52"
+  integrity sha512-OOlx/+yFn9k5LnucRzcDmShONBecOVKNN6HHWe8jl7hGzQBmkxO+iD6eBokO6p24EY1PjATqhZkhJqHiCUgx3A==
   dependencies:
-    "@fullcalendar/core" "~6.1.10"
-    "@fullcalendar/daygrid" "~6.1.10"
-    "@fullcalendar/interaction" "~6.1.10"
-    "@fullcalendar/list" "~6.1.10"
-    "@fullcalendar/multimonth" "~6.1.10"
-    "@fullcalendar/timegrid" "~6.1.10"
+    "@fullcalendar/core" "~6.1.11"
+    "@fullcalendar/daygrid" "~6.1.11"
+    "@fullcalendar/interaction" "~6.1.11"
+    "@fullcalendar/list" "~6.1.11"
+    "@fullcalendar/multimonth" "~6.1.11"
+    "@fullcalendar/timegrid" "~6.1.11"
 
 function-bind@^1.1.2:
   version "1.1.2"
@@ -11516,13 +11516,13 @@ makeerror@1.0.12:
     tmpl "1.0.5"
 
 mantine-react-table@^2.0.0-alpha.17:
-  version "2.0.0-alpha.17"
-  resolved "https://registry.yarnpkg.com/mantine-react-table/-/mantine-react-table-2.0.0-alpha.17.tgz#e593faf892a0294655f502c0f296fe7508671d8e"
-  integrity sha512-DnB1+c/IiTH2ptVqSEoaiBZ003wa8J5AlYK//apkhZE18M45lJ1iw12LCl1X5kRWx36P2D6O1yw8QW7SZZfQqQ==
+  version "2.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/mantine-react-table/-/mantine-react-table-2.0.0-beta.0.tgz#b9aab5063f9ae7833f253c3089c1c4f721227936"
+  integrity sha512-KZOr7nzoSt4aF0hyWKJJBK9/dxVWB3tdg2fFSNnqns9cbPFlLTGXDKguLSoNE8WkzjWE0ThpYJknIAoraL/7ug==
   dependencies:
     "@tanstack/match-sorter-utils" "8.11.8"
-    "@tanstack/react-table" "8.11.8"
-    "@tanstack/react-virtual" "3.0.4"
+    "@tanstack/react-table" "8.12.0"
+    "@tanstack/react-virtual" "3.1.2"
 
 map-or-similar@^1.5.0:
   version "1.5.0"
@@ -13302,11 +13302,11 @@ prisma-typegraphql-types-generator@^1.5.14:
     prettier "^2"
 
 prisma@^5.1.0:
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-5.9.1.tgz#baa3dd635fbf71504980978f10f55ea11068f6aa"
-  integrity sha512-Hy/8KJZz0ELtkw4FnG9MS9rNWlXcJhf98Z2QMqi0QiVMoS8PzsBkpla0/Y5hTlob8F3HeECYphBjqmBxrluUrQ==
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-5.10.2.tgz#aa63085c49dc74cdb5c3816e8dd1fb4d74a2aadd"
+  integrity sha512-hqb/JMz9/kymRE25pMWCxkdyhbnIWrq+h7S6WysJpdnCvhstbJSNP/S6mScEcqiB8Qv2F+0R3yG+osRaWqZacQ==
   dependencies:
-    "@prisma/engines" "5.9.1"
+    "@prisma/engines" "5.10.2"
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
@@ -14099,9 +14099,9 @@ safe-stable-stringify@^2.3.1:
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
 sass@^1.62.1:
-  version "1.70.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.70.0.tgz#761197419d97b5358cb25f9dd38c176a8a270a75"
-  integrity sha512-uUxNQ3zAHeAx5nRFskBnrWzDUJrrvpCPD5FNAoRvTi0WwremlheES3tg+56PaVtCs5QDRX5CBLxxKMDJMEa1WQ==
+  version "1.71.1"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.71.1.tgz#dfb09c63ce63f89353777bbd4a88c0a38386ee54"
+  integrity sha512-wovtnV2PxzteLlfNzbgm1tFXPLoZILYAMJtvoXXkD7/+1uP41eKkIt1ypWq5/q2uT94qHjXehEYfmjKOvjL9sg==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
@@ -16159,10 +16159,10 @@ zod@3.21.4:
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
 
-zustand@latest:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.0.tgz#141354af56f91de378aa6c4b930032ab338f3ef0"
-  integrity sha512-zlVFqS5TQ21nwijjhJlx4f9iGrXSL0o/+Dpy4txAP22miJ8Ti6c1Ol1RLNN98BMib83lmDH/2KmLwaNXpjrO1A==
+zustand@^4.5.1:
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.1.tgz#2088956ee454759fb8b866ca335a2373e76736c5"
+  integrity sha512-XlauQmH64xXSC1qGYNv00ODaQ3B+tNPoy22jv2diYiP4eoDKr9LA+Bh5Bc3gplTrFdb6JVI+N4kc1DZ/tbtfPg==
   dependencies:
     use-sync-external-store "1.2.0"
 

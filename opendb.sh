@@ -1,1 +1,1 @@
-sqlite3 ./prisma/database/nxtime.db
+sqlite3 ./prisma/database/tcon360.db

@@ -734,7 +734,7 @@ export default function SignupPage() {
               )}
             </Group>
 
-            <Text align="center" mt="md">
+            <Text ta="center" mt="md">
               Already have an account?{' '}
               <Anchor<'a'> href={`${basepath}/login`} fw={700}>
                 Login
