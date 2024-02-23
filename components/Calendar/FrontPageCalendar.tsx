@@ -51,21 +51,21 @@ export function FrontPageCalendar() {
   };
   const [leavePurpose, setleavePurpose] = useState(null);
 
-  //const [CurrentStart, setCurrentStart] = useState(new Date());
   const [formType, setFormType] = useState(null);
   const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
   const {
     LeaveRequestPeriod,
     setLeaveRequestPeriod,
     setStaffVacation,
-    currentStart,
-    setCurrentStart,
+
     setCalendarEvents,
     calendarEvents,
     setChargeableDays,
     leaveRequestId,
     setLeaveRequestId,
     clearAllState,
+    timesheetDefaultDate,
+    setTimesheetDefaultDate,
   } = useStore();
 
   const { isEventUpdated, setIsEventUpdated } = useUIStore();
@@ -127,6 +127,7 @@ export function FrontPageCalendar() {
       // observer.disconnect();
     };
   }, []);
+  const router = useRouter();
   useEffect(() => {
     if (isEventUpdated) {
       fetchEvents();
@@ -137,14 +138,32 @@ export function FrontPageCalendar() {
   useEffect(() => {
     // Calculate total chargeable days whenever calendar events or date changes
     if (calendarEvents.length > 0) {
-      setTitle(currentStart);
+      setTitle(timesheetDefaultDate);
       if (activeUser) {
         setVacationSummary(activeUser, calendarEvents);
       }
     }
-  }, [calendarEvents, currentStart]);
+    //handleJumpToMonth(timesheetDefaultDate);
+  }, [calendarEvents]);
 
-  const router = useRouter();
+  // useEffect(() => {
+  //   // Calculate total chargeable days whenever calendar events or date changes
+  //   handleJumpToMonth(timesheetDefaultDate);
+  // }, [timesheetDefaultDate]);
+
+  /**
+   * A function to handle jumping to a specific month on the calendar.
+   *
+   * @param {_date} _date - the date to jump to
+   * @return {void}
+   */
+  const handleJumpToMonth = (_date) => {
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+
+      calendarApi.gotoDate(_date);
+    }
+  };
 
   const handleOpenAdminPage = () => {
     router.push({
@@ -193,25 +212,13 @@ export function FrontPageCalendar() {
     if (calendarEvents.length == 0) {
       fetchEvents();
     }
-    const currentStart = info.view.currentStart;
-    setCurrentStart(currentStart);
-    console.log(' handleMonthYearChange, current start?', currentStart);
+    const timesheetDefaultDate = info.view.currentStart;
+    //setCurrentStart(currentStart);
+    setTimesheetDefaultDate(timesheetDefaultDate);
+    console.log(' handleMonthYearChange, current start?', timesheetDefaultDate);
   }
   const { isWeekend } = require('date-fns');
 
-  const getBusinessDaysx = (startDate, endDate) => {
-    let count = 0;
-    const current = new Date(startDate);
-
-    while (current <= endDate) {
-      if (!isWeekend(current) && !isPublicHoliday(current, calendarEvents)) {
-        count++;
-      }
-      current.setDate(current.getDate() + 1);
-    }
-
-    return count;
-  };
   function setVacationSummary(_user, _events) {
     if (!_user) {
       return;

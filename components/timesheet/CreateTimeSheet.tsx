@@ -30,17 +30,28 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [fileid, setfileid] = useState(false);
   //const [monthValue, setMonthValue] = useState(new Date());
   const [monthValue, setMonthValue] = useState<Date | null>(new Date());
-  const { currentStart, setCurrentStart } = useStore();
-  const [displayedYear, setDisplayedYear] = useState(
-    currentStart.getFullYear(),
-  );
+  const { timesheetDefaultDate, setTimesheetDefaultDate } = useStore();
+  const [defaultdate, setDefaultDate] = useState(new Date());
 
   useEffect(() => {
-    console.log('current start?', currentStart);
-    setMonthValue(currentStart);
-    setDisplayedYear(currentStart.getFullYear());
-  }, [currentStart]);
+    console.log('timesheetDefaultDate?', timesheetDefaultDate);
+    setMonthValue(timesheetDefaultDate);
 
+    console.log(
+      'timesheet default date year?',
+      timesheetDefaultDate.getFullYear(),
+    );
+    setDefaultDate(new Date(timesheetDefaultDate.getFullYear(), 1));
+  }, [timesheetDefaultDate]);
+  const handleMonthChange = (_date) => {
+    if (fileid) {
+      setfileid(null);
+    }
+    console.log('handle month change', _date);
+    setDefaultDate(new Date(_date.getFullYear(), 0));
+    setTimesheetDefaultDate(_date);
+    setMonthValue(_date);
+  };
   const onSubmit = async (event) => {
     setSubmitting(true);
     const year = monthValue.getFullYear();
@@ -73,15 +84,6 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
     }
   };
 
-  const handleMonthChange = (date) => {
-    if (fileid) {
-      setfileid(null);
-    }
-    console.log('handle month change', date);
-    setMonthValue(date);
-  };
-  // CSS styles to reduce button width
-
   return (
     <>
       <form method="post" onSubmit={handleSubmit(onSubmit)}>
@@ -89,12 +91,23 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
-                <MonthPicker
+                {/* <MonthPicker
                   maxLevel="year"
                   value={monthValue}
                   withCellSpacing={false}
                   onChange={handleMonthChange}
                   size={pickersize}
+                  date={defaultdate}
+                  defaultDate={defaultdate}
+                  className={styles.monthPickerButtons}
+                /> */}
+                <MonthPicker
+                  date={defaultdate}
+                  withCellSpacing={false}
+                  onDateChange={setDefaultDate}
+                  size={pickersize}
+                  value={monthValue}
+                  onChange={handleMonthChange}
                   className={styles.monthPickerButtons}
                 />
               </Group>

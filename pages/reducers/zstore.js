@@ -27,7 +27,11 @@ const useStore = create((set) => ({
   authtoken: '',
   basepath: null,
   user: null,
-
+  timesheetDefaultDate: new Date(),
+  setTimesheetDefaultDate: (_dt) =>
+    set((state) => ({
+      timesheetDefaultDate: _dt,
+    })),
   setStaffVacation: (vacation) =>
     set((state) => ({
       staffVacation: vacation,
