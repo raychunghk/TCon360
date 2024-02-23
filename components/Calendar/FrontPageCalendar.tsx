@@ -1,5 +1,4 @@
 import { Button, Drawer, Text } from '@mantine/core';
-
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
 import interactionPlugin from '@fullcalendar/interaction'; // needed for dayClick
@@ -25,6 +24,7 @@ import {
 import CustomView from './customeView';
 import { useStaffData } from 'components/useStaffData';
 import { getBusinessDays } from 'components/util/leaverequest.util';
+import { useRouter } from 'next/router';
 
 export function FrontPageCalendar() {
   const handleSignout = () => {
@@ -72,6 +72,7 @@ export function FrontPageCalendar() {
   const calendarRef = useRef(null);
   const basepath = process.env.basepath; //props.basepath;
   const [customTitle, setCustomTitle] = useState('');
+  const [hasCalendar, setHasCalendar] = useState(true);
   console.log('basepath?', basepath);
   const apiurl = `${basepath}/api/timesheet/calendar`;
 
@@ -92,10 +93,15 @@ export function FrontPageCalendar() {
       if ([200, 201].includes(response.status)) {
         const events = await response.data;
 
-        console.log('calendar event length', calendarEvents.length);
+        console.log(
+          `calendar event length, ${calendarEvents.length}\r\n fetched event lenght: ${events.length}`,
+        );
 
         if (isEventUpdated || events.length != calendarEvents.length) {
           await setCalendarEvents(events);
+        }
+        if (events.length === 0 && calendarEvents.length === 0) {
+          setHasCalendar(false);
         }
       } else {
         console.error('Failed to fetch events:', response);
@@ -138,7 +144,24 @@ export function FrontPageCalendar() {
     }
   }, [calendarEvents, currentStart]);
 
-  if (calendarEvents.length < 1) {
+  const router = useRouter();
+
+  const handleOpenAdminPage = () => {
+    router.push({
+      pathname: '/admin',
+      query: { tab: 'calendarManagement' },
+    });
+  };
+  if (!hasCalendar) {
+    return (
+      <>
+        <Text fw={500}>Calendar database is not initialized</Text>
+        <Button variant="filled" onClick={handleOpenAdminPage}>
+          Click to initialize Calendar in setting page
+        </Button>
+      </>
+    );
+  } else if (calendarEvents.length < 1) {
     return <Text>Loading...</Text>;
   }
 

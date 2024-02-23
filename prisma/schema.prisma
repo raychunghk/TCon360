@@ -119,6 +119,21 @@ model CalendarMaster {
   Month        Int
 }
 
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view viewCalendarTimeSheet {
+  CalendarDate           DateTime @id
+  CalendarDateStr        String?
+  WeekDayName            String?
+  Year                   Int?
+  Month                  Int?
+  VacationChargable      Decimal?
+  PublicHolidayChargable Decimal?
+  HolidaySummary         String?
+  LeaveRequestId         Int?
+  staffId                Int?
+  contractId             Int
+}
+
 model PublicHoliday {
   StartDate DateTime @id
   EndDate   DateTime
@@ -174,21 +189,6 @@ model staffFiles {
   staffId      Int
   LeaveRequest LeaveRequest[]
   staff        Staff          @relation(fields: [staffId], references: [id])
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view viewCalendarTimeSheet {
-  CalendarDate           DateTime @id
-  CalendarDateStr        String?
-  WeekDayName            String?
-  Year                   Int?
-  Month                  Int?
-  VacationChargable      Decimal?
-  PublicHolidayChargable Decimal?
-  HolidaySummary         String?
-  LeaveRequestId         Int?
-  staffId                Int?
-  contractId             Int
 }
 
 view viewEvents {

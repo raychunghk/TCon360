@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import { useState, useEffect } from 'react';
 import { useForm as useHookForm } from 'react-hook-form';
 import {
@@ -20,14 +20,24 @@ import axios from 'axios';
 import { useForm as uForm } from 'react-hook-form';
 import UserManagementTab from './UserManagerTab';
 import CalendarManagementTab from './CalendarManagerTab';
+import { useRouter } from 'next/router';
 
 const Admin = (props) => {
   const { register, handleSubmit, reset } = useHookForm();
-  const { basepath } = props;
+  const { basepath, initialActiveTab = 'userManagement' } = props; // Added initialActiveTab prop
   const [formValues, setFormValues] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const { activeUser } = useStore();
-
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState(initialActiveTab); // Set initial active tab
+  useEffect(() => {
+    const { tab } = router.query;
+    console.log('tab?', tab);
+    if (tab === 'calendarManagement') {
+      setActiveTab('calendarManagement');
+    }
+  }, []);
+ 
   if (activeUser?.role?.name !== 'admin') {
     return (
       <Layout home>
@@ -46,9 +56,7 @@ const Admin = (props) => {
     const headers = {
       Authorization: `Bearer ${tokenCookie}`,
     };
-    useEffect(() => {
-      console.log('active user?', activeUser);
-    }, []);
+
     try {
       const response = await axios.put(
         `${basepath}/api/admin/${formValues.id}`,
@@ -66,11 +74,11 @@ const Admin = (props) => {
 
     setSubmitting(false);
   };
-  const [activeTab, setActiveTab] = useState('userManagement');
 
   const handleTabChange = (value) => {
     setActiveTab(value);
   };
+
   return (
     <Layout home>
       <Head>
@@ -78,7 +86,8 @@ const Admin = (props) => {
       </Head>
 
       <Tabs
-        defaultValue="userManagement"
+        defaultValue={initialActiveTab}
+        value={activeTab}
         onChange={handleTabChange}
         style={{ width: '100%', height: '100%' }}
       >

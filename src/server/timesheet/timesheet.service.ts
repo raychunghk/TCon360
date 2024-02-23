@@ -146,7 +146,77 @@ export class TimesheetService {
     const monthName = months[month - 1]; // month index starts at 0
     return `${monthName}${year}`;
   }
-
+  /**
+   * Get calendar for a specific staff member for a given year and month
+   * @param staffId - The ID of the staff member
+   * @param year - The year for the calendar
+   * @param month - The month for the calendar
+   * @returns Promise<Array<CalendarTimeSheet>> - An array of calendar time sheet entries
+   */
+  async getCalendar(staffId: number, year: number, month: number) {
+    const viewCalendarTimeSheet = (await this.prisma.$queryRawUnsafe(`
+SELECT c.CalendarDate,
+       STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(c.CalendarDate / 1000, 'unixepoch')) AS CalendarDateStr,
+       c.WeekDayName,
+       c.Year,
+       c.Month,
+      CAST( IFNULL(vc.VacationChargable, 0.0) as REAL) AS VacationChargable,
+       IFNULL(vc.PublicHolidayChargable, 0.0) AS PublicHolidayChargable,
+       vc.HolidaySummary,
+       vc.LeaveRequestId,
+       vc.StaffId,
+       IFNULL(vc.ContractId, 0) AS ContractId
+FROM CalendarMaster c
+LEFT JOIN (
+    SELECT ID,
+           CalendarDate,
+           VacationChargable,
+           PublicHolidayChargable,
+           HolidaySummary,
+           LeaveRequestId,
+           StaffId,
+           ContractId
+    FROM viewCalendarTimeSheet
+    WHERE Year = ${year}
+      AND Month = ${month}
+      AND (IFNULL(StaffId, ${staffId}) = ${staffId})
+) vc ON vc.CalendarDate = c.CalendarDate
+WHERE Year = ${year}
+  AND Month = ${month}
+ORDER BY c.CalendarDate;
+`)) as viewCalendarTimeSheet[];
+    //`)) as Prisma.viewCalendarTimeSheetCreateInput[]; // viewCalendarTimeSheet[];
+    console.log('viewCalendarTimeSheet', viewCalendarTimeSheet);
+    return viewCalendarTimeSheet;
+  }
+  async getCalendarx(staffId: number, year: number, month: number) {
+    const arrCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
+      distinct: ['CalendarDate'],
+      where: {
+        Year: year,
+        Month: month,
+        OR: [{ staffId: staffId }, { staffId: null }],
+      },
+      orderBy: [
+        {
+          CalendarDate: 'asc',
+        },
+      ],
+      select: {
+        CalendarDate: true,
+        CalendarDateStr: true,
+        WeekDayName: true,
+        Year: true,
+        Month: true,
+        VacationChargable: true,
+        PublicHolidayChargable: true,
+        HolidaySummary: false,
+        staffId: true,
+      },
+    });
+    console.log('arrcalendar', arrCalendar);
+    return arrCalendar;
+  }
   async makeTimeSheet(
     staffId: number,
     year: number,
@@ -193,31 +263,31 @@ export class TimesheetService {
         ManagerEmail: 'K13',
       };
       await this.writeStaffInfoJsonToExcel(stf, fieldmap, destPath);
-
-      const objCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
-        distinct: ['CalendarDate'],
-        where: {
-          Year: year,
-          Month: month,
-          OR: [{ staffId: staffId }, { staffId: null }],
-        },
-        orderBy: [
-          {
-            CalendarDate: 'asc',
-          },
-        ],
-        select: {
-          CalendarDate: true,
-          CalendarDateStr: true,
-          WeekDayName: true,
-          Year: true,
-          Month: true,
-          VacationChargable: true,
-          PublicHolidayChargable: true,
-          HolidaySummary: false,
-          staffId: true,
-        },
-      });
+      const objCalendar = await this.getCalendar(staffId, year, month);
+      // const objCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
+      //   distinct: ['CalendarDate'],
+      //   where: {
+      //     Year: year,
+      //     Month: month,
+      //     OR: [{ staffId: staffId }, { staffId: null }],
+      //   },
+      //   orderBy: [
+      //     {
+      //       CalendarDate: 'asc',
+      //     },
+      //   ],
+      //   select: {
+      //     CalendarDate: true,
+      //     CalendarDateStr: true,
+      //     WeekDayName: true,
+      //     Year: true,
+      //     Month: true,
+      //     VacationChargable: true,
+      //     PublicHolidayChargable: true,
+      //     HolidaySummary: false,
+      //     staffId: true,
+      //   },
+      // });
       const firstdatecell = 20;
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(destPath);
@@ -233,7 +303,7 @@ export class TimesheetService {
         celltimesheetstart,
         format(objCalendar[0].CalendarDate, 'dd-MMM-yyyy'),
       );
-      //this.writeCellValue(worksheet, celltimesheetend, format(objCalendar.pop().CalendarDate, 'dd-MMM-yyyy'))
+
       this.writeCellValue(
         worksheet,
         celltimesheetend,
@@ -256,16 +326,22 @@ export class TimesheetService {
             let isHoliday = 0;
             const one = 1;
             const zero = 0;
-            if (new Decimal(dt.PublicHolidayChargable).greaterThan(0)) {
+            console.log(
+              'type of dt.publicholidaychargable',
+              typeof dt.PublicHolidayChargable,
+            );
+            //if (new Decimal(dt.PublicHolidayChargable).greaterThan(0)) {
+            if (Number(dt.PublicHolidayChargable) > 0) {
               cell.value = zero;
               holidayCell.value = one;
               isHoliday = 1;
             }
             //if (dt.VacationChargable > 0 && isHoliday == 0) {
-            if (
-              new Decimal(dt.VacationChargable).greaterThan(0) &&
-              isHoliday === 0
-            ) {
+            // if (
+            //   new Decimal(dt.VacationChargable).greaterThan(0) &&
+            //   isHoliday === 0
+            // ) {
+            if (Number(dt.VacationChargable) > 0 && isHoliday === 0) {
               const cellval = Number(1 - Number(dt.VacationChargable));
               cell.value = cellval;
               vacationLeaveCell.value = Number(dt.VacationChargable); //objCalendar.VacationChargable;
@@ -288,6 +364,7 @@ export class TimesheetService {
             });
           }
         } catch (error) {
+          throw error;
           console.log(error);
         }
         datecellpos++;
@@ -297,7 +374,7 @@ export class TimesheetService {
 
       worksheet.name = `Timesheet_${timesheetFileDate}`;
       await workbook.xlsx.writeFile(destPath);
-      console.log('calendar written to cell successfully!');
+      console.log('calendar written to cell successfully!', destPath);
       const _file = await this.prisma.staffFiles.create({
         data: {
           filePath: destPath,
