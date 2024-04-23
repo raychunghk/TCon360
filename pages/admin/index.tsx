@@ -11,7 +11,7 @@ import {
   Modal,
 } from '@mantine/core';
 import Layout from '../../components/layout';
-import { IconCalendarEvent, IconUser } from '@tabler/icons';
+import { IconCalendarEvent, IconUser, IconSunMoon } from '@tabler/icons';
 import Head from 'next/head';
 import useStore from 'pages/reducers/zstore';
 import { parseCookies } from 'nookies';
@@ -21,6 +21,7 @@ import { useForm as uForm } from 'react-hook-form';
 import UserManagementTab from './UserManagerTab';
 import CalendarManagementTab from './CalendarManagerTab';
 import { useRouter } from 'next/router';
+import { ColorSchemeToggle } from 'components/ColorSchemeToggle/ColorSchemeToggle';
 
 const Admin = (props) => {
   const { register, handleSubmit, reset } = useHookForm();
@@ -37,7 +38,7 @@ const Admin = (props) => {
       setActiveTab('calendarManagement');
     }
   }, []);
- 
+
   if (activeUser?.role?.name !== 'admin') {
     return (
       <Layout home>
@@ -101,8 +102,10 @@ const Admin = (props) => {
           >
             Calendar Management
           </Tabs.Tab>
+          <Tabs.Tab value="themeManagement" leftSection={<IconSunMoon />}>
+            Change Theme
+          </Tabs.Tab>
         </Tabs.List>
-
         <Tabs.Panel
           value="userManagement"
           pt="xs"
@@ -110,9 +113,11 @@ const Admin = (props) => {
         >
           <UserManagementTab />
         </Tabs.Panel>
-
         <Tabs.Panel value="calendarManagement" pt="xs">
           <CalendarManagementTab />
+        </Tabs.Panel>{' '}
+        <Tabs.Panel value="themeManagement" pt="xs">
+          <ColorSchemeToggle />
         </Tabs.Panel>
       </Tabs>
     </Layout>

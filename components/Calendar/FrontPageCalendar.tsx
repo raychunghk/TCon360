@@ -145,11 +145,13 @@ export function FrontPageCalendar() {
     }
     //handleJumpToMonth(timesheetDefaultDate);
   }, [calendarEvents]);
-
-  // useEffect(() => {
-  //   // Calculate total chargeable days whenever calendar events or date changes
-  //   handleJumpToMonth(timesheetDefaultDate);
-  // }, [timesheetDefaultDate]);
+  useEffect(() => {
+    setTitle(timesheetDefaultDate);
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+    }
+    // handleJumpToMonth(timesheetDefaultDate);
+  }, [timesheetDefaultDate]);
 
   /**
    * A function to handle jumping to a specific month on the calendar.
@@ -158,11 +160,16 @@ export function FrontPageCalendar() {
    * @return {void}
    */
   const handleJumpToMonth = (_date) => {
-    if (calendarRef.current) {
+    // if (!calendarRef.current) {
+
+    try {
       const calendarApi = calendarRef.current.getApi();
 
       calendarApi.gotoDate(_date);
+    } catch (error) {
+      console.log(error);
     }
+    //}
   };
 
   const handleOpenAdminPage = () => {

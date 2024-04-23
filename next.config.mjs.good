@@ -1,0 +1,14 @@
+/**
+ * @format
+ * @type {import('next').NextConfig}
+ */
+import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
+import dotenv from 'dotenv';
+dotenv.config();
+const _basepath = `/absproxy/5000`;
+
+console.log('_basepath', _basepath);
+
+const nextConfig = { basePath: _basepath, assetPrefix: _basepath };
+
+export default nextConfig;
