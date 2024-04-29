@@ -21,7 +21,7 @@ fastify.register(proxy, {
 });
 
 fastify.addHook("preValidation", async (request, reply) => {
-  console.log(`Request URL: ${request.url}`);
+  console.log(`Proxy server:Request URL: ${request.url}`);
 });
 
 fastify.listen(baseconfig.mainport, (err, address) => {

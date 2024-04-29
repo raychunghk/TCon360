@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start:dev": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev\" \"node proxyserver.js\"",
-    "fdev": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev\" \"node proxyserver.js\"",
+    "startdev": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev\" \"node proxyserver.js\"",
+    "fdev": "concurrently   \"cd frontend && npm run dev\" \"node proxyserver.js\"",
+    "bdev": "concurrently \"cd backend && npm run start:dev\"   \"node proxyserver.js\"",
     "startb": "concurrently \"cd backend && npm run start:prod\" \"cd frontend && npm run build && npm run start\" \"node proxyserver.js\""
   },
   "dependencies": {
     "@fastify/http-proxy": "^9.4.0",
+    "@tabler/icons-react": "^2.47.0",
     "concurrently": "^8.2.2",
     "fastify": "^4.26.2",
-    "http-proxy": "^1.18.1"
+    "http-proxy": "^1.18.1",
+    "next-auth": "^4.24.6",
+    "nookies": "^2.5.2"
   }
 }

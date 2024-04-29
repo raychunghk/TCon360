@@ -1,19 +1,18 @@
+//'use client';
 import '@mantine/core/styles.css';
 import React from 'react';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import { theme } from '../theme';
 import getConfig from 'next/config';
-
-export const metadata = {
-  title: 'Mantine Next.js template',
-  description: 'I am using Mantine with Next.js!',
-};
+//import useStore from '../components/store/zstore';
+import { baseconfig } from '../../baseconfig';
+// export const metadata = {
+//   title: 'Mantine Next.js template',
+//   description: 'I am using Mantine with Next.js!',
+// };
 
 export default function RootLayout({ children }: { children: any }) {
-  const {
-    publicRuntimeConfig: { assetPrefix },
-  } = getConfig();
-  const faviconUrl = `${assetPrefix}/favicon.svg`;
+  const faviconUrl = `${baseconfig.prefix}/favicon.svg`;
   return (
     <html lang="en">
       <head>

@@ -1,6 +1,6 @@
 'use client';
 import { create } from 'zustand';
-
+import { baseconfig } from '../../../baseconfig';
 const useStore = create((set) => ({
   contractStartDate: null,
   contractEndDate: null,
@@ -26,7 +26,7 @@ const useStore = create((set) => ({
   formType: null,
   selectedDatesCount: 0,
   authtoken: '',
-  basepath: null,
+  basepath: baseconfig.prefix,
   user: null,
   timesheetDefaultDate: new Date(),
   setTimesheetDefaultDate: (_dt) =>
@@ -78,15 +78,11 @@ const useStore = create((set) => ({
     })),
   setContractStartMaxDate: (date) =>
     set((state) => ({
-      contractStartMaxDate: new Date(
-        new Date(date).getTime() - 24 * 60 * 60 * 1000,
-      ),
+      contractStartMaxDate: new Date(new Date(date).getTime() - 24 * 60 * 60 * 1000),
     })),
   setContractEndMinDate: (date) =>
     set((state) => ({
-      contractEndMinDate: new Date(
-        new Date(date).getTime() + 24 * 60 * 60 * 1000,
-      ),
+      contractEndMinDate: new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000),
     })),
   setLeaveRequestId: (id) =>
     set((state) => ({

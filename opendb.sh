@@ -1,0 +1,1 @@
+sqlite3 ./backend/prisma/TCon360.db
