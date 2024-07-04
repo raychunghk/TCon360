@@ -19,7 +19,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:createplx": "jest --runInBand --detectOpenHandles --watch --testPathPattern=**/admin.service.spec.ts --testNamePattern='createPublicHoliday'",
-    "test:createpl": "jest --testNamePattern='createPublicHoliday' admin.service.spec.ts"
+    "test:createpl": "jest --testNamePattern='createPublicHoliday' admin.service.spec.ts",
+    "test:db": "jest --testNamePattern='createPublicHoliday' admin.service.spec.ts",
+    "test:userx": "jest --runInBand --detectOpenHandles --watch --testPathPattern=**/users.controller.spec.ts --testNamePattern='login'",
+    "test:user": "jest --runInBand --detectOpenHandles --testPathPattern=/users.controller.spec.ts$"
   },
   "dependencies": {
     "@fastify/secure-session": "^7.1.0",
@@ -90,20 +93,21 @@
     "typescript": "^5.1.3"
   },
   "jest": {
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
     "moduleFileExtensions": [
       "js",
       "json",
       "ts"
     ],
     "rootDir": "src",
+    "testEnvironment": "node",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testTimeout": 1000000
   }
 }

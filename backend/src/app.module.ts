@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HelloModule } from './hello/hello.module';
@@ -9,12 +9,12 @@ import { VacationsModule } from './vacations/vacations.module';
 import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AdminModule } from './admin/admin.module';
+import { LoggerMiddleware } from './common/logger.middleware';
 @Module({
   imports: [
     HelloModule,
     CacheModule.register({ isGlobal: true }),
     StaffModule,
-
     TimesheetModule,
     LeaveRequestModule,
     VacationsModule,
@@ -24,4 +24,9 @@ import { AdminModule } from './admin/admin.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+//export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

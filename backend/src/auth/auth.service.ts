@@ -86,43 +86,6 @@ export class AuthService {
           staffId: createdUserWithStaff.staff[0].id,
         },
       });
-      // const createdUser = await this.prisma.user.create({
-      //   data: {
-      //     email,
-      //     password: hashedPassword,
-      //     username,
-      //     name: staff.StaffName,
-      //   },
-      // });
-
-      // // Create Staff
-      // const createdStaff = await this.prisma.staff.create({
-      //   data: {
-      //     StaffName: staff.StaffName,
-      //     AgentName: staff.AgentName,
-      //     StaffCategory: staff.StaffCategory,
-      //     Department: staff.Department,
-      //     PostUnit: staff.PostUnit,
-      //     ManagerName: staff.ManagerName,
-      //     ManagerTitle: staff.ManagerTitle,
-      //     ManagerEmail: staff.ManagerEmail,
-      //     user: { connect: { id: createdUser.id } },
-      //   },
-      // });
-
-      // // Create StaffContract
-      // const contractStartDate = new Date(staff.ContractStartDate);
-      // const contractEndDate = new Date(staff.ContractEndDate);
-
-      // const createdStaffContract = await this.prisma.staffContract.create({
-      //   data: {
-      //     ContractStartDate: contractStartDate,
-      //     ContractEndDate: contractEndDate,
-      //     AnnualLeave: staff.AnnualLeave,
-      //     IsActive: true,
-      //     staff: { connect: { id: createdStaff.id } },
-      //   },
-      // });
 
       const updatedUser = await this.prisma.user.update({
         where: { id: createdUserWithStaff.id },

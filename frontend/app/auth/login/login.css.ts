@@ -17,7 +17,6 @@ export const form = style({
 
 export const title = style({
   // color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-  fontFamily: `Greycliff CF `,
 });
 
 export const logo = style({

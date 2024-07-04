@@ -16,7 +16,10 @@ export class UpdateUserDto {
   roleId?: number;
   userStatus?: string;
 }
-
+export interface LoginDto {
+  identifier: string;
+  password: string;
+}
 class UpdateContractDto {
   @IsDateString()
   ContractStartDate: Date;

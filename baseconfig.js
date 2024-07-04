@@ -2,7 +2,7 @@
 
 const baseconfig = {
   proxypath: "/absproxy",
-  frontendport: 3000,
+  frontendport: 2000,
   backendport: 3800,
   mainport: 3333,
 };

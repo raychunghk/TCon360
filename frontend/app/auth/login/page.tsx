@@ -12,90 +12,68 @@ import {
   Anchor,
   LoadingOverlay,
 } from '@mantine/core';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useDisclosure } from '@mantine/hooks';
-//import bg from 'public/images/loginbg1.webp';
 import { useState } from 'react';
 import { siteTitle } from '@/components/util/label';
-//import { handleLoginSuccess } from './handleLoginSuccess';
 import useStore from '@/components/store/zstore';
 import * as classes from './login.css';
 import '@mantine/core/styles.css';
-// const useStyles = createStyles((theme) => ({
-//   wrapper: {
-//     backgroundSize: 'cover',
-//     backgroundImage: `url('${bg.src}')`,
-//     height: '100vh',
-//   },
-//   form: {
-//     borderRight: `1px solid ${
-//       theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-//     }`,
-//     maxWidth: 450,
-//     paddingTop: 80,
-//     height: '100vh',
-//     marginLeft: 'auto', // set marginLeft to auto to align the Paper component to the right
-//     [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-//       maxWidth: '100%',
-//     },
-//     marginRight: '150px',
-//   },
+import { baseconfig } from '@/../baseconfig';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
-//   title: {
-//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-//     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-//   },
-
-//   logo: {
-//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-//     width: 120,
-//     display: 'block',
-//     marginLeft: 'auto',
-//     marginRight: 'auto',
-//   },
-// }));
-
-export default function LoginPage(props) {
+export default function LoginPage(props: any) {
   const router = useRouter();
   const { setAuthtoken } = useStore();
-  const basepath = router.basePath;
+
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
-  const [loginStatus, setLoginStatus] = useState(null); // add login status state variable
+  const [loginStatus, setLoginStatus] = useState(''); // add login status state variable
   const [visible, { toggle, open, close }] = useDisclosure(false);
-  async function handleLoginSuccess(response, router) {
-    const data = await response.json();
-    const token = data.accessToken;
-    setAuthtoken(token);
-    const _maxAge = process.env.TOKEN_MAX_AGE;
-    console.log('_maxage in handleLoginSuccess', _maxAge);
-    // set the user's session token in localStorage
-    await setCookie(null, 'token', token, {
-      maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
-      path: '/', // cookie path
-    });
 
-    const cookies = parseCookies();
-    const tokenCookie = cookies.token;
-    console.log('token cookie', tokenCookie);
-    console.log('Token max age(process.env.TOKEN_MAX_AGE/cookies.maxAge):', cookies.maxAge);
+  async function handleLoginSuccess(response: Response, router: AppRouterInstance | string[]) {
+    try {
+      const data = await response.json();
+      const token = data.accessToken;
+      setAuthtoken(token);
+      const _maxAge = process.env.TOKEN_MAX_AGE;
+      console.log('_maxage in handleLoginSuccess', _maxAge);
+      // set the user's session token in localStorage
+      if (_maxAge) {
+        await setCookie(null, 'token', token, {
+          maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
+          path: '/', // cookie path
+        });
+      } else {
+        console.error('TOKEN_MAX_AGE is not defined');
+      }
 
-    const signInResult = await signIn('custom-provider', {
-      token: tokenCookie,
-      redirect: false,
-    });
-    /* if (signInResult.error) { // Handle Error on client side
-        console.log('sign in result')
-        console.log(signInResult)
-        console.log(signInResult.error)
-    }*/
-    router.push('/'); // redirect to the dashboard page on successful login
+      const cookies = parseCookies();
+      const tokenCookie = cookies.token;
+      console.log('token cookie', tokenCookie);
+      console.log('Token max age(process.env.TOKEN_MAX_AGE/cookies.maxAge):', cookies.maxAge);
+
+      const signInResult = await signIn('custom-provider', {
+        token: tokenCookie,
+        redirect: false,
+      });
+      if (signInResult.error) {
+        console.error('Error during sign in:', signInResult.error);
+      }
+      router.push('/'); // redirect to the dashboard page on successful login
+    } catch (error) {
+      console.error('Error in handleLoginSuccess:', error);
+    }
   }
-  const handleLogin = async (event) => {
+
+  const handleLogin = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     open();
+    const basepath = baseconfig.prefix;
     const loginURL = `${basepath}/api/user/login`;
+    console.log('login url?', loginURL);
+
     const response = await fetch(loginURL, {
       // the URL of your Nest.js API endpoint
       method: 'POST',
@@ -167,7 +145,8 @@ export default function LoginPage(props) {
     </Container>
   );
 }
-LoginPage.getInitialProps = async (ctx) => {
+
+LoginPage.getInitialProps = async (ctx: any) => {
   return {
     title: `Login ${siteTitle}`,
   };

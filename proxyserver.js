@@ -12,7 +12,8 @@ const _backendendurl = `http://127.0.0.1:${baseconfig.backendport}`;
 console.log("_frontendurl", _frontendurl);
 console.log("_backendendurl", _backendendurl);
 fastify.register(proxy, {
-  upstream: _backendendurl,
+  //upstream: _backendendurl,
+  upstream: `${_backendendurl}/api`,
   prefix: `${_prefix}/api`, // optional
 });
 fastify.register(proxy, {
