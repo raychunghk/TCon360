@@ -32,14 +32,17 @@ export class UsersController {
   //@HttpCode(200)
   //@UseGuards(LocalAuthGuard)
   @Post('user/login')
-  async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
+  async login(
+    @Body() loginDto: LoginDto,
+  ): Promise<{ accessToken: string; tokenMaxAge: Number }> {
     console.log('login controller');
-    console.log(loginDto);
+    console.log('loginDto', loginDto);
     const { identifier, password } = loginDto;
     const accessToken = await this.authService.login(identifier, password);
     console.log('accessToken');
     console.log(accessToken);
-    return { accessToken };
+    const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+    return { accessToken, tokenMaxAge };
   }
   @Post('user/validateuser')
   //async signUp(@Request() req) {

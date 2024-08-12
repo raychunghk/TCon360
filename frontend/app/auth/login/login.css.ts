@@ -1,11 +1,16 @@
 import { style } from '@vanilla-extract/css';
 
 import backgroundImg from '@/public/images/loginbg1.webp';
+import { baseconfig } from '@/../baseconfig';
+console.log(baseconfig);
+const bgImage = `${baseconfig.prefix}/images/loginbg1.webp`;
 export const wrapper = style({
   backgroundSize: 'cover',
+  //backgroundImage: `url('${bgImage}')`,
   backgroundImage: `url('${backgroundImg.src}')`,
   height: '100vh',
 });
+
 export const form = style({
   maxWidth: 450,
   paddingTop: 80,

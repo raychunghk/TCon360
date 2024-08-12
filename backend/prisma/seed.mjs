@@ -7,9 +7,9 @@ import argon2 from 'argon2';
 import privatedata from './privatedata.mjs';
 const prisma = new PrismaClient();
 async function main() {
-  //await gencalendar();
-  //await genholiday();
-  //await createViewIfNotExists();
+  await gencalendar();
+  await genholiday();
+  await createViewIfNotExists();
   await genStaffInfo();
 }
 function createViewIfNotExists() {

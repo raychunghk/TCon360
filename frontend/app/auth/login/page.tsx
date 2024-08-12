@@ -13,7 +13,9 @@ import {
   LoadingOverlay,
 } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+//import { signIn } from 'next-auth/react';
+import { signOut } from '@/auth';
+import { SignIn } from '@/lib/auth-action';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { siteTitle } from '@/components/util/label';
@@ -22,11 +24,24 @@ import * as classes from './login.css';
 import '@mantine/core/styles.css';
 import { baseconfig } from '@/../baseconfig';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+async function getProviders() {
+  const basepath = baseconfig.prefix;
+  const loginURL = `${basepath}/api/user/login`;
+  //const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/providers`);
+  const res = await fetch(`${basepath}/api/auth/providers`);
 
+  if (!res.ok) {
+    throw new Error('Failed to fetch providers');
+  } else {
+    console.log(res.body);
+  }
+
+  return res.json();
+}
 export default function LoginPage(props: any) {
   const router = useRouter();
   const { setAuthtoken } = useStore();
-
+  // const resp: ReturnType<typeof getProviders> = (await getProviders()) || {};
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [loginStatus, setLoginStatus] = useState(''); // add login status state variable
@@ -37,7 +52,9 @@ export default function LoginPage(props: any) {
       const data = await response.json();
       const token = data.accessToken;
       setAuthtoken(token);
-      const _maxAge = process.env.TOKEN_MAX_AGE;
+      //const _maxAge = process.env.TOKEN_MAX_AGE;
+      const _maxAge = data.tokenMaxAge;
+
       console.log('_maxage in handleLoginSuccess', _maxAge);
       // set the user's session token in localStorage
       if (_maxAge) {
@@ -54,14 +71,11 @@ export default function LoginPage(props: any) {
       console.log('token cookie', tokenCookie);
       console.log('Token max age(process.env.TOKEN_MAX_AGE/cookies.maxAge):', cookies.maxAge);
 
-      const signInResult = await signIn('custom-provider', {
-        token: tokenCookie,
-        redirect: false,
-      });
+      const signInResult = await SignIn(tokenCookie);
       if (signInResult.error) {
         console.error('Error during sign in:', signInResult.error);
       }
-      router.push('/'); // redirect to the dashboard page on successful login
+      router.push(`${baseconfig.prefix}/`); // redirect to the dashboard page on successful login
     } catch (error) {
       console.error('Error in handleLoginSuccess:', error);
     }
@@ -102,7 +116,7 @@ export default function LoginPage(props: any) {
           {siteTitle}
         </Title>
         {loginStatus && (
-          <Text color="red" fw={700} fz="md" ta="center">
+          <Text c="red" fw={700} fz="md" ta="center">
             {loginStatus}
           </Text>
         )}{' '}

@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { JwtService } from '@nestjs/jwt';
-import argon2 from 'argon2';
+import * as argon2 from 'argon2';
 import { UsersService } from './users.service';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -132,7 +132,7 @@ export class AuthService {
       if (!user) {
         throw new Error('Invalid credentials');
       }
-
+      console.log('argon2', argon2);
       const isPasswordValid = await argon2.verify(user.password, password);
       if (!isPasswordValid) {
         throw new Error('Invalid credentials');

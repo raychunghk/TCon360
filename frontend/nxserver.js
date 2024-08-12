@@ -19,13 +19,20 @@ app.prepare().then(() => {
     console.log('parseURL', parsedUrl);
     const frontendprefix = `${baseconfig.proxypath}/${baseconfig.frontendport}`;
     console.log('frontendprefix', frontendprefix);
+    console.log('baseconfig.prefix', baseconfig.prefix);
     if (parsedUrl.pathname.startsWith(baseconfig.prefix)) {
       // Remove /absproxy/3333 from the pathname
       parsedUrl.pathname = parsedUrl.pathname.replace(baseconfig.prefix, '');
+      console.log('start with 3333, change url:', parsedUrl.pathname);
     }
     if (parsedUrl.pathname.startsWith(frontendprefix)) {
       // Remove /absproxy/3333 from the pathname
       parsedUrl.pathname = parsedUrl.pathname.replace(frontendprefix, '');
+      console.log('ParseURL condition frontendprefix:', parsedUrl.pathname);
+    }
+    if (parsedUrl.pathname.indexOf(':3000') > 0) {
+      parsedUrl.pathname = parsedUrl.pathname.replace(':3000', `:${baseconf.frontendport}`);
+      console.log('url contains port 3000', parsedUrl.pathname);
     }
     handle(req, res, parsedUrl);
   }).listen(baseconfig.frontendport, (err) => {

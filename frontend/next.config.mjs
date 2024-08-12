@@ -8,9 +8,11 @@ const { baseconfig } = baseconf;
 // Load environment variables from .env file
 dotenv.config();
 const _basepath = baseconfig.prefix;
-console.log('_basepath?', _basepath);
+//for testing with frontend stand alone
+//const _basepath = 'absproxy/2000';
+console.log('next config _basepath?', _basepath);
 const _assetPrefix = `${baseconfig.proxypath}/${baseconfig.frontendport}`;
-console.log('asset prefix?', _assetPrefix);
+console.log('next config  asset prefix?', _assetPrefix);
 // Define Next.js configuration object
 const nextConfig = {
   // Set the base path for the application (commented out)
@@ -32,7 +34,11 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
-
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:*', '127.0.0.1:*', '*.raygor.cc', '*.raygor.cc:*'],
+    },
+  },
   // Define environment variables
   env: {
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
