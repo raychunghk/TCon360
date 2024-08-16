@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 //import { basepath } from '/global';
-import useStore from '@/components/store/zstore';
+import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
+import { baseconfig } from '@/../baseconfig';
 interface StaffData {
   activeUser: any;
   activeStaff: any;
@@ -24,7 +25,30 @@ export function useStaffData(): StaffData {
       state.setNextContractStartDate,
     ]),
   );*/
-  const [
+  // const [
+  //   activeContract,
+  //   setActiveContract,
+  //   activeStaff,
+  //   setActiveStaff,
+  //   activeUser,
+  //   setActiveUser,
+  //   userStatus,
+  //   basepath,
+  //   setBasepath,
+  // ] = useStore(
+  //   useShallow((state) => [
+  //     state.activeContract,
+  //     state.setActiveContract,
+  //     state.activeStaff,
+  //     state.setActiveStaff,
+  //     state.activeUser,
+  //     state.setActiveUser,
+  //     state.userStatus,
+  //     state.basepath,
+  //     state.setBasepath,
+  //   ])
+  // );
+  const {
     activeContract,
     setActiveContract,
     activeStaff,
@@ -33,19 +57,8 @@ export function useStaffData(): StaffData {
     setActiveUser,
     userStatus,
     basepath,
-  ] = useStore(
-    useShallow((state) => [
-      state.activeContract,
-      state.setActiveContract,
-      state.activeStaff,
-      state.setActiveStaff,
-      state.activeUser,
-      state.setActiveUser,
-      state.userStatus,
-      state.basepath,
-    ])
-  );
-
+    setBasepath,
+  } = useStore();
   const fetchData = async () => {
     try {
       const headers = {
@@ -81,10 +94,26 @@ export function useStaffData(): StaffData {
     }
   };
 
-  useEffect(() => {
-    if (tokenCookie) fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const _basepath = baseconfig.basepath;
+  //   if (!basepath) {
+  //     setBasepath(_basepath);
+  //   }
 
+  //   if (tokenCookie) fetchData();
+  // }, []);
+  useEffect(() => {
+    const _basepath = baseconfig.basepath;
+    if (!basepath) {
+      setBasepath(_basepath);
+    }
+  }, [baseconfig.basepath, basepath, setBasepath]);
+
+  useEffect(() => {
+    if (basepath && tokenCookie) {
+      fetchData();
+    }
+  }, [basepath, tokenCookie]);
   const refreshFormValues = async () => {
     await fetchData();
   };

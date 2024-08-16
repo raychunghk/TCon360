@@ -2,7 +2,7 @@ import { AppShell, Flex } from '@mantine/core';
 import MainLinks from './mainlinks';
 
 import CreateTimesheetPage from '@/components/timesheet/CreateTimeSheet';
-import useStore from '@/components/store/zstore';
+import useStore from '@/components/stores/zstore';
 export default function AppShellNavBar({ opened }) {
   const { navbarwidth } = useStore();
   return (
@@ -21,7 +21,7 @@ export default function AppShellNavBar({ opened }) {
         gap={{ base: 'sm', sm: 'xs' }}
       >
         {/* Header with logo */}
-        {/* <CreateTimesheetPage pickersize="xs" /> */}
+        <CreateTimesheetPage pickersize="xs" />
 
         {/* Links sections */}
         <MainLinks />

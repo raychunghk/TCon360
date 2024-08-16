@@ -15,11 +15,11 @@ import {
 import { useRouter } from 'next/navigation';
 //import { signIn } from 'next-auth/react';
 import { signOut } from '@/auth';
-import { SignIn } from '@/lib/auth-action';
+import { SignIn } from '@/app/lib/auth-action';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { siteTitle } from '@/components/util/label';
-import useStore from '@/components/store/zstore';
+import useStore from '@/components/stores/zstore';
 import * as classes from './login.css';
 import '@mantine/core/styles.css';
 import { baseconfig } from '@/../baseconfig';

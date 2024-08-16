@@ -4,9 +4,8 @@ import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React from 'react';
+import useStore from '@/components/stores/zstore';
 import { useState, useEffect } from 'react';
-
-import useStore from 'pages/reducers/zstore';
 
 export default function HeaderPopover({}) {
   const [openedPop, setOpenedPop] = useState(false);

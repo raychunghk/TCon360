@@ -25,12 +25,12 @@ import {
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { useStaffData } from 'components/useStaffData';
 import * as classes from './MainShell.css';
 import useUIStore from 'pages/reducers/useUIStore';
-import useStore from 'pages/reducers/zstore';
+import useStore from '@/components/stores/zstore';
 
 import useTokenExpiration from './useTokenExpiration';
 import { child } from 'winston';
@@ -69,10 +69,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     borderRadius: theme.radius.sm,
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
     '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
     },
   });
 

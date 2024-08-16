@@ -1,6 +1,5 @@
-'use client';
 import { create } from 'zustand';
-import { baseconfig } from '../../../baseconfig';
+
 const useStore = create((set) => ({
   contractStartDate: null,
   contractEndDate: null,
@@ -26,9 +25,24 @@ const useStore = create((set) => ({
   formType: null,
   selectedDatesCount: 0,
   authtoken: '',
-  basepath: baseconfig.prefix,
+  basepath: null,
   user: null,
   timesheetDefaultDate: new Date(),
+  isMonthPickerChangeEvent: false,
+  isFrontCalendarChangeEvent: false,
+  setIsFrontCalendarChangeEvent: (_evt) =>
+    set((state) => ({
+      isFrontCalendarChangeEvent: _evt,
+    })),
+  selectedMonth: new Date(),
+  setIsMonthPickerChangeEvent: (_evt) =>
+    set((state) => ({
+      isMonthPickerChangeEvent: _evt,
+    })),
+  setSelectedMonth: (_dt) =>
+    set((state) => ({
+      selectedMonth: _dt,
+    })),
   setTimesheetDefaultDate: (_dt) =>
     set((state) => ({
       timesheetDefaultDate: _dt,

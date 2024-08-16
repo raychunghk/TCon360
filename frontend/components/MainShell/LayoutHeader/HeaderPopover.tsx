@@ -6,7 +6,7 @@ import { format, parseISO } from 'date-fns';
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-import useStore from '../../store/zstore';
+import useStore from '@/components/stores/zstore';
 export default function HeaderPopover({}) {
   const [openedPop, setOpenedPop] = useState(false);
   const [userFields, setuserFields] = useState(null);

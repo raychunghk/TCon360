@@ -11,5 +11,6 @@ module.exports = {
   baseconfig: {
     ...baseconfig,
     prefix: `${baseconfig.proxypath}/${baseconfig.mainport}`,
+    basepath: `${baseconfig.proxypath}/${baseconfig.mainport}`,
   },
 };

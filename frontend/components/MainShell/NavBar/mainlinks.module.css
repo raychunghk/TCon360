@@ -5,7 +5,7 @@
 .unstylebtn {
   display: block;
 
-  padding: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-sm) !important;
   border-radius: var(--mantine-radius-xs);
   width: 190px;
 }

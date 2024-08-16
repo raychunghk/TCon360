@@ -1,17 +1,19 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { parseCookies, destroyCookie } from 'nookies';
 import { format, addSeconds, differenceInSeconds } from 'date-fns';
-import useStore from '@/components/store/zstore';
+import useStore from '@/components/stores/zstore';
+import { usePathname } from 'next/navigation';
 
 import { useShallow } from 'zustand/react/shallow';
 
 export default function useTokenExpiration() {
   const router = useRouter();
   const { activeUser } = useStore();
-  console.log('router pathname', router.pathname);
+  const pathname = usePathname();
+  console.log('router pathname', pathname);
   useEffect(() => {
-    if (['/user/login', '/user/signup'].includes(router.pathname)) {
+    if (['/user/login', '/user/signup'].includes(pathname)) {
       // Skip token expiration logic for '/user/login' page
       return;
     }

@@ -1,4 +1,7 @@
 import React from 'react';
+import { ThemeIcon, UnstyledButton, Group, Text, Anchor, NavLink } from '@mantine/core';
+import Link from 'next/link';
+import '@mantine/core/styles.css';
 import {
   IconHome2,
   IconGauge,
@@ -16,10 +19,9 @@ import {
   IconUserEdit,
   IconSettings,
 } from '@tabler/icons-react';
-import { ThemeIcon, UnstyledButton, Group, Text, Anchor, NavLink } from '@mantine/core';
-import Link from 'next/link';
+
 import styles from './mainlinks.module.css';
-import useStore from '@/components/store/zstore';
+import useStore from '@/components/stores/zstore';
 type LinkItemProps = {
   icon: React.ReactNode;
   color: string;
@@ -43,10 +45,10 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
 }
 function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
   const marginLeft = isChild ? 20 : 0;
-
+  const { basepath } = useStore();
   return (
     <div style={{ marginLeft }}>
-      <CustomLink href={link}>
+      <CustomLink href={`${basepath ?? ''}${link}`}>
         <Group>
           <ThemeIcon color={color} variant="light">
             {icon}

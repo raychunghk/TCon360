@@ -1,6 +1,6 @@
 import { signIn } from 'next-auth/react';
 import { parseCookies, setCookie } from 'nookies';
-import useStore from 'pages/reducers/zstore';
+import useStore from '@/components/stores/zstore';
 //import { setAuthtoken } from 'pages/reducers/calendarReducer';
 export async function handleLoginSuccess(response, router) {
   const data = await response.json();
