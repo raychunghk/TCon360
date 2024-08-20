@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev2": "node nxserver.js",
+    "dev2": "next dev",
+    "dev2x": "node nxserver.js",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",

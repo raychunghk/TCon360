@@ -12,7 +12,7 @@ import { auth } from '@/auth';
 export function middleware(request: NextRequest) {
   console.log(`Next Request URL: ${request.url}`);
   if (request.url.indexOf(':3000') > 0) {
-    console.log(`URL contains port 3000: ${request.url}`);
+    console.log(`middleware :URL contains port 3000: ${request.url}`);
     const updatedUrl = request.nextUrl.clone();
 
     //updatedUrl.port = '2000';

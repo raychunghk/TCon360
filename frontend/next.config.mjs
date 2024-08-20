@@ -58,6 +58,10 @@ const nextConfig = {
         source: '/images/:path*',
         destination: `${_basepath}/images/:path*`,
       },
+      {
+        source: '/:path*',
+        destination: `${_basepath}/:path*`,
+      },
     ];
   },
 

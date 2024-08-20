@@ -58,10 +58,10 @@ export function MainShell({ children, contentpadding = '10px', handleTimesheetDa
   };
   const router = useRouter();
   const handleSignout = () => {
-    clearAllCookies();
-    clearAllState();
-
-    router.push('/login');
+    //clearAllCookies();
+    //clearAllState();
+    console.log('router', router);
+    //router.push('/login');
   };
   const { activeUser, activeStaff, status } = useStaffData();
 
