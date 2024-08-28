@@ -36,7 +36,7 @@ async function bootstrap() {
     //app.setGlobalPrefix(appPrefix);
 
     //const service = app.get(RenderService);
-
+    console.log('using express');
     app.use(
       session({
         secret: 'my-secret',

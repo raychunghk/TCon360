@@ -5,7 +5,7 @@ import AppShellNavBar from './NavBar/AppShellNavBar';
 import Link from 'next/link';
 import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
-import { basepath } from '/global';
+
 import '@mantine/dates/styles.css';
 import HeaderPopover from './LayoutHeader/HeaderPopover';
 import {
@@ -26,6 +26,7 @@ import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/navigation';
+import useCustRouter from '@/components/useCustRouter';
 import { useDisclosure } from '@mantine/hooks';
 import { useStaffData } from 'components/useStaffData';
 import * as classes from './MainShell.css';
@@ -48,7 +49,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     const cookies2 = parseCookies();
     console.log('validate if cookie deleted:cookies2', cookies2);
   };
-  const router = useRouter();
+  const router = useCustRouter();
   const handleSignout = () => {
     clearAllCookies();
     clearAllState();

@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import { parseCookies, destroyCookie } from 'nookies';
 import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import useStore from '@/components/stores/zstore';
 
 import { useShallow } from 'zustand/react/shallow';
+import useCustRouter from '../useCustRouter';
 
 export default function useTokenExpiration() {
-  const router = useRouter();
+  const router = useCustRouter();
   const { activeUser } = useStore();
   console.log('router pathname', router.pathname);
   useEffect(() => {

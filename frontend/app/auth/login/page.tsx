@@ -12,7 +12,7 @@ import {
   Anchor,
   LoadingOverlay,
 } from '@mantine/core';
-import { useRouter } from 'next/navigation';
+import useCustRouter from '@/components/useCustRouter';
 //import { signIn } from 'next-auth/react';
 import { signOut } from '@/auth';
 import { SignIn } from '@/app/lib/auth-action';
@@ -39,7 +39,7 @@ async function getProviders() {
   return res.json();
 }
 export default function LoginPage(props: any) {
-  const router = useRouter();
+  const router = useCustRouter();
   const { setAuthtoken } = useStore();
   // const resp: ReturnType<typeof getProviders> = (await getProviders()) || {};
   const [password, setPassword] = useState('');
@@ -75,7 +75,7 @@ export default function LoginPage(props: any) {
       if (signInResult.error) {
         console.error('Error during sign in:', signInResult.error);
       }
-      router.push(`${baseconfig.prefix}/`); // redirect to the dashboard page on successful login
+      router.push(`/`); // redirect to the dashboard page on successful login
     } catch (error) {
       console.error('Error in handleLoginSuccess:', error);
     }

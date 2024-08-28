@@ -80,6 +80,7 @@ export const authOptions = {
       },
     },
   ],
+  basePath: '/absproxy/3333/api/auth',
   callbacks: {
     // async jwt(token, user, account, profile, isNewUser) {
 

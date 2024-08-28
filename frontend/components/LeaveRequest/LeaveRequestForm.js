@@ -1,3 +1,4 @@
+'use client';
 import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,14 +17,11 @@ import {
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import MyCard from '@/components/MyCard';
-
 import MyModal from '@/components/MyModal';
-
 import { format, parseISO, isWeekend } from 'date-fns';
-
 import Head from 'next/head';
 
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import {
   getBusinessDays,
   formatResponseDate,
@@ -46,6 +44,7 @@ import {
 import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import useUIStore from '@/components/stores/useUIStore';
+import { getMySession } from '@/app/lib/auth-action';
 export async function getServerSideProps(context) {
   const session = await getServerSession(context);
   const staff = session.staff;
@@ -118,13 +117,25 @@ export default function LeaveRequestForm({
     Authorization: `Bearer ${tokenCookie}`,
   };
 
-  const { data: session } = useSession();
-
+  // const { data: session } = useSession();
+  const sessiondata = null;
+  console.log('session', sessiondata);
   useEffect(() => {
-    console.log('session?', session);
+    // Function to fetch session and update state
+    const fetchSessionData = async () => {
+      try {
+        const session = await getMySession();
+        //setStaff(session.user.staff);
+        setLeaveRequest({ ...leaveRequest, staffId: activeStaff.id });
+      } catch (error) {
+        console.error('Error fetching session:', error);
+        // Handle error, e.g., display an error message
+      }
+    };
+
+    // Only fetch session if activeUser exists
     if (activeUser) {
-      //setStaff(session.user.staff);
-      setLeaveRequest({ ...leaveRequest, staffId: activeStaff.id });
+      fetchSessionData();
     }
   }, [activeUser]);
   const getTextinputProps = (fieldName) => {

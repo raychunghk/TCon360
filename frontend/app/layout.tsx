@@ -36,7 +36,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconLogout, IconLogin } from '@tabler/icons-react';
-import { useSession, signOut } from 'next-auth/react';
+//import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/router';
 import { useDisclosure } from '@mantine/hooks';
@@ -44,11 +44,15 @@ import { useStaffData } from '@/components/hooks/useStaffData';
 import * as classes from '@/components/layout.css';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
-import useTokenExpiration from '@/components/hooks/useTokenExpiration';
+import { usePublicHolidays } from '@/components/util/usePublicHolidays';
+//import useTokenExpiration from '@/components/hooks/useTokenExpiration';
 import { child } from 'winston';
+import Providers from '@/components/providers';
 export default function RootLayout({ children }: { children: any }) {
   const faviconUrl = `${baseconfig.prefix}/favicon.svg`;
+  const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
 
+  //useTokenExpiration();
   const { basepath, setBasepath } = useStore();
   useEffect(() => {
     const _basepath = baseconfig.basepath;
@@ -67,7 +71,7 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

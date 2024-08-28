@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useSession, SessionProvider } from 'next-auth/react';
 
 import * as classes from './login/login.css';
@@ -24,14 +24,18 @@ import Head from 'next/head';
 
 import Link from 'next/link';
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
-import Signupcard from '../../components/Signupcard';
+import Signupcard from '@/components/Signupcard';
 import { handleLoginSuccess } from './handleLoginSuccess';
 import { DatePickerInput } from '@mantine/dates';
 import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
-import { excludeHoliday, myRenderDay, setPublicHolidays } from 'components/util/leaverequest.util';
+import {
+  excludeHoliday,
+  myRenderDay,
+  setPublicHolidays,
+} from '@/components/util/leaverequest.util';
 import { PublicHolidaysContext } from 'pages/_app';
 //import { useDispatch } from 'react-redux';
-import { UtilsContext } from 'components/util/utilCtx';
+import { UtilsContext } from '@/components/util/utilCtx';
 import axios from 'axios';
 import { IconX } from '@tabler/icons';
 // const useStyles = createStyles((theme) => ({

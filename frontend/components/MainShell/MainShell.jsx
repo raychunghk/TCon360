@@ -27,7 +27,7 @@ import {
   Anchor,
 } from '@mantine/core';
 import { IconLogout, IconLogin } from '@tabler/icons-react';
-import { useSession, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 //import { useRouter } from 'next/router';
 import { useRouter } from 'next/navigation';
@@ -39,6 +39,7 @@ import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
 import { baseconfig } from '@/../baseconfig';
 import { child } from 'winston';
+import useCustRouter from '../useCustRouter';
 //export function MainShell({ children: any, home, contentpadding = '10px' }) {
 export function MainShell({ children, contentpadding = '10px', handleTimesheetDateChange }) {
   const theme = useMantineTheme();
@@ -56,12 +57,12 @@ export function MainShell({ children, contentpadding = '10px', handleTimesheetDa
     const cookies2 = parseCookies();
     console.log('validate if cookie deleted:cookies2', cookies2);
   };
-  const router = useRouter();
+  const router = useCustRouter();
   const handleSignout = () => {
     //clearAllCookies();
     //clearAllState();
     console.log('router', router);
-    //router.push('/login');
+    router.push('/login');
   };
   const { activeUser, activeStaff, status } = useStaffData();
 

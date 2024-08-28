@@ -18,6 +18,13 @@ fastify.register(proxy, {
   upstream: `${_frontendurl}/api/auth`,
   prefix: `${_prefix}/api/auth`,
   websocket: true,
+  preHandler: (request, reply, done) => {
+    if (request.url.startsWith(`${_prefix}/api/auth`)) {
+      console.log("API Auth called");
+      console.log("url", request.url);
+    }
+    done();
+  },
 });
 
 // Proxy for other API requests to backend

@@ -2,23 +2,21 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { format } from 'date-fns';
-import { basepath } from '/global';
-import useStore from 'pages/reducers/zstore';
+
+import useStore from '@/components/stores/zstore';
 export function usePublicHolidays() {
   const [loading, setLoading] = useState(false);
 
-  const { publicHolidays, setPublicHolidays } = useStore();
+  const { publicHolidays, setPublicHolidays, basepath, setBasepath } = useStore();
   async function loadPublicHolidays() {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${basepath}/api/timesheet/publicholidays`,
-      );
+      const response = await axios.get(`${basepath}/api/timesheet/publicholidays`);
       const pldays = response.data.map((holiday) => ({
         Summary: holiday.Summary,
         StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
       }));
-
+      console.log('public holidays', pldays);
       // dispatch(setPublicHolidays(pldays));
       setPublicHolidays(pldays);
     } catch (error) {
@@ -29,10 +27,12 @@ export function usePublicHolidays() {
   }
 
   useEffect(() => {
-    if (!publicHolidays || publicHolidays.length === 0) {
-      loadPublicHolidays();
+    if (basepath) {
+      if (!publicHolidays || publicHolidays.length === 0) {
+        loadPublicHolidays();
+      }
     }
-  }, []);
+  }, [basepath]);
 
   return { publicHolidays, loading, loadPublicHolidays };
 }
