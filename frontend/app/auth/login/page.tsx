@@ -12,7 +12,7 @@ import {
   Anchor,
   LoadingOverlay,
 } from '@mantine/core';
-import useCustRouter from '@/components/useCustRouter';
+import { default as useRouter } from '@/components/useCustRouter';
 //import { signIn } from 'next-auth/react';
 import { signOut } from '@/auth';
 import { SignIn } from '@/app/lib/auth-action';
@@ -39,7 +39,7 @@ async function getProviders() {
   return res.json();
 }
 export default function LoginPage(props: any) {
-  const router = useCustRouter();
+  const router = useRouter();
   const { setAuthtoken } = useStore();
   // const resp: ReturnType<typeof getProviders> = (await getProviders()) || {};
   const [password, setPassword] = useState('');

@@ -5,10 +5,10 @@ import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import useStore from '@/components/stores/zstore';
 
 import { useShallow } from 'zustand/react/shallow';
-import useCustRouter from '../useCustRouter';
+import { default as useRouter } from '@/components/useCustRouter';
 
 export default function useTokenExpiration() {
-  const router = useCustRouter();
+  const router = useRouter();
   const { activeUser } = useStore();
   console.log('router pathname', router.pathname);
   useEffect(() => {

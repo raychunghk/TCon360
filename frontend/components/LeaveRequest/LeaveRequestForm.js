@@ -3,17 +3,7 @@ import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { parseCookies } from 'nookies';
-import {
-  Button,
-  TextInput,
-  Grid,
-  useMantineTheme,
-  rem,
-  Card,
-  Select,
-  Text,
-  Flex,
-} from '@mantine/core';
+import { Button, TextInput, Grid, useMantineTheme, Card, Select, Text, Flex } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import MyCard from '@/components/MyCard';
@@ -69,7 +59,15 @@ export default function LeaveRequestForm({
   console.log('leave Request ID?', leaveRequestId);
   console.log('leave purpose?', leavePurpose);
 
-  const { publicHolidays, activeUser, activeStaff, activeContract, basepath } = useStore();
+  const { publicHolidays, activeUser, activeStaff, activeContract, basepath } = useStore(
+    useShallow((state) => [
+      state.publicHolidays,
+      state.activeUser,
+      state.activeStaff,
+      state.activeContract,
+      state.basepath,
+    ])
+  );
   const [isEventUpdated, setIsEventUpdated] = useUIStore(
     useShallow((state) => [state.isEventUpdated, state.setIsEventUpdated])
   );

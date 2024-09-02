@@ -1,0 +1,31 @@
+.clsweekend {
+  color: #ca5478;
+  font-weight: bold;
+  opacity: 0.8 !important;
+  border-color: #f89292;
+  background: #fce6b4 !important;
+}
+
+.clsPublicHoliday {
+  color: rgb(241, 68, 68);
+
+  background: rgb(255, 198, 221);
+
+  background: linear-gradient(
+    0deg,
+    rgba(255, 198, 221, 1) 0%,
+    rgba(255, 210, 228, 1) 28%,
+    rgba(255, 229, 240, 1) 48%,
+    rgba(246, 239, 242, 1) 88%
+  ) !important;
+  font-weight: bold;
+  color-scheme: dark;
+  opacity: 0.9 !important;
+}
+
+.clsVacation {
+  color: #000b5b;
+  font-weight: bold;
+
+  background: #6d6ff5 !important;
+}

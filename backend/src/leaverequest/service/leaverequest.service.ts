@@ -41,9 +41,12 @@ export class LeaveRequestService {
   getFilePath(fileName: string): string {
     // return path.join(__dirname, '../../timesheet', fileName);
     const isDevelopment = process.env.NODE_ENV === 'development';
+    /*const rootPath = isDevelopment
+      ? path.resolve('.')
+      : path.resolve(__dirname, '..', '..', '..', '..');*/
     const rootPath = isDevelopment
       ? path.resolve('.')
-      : path.resolve(__dirname, '..', '..', '..', '..');
+      : path.resolve(__dirname, '..', '..', '..');
     const filePath = path.join(rootPath, 'timesheet', fileName);
     console.log('get file path file name', filePath);
     return filePath;

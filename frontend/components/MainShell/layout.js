@@ -25,8 +25,8 @@ import {
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { useSession, signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
-import { useRouter } from 'next/navigation';
-import useCustRouter from '@/components/useCustRouter';
+//import { useRouter } from 'next/navigation';
+import { useCustRouter as useRouter } from '@/components/useCustRouter';
 import { useDisclosure } from '@mantine/hooks';
 import { useStaffData } from 'components/useStaffData';
 import * as classes from './MainShell.css';
@@ -49,7 +49,7 @@ export default function Layout({ children, home, contentpadding = '10px' }) {
     const cookies2 = parseCookies();
     console.log('validate if cookie deleted:cookies2', cookies2);
   };
-  const router = useCustRouter();
+  const router = useRouter();
   const handleSignout = () => {
     clearAllCookies();
     clearAllState();

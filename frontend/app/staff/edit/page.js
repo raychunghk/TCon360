@@ -8,7 +8,7 @@ import axios from 'axios';
 import Head from 'next/head';
 import { TextInput, Grid, Button, Text, Code, Card } from '@mantine/core';
 
-import { useCustRouter } from '@/components/useCustRouter';
+import { default as useRouter } from '@/components/useCustRouter';
 
 //import Layout from '@/components/layout';
 import { MainShell } from '@/components/MainShell/MainShell';
@@ -46,7 +46,7 @@ export default function EditStaff() {
   //const setActiveContract = useStore((state) => state.setActiveContract);
   const { setActiveContract, setActiveStaff, setBasepath, nextContractStartDate, basepath } =
     useStore();
-  const router = useCustRouter();
+  const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
   const getStaffData = async () => {
