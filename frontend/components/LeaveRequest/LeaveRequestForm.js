@@ -58,8 +58,12 @@ export default function LeaveRequestForm({
   console.log('form type?', formType);
   console.log('leave Request ID?', leaveRequestId);
   console.log('leave purpose?', leavePurpose);
+  /*
 
-  const { publicHolidays, activeUser, activeStaff, activeContract, basepath } = useStore(
+const [nuts, honey] = useBearStore(
+  useShallow((state) => [state.nuts, state.honey]),
+)*/
+  const [publicHolidays, activeUser, activeStaff, activeContract, basepath] = useStore(
     useShallow((state) => [
       state.publicHolidays,
       state.activeUser,
@@ -123,19 +127,25 @@ export default function LeaveRequestForm({
     const fetchSessionData = async () => {
       try {
         const session = await getMySession();
-        //setStaff(session.user.staff);
-        setLeaveRequest({ ...leaveRequest, staffId: activeStaff.id });
+        if (!leaveRequest) {
+          console.log('in useeffect ActiveUser, leaveRequest is null');
+        }
+
+        // Check if activeStaff.id exists and is different from session.user.staff.id
+        if (activeStaff?.id !== session.user.staff.id) {
+          setLeaveRequest({ ...leaveRequest, staffId: session.user.staff.id });
+        }
       } catch (error) {
         console.error('Error fetching session:', error);
         // Handle error, e.g., display an error message
       }
     };
 
-    // Only fetch session if activeUser exists
-    if (activeUser) {
+    // Only fetch session if activeStaff is not already set (initial fetch)
+    if (!activeStaff?.id) {
       fetchSessionData();
     }
-  }, [activeUser]);
+  }, [activeStaff]); // Depend on activeStaff to trigger only on changes
   const getTextinputProps = (fieldName) => {
     return {
       name: fieldName,
@@ -145,7 +155,7 @@ export default function LeaveRequestForm({
   };
 
   useEffect(() => {
-    if (formType === 'edit') {
+    if (basepath && formType === 'edit') {
       const getLeaveRequestData = async () => {
         try {
           const headers = {
@@ -168,7 +178,9 @@ export default function LeaveRequestForm({
               dateOfReturn: new Date(dateOfReturn),
               staffSignDate: new Date(staffSignDate),
             };
-
+            if (!leaveRequest) {
+              console.log('in useeffect FormType, leaveRequest is null');
+            }
             setLeaveRequest(formattedData);
           }
         } catch (error) {
@@ -176,69 +188,73 @@ export default function LeaveRequestForm({
         }
       };
 
-      getLeaveRequestData();
+      if (formType) getLeaveRequestData();
     }
   }, [formType]);
-  useEffect(() => {
-    const { leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd } = leaveRequest;
-    const startDate = new Date(leavePeriodStart);
-    const endDate = leavePeriodEnd ? new Date(leavePeriodEnd) : null;
-    let _leavedays = 0;
-    let returnDate = null;
-    let _ampmend = AMPMEnd;
-    let _ampmstart = AMPMStart;
-    if (!leavePeriodStart) {
-      leaveRequest.leavePeriodEnd = null;
-      leaveRequest.leaveDays = 0;
-      leaveRequest.dateOfReturn = null;
-    }
-    if (endDate) {
-      if (!AMPMEnd || AMPMEnd === 'NA') {
-        _ampmend = 'AMPM';
-      }
-      if (AMPMStart === 'AM') {
-        _ampmstart = 'AMPM';
-      }
-      const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
-      const startIsPM = AMPMStart === 'PM';
-      const endIsAM = AMPMEnd === 'AM';
-      const endIsPM = AMPMEnd === 'AMPM';
-      if (startIsAM && endIsAM) {
-        _leavedays = getBusinessDays(startDate, endDate) - 0.5;
-        returnDate = endDate;
-      } else if (startIsPM && endIsPM) {
-        _leavedays = getBusinessDays(startDate, endDate) - 0.5;
-        returnDate = getNextWorkingDate(endDate);
-      } else if (startIsPM && endIsAM) {
-        _leavedays = getBusinessDays(startDate, endDate) - 1;
-        returnDate = endDate;
-      } else if (startIsAM && endIsPM) {
-        _leavedays = getBusinessDays(startDate, endDate);
-        returnDate = getNextWorkingDate(endDate);
 
-        console.log('return date?', returnDate);
+  useEffect(() => {
+    const handleFormValueChange = async () => {
+      const startDate = new Date(leavePeriodStart);
+      const endDate = leavePeriodEnd ? new Date(leavePeriodEnd) : null;
+      let _leavedays = 0;
+      let returnDate = null;
+      let _ampmend = AMPMEnd;
+      let _ampmstart = AMPMStart;
+      if (!leavePeriodStart) {
+        leaveRequest.leavePeriodEnd = null;
+        leaveRequest.leaveDays = 0;
+        leaveRequest.dateOfReturn = null;
       }
-    } else {
-      _ampmend = 'NA';
-      if (AMPMStart === 'AMPM') {
-        _leavedays = 1;
-        returnDate = getNextWorkingDate(startDate);
-      } else if (AMPMStart === 'AM') {
-        _leavedays = 0.5;
-        returnDate = startDate;
-      } else if (AMPMStart === 'PM') {
-        _leavedays = 0.5;
-        returnDate = getNextWorkingDate(startDate);
+      if (endDate) {
+        if (!AMPMEnd || AMPMEnd === 'NA') {
+          _ampmend = 'AMPM';
+        }
+        if (AMPMStart === 'AM') {
+          _ampmstart = 'AMPM';
+        }
+        const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
+        const startIsPM = AMPMStart === 'PM';
+        const endIsAM = AMPMEnd === 'AM';
+        const endIsPM = AMPMEnd === 'AMPM';
+        if (startIsAM && endIsAM) {
+          _leavedays = getBusinessDays(startDate, endDate) - 0.5;
+          returnDate = endDate;
+        } else if (startIsPM && endIsPM) {
+          _leavedays = getBusinessDays(startDate, endDate) - 0.5;
+          returnDate = getNextWorkingDate(endDate);
+        } else if (startIsPM && endIsAM) {
+          _leavedays = getBusinessDays(startDate, endDate) - 1;
+          returnDate = endDate;
+        } else if (startIsAM && endIsPM) {
+          _leavedays = getBusinessDays(startDate, endDate);
+          returnDate = getNextWorkingDate(endDate);
+          console.log('return to work date?', returnDate);
+        }
+      } else {
+        _ampmend = 'NA';
+        if (AMPMStart === 'AMPM') {
+          _leavedays = 1;
+          returnDate = getNextWorkingDate(startDate);
+        } else if (AMPMStart === 'AM') {
+          _leavedays = 0.5;
+          returnDate = startDate;
+        } else if (AMPMStart === 'PM') {
+          _leavedays = 0.5;
+          returnDate = getNextWorkingDate(startDate);
+        }
       }
-    }
-    console.log('leavedays?', _leavedays);
-    setLeaveRequest((prevRequest) => ({
-      ...prevRequest,
-      AMPMEnd: _ampmend,
-      AMPMStart: _ampmstart,
-      leaveDays: _leavedays,
-      dateOfReturn: returnDate,
-    }));
+      console.log('leavedays?', _leavedays);
+      console.log('In use Effect LeaveRequest form value change, prevRequest:', leaveRequest);
+      setLeaveRequest((prevRequest) => ({
+        ...prevRequest,
+        AMPMEnd: _ampmend,
+        AMPMStart: _ampmstart,
+        leaveDays: _leavedays,
+        dateOfReturn: returnDate,
+      }));
+    };
+    const { leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd } = leaveRequest;
+    if (leavePeriodStart) handleFormValueChange();
   }, [
     leaveRequest.AMPMStart,
     leaveRequest.AMPMEnd,

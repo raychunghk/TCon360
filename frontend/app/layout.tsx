@@ -11,6 +11,7 @@ import { baseconfig } from '@/../baseconfig';
 //   title: 'Mantine Next.js template',
 //   description: 'I am using Mantine with Next.js!',
 // };
+import '@/styles/styles.css';
 import styles from './layout.module.css';
 //import '@mantine/core/styles.css';
 import linkstyle from './NavBar/mainlinks.module.css';

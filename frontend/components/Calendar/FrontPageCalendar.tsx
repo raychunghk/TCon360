@@ -62,7 +62,6 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
   const [LeaveRequestPeriod, isMonthPickerChangeEvent, isFrontCalendarChangeEvent] = useStore(
     useShallow((state) => [
       state.LeaveRequestPeriod,
-
       state.isMonthPickerChangeEvent,
       state.isFrontCalendarChangeEvent,
     ])
@@ -175,8 +174,6 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
         handleJumpToMonth(timesheetDefaultDate);
       }
     }
-
-    //handleJumpToMonth(timesheetDefaultDate);
   }, [calendarEvents, timesheetDefaultDate]);
 
   function handleMonthYearChange(info, isUserClick = false) {
@@ -252,9 +249,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
       setDrawerOpen();
     }
   };
-
-  const { isWeekend } = require('date-fns');
-
+  //const { isWeekend } = require('date-fns');
   function setVacationSummary(_user, _events) {
     if (!_user) {
       return;
