@@ -1,88 +1,82 @@
 import { create } from 'zustand';
 
 const useStore = create((set) => ({
-  contractStartDate: null,
-  contractEndDate: null,
-  contractStartMaxDate: null,
-  contractEndMinDate: null,
-  editErrors: null,
-  nextContractStartDate: null,
+  // State variables
   activeContract: null,
   activeStaff: null,
-  navbarwidth: 260,
   activeUser: null,
-  userStatus: null,
-  publicHolidays: null,
-  staffVacation: { total: 0, used: 0, balance: 0 },
-  leaveRequestId: null,
-  LeaveRequestPeriod: null,
-  leavePurpose: null,
-  staff: null,
-  chargeableDays: 0,
-  customTitle: '',
-  calendarEvents: [],
-  currentStart: new Date(),
-  formType: null,
-  selectedDatesCount: 0,
   authtoken: '',
   basepath: null,
-  user: null,
-  timesheetDefaultDate: new Date(),
-  isMonthPickerChangeEvent: false,
+  calendarEvents: [],
+  chargeableDays: 0,
+  clearAllState: () =>
+    set(() => ({
+      activeContract: null,
+      activeStaff: null,
+      activeUser: null,
+      authtoken: '',
+      basepath: null,
+      calendarEvents: [],
+      chargeableDays: 0,
+      contractEndDate: null,
+      contractEndMinDate: null,
+      contractStartDate: null,
+      contractStartMaxDate: null,
+      editErrors: null,
+      LeaveRequestPeriod: null,
+      leavePurpose: null,
+      leaveRequestId: null,
+      navbarwidth: 230,
+      publicHolidays: null,
+      staff: null,
+      staffVacation: { total: 0, used: 0, balance: 0 },
+      selectedDatesCount: 0,
+      customTitle: '',
+      currentStart: new Date(),
+      formType: null,
+      isEventUpdated: false,
+      isFrontCalendarChangeEvent: false,
+      isMonthPickerChangeEvent: false,
+      nextContractStartDate: null,
+      selectedMonth: new Date(),
+      timesheetDefaultDate: new Date(),
+      user: null,
+      userStatus: null,
+    })),
+  contractEndDate: null,
+  contractEndMinDate: null,
+  contractStartDate: null,
+  contractStartMaxDate: null,
+  editErrors: null,
+  formType: null,
   isFrontCalendarChangeEvent: false,
-  setIsFrontCalendarChangeEvent: (_evt) =>
-    set((state) => ({
-      isFrontCalendarChangeEvent: _evt,
-    })),
-  selectedMonth: new Date(),
-  setIsMonthPickerChangeEvent: (_evt) =>
-    set((state) => ({
-      isMonthPickerChangeEvent: _evt,
-    })),
-  setSelectedMonth: (_dt) =>
-    set((state) => ({
-      selectedMonth: _dt,
-    })),
-  setTimesheetDefaultDate: (_dt) =>
-    set((state) => ({
-      timesheetDefaultDate: _dt,
-    })),
-  setStaffVacation: (vacation) =>
-    set((state) => ({
-      staffVacation: vacation,
-    })),
-  setPublicHolidays: (_publicholidays) =>
-    set((state) => ({
-      publicHolidays: _publicholidays,
-    })),
-  setUserStatus: (status) =>
-    set((state) => ({
-      userStatus: status,
-    })),
-  setActiveContract: (contract) =>
-    set((state) => ({
-      activeContract: contract,
-    })),
-  setActiveStaff: (staff) =>
-    set((state) => ({
-      activeStaff: staff,
-    })),
-  setActiveUser: (user) =>
-    set((state) => ({
-      activeUser: user,
-    })),
-  setNextContractStartDate: (date) =>
-    set((state) => ({
-      nextContractStartDate: date,
-    })),
-  setEditErrors: (error) =>
-    set((state) => ({
-      editErrors: error,
-    })),
-  setContractStartDate: (date) =>
-    set((state) => ({
-      contractStartDate: date,
-    })),
+  isMonthPickerChangeEvent: false,
+  leavePurpose: null,
+  leaveRequestId: null,
+  LeaveRequestPeriod: null,
+  navbarwidth: 260,
+  nextContractStartDate: null,
+  publicHolidays: null,
+  selectedDatesCount: 0,
+  staff: null,
+  staffVacation: { total: 0, used: 0, balance: 0 },
+  customTitle: '',
+  currentStart: new Date(),
+  timesheetDefaultDate: new Date(),
+  user: null,
+  userStatus: null,
+  MainshellOverlayVisible: false,
+  authOverlayVisible: false,
+  setAuthOverlayVisible: (visible) => set(() => ({ authOverlayVisible: visible })),
+  setMainshellOverlayVisible: (visible) => set(() => ({ MainshellOverlayVisible: visible })),
+  // Setters
+  setActiveContract: (contract) => set(() => ({ activeContract: contract })),
+  setActiveStaff: (staff) => set(() => ({ activeStaff: staff })),
+  setActiveUser: (user) => set(() => ({ activeUser: user })),
+  setAuthtoken: (token) => set(() => ({ authtoken: token })),
+  setBasepath: (path) => set(() => ({ basepath: path })),
+  setCalendarEvents: (events) => set(() => ({ calendarEvents: events })),
+  setChargeableDays: (days) => set(() => ({ chargeableDays: days })),
   setContractEndDate: (date) =>
     set((state) => ({
       contractEndDate: date,
@@ -90,96 +84,29 @@ const useStore = create((set) => ({
         ? new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000)
         : null,
     })),
-  setContractStartMaxDate: (date) =>
-    set((state) => ({
-      contractStartMaxDate: new Date(new Date(date).getTime() - 24 * 60 * 60 * 1000),
-    })),
   setContractEndMinDate: (date) =>
-    set((state) => ({
-      contractEndMinDate: new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000),
-    })),
-  setLeaveRequestId: (id) =>
-    set((state) => ({
-      leaveRequestId: id,
-    })),
-  setLeaveRequestPeriod: (period) =>
-    set((state) => ({
-      LeaveRequestPeriod: period,
-    })),
-  setLeavePurpose: (purpose) =>
-    set((state) => ({
-      leavePurpose: purpose,
-    })),
-  setStaff: (staff) =>
-    set((state) => ({
-      staff: staff,
-    })),
-  setChargeableDays: (days) =>
-    set((state) => ({
-      chargeableDays: days,
-    })),
-  setCustomTitle: (title) =>
-    set((state) => ({
-      customTitle: title,
-    })),
-  setCalendarEvents: (events) =>
-    set((state) => ({
-      calendarEvents: events,
-    })),
-  setCurrentStart: (start) =>
-    set((state) => ({
-      currentStart: start,
-    })),
-  setFormType: (type) =>
-    set((state) => ({
-      formType: type,
-    })),
-  setSelectedDatesCount: (count) =>
-    set((state) => ({
-      selectedDatesCount: count,
-    })),
-  setAuthtoken: (token) =>
-    set((state) => ({
-      authtoken: token,
-    })),
-  setBasepath: (path) =>
-    set((state) => ({
-      basepath: path,
-    })),
-  setUser: (user) =>
-    set((state) => ({
-      user: user,
-    })),
-  clearAllState: () =>
-    set(() => ({
-      contractStartDate: null,
-      contractEndDate: null,
-      contractStartMaxDate: null,
-      contractEndMinDate: null,
-      editErrors: null,
-      nextContractStartDate: null,
-      activeContract: null,
-      activeStaff: null,
-      activeUser: null,
-      userStatus: null,
-      publicHolidays: null,
-      staffVacation: { total: 0, used: 0, balance: 0 },
-      leaveRequestId: null,
-      LeaveRequestPeriod: null,
-      leavePurpose: null,
-      staff: null,
-      chargeableDays: 0,
-      navbarwidth: 230,
-      customTitle: '',
-      calendarEvents: [],
-      currentStart: new Date(),
-      formType: null,
-      selectedDatesCount: 0,
-      authtoken: '',
-      basepath: null,
-      user: null,
-      isEventUpdated: false,
-    })),
+    set(() => ({ contractEndMinDate: new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000) })),
+  setContractStartDate: (date) => set(() => ({ contractStartDate: date })),
+  setContractStartMaxDate: (date) =>
+    set(() => ({ contractStartMaxDate: new Date(new Date(date).getTime() - 24 * 60 * 60 * 1000) })),
+  setEditErrors: (error) => set(() => ({ editErrors: error })),
+  setFormType: (type) => set(() => ({ formType: type })),
+  setLeavePurpose: (purpose) => set(() => ({ leavePurpose: purpose })),
+  setLeaveRequestId: (id) => set(() => ({ leaveRequestId: id })),
+  setLeaveRequestPeriod: (period) => set(() => ({ LeaveRequestPeriod: period })),
+  setNextContractStartDate: (date) => set(() => ({ nextContractStartDate: date })),
+  setPublicHolidays: (holidays) => set(() => ({ publicHolidays: holidays })),
+  setSelectedDatesCount: (count) => set(() => ({ selectedDatesCount: count })),
+  setStaff: (staff) => set(() => ({ staff: staff })),
+  setStaffVacation: (vacation) => set(() => ({ staffVacation: vacation })),
+  setCustomTitle: (title) => set(() => ({ customTitle: title })),
+  setCurrentStart: (start) => set(() => ({ currentStart: start })),
+  setTimesheetDefaultDate: (date) => set(() => ({ timesheetDefaultDate: date })),
+  setUser: (user) => set(() => ({ user: user })),
+  setUserStatus: (status) => set(() => ({ userStatus: status })),
+  setSelectedMonth: (date) => set(() => ({ selectedMonth: date })),
+  setIsFrontCalendarChangeEvent: (event) => set(() => ({ isFrontCalendarChangeEvent: event })),
+  setIsMonthPickerChangeEvent: (event) => set(() => ({ isMonthPickerChangeEvent: event })),
 }));
 
 export default useStore;

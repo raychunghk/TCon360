@@ -226,7 +226,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
       </>
     );
   } else if (calendarEvents.length < 1) {
-    return <Text>Loading...</Text>;
+    return <Text>Loading Calendar...</Text>;
   }
 
   const handleDeleteEvent = async (eventId) => {
@@ -376,19 +376,21 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
 
   return (
     <>
-      <Drawer opened={drawerOpened} onClose={setDrawerClose} size={550} title="Leave Request">
-        {/* Drawer content */}
-        {formType && leaveRequestId && (
-          <LeaveRequestForm
-            formType={formType}
-            leaveRequestId={leaveRequestId}
-            onDeleteEvent={handleDeleteEvent} // pass the callback function
-            onClose={setDrawerClose}
-            LeaveRequestPeriod={LeaveRequestPeriod}
-            leavePurpose={leavePurpose}
-          />
-        )}
-      </Drawer>
+      {formType && (
+        <Drawer opened={drawerOpened} onClose={setDrawerClose} size={550} title="Leave Request">
+          {/* Drawer content */}
+          {leaveRequestId >= 0 && (
+            <LeaveRequestForm
+              formType={formType}
+              leaveRequestId={leaveRequestId}
+              onDeleteEvent={handleDeleteEvent} // pass the callback function
+              onClose={setDrawerClose}
+              LeaveRequestPeriod={LeaveRequestPeriod}
+              leavePurpose={leavePurpose}
+            />
+          )}
+        </Drawer>
+      )}
       <style data-fullcalendar id="fcstyle" />
       <div className="calendar-container">
         <FullCalendar

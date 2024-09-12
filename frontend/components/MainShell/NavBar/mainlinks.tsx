@@ -6,9 +6,6 @@ import {
   IconHome2,
   IconGauge,
   IconFingerprint,
-  IconCalendarStats,
-  IconUser,
-  IconCalendarEvent,
   IconCalendarPlus,
   IconEyeglass,
   IconClock,
@@ -20,7 +17,9 @@ import {
   IconSettings,
 } from '@tabler/icons-react';
 
+import { default as useRouter } from '@/components/useCustRouter';
 import styles from './mainlinks.module.css';
+import { usePathname } from 'next/navigation';
 import useStore from '@/components/stores/zstore';
 type LinkItemProps = {
   icon: React.ReactNode;
@@ -37,8 +36,21 @@ const iconSizeStyle = {
 const defaultIconSize = '2rem';
 
 function CustomLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const { MainshellOverlayVisible, setMainshellOverlayVisible } = useStore();
+  //const router = useRouter();
+  const pathname = usePathname();
+  const handleClick = () => {
+    //setMainshellOverlayVisible(true);
+    console.log('href?', href);
+    console.log('pathname', pathname);
+    if (pathname === href) {
+      setMainshellOverlayVisible(false); // Hide overlay if the same route is clicked
+    } else {
+      setMainshellOverlayVisible(true); // Show overlay for different route
+    }
+  };
   return (
-    <Link href={href} className={styles.links}>
+    <Link href={href} className={styles.links} onClick={handleClick}>
       <UnstyledButton className={styles.unstylebtn}>{children}</UnstyledButton>
     </Link>
   );

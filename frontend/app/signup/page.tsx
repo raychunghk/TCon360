@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession, SessionProvider } from 'next-auth/react';
+'use client';
+import { useState, useEffect, useContext, useRef, useLayoutEffect, SetStateAction } from 'react';
+import { default as useRouter } from '@/components/useCustRouter';
 
-import * as classes from './login/login.css';
+import * as classes from '@/styles/login.css';
 import {
   Paper,
   TextInput,
@@ -25,7 +25,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
 import Signupcard from '@/components/Signupcard';
-import { handleLoginSuccess } from './handleLoginSuccess';
+//import { handleLoginSuccess } from '@/components/handleLoginSuccess';
+import { useLogin } from '@/components/handleLoginSuccess';
 import { DatePickerInput } from '@mantine/dates';
 import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 import {
@@ -33,51 +34,13 @@ import {
   myRenderDay,
   setPublicHolidays,
 } from '@/components/util/leaverequest.util';
-import { PublicHolidaysContext } from 'pages/_app';
-//import { useDispatch } from 'react-redux';
-import { UtilsContext } from '@/components/util/utilCtx';
+
 import axios from 'axios';
-import { IconX } from '@tabler/icons';
-// const useStyles = createStyles((theme) => ({
-//   wrapper: {
-//     backgroundSize: 'cover',
-//     backgroundImage: `url('${bg.src}')`,
-//     height: '100vh',
-//   },
-//   form: {
-//     borderRight: `1px solid ${
-//       theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-//     }`,
-//     maxWidth: 800,
-//     paddingTop: 80,
-//     height: '100vh',
-//     marginLeft: 'auto',
-//     marginRight: '150px',
-//     [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-//       maxWidth: '100%',
-//     },
-//   },
-//   title: {
-//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-//     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-//   },
-//   steptitle: {
-//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-//     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-//     fontSize: '1.2em',
-//     alignContent: 'center',
-//     marginTop: '20',
-//     marginBottom: '20',
-//   },
-//   logo: {
-//     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-//     width: 120,
-//     display: 'block',
-//     marginLeft: 'auto',
-//     marginRight: 'auto',
-//   },
-// }));
-import useUIStore from 'pages/reducers/useUIStore';
+import { IconX } from '@tabler/icons-react';
+
+import useUIStore from '@/components/stores/useUIStore';
+import useStore from '@/components/stores/zstore';
+import { baseconfig } from '@/../baseconfig';
 export default function SignupPage() {
   interface iStaffModel {
     StaffName: string;
@@ -105,12 +68,12 @@ export default function SignupPage() {
     ContractEndDate: null,
     AnnualLeave: 10,
   };
-
+  const basepath = baseconfig.prefix;
   const [formValues, setFormValues] = useState(staffModel);
-
-  const [loading, setLoading] = useState(false); // State to handle loading overlay
+  const { handleLoginSuccess } = useLogin();
+  //const [loading, setLoading] = useState(false); // State to handle loading overlay
   const router = useRouter();
-  const basepath = router.basePath;
+  //  const basepath = router.basePath;
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -120,10 +83,9 @@ export default function SignupPage() {
   const [signUpError, setsignUpError] = useState('');
   //const dispatch = useDispatch();
   const inputRefs = useRef([]);
-  const publicholidays = useContext(PublicHolidaysContext);
+
   const { siteTitle } = useUIStore();
-  const { data: session, status } = useSession();
-  const sessionLoading = status === 'loading';
+  const { authOverlayVisible, setAuthOverlayVisible } = useStore();
   const mainpage = '/';
 
   const nextStep = async () => {
@@ -159,7 +121,8 @@ export default function SignupPage() {
       label: 'Email Address',
       placeholder: 'username@department.gov.hk',
       value: email,
-      onChange: (event) => setEmail(event.target.value),
+      onChange: (event: { target: { value: SetStateAction<string> } }) =>
+        setEmail(event.target.value),
       name: 'email',
     },
     {
@@ -181,7 +144,6 @@ export default function SignupPage() {
   ];
 
   useHotkeys([['mod+Enter', nextStep]]);
-  setPublicHolidays(publicholidays);
 
   const maxAge = process.env.TOKEN_MAX_AGE;
 
@@ -189,13 +151,6 @@ export default function SignupPage() {
     initialValues: { ...formValues, username, password, email },
     validate: (values) => {
       if (active === 0) {
-        // const isValid = await validateStep0(values.username, values.email);
-        // if (!isValid) {
-        //   return {
-        //     username: 'Username or email already exists',
-        //     email: 'Username or email already exists',
-        //   };
-        // }
         const rtn = {
           username:
             values.username.trim().length < 6
@@ -266,7 +221,7 @@ export default function SignupPage() {
   async function handleSubmit(form) {
     // event.preventDefault();
     console.log('form?', form);
-    setLoading(true);
+    setAuthOverlayVisible(true);
     const { email, password, username, ...staff } = form;
     const user = { email, password, username, staff };
     setFormValues({ ...staff });
@@ -283,7 +238,7 @@ export default function SignupPage() {
 
       if (response.ok) {
         // router.push(mainpage);
-        await handleLoginSuccess(response, router);
+        await handleLoginSuccess(response);
       } else if (response.status === 400) {
         // Display an error message and jump to stepper page 1
         const data = await response.json();
@@ -297,20 +252,18 @@ export default function SignupPage() {
       } else {
         console.error('Error signing up:', response.statusText);
         setsignUpError('Fail to Signup:Server error');
-        setLoading(false);
+        setAuthOverlayVisible(false);
         return;
       }
     } catch (error) {
       setsignUpError('Fail to Signup:Server error');
+      setAuthOverlayVisible(false);
       console.error(error);
-    } finally {
+    } /* finally {
       setLoading(false);
-    }
+    }*/
   }
 
-  if (sessionLoading) {
-    return <p>Loading...</p>;
-  }
   const formKeydown = () => {};
   const handleStepClick = (stepIndex) => {
     // Perform validation before switching to Step 1
@@ -342,7 +295,7 @@ export default function SignupPage() {
       });
 
       if (response.data.message === 'ok') {
-        setErrorMessage(null);
+        setErrorMessage('');
         // Validation successful, return true
         return true;
       } else {
@@ -578,7 +531,11 @@ export default function SignupPage() {
               </Stepper.Step>
               <Stepper.Completed>
                 <Paper shadow="sm" p="md" withBorder>
-                  <LoadingOverlay visible={loading} overlayBlur={2} />
+                  <LoadingOverlay
+                    visible={authOverlayVisible}
+                    overlayProps={{ radius: 'sm', blur: 2 }}
+                  />
+
                   <Title order={2}>Please review the signup info:</Title>
                   {signUpError && (
                     <Notification

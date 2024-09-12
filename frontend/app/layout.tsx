@@ -62,19 +62,21 @@ export default function RootLayout({ children }: { children: any }) {
     }
   }, []);
   return (
-    <html lang="en">
-      <head>
-        <ColorSchemeScript />
-        <link rel="shortcut icon" href={faviconUrl} />
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-        />
-      </head>
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
+    basepath && (
+      <html lang="en">
+        <head>
+          <ColorSchemeScript />
+          <link rel="shortcut icon" href={faviconUrl} />
+          <meta
+            name="viewport"
+            content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
+          />
+        </head>
+        <body>
+          <Providers>{children}</Providers>
+        </body>
+      </html>
+    )
   );
 }
 

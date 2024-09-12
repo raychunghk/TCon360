@@ -24,7 +24,7 @@ import {
   Button,
   UnstyledButton,
   useMantineTheme,
-  Anchor,
+  LoadingOverlay,
 } from '@mantine/core';
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
@@ -40,13 +40,21 @@ import useStore from '@/components/stores/zstore';
 import { baseconfig } from '@/../baseconfig';
 import { child } from 'winston';
 import useCustRouter from '../useCustRouter';
+import { getMySession } from '@/app/lib/auth-action';
 //export function MainShell({ children: any, home, contentpadding = '10px' }) {
 export function MainShell({ children, contentpadding = '10px', handleTimesheetDateChange }) {
   const theme = useMantineTheme();
 
   const { siteTitle } = useUIStore();
 
-  const { clearAllState, navbarwidth, basepath, setBasepath } = useStore();
+  const {
+    clearAllState,
+    navbarwidth,
+    basepath,
+    setBasepath,
+    MainshellOverlayVisible,
+    setMainshellOverlayVisible,
+  } = useStore();
 
   const [opened, setOpened] = useState(false);
   const clearAllCookies = () => {
@@ -62,13 +70,26 @@ export function MainShell({ children, contentpadding = '10px', handleTimesheetDa
     //clearAllCookies();
     //clearAllState();
     console.log('router', router);
-    router.push('/login');
+    router.push('/auth/login');
   };
-  const { activeUser, activeStaff, status } = useStaffData();
+  const { activeUser, activeStaff, status, isAuthenticated } = useStaffData();
+  useEffect(() => {
+    const checksession = async () => {
+      let sess = await getMySession();
+      setMainshellOverlayVisible(false);
+      console.log('MainShell session', sess);
+
+      if (!sess) {
+        router.push('/auth/login');
+      }
+    };
+    checksession();
+  }, [setMainshellOverlayVisible]);
 
   if (status === 'loading') {
     <p>Loading...</p>;
   }
+
   const buttonStyles = (theme) => ({
     display: 'block',
     width: '115px',
@@ -90,7 +111,6 @@ export function MainShell({ children, contentpadding = '10px', handleTimesheetDa
       }}
       padding="md"
     >
-      {' '}
       <AppShell.Header className={classes.header}>
         <Group justify="space-between" pl={15} w={'100%'}>
           <Group>
@@ -168,7 +188,15 @@ export function MainShell({ children, contentpadding = '10px', handleTimesheetDa
         </Group>
       </AppShell.Header>
       {activeUser ? <AppShellNavBar opened={opened} /> : null}
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main>
+        {' '}
+        <LoadingOverlay
+          visible={MainshellOverlayVisible}
+          zIndex={1000}
+          overlayProps={{ radius: 'sm', blur: 2 }}
+        />
+        {children}
+      </AppShell.Main>
       <AppShell.Footer h={30}>
         <Center h={30}>
           <div>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</div>

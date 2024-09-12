@@ -20,7 +20,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { siteTitle } from '@/components/util/label';
 import useStore from '@/components/stores/zstore';
-import * as classes from './login.css';
+import * as classes from '@/styles/login.css';
 import '@mantine/core/styles.css';
 import { baseconfig } from '@/../baseconfig';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';

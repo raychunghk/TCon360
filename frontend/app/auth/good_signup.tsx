@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react'
 import { useRouter } from 'next/router';
 import { useSession, SessionProvider } from 'next-auth/react';
 
-import * as classes from './login/login.css';
+import * as classes from '../../styles/login.css';
 import {
   Paper,
   TextInput,

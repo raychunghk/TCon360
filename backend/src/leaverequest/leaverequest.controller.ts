@@ -70,12 +70,19 @@ export class LeaveRequestController {
         contractId,
         leaveRequestData,
       );
-      const leaveRequest = await this.leaveRequestService.createword(
+      const objfile = await this.leaveRequestService.createword(
         staffId,
         contractId,
         leaveRequestData,
       );
-      Logger.log('create result', leaveRequest);
+      let leaveRequest = await this.leaveRequestService.create(
+        staffId,
+        objfile.id,
+        contractId,
+        leaveRequestData,
+      );
+
+      Logger.log('leaveRequest create result: ', leaveRequest);
 
       return leaveRequest;
     } catch (error) {
@@ -84,11 +91,18 @@ export class LeaveRequestController {
     }
   }
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   async update(
     @Param('id') id: string,
+    @Req() req,
     @Body() data: LeaveRequest,
   ): Promise<LeaveRequest> {
     try {
+      const userId = req.user.id;
+      const user = await this.usrSvc.getUserWithViewStaff(userId);
+      //const staffId = user.staffId ? user.staffId : user.staff[0].id;
+      const _staffId = user.viewStaff[0].StaffId;
+      const _contractId = user.viewStaff[0].contractId;
       console.log('update leave request data', data);
       // Strip the time value from leavePeriodStart
       /* if (data.leavePeriodStart) {
@@ -98,7 +112,11 @@ export class LeaveRequestController {
         data.leavePeriodEnd.setHours(0, 0, 0, 0);
       }*/
 
-      const rtn = this.leaveRequestService.update({ id: +id, data });
+      const rtn = this.leaveRequestService.update({
+        id: +id,
+        staffId: _staffId,
+        data,
+      });
       return rtn;
     } catch (error) {
       console.log('error updating leave request:', error);

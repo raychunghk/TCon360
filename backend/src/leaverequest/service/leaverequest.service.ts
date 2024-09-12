@@ -108,7 +108,7 @@ export class LeaveRequestService {
   async createword(
     staffId: number,
     contractId: number,
-    data: Prisma.LeaveRequestCreateInput,
+    data: Prisma.LeaveRequestCreateInput | Prisma.LeaveRequestUpdateInput,
   ) {
     const date = new Date(Date.now());
     const formattedDate = date
@@ -180,7 +180,7 @@ export class LeaveRequestService {
       });
       const buffer = doc.getZip().generate({ type: 'nodebuffer' });
       fs.writeFileSync(destPath, buffer);
-
+      //create record in staffFIles to store the leave Request form path;
       const _file = await this.prisma.staffFiles.create({
         data: {
           filePath: destPath,
@@ -189,9 +189,7 @@ export class LeaveRequestService {
         },
       });
 
-      let lreq = await this.create(staffId, _file.id, contractId, data);
-
-      return lreq;
+      return _file;
     } catch (error) {
       Logger.log('error filling docx template');
       Logger.log(error);
@@ -319,10 +317,37 @@ export class LeaveRequestService {
 
   async update(params: {
     id: number;
-    data: Prisma.LeaveRequestUpdateInput;
+    staffId: number;
+
+    data: LeaveRequest;
   }): Promise<LeaveRequest> {
-    const { id, data } = params;
-    await this.prisma.leaveRequest.update({ where: { id }, data });
+    const { id, staffId, data } = params;
+    let newFileId = null;
+    try {
+      const { contractId, ...restData } = data;
+      const objFile = await this.createword(
+        staffId, // Make sure staffId is in your DTO
+        contractId, // Make sure contractId is in your DTO
+        data,
+      );
+      newFileId = objFile.id; // Assuming your createWord function returns the file object with an ID
+      //await this.prisma.leaveRequest.update({ where: { id }, data });
+      const updateData: Prisma.LeaveRequestUpdateInput = {
+        ...restData, // Spread in basic fields from DTO
+        staffFile: objFile ? { connect: { id: objFile.id } } : undefined,
+        contract: data.contractId
+          ? { connect: { id: data.contractId } }
+          : undefined,
+      };
+      console.log('data passed to update leave Request \r\n: ', updateData);
+      const updatedLeaveRequest = await this.prisma.leaveRequest.update({
+        where: { id },
+        data: updateData,
+      });
+    } catch (error) {
+      console.log('error updateing leaverequest', error);
+    }
+
     return this.prisma.leaveRequest.findUnique({ where: { id } });
   }
 
