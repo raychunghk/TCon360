@@ -1,107 +1,92 @@
 'use client';
-import { GetServerSideProps, GetStaticProps } from 'next';
 import { useState, useEffect } from 'react';
-import { useForm as useHookForm } from 'react-hook-form';
-import { TextInput, Checkbox, Code, Text, Stack, Tabs, Modal } from '@mantine/core';
+import { useForm } from 'react-hook-form';
+import {  Text, Stack, Tabs } from '@mantine/core';
 import { MainShell } from '@/components/MainShell/MainShell';
 import Head from 'next/head';
 import useStore from '@/components/stores/zstore';
-import { parseCookies } from 'nookies';
-import commonstyle from '@/styles/common.module.css';
 import axios from 'axios';
-import { useForm as uForm } from 'react-hook-form';
-import UserManagementTab from './UserManagerTab';
-import CalendarManagementTab from './CalendarManagerTab';
+import UserManagementTab from '@/components/admin/UserManagerTab';
+import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
 import { default as useRouter } from '@/components/useCustRouter';
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
 
 import { IconCalendarEvent, IconUser, IconSunMoon } from '@tabler/icons-react';
 import { useShallow } from 'zustand/react/shallow';
 import { useSearchParams } from 'next/navigation';
-const Page = () => {
-  const { register, handleSubmit, reset } = useHookForm();
-  //const { basepath, initialActiveTab = 'userManagement' } = props; // Added initialActiveTab prop
+import { parseCookies } from 'nookies';
+export default function Page() {
+  const { register, handleSubmit, reset } = useForm();
   const [formValues, setFormValues] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
-  const router = useRouter();
 
   const [activeUser, basepath] = useStore(
     useShallow((state) => [state.activeUser, state.basepath])
   );
-  const initialTab = 'userManagement';
-  const [activeTab, setActiveTab] = useState(initialTab); // Set initial active tab
+  const [activeTab, setActiveTab] = useState('userManagement');
   const searchParams = useSearchParams();
 
-  const tabid = searchParams.get('tab') ?? 'userManagement'; // default value is "1"
-
   useEffect(() => {
-    //onst { tab } = tabid;
-    console.log('tabid?', tabid);
-    if (tabid === 'calendarManagement') {
+    const tabId = searchParams.get('tab');
+    if (tabId === 'calendarManagement') {
       setActiveTab('calendarManagement');
     }
-  }, []);
+  }, [searchParams]); 
 
-  if (!activeUser) {
+  if (!activeUser || activeUser?.role?.name !== 'admin') {
     return (
-      <MainShell home>
+      <MainShell contentpadding="20px">
         <Head>
           <title>Admin</title>
         </Head>
-        <p>Loading...</p>
-      </MainShell>
-    );
-  }
-  if (activeUser?.role?.name !== 'admin') {
-    return (
-      <MainShell home>
-        <Head>
-          <title>Admin</title>
-        </Head>
-        <p>Sorry, you are not authorized to access this page.</p>
+        <p>
+          {activeUser
+            ? 'Sorry, you are not authorized to access this page.'
+            : 'Loading...'}
+        </p>
       </MainShell>
     );
   }
 
   const onSubmit = async () => {
     setSubmitting(true);
-    const cookies = parseCookies();
-    const tokenCookie = cookies.token;
-    const headers = {
-      Authorization: `Bearer ${tokenCookie}`,
-    };
-
     try {
-      const response = await axios.put(`${basepath}/api/admin/${formValues.id}`, formValues, {
-        headers,
-      });
+      if (formValues) {
+        /*const cookies = document.cookie.split('; ');
+        const tokenCookie = cookies.find((cookie) => cookie.startsWith('token='));
+        */
+           const cookies = parseCookies();
+    const tokenCookie = cookies.token;
+        const token = tokenCookie ? tokenCookie.split('=')[1] : null;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      if (response.status === 200) {
-      } else {
-        console.error('Failed to update staff record:', response);
+        const response = await axios.put(
+          `${basepath}/api/admin/${formValues.id}`,
+          formValues,
+          { headers }
+        );
+
+        if (response.status !== 200) {
+          console.error('Failed to update record:', response);
+        }
       }
     } catch (error) {
-      console.error('Failed to update staff record:', error);
+      console.error('Failed to update record:', error);
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
-  };
-
-  const handleTabChange = (value: String) => {
-    setActiveTab(value);
   };
 
   return (
-    <MainShell home>
+    <MainShell contentpadding="20px">
       <Head>
         <title>Admin</title>
       </Head>
 
       <Tabs
-        defaultValue={initialTab}
+        defaultValue={activeTab} 
         value={activeTab}
-        onChange={handleTabChange}
+        onChange={setActiveTab} 
         style={{ width: '100%', height: '100%' }}
       >
         <Tabs.List>
@@ -120,7 +105,7 @@ const Page = () => {
         </Tabs.Panel>
         <Tabs.Panel value="calendarManagement" pt="xs">
           <CalendarManagementTab />
-        </Tabs.Panel>{' '}
+        </Tabs.Panel>
         <Tabs.Panel value="themeManagement" pt="xs">
           <ColorSchemeToggle />
         </Tabs.Panel>
@@ -129,4 +114,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+ 

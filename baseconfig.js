@@ -1,16 +1,10 @@
 /** @format */
 
+const { feconfig } = require("./frontend/frontendconfig");
+
 const baseconfig = {
-  proxypath: "/absproxy",
-  frontendport: 3000,
+  ...feconfig,
   backendport: 3800,
-  mainport: 3333,
 };
 
-module.exports = {
-  baseconfig: {
-    ...baseconfig,
-    prefix: `${baseconfig.proxypath}/${baseconfig.mainport}`,
-    basepath: `${baseconfig.proxypath}/${baseconfig.mainport}`,
-  },
-};
+module.exports = { baseconfig };

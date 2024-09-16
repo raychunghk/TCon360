@@ -6,7 +6,8 @@ import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import { theme } from '@/components/theme';
 import getConfig from 'next/config';
 //import useStore from '../components/store/zstore';
-import { baseconfig } from '@/../baseconfig';
+//import { default as baseconfig } from '@/frontendconfig';
+import { feconfig } from '@/frontendconfig';
 // export const metadata = {
 //   title: 'Mantine Next.js template',
 //   description: 'I am using Mantine with Next.js!',
@@ -50,13 +51,14 @@ import { usePublicHolidays } from '@/components/util/usePublicHolidays';
 import { child } from 'winston';
 import Providers from '@/components/providers';
 export default function RootLayout({ children }: { children: any }) {
-  const faviconUrl = `${baseconfig.prefix}/favicon.svg`;
-  const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
+  const faviconUrl = `${feconfig.prefix}/favicon.svg`;
+  //const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
 
   //useTokenExpiration();
   const { basepath, setBasepath } = useStore();
   useEffect(() => {
-    const _basepath = baseconfig.basepath;
+    const _basepath = feconfig.basepath;
+    console.log('on layout');
     if (!basepath) {
       setBasepath(_basepath);
     }

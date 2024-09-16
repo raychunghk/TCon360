@@ -35,18 +35,7 @@ import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import useUIStore from '@/components/stores/useUIStore';
 import { getMySession } from '@/app/lib/auth-action';
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context);
-  const staff = session.staff;
-  console.log(' in server staff', staff);
-
-  return {
-    props: {
-      staff,
-    },
-  };
-}
-
+ 
 export default function LeaveRequestForm({
   formType,
   leaveRequestId,

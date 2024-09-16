@@ -1,3 +1,4 @@
+'use client'
 import 'mantine-react-table/styles.css';
 import { useMemo, useEffect, useState } from 'react';
 import { Text, Card } from '@mantine/core';
@@ -6,7 +7,6 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef,
   type MRT_Row,
-  type MRT_TableOptions,
 } from 'mantine-react-table';
 import axios from 'axios';
 import commonstyle from '@/styles/common.module.css';
@@ -16,13 +16,17 @@ import useStore from '@/components/stores/zstore';
 type UserRole = {
   userId: string;
   username?: string;
-  name?: string;
-  email?: string;
+  name: string;
+  email: string;
   roleId: number;
   roleName: string;
   userStatus: string;
 };
 type Role = { id: number; name: string };
+type ValidationErrors = {
+  name?: string;
+  email?: string;
+};
 const UserManagementTab = () => {
   const [userData, setUserData] = useState<UserRole[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -31,7 +35,7 @@ const UserManagementTab = () => {
   const [rolesLoaded, setRolesLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [validationErrors, setValidationErrors] = useState({});
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   const [emailerr, setemailerr] = useState('');
 
@@ -43,7 +47,7 @@ const UserManagementTab = () => {
         setUserData(data.users);
         setRoles(data.roles);
         setRoleNames(data.roles.map((r) => r.name));
-
+        console.log('rolenaemms', rolenames)
         console.log('roles?', data.roles);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -52,84 +56,83 @@ const UserManagementTab = () => {
     if (basepath) fetchUserData();
   }, []);
 
-  useEffect(() => {
-    if (roles.length > 0) {
-      setRolesLoaded(true);
-    }
-  }, [rolenames]);
 
-  const columns = [
-    {
-      accessorKey: 'userId',
-      header: 'User ID',
-      size: 80,
-      enableEditing: false,
-    },
 
-    {
-      accessorKey: 'username',
-      header: 'Username',
-      size: 150,
-      enableEditing: false,
-    },
-    {
-      accessorKey: 'name',
-      header: 'Name',
-      size: 150,
-      mantineEditTextInputProps: {
-        error: validationErrors.name,
+  const columns: MRT_ColumnDef<UserRole>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'userId',
+        header: 'User ID',
+        size: 80,
+        enableEditing: false,
       },
-    },
-    {
-      accessorKey: 'email',
-      header: 'Email',
-      size: 250,
-      mantineEditTextInputProps: {
-        type: 'email',
-        onChange: (event) => {
-          const value = event.target.value;
-          //validation logic
-          if (!value) {
-            setemailerr('email required');
-            setValidationErrors((prev) => ({
-              email: 'Age is required',
-            }));
-          } else {
-            setemailerr('');
-            delete validationErrors.email;
-            setValidationErrors({ ...validationErrors });
-          }
+
+      {
+        accessorKey: 'username',
+        header: 'Username',
+        size: 150,
+        enableEditing: false,
+      },
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        size: 150,
+        mantineEditTextInputProps: {
+          error: validationErrors.name,
         },
-        required: true,
-        error: `${validationErrors?.email ?? ''}`,
-        //remove any previous validation errors when user focuses on the input
       },
-    },
-    {
-      accessorKey: 'roleId',
-      header: 'Role ID',
-      size: 80,
-      enableEditing: false,
-    },
-    {
-      accessorKey: 'roleName',
-      header: 'Role Name',
-      size: 150,
-      editVariant: 'select',
-      mantineEditSelectProps: {
-        data: rolenames,
+      {
+        accessorKey: 'email',
+        header: 'Email',
+        size: 250,
+        mantineEditTextInputProps: {
+          type: 'email',
+          onChange: (event) => {
+            const value = event.target.value;
+            //validation logic
+            if (!value) {
+              setemailerr('email required');
+              setValidationErrors((prev) => ({
+                email: 'Age is required',
+              }));
+            } else {
+              setemailerr('');
+              delete validationErrors.email;
+              setValidationErrors({ ...validationErrors });
+            }
+          },
+          required: true,
+          error: `${validationErrors?.email ?? ''}`,
+          //remove any previous validation errors when user focuses on the input
+        },
       },
-    },
-    {
-      accessorKey: 'userStatus',
-      header: 'User Status',
-      size: 150,
-      editVariant: 'select',
-      mantineEditSelectProps: {
-        data: ['active', 'suspended'],
+      {
+        accessorKey: 'roleId',
+        header: 'Role ID',
+        size: 80,
+        enableEditing: false,
       },
-    },
-  ];
+      {
+        accessorKey: 'roleName',
+        header: 'Role Name',
+        size: 150,
+        editVariant: 'select',
+        mantineEditSelectProps: {
+          data: ['staff', 'admin'],
+        },
+      },
+      {
+        accessorKey: 'userStatus',
+        header: 'User Status',
+        size: 150,
+        editVariant: 'select',
+        mantineEditSelectProps: {
+          data: ['active', 'suspended'],
+        },
+      },
+    ],
+    [],
+  );
   const handleSaveRow = async (rowEditEvent) => {
     setSaving(true);
     const { row, values, exitEditingMode } = rowEditEvent;
@@ -162,7 +165,7 @@ const UserManagementTab = () => {
     }
 
     try {
-      const response = await axios.put(`/absproxy/5000/api/admin/updateuser/${values.userId}`, {
+      const response = await axios.put(`${basepath}/api/admin/updateuser/${values.userId}`, {
         name: values.name,
         email: values.email,
         roleId: _roleid,
@@ -212,7 +215,7 @@ const UserManagementTab = () => {
       density: 'xs',
     },
     enableRowNumbers: true,
-    rowNumberMode: 'static', //default
+    //rowNumberMode: 'static', //default
     mantineTableContainerProps: {
       style: {
         minHeight: '500px',
@@ -248,9 +251,7 @@ const UserManagementTab = () => {
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
 
-  if (!rolesLoaded) {
-    return <Text>Loading...</Text>;
-  }
+
 
   return (
     <Card

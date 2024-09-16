@@ -11,7 +11,7 @@ export const useLogin = () => {
   const handleLoginSuccess = async (response) => {
     try {
       const { accessToken } = await response.json();
-      const maxAge = parseInt(process.env.TOKEN_MAX_AGE, 10);
+      const maxAge  = parseInt(process.env.TOKEN_MAX_AGE, 10);
 
       setCookie(null, 'token', accessToken, {
         maxAge, // cookie expiration time (in seconds)

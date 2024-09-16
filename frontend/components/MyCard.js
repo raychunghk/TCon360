@@ -1,3 +1,4 @@
+'use client'
 import { Card, Text } from '@mantine/core';
 import commonstyle from '../styles/common.module.css';
 

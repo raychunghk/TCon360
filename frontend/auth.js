@@ -4,8 +4,9 @@ import jwt from 'jsonwebtoken';
 import { parseCookies, setCookie } from 'nookies';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { format, parseISO } from 'date-fns';
-const config = require('@/../baseconfig');
-const { baseconfig } = config;
+//const config = require('@base/baseconfig');
+import { default as baseconfig } from '@/frontendconfig';
+ 
 const { prefix: _prefix, frontendport, backendport, mainport } = baseconfig;
 const _frontendurl = `http://127.0.0.1:${frontendport}`;
 const _backendurl = `http://127.0.0.1:${backendport}`;

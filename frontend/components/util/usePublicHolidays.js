@@ -6,8 +6,8 @@ import { format } from 'date-fns';
 import useStore from '@/components/stores/zstore';
 export function usePublicHolidays() {
   const [loading, setLoading] = useState(false);
+  const { publicHolidays, setPublicHolidays,basepath } = useStore();
 
-  const { publicHolidays, setPublicHolidays, basepath, setBasepath } = useStore();
   async function loadPublicHolidays() {
     try {
       setLoading(true);
@@ -16,8 +16,6 @@ export function usePublicHolidays() {
         Summary: holiday.Summary,
         StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
       }));
-      console.log('public holidays', pldays);
-      // dispatch(setPublicHolidays(pldays));
       setPublicHolidays(pldays);
     } catch (error) {
       console.error(error);
@@ -27,12 +25,13 @@ export function usePublicHolidays() {
   }
 
   useEffect(() => {
-    if (basepath) {
+    const fetchHolidays = async () => {
       if (!publicHolidays || publicHolidays.length === 0) {
-        loadPublicHolidays();
+        await loadPublicHolidays();
       }
-    }
-  }, [basepath]);
+    };
+    fetchHolidays();
+  }, [publicHolidays]); // Added publicHolidays to the dependency array
 
   return { publicHolidays, loading, loadPublicHolidays };
 }

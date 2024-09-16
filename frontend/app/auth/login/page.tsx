@@ -13,19 +13,18 @@ import {
   LoadingOverlay,
 } from '@mantine/core';
 import { default as useRouter } from '@/components/useCustRouter';
-//import { signIn } from 'next-auth/react';
-import { signOut } from '@/auth';
+
 import { SignIn } from '@/app/lib/auth-action';
 import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { siteTitle } from '@/components/util/label';
 import useStore from '@/components/stores/zstore';
 import * as classes from '@/styles/login.css';
 import '@mantine/core/styles.css';
-import { baseconfig } from '@/../baseconfig';
+import { feconfig } from '@/frontendconfig';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-async function getProviders() {
-  const basepath = baseconfig.prefix;
+/*async function getProviders() {
+  const basepath = feconfig.prefix;
   const loginURL = `${basepath}/api/user/login`;
   //const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/providers`);
   const res = await fetch(`${basepath}/api/auth/providers`);
@@ -37,10 +36,18 @@ async function getProviders() {
   }
 
   return res.json();
-}
+}*/
 export default function LoginPage(props: any) {
   const router = useRouter();
-  const { setAuthtoken } = useStore();
+  const passwordInputRef = useRef(null);
+  const { setAuthtoken, basepath, setBasepath } = useStore();
+  const handleKeyDown = (event) => {
+    console.log('event.key', event.key);
+    if (event.key === 'Tab') {
+      event.preventDefault(); // Prevent the default tab behavior
+      passwordInputRef.current.focus(); // Focus on the password input
+    }
+  };
   // const resp: ReturnType<typeof getProviders> = (await getProviders()) || {};
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
@@ -84,7 +91,7 @@ export default function LoginPage(props: any) {
   const handleLogin = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     open();
-    const basepath = baseconfig.prefix;
+    //const basepath = feconfig.prefix;
     const loginURL = `${basepath}/api/user/login`;
     console.log('login url?', loginURL);
 
@@ -134,11 +141,12 @@ export default function LoginPage(props: any) {
             placeholder="hello@gmail.com"
             size="md"
             value={identifier}
-            onChange={(event) => setIdentifier(event.target.value)}
+            onChange={(event) => setIdentifier(event.target.value)} onKeyDown={handleKeyDown} // Add the key down handler
           />
           <PasswordInput
             label="Password"
             placeholder="Your password"
+            ref={passwordInputRef}
             mt="md"
             size="md"
             value={password}

@@ -9,7 +9,7 @@ import { MainShell } from '@/components/MainShell/MainShell';
 //import MainLinks from '../../components/MainShell/NavBar/mainlinks';
 
 //export default function LeaveRequestForm({ staff, publicholidays }) {
-export default function CreateLeaveRequestForm() {
+export default function Page() {
   const LeaveRequestPeriod = {
     leavePeriodStart: null,
     leavePeriodEnd: null,
@@ -20,12 +20,4 @@ export default function CreateLeaveRequestForm() {
     </MainShell>
   );
 }
-// export const getServerSideProps = async ({ params }) => {
-//   const staffService = new StaffService();
-//   const prisma = new PrismaClient();
-//   const leaveReqSvc = new LeaveRequestService(prisma);
-
-//   return {
-//     props: {},
-//   };
-// };
+ 

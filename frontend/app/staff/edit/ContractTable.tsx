@@ -316,11 +316,4 @@ export default function ContractTable({
     </>
   );
 }
-
-export async function getServerSideProps(ctx) {
-  return {
-    props: {
-      data: null,
-    },
-  };
-}
+ 

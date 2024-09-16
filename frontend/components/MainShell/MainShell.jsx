@@ -29,9 +29,8 @@ import {
 import { IconLogout, IconLogin } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
-//import { useRouter } from 'next/router';
-import { useRouter } from 'next/navigation';
-import { useDisclosure } from '@mantine/hooks';
+
+
 import { useStaffData } from '@/components/hooks/useStaffData';
 import useTokenExpiration from '@/components/hooks/useTokenExpiration';
 import * as classes from './MainShell.css';
@@ -42,7 +41,7 @@ import { child } from 'winston';
 import useCustRouter from '../useCustRouter';
 import { getMySession } from '@/app/lib/auth-action';
 //export function MainShell({ children: any, home, contentpadding = '10px' }) {
-export function MainShell({ children, contentpadding = '10px', handleTimesheetDateChange }) {
+export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
 
   const { siteTitle } = useUIStore();

@@ -16,10 +16,10 @@ import useStore from '@/components/stores/zstore';
 
 export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const { register, handleSubmit, reset } = useReactHookForm();
+  const { handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState(false);
-  //const [monthValue, setMonthValue] = useState(new Date());
+
   const [monthValue, setMonthValue] = useState<Date | null>(new Date());
   const { timesheetDefaultDate, setTimesheetDefaultDate, basepath } = useStore();
   const [defaultdate, setDefaultDate] = useState(new Date());
@@ -79,16 +79,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
-                {/* <MonthPicker
-                  maxLevel="year"
-                  value={monthValue}
-                  withCellSpacing={false}
-                  onChange={handleMonthChange}
-                  size={pickersize}
-                  date={defaultdate}
-                  defaultDate={defaultdate}
-                  className={styles.monthPickerButtons}
-                /> */}
+
                 <MonthPicker
                   date={defaultdate}
                   withCellSpacing={false}

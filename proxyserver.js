@@ -7,6 +7,7 @@ const fastify = Fastify();
 const config = require("./baseconfig");
 const { baseconfig } = config;
 const { prefix: _prefix, frontendport, backendport, mainport } = baseconfig;
+console.log(baseconfig);
 const _frontendurl = `http://127.0.0.1:${frontendport}`;
 const _backendurl = `http://127.0.0.1:${backendport}`;
 

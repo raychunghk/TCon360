@@ -2,6 +2,7 @@ import { format, parseISO, isWeekend } from 'date-fns';
 import { useContext } from 'react';
 
 import useStore from '@/components/stores/zstore';
+import { usePublicHolidays } from './usePublicHolidays';
 let arrPublicHoliday;
 export function setPublicHolidays(holidays) {
   arrPublicHoliday = holidays;
@@ -194,8 +195,14 @@ export function getNextWorkingDatex(date) {
 
   return nextWorkingDate;
 }
+
 const getPublicHolidays = () => {
   const state = useStore.getState();
+  if (!state.publicHolidays) {
+    const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
+    // await plHoliday.loadPublicHolidays();
+
+  }
   //zustand api call method when getting state outside of comonents.
   return state.publicHolidays;
 };

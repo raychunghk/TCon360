@@ -16,7 +16,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"], // Keep this for TypeScript/JSX/TSX files
+      "@base/*": ["../*"]
     },
     "plugins": [{ "name": "next" }],
     "noImplicitAny": false

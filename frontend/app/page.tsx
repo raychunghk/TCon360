@@ -7,7 +7,7 @@ import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import { FrontPageCalendar } from '@/components/Calendar/FrontPageCalendar';
 
-export default function HomePage() {
+export default function Page() {
   //const { siteTitle } = useUIStore();
   const [siteTitle] = useUIStore(useShallow((state) => [state.siteTitle]));
   const [setTimesheetDefaultDate, basepath] = useStore(
@@ -17,7 +17,7 @@ export default function HomePage() {
     setTimesheetDefaultDate(date);
   };
   return (
-    <MainShell contentpadding="0px" handleTimesheetDateChange>
+    <MainShell contentpadding="0px">
       {basepath && <FrontPageCalendar handleTimesheetDateChange />}
     </MainShell>
   );

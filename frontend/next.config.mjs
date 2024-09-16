@@ -1,5 +1,6 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
+//https://poe.com/s/1XIh5Ypw2UL25fudpAIl
 const withVanillaExtract = createVanillaExtractPlugin();
 import dotenv from 'dotenv';
 import baseconf from '../baseconfig.js';
@@ -29,7 +30,13 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-
+  //typescript: {
+  // !! WARN !!
+  // Dangerously allow production builds to successfully complete even if
+  // your project has type errors.
+  // !! WARN !!
+  //  ignoreBuildErrors: true,
+  // },
   // Enable experimental package import optimization
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],

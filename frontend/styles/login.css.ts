@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
 import backgroundImg from '@/public/images/loginbg1.webp';
-import { baseconfig } from '@/../baseconfig';
+import { default as baseconfig } from '@/frontendconfig';
 console.log(baseconfig);
 const bgImage = `${baseconfig.prefix}/images/loginbg1.webp`;
 export const wrapper = style({

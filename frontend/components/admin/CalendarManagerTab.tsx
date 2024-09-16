@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Text, Button, LoadingOverlay, TextInput, Card, Box, Tooltip } from '@mantine/core';
-import axios from 'axios';
+ 
 import commonstyle from '/styles/common.module.css';
 
 import MyModal from '@/components/MyModal';
 import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
-
+  import axios, { AxiosError } from 'axios'; // Import AxiosError
 import { IconCalendarEvent } from '@tabler/icons-react';
 const CalendarManagementTab = () => {
   const [icsUrl, setIcsUrl] = useState('https://www.1823.gov.hk/common/ical/tc.json');
@@ -17,35 +17,57 @@ const CalendarManagementTab = () => {
     setModalOpen(false);
   };
   const [basepath] = useStore(useShallow((state) => [state.basepath]));
-  const handleGeneratePublicHoliday = async (event) => {
-    event.preventDefault(); // Prevent the default form submit behavior
-    const api = `${basepath}/api/admin/publicholiday`;
-    setLoading(true);
-    console.log('api', api);
 
-    try {
-      const response = await axios.post(api, {
-        icsUrl: icsUrl,
-      });
 
-      if ([200, 201].includes(response.status)) {
-        const msg = response.data.message;
-        console.log('Public holiday records generated successfully.');
-        setModalMsg(msg); // Set success message
-        setModalOpen(true);
-      } else {
-        console.error('Error generating public holiday records:', response.statusText);
-        setModalMsg(`Error: ${response.statusText}`); // Set error message
-        setModalOpen(true);
-      }
-    } catch (error) {
-      console.error('Error generating public holiday records:', error);
-      setModalMsg(`Error: ${error.message}`); // Set error message
+const handleGeneratePublicHoliday = async (event) => {
+  event.preventDefault(); 
+  const api = `${basepath}/api/admin/publicholiday`;
+  setLoading(true);
+
+  try {
+    const response = await axios.post(api, {
+      icsUrl: icsUrl,
+    });
+
+    if ([200, 201].includes(response.status)) {
+      console.log('Public holiday records generated successfully.');
+      setModalMsg(response.data.message); 
       setModalOpen(true);
-    } finally {
-      setLoading(false);
+    } else {
+      // Handle non-200/201 responses as errors
+      console.error('Error generating public holiday records:', response.statusText);
+      setModalMsg(`Error: ${response.statusText}`); 
+      setModalOpen(true);
     }
-  };
+  } catch (error) {
+    // Use AxiosError for better type safety
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.message);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        console.error('Data:', error.response.data);
+        console.error('Status:', error.response.status);
+        console.error('Headers:', error.response.headers);
+        setModalMsg(`Error: ${error.response.data.message || error.message}`); 
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('Request:', error.request);
+        setModalMsg('Error: No response from server.'); 
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error:', error.message);
+        setModalMsg(`Error: ${error.message}`); 
+      }
+    } else {
+      // Handle unexpected errors
+      console.error('Unexpected Error:', error);
+      setModalMsg('An unexpected error occurred.'); 
+    }
+    setModalOpen(true);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Box maw={800} pos="relative">
