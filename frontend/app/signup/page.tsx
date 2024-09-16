@@ -289,22 +289,26 @@ export default function SignupPage() {
 
   //const onKeyDown = useHotkeys([['mod+Enter', nextStep]]);
   const hotkeyConfig = [['mod+Enter', nextStep]];
-  const numberoffields = [3, 8];
-  const handleTabKey = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    console.log('event.key?', event.key);
 
+  const handleTabKey = (event, stepStartIndex, stepEndIndex) => {
     if (event.key === 'Tab') {
       event.preventDefault();
       const currentIndex = inputRefs.current.indexOf(event.target);
       if (currentIndex !== -1) {
-        const nextIndex = (currentIndex + (event.shiftKey ? -1 : 1)) % inputRefs.current.length;
-        if (nextIndex >= 0) {
-          inputRefs.current[nextIndex].focus();
+        const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
+
+        if (nextIndex > stepEndIndex) {
+          // Wrap around to the first field in the current step
+          inputRefs.current[stepStartIndex]?.focus();
+        } else if (nextIndex < stepStartIndex) {
+          // Wrap around to the last field in the current step
+          inputRefs.current[stepEndIndex]?.focus();
+        } else {
+          inputRefs.current[nextIndex]?.focus();
         }
       }
     }
   };
-  let inputIndex = 0;
   return (
     <>
       <Head>
@@ -326,7 +330,7 @@ export default function SignupPage() {
             <Stepper active={active} onStepClick={handleStepClick} breakpoint="sm">
               <Stepper.Step label="First step" description="Enter login details">
                 <Paper shadow="sm" p="xs" withBorder>
-                  <Title order={2} className={classes.steptitle}>
+                  <Title order={2}  >
                     Enter login details
                   </Title>
                   <Grid pb={10} pt={10}>
@@ -369,7 +373,7 @@ export default function SignupPage() {
                             onChange={field.onChange}
                             onKeyDown={(event) => {
                               getHotkeyHandler(hotkeyConfig)(event);
-                              handleTabKey(event);
+                              handleTabKey(event, 0, 2);
                             }}
                             {...form.getInputProps(field.name)}
                             ref={(ref) => {
@@ -396,7 +400,7 @@ export default function SignupPage() {
               </Stepper.Step>
               {publicHolidays && <Stepper.Step label="Second step" description="T-contract Staff Details">
                 <Paper shadow="sm" p="xs" withBorder>
-                  <Title order={2} className={classes.steptitle}>
+                  <Title order={2}  >
                     T-contract Staff Details
                   </Title>
                   <Grid pb={10} pt={10}>
@@ -456,11 +460,13 @@ export default function SignupPage() {
                       const isDateTime = field.type === 'datetime';
                       const isNumber = field.type === 'number';
                       const refIndex = index + 3; // Adjust the index as needed
-
+                      const _stepid = 2;
+                      const autoFocus = refIndex === 3 && active === 1;
                       return (
                         <Grid.Col span={6} key={field.name}>
                           {isDateTime ? (
                             <DatePickerInput
+                              autoFocus={autoFocus}
                               clearable
                               label={field.label}
                               placeholder={field.placeholder}
@@ -477,11 +483,11 @@ export default function SignupPage() {
                               }}
                               onKeyDown={(event) => {
                                 getHotkeyHandler(hotkeyConfig)(event);
-                                handleTabKey(event);
+                                handleTabKey(event, 3, 10);
                               }}
                             />
                           ) : isNumber ? (
-                            <NumberInput
+                            <NumberInput autoFocus={autoFocus}
                               label={field.label}
                               placeholder={field.placeholder}
                               name={field.name}
@@ -490,7 +496,7 @@ export default function SignupPage() {
                               min={0}
                               onKeyDown={(event) => {
                                 getHotkeyHandler(hotkeyConfig)(event);
-                                handleTabKey(event);
+                                handleTabKey(event, 3, 10);
                               }}
                               {...form.getInputProps(field.name)}
                               ref={(ref) => {
@@ -498,7 +504,7 @@ export default function SignupPage() {
                               }}
                             />
                           ) : (
-                            <TextInput
+                            <TextInput autoFocus={autoFocus}
                               label={field.label}
                               placeholder={field.placeholder}
                               name={field.name}
@@ -506,7 +512,7 @@ export default function SignupPage() {
                               value={field.value}
                               onKeyDown={(event) => {
                                 getHotkeyHandler(hotkeyConfig)(event);
-                                handleTabKey(event);
+                                handleTabKey(event, 3, 10);
                               }}
                               {...form.getInputProps(field.name)}
                               ref={(ref) => {
@@ -522,9 +528,7 @@ export default function SignupPage() {
               </Stepper.Step>}
               <Stepper.Step label="Final step" description="Timesheet Certifying Officer">
                 <Paper shadow="sm" p="xs" withBorder>
-                  <Title order={2} className={classes.steptitle}>
-                    Timesheet Certifying Officer
-                  </Title>
+                  <Title order={2}>Timesheet Certifying Officer</Title>
                   <Grid pb={10} pt={10}>
                     {[
                       {
@@ -545,25 +549,29 @@ export default function SignupPage() {
                         name: 'ManagerEmail',
                         value: formValues.ManagerEmail,
                       },
-                    ].map(({ label, placeholder, name, value }, index) => (
-                      <Grid.Col span={6}>
-                        <TextInput
-                          label={label}
-                          placeholder={placeholder}
-                          name={name}
-                          onChange={handleInputChange}
-                          onKeyDown={(event) => {
-                            getHotkeyHandler(hotkeyConfig)(event);
-                            handleTabKey(event);
-                          }}
-                          value={value}
-                          {...form.getInputProps(name)}
-                          ref={(ref) => {
-                            inputRefs.current[index] = ref;
-                          }}
-                        />
-                      </Grid.Col>
-                    ))}
+                    ].map((field, index) => {
+                      const refIndex = index + 11; // Adjust the starting index based on previous fields
+                      const autoFocus = refIndex === 11 && active === 2;
+                      return (
+                        <Grid.Col span={6} key={field.name}>
+                          <TextInput autoFocus={autoFocus}
+                            label={field.label}
+                            placeholder={field.placeholder}
+                            name={field.name}
+                            onChange={handleInputChange}
+                            onKeyDown={(event) => {
+                              getHotkeyHandler(hotkeyConfig)(event);
+                              handleTabKey(event, 11, 13); // Adjust indices for the final step
+                            }}
+                            value={field.value}
+                            {...form.getInputProps(field.name)}
+                            ref={(ref) => {
+                              inputRefs.current[refIndex] = ref;
+                            }}
+                          />
+                        </Grid.Col>
+                      );
+                    })}
                   </Grid>
                 </Paper>
               </Stepper.Step>
