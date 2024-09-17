@@ -27,6 +27,7 @@ import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
 import useCustRouter from '../useCustRouter';
 import { useShallow } from 'zustand/react/shallow';
+import { usePublicHolidays } from '../util/usePublicHolidays';
 
 export function FrontPageCalendar(handleTimesheetDateChange) {
   const handleSignout = () => {
@@ -80,7 +81,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
   //const basepath = process.env.basepath;
   const [customTitle, setCustomTitle] = useState('');
   const [hasCalendar, setHasCalendar] = useState(true);
-
+  const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
   console.log('fronpagecalendar basepath?', basepath);
   async function fetchEvents() {
     try {

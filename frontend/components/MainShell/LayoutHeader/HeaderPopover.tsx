@@ -7,7 +7,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 import useStore from '@/components/stores/zstore';
-export default function HeaderPopover({}) {
+export default function HeaderPopover({ }) {
   const [openedPop, setOpenedPop] = useState(false);
   const [userFields, setuserFields] = useState(null);
 
@@ -55,9 +55,8 @@ export default function HeaderPopover({}) {
       {
         label: 'Annual Leave:',
         value: `Total: ${activeContract.AnnualLeave}`,
-        subValue2: `Available: ${
-          staffVacation ? activeContract.AnnualLeave - staffVacation.used : 0
-        }`,
+        subValue2: `Available: ${staffVacation ? activeContract.AnnualLeave - staffVacation.used : 0
+          }`,
         subValue: `Used: ${staffVacation ? staffVacation.used : 0}`,
       },
     ]);
@@ -88,7 +87,7 @@ export default function HeaderPopover({}) {
           {activeUser?.name}
         </Button>
       </Popover.Target>
-      <Popover.Dropdown className={styles.PopoverDropdown}>
+      <Popover.Dropdown className={styles.PopoverDropdown} style={{ borderRadius: '8px !important;' }}>
         <ActionIcon
           variant="filled"
           size="md"
@@ -105,25 +104,25 @@ export default function HeaderPopover({}) {
         <Grid gutter="sm">
           {userFields
             ? userFields.map((field, index) => (
-                <React.Fragment key={index}>
-                  <Grid.Col span={5}>
-                    <Text ta="right" size="sm" fw={500}>
-                      {field.label}
-                    </Text>
-                  </Grid.Col>
-                  <Grid.Col span={7}>
-                    {field.subValue ? (
-                      <>
-                        <Text size="sm">{field.value}</Text>
-                        <Text size="sm">{field.subValue}</Text>
-                        <Text size="sm">{field.subValue2}</Text>
-                      </>
-                    ) : (
+              <React.Fragment key={index}>
+                <Grid.Col span={5}>
+                  <Text ta="right" size="sm" fw={500}>
+                    {field.label}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={7}>
+                  {field.subValue ? (
+                    <>
                       <Text size="sm">{field.value}</Text>
-                    )}
-                  </Grid.Col>
-                </React.Fragment>
-              ))
+                      <Text size="sm">{field.subValue}</Text>
+                      <Text size="sm">{field.subValue2}</Text>
+                    </>
+                  ) : (
+                    <Text size="sm">{field.value}</Text>
+                  )}
+                </Grid.Col>
+              </React.Fragment>
+            ))
             : ''}
         </Grid>
       </Popover.Dropdown>

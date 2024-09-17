@@ -44,7 +44,7 @@
 }
 .PopoverDropdown {
   background: linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e);
-  border-radius: var(--mantine-radius-md);
+  border-radius: var(--mantine-radius-md) !important;
   color: white;
   box-shadow: var(--mantine-shadows-md);
   padding: var(--mantine-spacing-md);

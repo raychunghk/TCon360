@@ -1,14 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import {  Text, Stack, Tabs } from '@mantine/core';
+
+import { Text, Stack, Tabs } from '@mantine/core';
 import { MainShell } from '@/components/MainShell/MainShell';
 import Head from 'next/head';
 import useStore from '@/components/stores/zstore';
 import axios from 'axios';
 import UserManagementTab from '@/components/admin/UserManagerTab';
 import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
-import { default as useRouter } from '@/components/useCustRouter';
+
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
 
 import { IconCalendarEvent, IconUser, IconSunMoon } from '@tabler/icons-react';
@@ -16,7 +16,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useSearchParams } from 'next/navigation';
 import { parseCookies } from 'nookies';
 export default function Page() {
-  const { register, handleSubmit, reset } = useForm();
+
   const [formValues, setFormValues] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -31,7 +31,7 @@ export default function Page() {
     if (tabId === 'calendarManagement') {
       setActiveTab('calendarManagement');
     }
-  }, [searchParams]); 
+  }, [searchParams]);
 
   if (!activeUser || activeUser?.role?.name !== 'admin') {
     return (
@@ -55,8 +55,8 @@ export default function Page() {
         /*const cookies = document.cookie.split('; ');
         const tokenCookie = cookies.find((cookie) => cookie.startsWith('token='));
         */
-           const cookies = parseCookies();
-    const tokenCookie = cookies.token;
+        const cookies = parseCookies();
+        const tokenCookie = cookies.token;
         const token = tokenCookie ? tokenCookie.split('=')[1] : null;
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
@@ -84,9 +84,9 @@ export default function Page() {
       </Head>
 
       <Tabs
-        defaultValue={activeTab} 
+        defaultValue={activeTab}
         value={activeTab}
-        onChange={setActiveTab} 
+        onChange={setActiveTab}
         style={{ width: '100%', height: '100%' }}
       >
         <Tabs.List>
@@ -114,4 +114,3 @@ export default function Page() {
   );
 };
 
- 

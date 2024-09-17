@@ -5,12 +5,12 @@ import { format } from 'date-fns';
 
 import useStore from '@/components/stores/zstore';
 export function usePublicHolidays() {
-  const [loading, setLoading] = useState(false);
-  const { publicHolidays, setPublicHolidays,basepath } = useStore();
+  //const [loading, setLoading] = useState(false);
+  const { publicHolidays, setPublicHolidays, basepath } = useStore();
 
   async function loadPublicHolidays() {
     try {
-      setLoading(true);
+      //  setLoading(true);
       const response = await axios.get(`${basepath}/api/timesheet/publicholidays`);
       const pldays = response.data.map((holiday) => ({
         Summary: holiday.Summary,
@@ -20,7 +20,7 @@ export function usePublicHolidays() {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   }
 
@@ -33,5 +33,5 @@ export function usePublicHolidays() {
     fetchHolidays();
   }, [publicHolidays]); // Added publicHolidays to the dependency array
 
-  return { publicHolidays, loading, loadPublicHolidays };
+  return { publicHolidays, loadPublicHolidays };
 }

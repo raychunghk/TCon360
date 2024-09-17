@@ -1,17 +1,15 @@
-/** @format */
 
-const feconfig = {
-    proxypath: "/absproxy",
-    frontendport: 3000,
-    mainport: 3333,
- 
-};
+const proxypath = "/absproxy";
+const frontendport = 3000;
+const useReverseProxy = false;
+const mainport = useReverseProxy ? 3333 : frontendport;
 
- 
 module.exports = {
-  feconfig: {
-    ...feconfig,
-    prefix: `${feconfig.proxypath}/${feconfig.mainport}`,
-    basepath: `${feconfig.proxypath}/${feconfig.mainport}`,
-  },
+  proxypath: proxypath,
+  useReverseProxy: useReverseProxy,
+  frontendport,
+  mainport,
+  prefix: `${proxypath}/${mainport}`,
+  basepath: `${proxypath}/${mainport}`,
+  feprefix: `${proxypath}/${frontendport}`,
 };

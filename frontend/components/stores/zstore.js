@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+//import { create } from 'zustand';
+import { createWithEqualityFn as create } from 'zustand/traditional'
 
 const useStore = create((set) => ({
   // State variables
@@ -67,6 +68,8 @@ const useStore = create((set) => ({
   userStatus: null,
   MainshellOverlayVisible: false,
   authOverlayVisible: false,
+  useReverseProxy: false,
+  setUseReverseProxy: (isUse) => set(() => ({ useReverseProxy: isUse })),
   setAuthOverlayVisible: (visible) => set(() => ({ authOverlayVisible: visible })),
   setMainshellOverlayVisible: (visible) => set(() => ({ MainshellOverlayVisible: visible })),
   // Setters

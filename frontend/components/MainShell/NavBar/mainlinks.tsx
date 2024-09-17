@@ -57,10 +57,11 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
 }
 function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
   const marginLeft = isChild ? 20 : 0;
-  const { basepath } = useStore();
+  const { basepath, useReverseProxy } = useStore();
+  const _link = useReverseProxy ? `${basepath ?? ''}${link}` : link;
   return (
     <div style={{ marginLeft }}>
-      <CustomLink href={`${basepath ?? ''}${link}`}>
+      <CustomLink href={_link}>
         <Group>
           <ThemeIcon color={color} variant="light">
             {icon}
@@ -126,13 +127,13 @@ export default function MainLinks() {
 
     ...(activeUser?.role?.name === 'admin'
       ? [
-          {
-            icon: <IconSettings size={'1.5rem'} color="orange" />,
-            color: 'orange',
-            label: 'Settings',
-            link: '/admin',
-          },
-        ]
+        {
+          icon: <IconSettings size={'1.5rem'} color="orange" />,
+          color: 'orange',
+          label: 'Settings',
+          link: '/admin',
+        },
+      ]
       : []),
     // {
     //   icon: <IconCalendarStats size={defaultIconSize} />,
