@@ -80,7 +80,7 @@ export default function EditStaff() {
           // Token has expired, perform logout action
           console.log('Logging out, now is:', format(Date.now(), 'yyyy-MM-dd hh:mm:ss'));
 
-          router.push('/login'); // Redirect to the login page or any other appropriate route
+          router.push('/auth/login'); // Redirect to the login page or any other appropriate route
         }, 5 * 1000);
 
         return () => clearTimeout(timeout);

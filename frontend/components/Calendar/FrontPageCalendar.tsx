@@ -1,6 +1,6 @@
 import { Button, Drawer, Text } from '@mantine/core';
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
@@ -14,7 +14,7 @@ import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { signOut, useSession } from 'next-auth/react';
 
 import {
-  convertDateStringToDate,
+
   isPublicHoliday,
   handleSelectAllow,
   isSameDate,
@@ -48,23 +48,26 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
     setLeaveRequestPeriod,
     setStaffVacation,
     setCalendarEvents,
-    setIsMonthPickerChangeEvent,
+    // setIsMonthPickerChangeEvent,
     setIsFrontCalendarChangeEvent,
     basepath,
     setSelectedMonth,
-    setTimesheetDefaultDate,
+    //    setTimesheetDefaultDate,
     clearAllState,
     timesheetDefaultDate,
     calendarEvents,
     setChargeableDays,
     setLeaveRequestId,
-    leaveRequestId,
+    leaveRequestId, activeStaff
+
   } = useStore();
-  const [LeaveRequestPeriod, isMonthPickerChangeEvent, isFrontCalendarChangeEvent] = useStore(
+  const [LeaveRequestPeriod, isMonthPickerChangeEvent, isFrontCalendarChangeEvent, activeUser, activeContract] = useStore(
     useShallow((state) => [
       state.LeaveRequestPeriod,
       state.isMonthPickerChangeEvent,
       state.isFrontCalendarChangeEvent,
+      state.activeUser,
+      state.activeContract
     ])
   );
   /*const { publicHolidays, activeUser, activeStaff, activeContract, basepath } = useStore(
@@ -122,7 +125,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
       }
     }
   }
-  const { activeStaff, activeContract, isAuthenticated, activeUser } = useStaffData();
+  //const { activeStaff, activeContract, isAuthenticated, activeUser } = useStaffData();
   //  const { data: session, status } = useSession();
   const router = useCustRouter();
 

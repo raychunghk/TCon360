@@ -6,7 +6,7 @@ import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
-  type MRT_Row,
+
 } from 'mantine-react-table';
 import axios from 'axios';
 import commonstyle from '@/styles/common.module.css';
@@ -27,12 +27,12 @@ type ValidationErrors = {
   name?: string;
   email?: string;
 };
-const UserManagementTab = () => {
+export default function UserManagementTab() {
   const [userData, setUserData] = useState<UserRole[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [rolenames, setRoleNames] = useState([]);
   const [basepath] = useStore(useShallow((state) => [state.basepath]));
-  const [rolesLoaded, setRolesLoaded] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -273,4 +273,4 @@ const UserManagementTab = () => {
   );
 };
 
-export default UserManagementTab;
+//export default UserManagementTab;

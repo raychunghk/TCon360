@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 
 import { Text, Stack, Tabs } from '@mantine/core';
 import { MainShell } from '@/components/MainShell/MainShell';
@@ -11,10 +11,11 @@ import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
 
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
 
-import { IconCalendarEvent, IconUser, IconSunMoon } from '@tabler/icons-react';
+import { IconCalendarEvent, IconUser, IconSunMoon, IconDatabasePlus } from '@tabler/icons-react';
 import { useShallow } from 'zustand/react/shallow';
 import { useSearchParams } from 'next/navigation';
 import { parseCookies } from 'nookies';
+import BackupRestoreTab from '@/components/admin/BackupRestoreTab';
 export default function Page() {
 
   const [formValues, setFormValues] = useState(null);
@@ -96,18 +97,29 @@ export default function Page() {
           <Tabs.Tab value="calendarManagement" leftSection={<IconCalendarEvent />}>
             Calendar Management
           </Tabs.Tab>
+          <Tabs.Tab value="dataManagement" leftSection={<IconDatabasePlus />}>
+            Backup/Restore
+          </Tabs.Tab>
           <Tabs.Tab value="themeManagement" leftSection={<IconSunMoon />}>
             Change Theme
           </Tabs.Tab>
+
         </Tabs.List>
         <Tabs.Panel value="userManagement" pt="xs" style={{ width: '100%', height: '100%' }}>
-          <UserManagementTab />
+          <Suspense fallback={<p>Loading User Management...</p>}>
+            <UserManagementTab />
+          </Suspense>
         </Tabs.Panel>
         <Tabs.Panel value="calendarManagement" pt="xs">
-          <CalendarManagementTab />
+          <Suspense fallback={<p>Loading Calendar Management...</p>}>
+            <CalendarManagementTab />
+          </Suspense>
         </Tabs.Panel>
         <Tabs.Panel value="themeManagement" pt="xs">
           <ColorSchemeToggle />
+        </Tabs.Panel>
+        <Tabs.Panel value="dataManagement" pt="xs">
+          <BackupRestoreTab />
         </Tabs.Panel>
       </Tabs>
     </MainShell>

@@ -35,7 +35,7 @@ import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import useUIStore from '@/components/stores/useUIStore';
 import { getMySession } from '@/app/lib/auth-action';
- 
+
 export default function LeaveRequestForm({
   formType,
   leaveRequestId,
@@ -497,11 +497,9 @@ const [nuts, honey] = useBearStore(
                   <p>
                     <Text fw={500}>Leave Period:</Text>
 
-                    {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${
-                      leaveRequest.AMPMStart === 'AMPM' ? '' : leaveRequest.AMPMStart
-                    } to ${format(leaveRequest.leavePeriodEnd, 'dd-MMM-yyyy')} ${
-                      leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
-                    }`}
+                    {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${leaveRequest.AMPMStart === 'AMPM' ? '' : leaveRequest.AMPMStart
+                      } to ${format(leaveRequest.leavePeriodEnd, 'dd-MMM-yyyy')} ${leaveRequest.AMPMEnd == 'AMPM' ? '' : leaveRequest.AMPMEnd
+                      }`}
                   </p>
                 )}
             </Grid.Col>
