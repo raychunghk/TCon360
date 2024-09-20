@@ -21,9 +21,33 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   const [fileid, setfileid] = useState(false);
 
   const [monthValue, setMonthValue] = useState<Date | null>(new Date());
-  const { timesheetDefaultDate, setTimesheetDefaultDate, basepath } = useStore();
-  const [defaultdate, setDefaultDate] = useState(new Date());
 
+  const {
+    timesheetDefaultDate,
+    setTimesheetDefaultDate,
+    selectedMonth,
+    setSelectedMonth,
+    isMonthPickerChangeEvent,
+    setIsMonthPickerChangeEvent,
+    isFrontCalendarChangeEvent, basepath
+  } = useStore();
+  const [defaultdate, setDefaultDate] = useState(new Date());
+  useEffect(
+    () => {
+      if (isFrontCalendarChangeEvent) {
+        console.log(
+          'selected month change triggered by frontpagecalendar',
+          selectedMonth,
+        );
+        if (timesheetDefaultDate != selectedMonth) {
+          //setTimesheetDefaultDate(selectedMonth);
+        }
+      }
+      return () => { };
+    },
+    //eslint-disable-next-line
+    [selectedMonth],
+  );
   useEffect(() => {
     console.log('timesheetDefaultDate?', timesheetDefaultDate);
     setMonthValue(timesheetDefaultDate);

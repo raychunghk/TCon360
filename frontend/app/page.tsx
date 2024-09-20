@@ -5,7 +5,8 @@ import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeTo
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
-import { FrontPageCalendar } from '@/components/Calendar/FrontPageCalendar';
+import FrontPageCalendar from '@/components/Calendar/FrontPageCalendar';
+
 
 export default function Page() {
   //const { siteTitle } = useUIStore();

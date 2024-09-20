@@ -1,53 +1,25 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { parseCookies } from 'nookies';
-//import { basepath } from '/global';
 import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import { baseconfig } from '@/../baseconfig';
+
 interface StaffData {
   activeUser: any;
   activeStaff: any;
   activeContract: any;
   isAuthenticated: boolean;
-  status: any;
+  status: string;
 }
 
 export function useStaffData(): StaffData {
   const cookies = parseCookies();
+  const tokenCookie = cookies.token;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [status, setStatus] = useState('loading');
-  const tokenCookie = cookies.token;
-  /*const [setEditErrors, setNextContractStartDate] = useStore(
-    useShallow((state) => [
-      state.setEditErrors,
-      state.setNextContractStartDate,
-    ]),
-  );*/
-  // const [
-  //   activeContract,
-  //   setActiveContract,
-  //   activeStaff,
-  //   setActiveStaff,
-  //   activeUser,
-  //   setActiveUser,
-  //   userStatus,
-  //   basepath,
-  //   setBasepath,
-  // ] = useStore(
-  //   useShallow((state) => [
-  //     state.activeContract,
-  //     state.setActiveContract,
-  //     state.activeStaff,
-  //     state.setActiveStaff,
-  //     state.activeUser,
-  //     state.setActiveUser,
-  //     state.userStatus,
-  //     state.basepath,
-  //     state.setBasepath,
-  //   ])
-  // );
+
   const {
     activeContract,
     setActiveContract,
@@ -59,61 +31,52 @@ export function useStaffData(): StaffData {
     basepath,
     setBasepath,
   } = useStore();
+
   const fetchData = async () => {
+    if (!tokenCookie) {
+      setStatus('unauthenticated');
+      return;
+    }
+
     try {
-      const headers = {
-        Authorization: `Bearer ${tokenCookie}`,
-      };
+      const headers = { Authorization: `Bearer ${tokenCookie}` };
+      const response = await axios.get(`${basepath}/api/user/myuser`, { headers });
 
-      const response = await axios.get(`${basepath}/api/user/myuser`, {
-        headers,
-      });
-
-      if ([200, 201].includes(response.status)) {
+      if (response.status === 200 || response.status === 201) {
+        const userData = response.data;
         setIsAuthenticated(true);
-        const _user = response.data;
-        setActiveUser(_user);
-        const _staff = _user.staff[0];
-        // activeStaff = _staff;
-        console.log('usestaff:, setstaff', _staff);
-        setActiveStaff(_staff);
-        // setFormValues(_staff);
-        // setEditing(true);
-        // dispatch(setStaff(_staff));
-        const _activeContract = _staff.contracts.filter((contract) => contract.IsActive === true);
-        const ctract = _activeContract ? _activeContract[0] : null;
-        console.log('usestaff:, setActiveContract', ctract);
-        setActiveContract(ctract);
+        setActiveUser(userData);
+
+        const staffMember = userData.staff[0];
+        setActiveStaff(staffMember);
+
+        const activeContracts = staffMember.contracts.filter(contract => contract.IsActive);
+        setActiveContract(activeContracts.length > 0 ? activeContracts[0] : null);
+
         setStatus('authenticated');
       } else {
-        setStatus('unauthenticated');
-        setIsAuthenticated(false);
+        throw new Error('Invalid response status');
       }
     } catch (error) {
       console.error('Failed to fetch staff data:', error);
+      setIsAuthenticated(false);
+      setStatus('unauthenticated');
     }
   };
 
-  // useEffect(() => {
-  //   const _basepath = baseconfig.basepath;
-  //   if (!basepath) {
-  //     setBasepath(_basepath);
-  //   }
-
-  //   if (tokenCookie) fetchData();
-  // }, []);
   useEffect(() => {
     const _basepath = baseconfig.basepath;
     if (!basepath) {
       setBasepath(_basepath);
     }
-  }, [baseconfig.basepath, basepath, setBasepath]);
+  }, [basepath, setBasepath]);
 
   useEffect(() => {
-    if (basepath && tokenCookie) {
+    if (basepath) {
       fetchData();
     }
   }, [basepath, tokenCookie]);
+
   const refreshFormValues = async () => {
     await fetchData();
   };

@@ -1,6 +1,7 @@
 import { Button, Drawer, Text } from '@mantine/core';
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
@@ -20,7 +21,7 @@ import {
   isSameDate,
 } from './calendar.util';
 import CustomView from './customeView';
-import { useStaffData } from '@/components/useStaffData';
+
 import { getBusinessDays } from '@/components/util/leaverequest.util';
 
 import useUIStore from '@/components/stores/useUIStore';
@@ -29,7 +30,7 @@ import useCustRouter from '../useCustRouter';
 import { useShallow } from 'zustand/react/shallow';
 import { usePublicHolidays } from '../util/usePublicHolidays';
 
-export function FrontPageCalendar(handleTimesheetDateChange) {
+const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
   const handleSignout = () => {
     destroyCookie(null, 'token');
     clearAllState();
@@ -42,56 +43,52 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
   };
   const [leavePurpose, setleavePurpose] = useState(null);
 
-  const [formType, setFormType] = useState(null);
+  const [formType, setFormType] = useState('');
   const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
   const {
     setLeaveRequestPeriod,
     setStaffVacation,
     setCalendarEvents,
-    // setIsMonthPickerChangeEvent,
+
     setIsFrontCalendarChangeEvent,
-    basepath,
+
     setSelectedMonth,
-    //    setTimesheetDefaultDate,
+
     clearAllState,
     timesheetDefaultDate,
     calendarEvents,
     setChargeableDays,
     setLeaveRequestId,
-    leaveRequestId, activeStaff
+    leaveRequestId, activeStaff, setTimesheetDefaultDate
 
   } = useStore();
-  const [LeaveRequestPeriod, isMonthPickerChangeEvent, isFrontCalendarChangeEvent, activeUser, activeContract] = useStore(
+  const [LeaveRequestPeriod, isMonthPickerChangeEvent, isFrontCalendarChangeEvent, activeUser, activeContract, basepath] = useStore(
     useShallow((state) => [
       state.LeaveRequestPeriod,
       state.isMonthPickerChangeEvent,
       state.isFrontCalendarChangeEvent,
       state.activeUser,
-      state.activeContract
+      state.activeContract,
+      state.basepath
     ])
   );
-  /*const { publicHolidays, activeUser, activeStaff, activeContract, basepath } = useStore(
-   useShallow((state) => [
-     state.publicHolidays,
-     state.activeUser,
-     state.activeStaff,
-     state.activeContract,
-     state.basepath,
-   ])
- );*/
+
   const { isEventUpdated, setIsEventUpdated } = useUIStore();
+  const [renderCount, setRenderCount] = useState(0);
   const calendarRef = useRef(null);
-  //const basepath = process.env.basepath;
+
   const [customTitle, setCustomTitle] = useState('');
   const [hasCalendar, setHasCalendar] = useState(true);
   const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
   console.log('fronpagecalendar basepath?', basepath);
-  async function fetchEvents() {
+  useEffect(() => {
+    setRenderCount(renderCount + 1);
+  }, []);
+  const fetchEvents = useCallback(async () => {
     try {
       const apiurl = `${basepath}/api/timesheet/calendar`;
       const cookies = parseCookies();
       const _token = cookies.token;
-      console.log('_token?', _token);
       if (!_token) {
         return;
       }
@@ -103,12 +100,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
       });
       if ([200, 201].includes(response.status)) {
         const events = await response.data;
-
-        console.log(
-          `calendar event length, ${calendarEvents ? calendarEvents.length : 0}\r\n fetched event lenght: ${events.length}`
-        );
-
-        if (!calendarEvents || isEventUpdated || events.length != calendarEvents.length) {
+        if (!calendarEvents || isEventUpdated || events.length !== calendarEvents.length) {
           await setCalendarEvents(events);
         }
         if (events.length === 0 && calendarEvents.length === 0) {
@@ -124,46 +116,21 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
         console.error('Error! Failed to fetch events:', error);
       }
     }
-  }
-  //const { activeStaff, activeContract, isAuthenticated, activeUser } = useStaffData();
-  //  const { data: session, status } = useSession();
-  const router = useCustRouter();
-
+  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout]);
+  const memoizedFetchEvents = useMemo(() => fetchEvents, [basepath, handleSignout]);
   useEffect(() => {
-    if (activeStaff && basepath) {
-      fetchEvents();
+    if (basepath) {
+      memoizedFetchEvents();
     }
-    return () => {
-      // observer.disconnect();
-    };
-  }, [activeStaff]);
+  }, [basepath, activeStaff, memoizedFetchEvents]);
+
   useEffect(() => {
     if (isEventUpdated) {
       fetchEvents();
       setIsEventUpdated(false);
     }
-  }, [isEventUpdated]);
-  /*
-  useEffect(() => {
-    // Calculate total chargeable days whenever calendar events or date changes
-    if (calendarEvents && calendarEvents.length > 0) {
-      setTitle(timesheetDefaultDate);
-      if (activeUser) {
-        setVacationSummary(activeUser, calendarEvents);
-      }
-    }
-    //handleJumpToMonth(timesheetDefaultDate);
-  }, [calendarEvents]);
-  useEffect(() => {
-    if (timesheetDefaultDate) {
-      if (calendarEvents) {
-        setTitle(timesheetDefaultDate);
+  }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
 
-        setIsFrontCalendarChangeEvent(true);
-        handleJumpToMonth(timesheetDefaultDate);
-      }
-    }
-  }, [timesheetDefaultDate]);*/
   useEffect(() => {
     // Calculate total chargeable days whenever calendar events or date changes
     if (calendarEvents && calendarEvents.length > 0) {
@@ -172,6 +139,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
         setVacationSummary(activeUser, calendarEvents);
       }
       if (timesheetDefaultDate) {
+        console.log('use effect: timesheet default date');
         setTitle(timesheetDefaultDate);
 
         setIsFrontCalendarChangeEvent(true);
@@ -179,7 +147,6 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
       }
     }
   }, [calendarEvents, timesheetDefaultDate]);
-
   function handleMonthYearChange(info, isUserClick = false) {
     console.log('isMonthPickerChangeEvent, ', isMonthPickerChangeEvent);
     if (calendarEvents.length === 0) {
@@ -191,7 +158,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
     //setTimesheetDefaultDate(_timesheetDefaultDate);
     setSelectedMonth(_timesheetDefaultDate);
     setTitle(_timesheetDefaultDate);
-
+    //setTimesheetDefaultDate(_timesheetDefaultDate);
     //setIsFrontCalendarChangeEvent(true);
     console.log('handleMonthYearChange, current start?', _timesheetDefaultDate);
   }
@@ -211,7 +178,7 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
     } catch (error) {
       console.log(error);
     }
-    //}
+
   };
 
   const handleOpenAdminPage = () => {
@@ -247,13 +214,13 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
     console.log('event click', e.event);
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
     setLeaveRequestId(_leaveRequestid);
-    //    console.log('leave request props?', e.event.extendedProps.result);
+
     if (_leaveRequestid) {
       setFormType('edit');
       setDrawerOpen();
     }
   };
-  //const { isWeekend } = require('date-fns');
+
   function setVacationSummary(_user, _events) {
     if (!_user) {
       return;
@@ -371,9 +338,9 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
     if (_leavePurpose) {
       setleavePurpose(_leavePurpose);
       setFormType('create');
-      //dispatch(setLeaveRequestId(0));
+
       setLeaveRequestId(0);
-      //open();
+
       setDrawerOpen();
     }
   };
@@ -438,7 +405,10 @@ export function FrontPageCalendar(handleTimesheetDateChange) {
             },
           }}
         />
+        {renderCount}
       </div>
     </>
   );
-}
+};
+
+export default React.memo(FrontPageCalendar);
