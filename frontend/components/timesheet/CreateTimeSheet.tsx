@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 
 import { useForm as useReactHookForm } from 'react-hook-form';
@@ -32,6 +32,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
     isFrontCalendarChangeEvent, basepath
   } = useStore();
   const [defaultdate, setDefaultDate] = useState(new Date());
+  const monthPickerRef = useRef(null);
   useEffect(
     () => {
       if (isFrontCalendarChangeEvent) {
@@ -50,6 +51,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   );
   useEffect(() => {
     console.log('timesheetDefaultDate?', timesheetDefaultDate);
+
     const _defaultDate = new Date(timesheetDefaultDate.getFullYear(), 1);
     const _selectedMonth = new Date(
       timesheetDefaultDate.getFullYear(),
@@ -116,7 +118,10 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
                 <MonthPicker
 
                   size={pickersize}
+                  onDateChange={handleMonthChange}
+                  ref={monthPickerRef}
                   value={selectedMonth}
+                  date={selectedMonth}
                   onChange={handleMonthChange}
                   className={styles.monthPickerButtons}
                 />
