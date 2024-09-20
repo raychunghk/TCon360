@@ -50,24 +50,33 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
   );
   useEffect(() => {
     console.log('timesheetDefaultDate?', timesheetDefaultDate);
-    setMonthValue(timesheetDefaultDate);
+    const _defaultDate = new Date(timesheetDefaultDate.getFullYear(), 1);
+    const _selectedMonth = new Date(
+      timesheetDefaultDate.getFullYear(),
+      timesheetDefaultDate.getMonth(),
+      1,
+    );
 
-    console.log('timesheet default date year?', timesheetDefaultDate.getFullYear());
-    setDefaultDate(new Date(timesheetDefaultDate.getFullYear(), 1));
-  }, [timesheetDefaultDate]);
+    // Check if it's not a month picker change event
+    if (!isMonthPickerChangeEvent) {
+    }
+
+    // Reset the isMonthPickerChangeEvent state
+    if (isMonthPickerChangeEvent) setIsMonthPickerChangeEvent(false);
+  }, [timesheetDefaultDate, isMonthPickerChangeEvent]);
   const handleMonthChange = (_date) => {
     if (fileid) {
       setfileid(null);
     }
     console.log('handle month change', _date);
-    setDefaultDate(new Date(_date.getFullYear(), 0));
+    setIsMonthPickerChangeEvent(true);
     setTimesheetDefaultDate(_date);
-    setMonthValue(_date);
   };
+
   const onSubmit = async (event) => {
     setSubmitting(true);
-    const year = monthValue.getFullYear();
-    const month = monthValue.getMonth() + 1;
+    const year = timesheetDefaultDate.getFullYear();
+    const month = timesheetDefaultDate.getMonth() + 1;
     const response = await axios.post(`${basepath}/api/timesheet/create`, {
       year,
       month,
@@ -105,11 +114,9 @@ export default function CreateTimesheetPage({ pickersize = 'md' }) {
               <Group justify="center">
 
                 <MonthPicker
-                  date={defaultdate}
-                  withCellSpacing={false}
-                  onDateChange={setDefaultDate}
+
                   size={pickersize}
-                  value={monthValue}
+                  value={selectedMonth}
                   onChange={handleMonthChange}
                   className={styles.monthPickerButtons}
                 />
