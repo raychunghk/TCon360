@@ -1,3 +1,4 @@
+'user client'
 import { Button, Drawer, Text } from '@mantine/core';
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { useEffect, useState, useRef } from 'react';
@@ -30,7 +31,7 @@ import useCustRouter from '../useCustRouter';
 import { useShallow } from 'zustand/react/shallow';
 import { usePublicHolidays } from '../util/usePublicHolidays';
 
-const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
+const FrontPageCalendar = () => {
   const handleSignout = () => {
     destroyCookie(null, 'token');
     clearAllState();
@@ -76,11 +77,11 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
   const { isEventUpdated, setIsEventUpdated } = useUIStore();
   const [renderCount, setRenderCount] = useState(0);
   const calendarRef = useRef(null);
-
+  const [currentCalendarDate, setCurrentCalendarDate] = useState(null);
   const [customTitle, setCustomTitle] = useState('');
   const [hasCalendar, setHasCalendar] = useState(true);
   const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
-  console.log('fronpagecalendar basepath?', basepath);
+
   useEffect(() => {
     setRenderCount(renderCount + 1);
   }, []);
@@ -116,20 +117,21 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
         console.error('Error! Failed to fetch events:', error);
       }
     }
-  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout]);
+  }, [basepath, calendarEvents, isEventUpdated]);
+  useEffect(() => {
+    if (isEventUpdated === true) {
+      fetchEvents();
+      setIsEventUpdated(false);
+    }
+  }, [isEventUpdated]);
   const memoizedFetchEvents = useMemo(() => fetchEvents, [basepath, handleSignout]);
   useEffect(() => {
     if (basepath) {
       memoizedFetchEvents();
     }
-  }, [basepath, activeStaff, memoizedFetchEvents]);
+  }, [basepath, activeStaff]);
 
-  useEffect(() => {
-    if (isEventUpdated) {
-      fetchEvents();
-      setIsEventUpdated(false);
-    }
-  }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
+
 
   useEffect(() => {
     // Calculate total chargeable days whenever calendar events or date changes
@@ -139,7 +141,7 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
         setVacationSummary(activeUser, calendarEvents);
       }
       if (timesheetDefaultDate) {
-        console.log('use effect: timesheet default date');
+        console.log('use effect: timesheet default date:', timesheetDefaultDate);
         setTitle(timesheetDefaultDate);
 
         setIsFrontCalendarChangeEvent(true);
@@ -158,8 +160,13 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
     //setTimesheetDefaultDate(_timesheetDefaultDate);
     setSelectedMonth(_timesheetDefaultDate);
     setTitle(_timesheetDefaultDate);
-    //setTimesheetDefaultDate(_timesheetDefaultDate);
-    //setIsFrontCalendarChangeEvent(true);
+    if (calendarRef.current) {
+      const view = calendarRef.current.getApi().view;
+      if (view.type === 'dayGridMonth') {
+        setCurrentCalendarDate(_timesheetDefaultDate);
+        //console.log('currentCalendarDate!!', currentCalendarDate)
+      }
+    }
     console.log('handleMonthYearChange, current start?', _timesheetDefaultDate);
   }
   /**
@@ -172,7 +179,7 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
     try {
       if (calendarRef.current) {
         const calendarApi = calendarRef.current.getApi();
-        console.log('timesheet default date', _date);
+        console.log('timesheet default date _date in handleJumpToMonth', _date);
         calendarApi.gotoDate(_date);
       }
     } catch (error) {
@@ -200,10 +207,13 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
     return <Text>Loading Calendar...</Text>;
   }
 
-  const handleDeleteEvent = async (eventId) => {
+  const handleDeleteEvent = async (eventId, _evtdate) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
+
       setIsEventUpdated(true);
+
+
     } catch (error) {
       console.log('error', error);
       throw error;
@@ -358,6 +368,7 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
               onClose={setDrawerClose}
               LeaveRequestPeriod={LeaveRequestPeriod}
               leavePurpose={leavePurpose}
+              CalendarDate={currentCalendarDate}
             />
           )}
         </Drawer>
@@ -405,7 +416,7 @@ const FrontPageCalendar = ({ handleTimesheetDateChange }) => {
             },
           }}
         />
-        {renderCount}
+        {/* {renderCount} */}
       </div>
     </>
   );

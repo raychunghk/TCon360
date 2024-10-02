@@ -13,8 +13,11 @@ import download from 'downloadjs';
 
 import styles from './mp.module.css';
 import useStore from '@/components/stores/zstore';
+interface CreateTimesheetPageProps {
+  pickersize?: MantineSize; // Specify the type here
+}
 
-export default function CreateTimesheetPage({ pickersize = 'md' }) {
+export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const { handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);

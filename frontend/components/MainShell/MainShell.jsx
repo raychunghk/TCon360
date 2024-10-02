@@ -85,7 +85,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
         //return (<LoginBody />)
       }
     };
-    checksession();
+    //checksession();
   }, []);
 
   if (status === 'loading') {

@@ -6,7 +6,7 @@ import ical2json from 'ical2json';
 import { isValid, parseISO, parse } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
-import { Role, User } from '@prisma/client';
+import { Role, StaffContract, User } from '@prisma/client';
 import { UpdateUserDto } from '../models/customDTOs';
 
 @Injectable()
@@ -30,6 +30,41 @@ export class AdminService {
   }
   // adjust the date value to Hong Kong Time
 
+  async userBackup(userId: string): Promise<any> {
+    const staff = await this.prisma.staff.findMany({
+      where: { userId },
+      include: {
+        // Use include to eagerly load relations
+        leaveRequests: true,
+        contracts: true,
+        staffFiles: true,
+      },
+    });
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    const leaveRequests = staff.flatMap((s) => s.leaveRequests);
+    const staffContracts = staff.flatMap((s) => s.contracts);
+    const staffFiles = staff.flatMap((s) => s.staffFiles);
+
+    // Find the active contract (if any)
+    let activeStaffContract: StaffContract | null = null;
+    for (const contract of staffContracts) {
+      if (contract.IsActive) {
+        activeStaffContract = contract;
+        break; // Assuming only one contract can be active at a time
+      }
+    }
+
+    return {
+      leaveRequests,
+      staffContracts,
+      activeStaffContract, // Now included in the return object
+      staff,
+      staffFiles,
+      user,
+    };
+  }
   icsFilePath() {
     const prismaDirectory = 'prisma';
     let filePath;

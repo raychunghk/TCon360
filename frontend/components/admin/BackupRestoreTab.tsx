@@ -6,6 +6,7 @@ import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
 import axios, { AxiosError } from 'axios';
 import { IconCloudDownload, IconJson, IconUpload } from '@tabler/icons-react';
+import { parseCookies } from 'nookies';
 
 const BackupRestoreTab = () => {
     const [loading, setLoading] = useState(false);
@@ -29,11 +30,18 @@ const BackupRestoreTab = () => {
     };
 
     const handleBackup = async () => {
-        const api = `${basepath}/api/admin/user-backup`;
+        const api = `${basepath}/api/admin/userbackup`;
         setLoading(true);
 
         try {
-            const response = await axios.get(api, { responseType: 'blob' });
+            const cookies = parseCookies();
+            const tokenCookie = cookies.token;
+            console.log('token cookie', tokenCookie);
+            const headers = { Authorization: `Bearer ${tokenCookie}` };
+            console.log('header?', headers);
+            const response = await axios.get(api, {
+                headers,
+            });
             const fileName = 'backup.json';
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');

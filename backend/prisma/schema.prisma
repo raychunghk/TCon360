@@ -11,18 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// generator typegraphql {
-//   provider            = "typegraphql-prisma"
-//   output              = "../src/server/graphql"
-//   formatGeneratedCode = "prettier"
-// }
-
-// generator PrismaTypeGraphQLTypesGenerator {
-//   provider     = "npx prisma-typegraphql-types-generator"
-//   enumsOutput  = "./src/types/enums"
-//   modelsOutput = "./src/models"
-//   useYarn      = "true"
-// }
+ 
 
 model Account {
   id                 String    @id @default(cuid())
@@ -106,14 +95,7 @@ model Staff {
   staffFiles    staffFiles[]
 }
 
-// model Post {
-//   id        Int      @id @default(autoincrement())
-//   title     String
-//   content   String?
-//   published Boolean  @default(false)
-//   authorId  Int
-//   author    PostUser @relation(fields: [authorId], references: [id])
-// }
+ 
 
 model CalendarMaster {
   CalendarDate DateTime @id
@@ -265,29 +247,4 @@ view viewStaff {
   contractId        Int
   user              User     @relation(fields: [userId], references: [id])
 }
-
-// model TimeSheetCalendar {
-//   id             Int       @id @default(autoincrement())
-//   DayID          Int
-//   CalendarDate   DateTime
-//   TimeSheetID    Int
-//   ChargeableDay  Decimal
-//   ChargeableHour Decimal
-//   Training       Decimal   @default(0)
-//   Vacation       Decimal   @default(0)
-//   PublicHoliday  Decimal   @default(0)
-//   WeekEnd        Decimal   @default(0)
-//   Others         Decimal   @default(0)
-//   timesheet      TimeSheet @relation(fields: [TimeSheetID], references: [id])
-// }
-// model TimeSheet {
-//   id                  Int                 @id @unique @default(autoincrement())
-//   StartDate           DateTime
-//   EndDate             DateTime
-//   TSCalendarID        Int
-//   TimeSheetFileName   String?
-//   TotalChargeableDay  Decimal             @default(0)
-//   TotalChargeableHour Decimal             @default(0)
-//   TotalOTHour         Decimal
-//   calendar            TimeSheetCalendar[]
-// }
+ 

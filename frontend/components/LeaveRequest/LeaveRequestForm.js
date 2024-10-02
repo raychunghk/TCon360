@@ -43,6 +43,7 @@ export default function LeaveRequestForm({
   onClose,
   LeaveRequestPeriod,
   leavePurpose,
+  CalendarDate,
 }) {
   console.log('form type?', formType);
   console.log('leave Request ID?', leaveRequestId);
@@ -52,13 +53,19 @@ export default function LeaveRequestForm({
 const [nuts, honey] = useBearStore(
   useShallow((state) => [state.nuts, state.honey]),
 )*/
-  const [publicHolidays, activeUser, activeStaff, activeContract, basepath] = useStore(
+
+  const [publicHolidays, activeUser, activeStaff, activeContract, basepath, timesheetDefaultDate, setTimesheetDefaultDate, setIsMonthPickerChangeEvent, selectedMonth, setSelectedMonth] = useStore(
     useShallow((state) => [
       state.publicHolidays,
       state.activeUser,
       state.activeStaff,
       state.activeContract,
       state.basepath,
+      state.timesheetDefaultDate,
+      state.setTimesheetDefaultDate,
+      state.setIsMonthPickerChangeEvent,
+      state.selectedMonth,
+      state.setSelectedMonth,
     ])
   );
   const [isEventUpdated, setIsEventUpdated] = useUIStore(
@@ -253,9 +260,12 @@ const [nuts, honey] = useBearStore(
 
   const deleteOnClick = async (e) => {
     leaveRequestId = leaveRequest.id;
+    console.log('Delete click Timesheet default date ', timesheetDefaultDate)
+    //console.log('Delete click   _date ', _date)
     setSubmitting(true);
     const url = `${basepath}/api/leaverequest/${leaveRequestId}`;
     try {
+
       const response = await axios.delete(
         url,
 
@@ -265,17 +275,19 @@ const [nuts, honey] = useBearStore(
       );
 
       if ([200, 201].includes(response.status)) {
+
+        console.log('Delete Response', formatResponseDate(response.data));
+        setSelectedMonth(CalendarDate)
+        await setTimesheetDefaultDate(CalendarDate)
+        await onDeleteEvent(leaveRequestId, timesheetDefaultDate);
         setModalMsg('Leave Record Deleted Successfully');
         setModalOpen(true);
         reset();
 
-        console.log('Delete Response', formatResponseDate(response.data));
-
-        await onDeleteEvent(leaveRequestId);
-        //await setIsEventUpdated(true);
       } else {
         console.error('Failed to create leave request:', response);
       }
+
       // Do something with the response data
     } catch (error) {
       console.error(error);
@@ -334,6 +346,8 @@ const [nuts, honey] = useBearStore(
           setModalMsg(response.data.error);
           setModalOpen(true);
         } else {
+          setSelectedMonth(CalendarDate)
+          await setTimesheetDefaultDate(CalendarDate)
           setModalMsg('Leave Record Created Successfully');
           setModalOpen(true);
           reset();
@@ -351,13 +365,11 @@ const [nuts, honey] = useBearStore(
         console.error('Failed to create leave request:', response);
       }
     } catch (err) {
-      /*const newErrors = {};
-      err.inner.forEach((error) => {
-        newErrors[error.path] = error.message;
-      });
-      setErrors(newErrors);
-      console.error('err submiting form ', err);
-   */
+      if (error.response && error.response.status === 401) {
+        // Handle session timeout
+        setModalMsg("Session timeout, you are not authorized, please login again");
+        setModalOpen(true);
+      }
       if (err.response) {
         // Handle backend validation errors
         const errorData = err.response.data;
@@ -381,7 +393,7 @@ const [nuts, honey] = useBearStore(
     setSubmitting(true);
     const state = useStore.getState(); // Access the entire store state
 
-    console.log('all Zustand states:', state); // Print the state object to the console
+    // console.log('all Zustand states:', state); // Print the state object to the console
 
     const newData = {
       leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
@@ -416,6 +428,8 @@ const [nuts, honey] = useBearStore(
         });
         setErrors({});
 
+        setSelectedMonth(newData.leavePeriodStart)
+        await setTimesheetDefaultDate(CalendarDate)
         await setIsEventUpdated(true);
         // await fetchEvents();
       } else {

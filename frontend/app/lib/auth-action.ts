@@ -9,7 +9,8 @@ export async function SignIn(tokenCookie: String) {
   });
 }
 
-export async function getMySession(tokenCookie: String) {
+//export async function getMySession(tokenCookie: String) {
+export async function getMySession( ) {
   console.log('Next server side called, getSession');
   const session = await auth();
   console.log('getMySessionResult:', session);
