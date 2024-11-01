@@ -6,8 +6,8 @@ console.log(baseconfig);
 const bgImage = `${baseconfig.prefix}/images/loginbg1.webp`;
 export const wrapper = style({
   backgroundSize: 'cover',
-  //backgroundImage: `url('${bgImage}')`,
-  backgroundImage: `url('${backgroundImg.src}')`,
+  backgroundImage: `url('${bgImage}')`,
+  //backgroundImage: `url('${backgroundImg.src}')`,
   height: '100vh',
 });
 

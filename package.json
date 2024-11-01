@@ -6,7 +6,8 @@
     "startdev": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
     "fdev": "concurrently   \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
     "fdev2": "cd frontend && npm run dev2",
-    "bdev": "concurrently \"cd backend && npm run start:dev\"   \"node proxyserver.js\"",
+    "bdev": "concurrently \"cd backend && npm run start:dev\"   ",
+    "bdev2": "concurrently \"cd backend && npm run start:dev\"   \"node proxyserver.js\"",
     "backend": " concurrently \"cd backend && npm run start:dev\"   ",
     "startb": "concurrently \"cd backend && npm run start:prod\" \"cd frontend && npm run build && npm run start\" \"node proxyserver.js\""
   },

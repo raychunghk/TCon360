@@ -19,6 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:createplx": "jest --runInBand --detectOpenHandles --watch --testPathPattern=**/admin.service.spec.ts --testNamePattern='createPublicHoliday'",
+    "test:userbackup": "jest --testNamePattern='userBackup' admin.service.spec.ts",
     "test:createpl": "jest --testNamePattern='createPublicHoliday' admin.service.spec.ts",
     "test:db": "jest --testNamePattern='createPublicHoliday' admin.service.spec.ts",
     "test:userx": "jest --runInBand --detectOpenHandles --watch --testPathPattern=**/users.controller.spec.ts --testNamePattern='login'",

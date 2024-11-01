@@ -1,18 +1,18 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 
-import { useForm as useReactHookForm } from 'react-hook-form';
+import { Button, Card, Center, Grid, Group, MantineSize, Modal, Text } from '@mantine/core';
 import { MonthPicker } from '@mantine/dates';
-import { Button, Card, Grid, Modal, Text, Center, Group, MantineSize } from '@mantine/core';
 import { IconTableExport } from '@tabler/icons-react';
+import { useForm as useReactHookForm } from 'react-hook-form';
 
 import MyCard from '../MyCard';
 
 import download from 'downloadjs';
 
-import styles from './mp.module.css';
 import useStore from '@/components/stores/zstore';
+import styles from './mp.module.css';
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize; // Specify the type here
 }
@@ -80,8 +80,11 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
 
   const onSubmit = async (event) => {
     setSubmitting(true);
-    const year = timesheetDefaultDate.getFullYear();
-    const month = timesheetDefaultDate.getMonth() + 1;
+    //  const year = timesheetDefaultDate.getFullYear();
+    //    const month = timesheetDefaultDate.getMonth() + 1;
+    const year = selectedMonth.getFullYear();
+    const month = selectedMonth.getMonth() + 1;
+
     const response = await axios.post(`${basepath}/api/timesheet/create`, {
       year,
       month,

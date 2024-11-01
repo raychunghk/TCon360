@@ -41,16 +41,19 @@ export class AdminController {
     try {
       const userId = req.user.id;
       console.log('user id:', userId);
-      const userData = await this.adminService.userBackup(userId);
-      const jsonStringData = stringify(userData);
 
-      // Create a temporary file path (you might want to handle this more robustly)
+      // Fetch and stringify the user data
+      const userData = await this.adminService.userBackup(userId);
+      const jsonStringData = JSON.stringify(userData, null, 2);
+
+      //const jsonStringData = JSON.stringify(userData);
+      console.log('backup data:', jsonStringData);
+
+      // Create a temporary file path
       const tempFilePath = join(process.cwd(), 'temp-backup.json');
 
-      // Create a write stream to write the JSON string to the file
+      // Write the JSON string to the file
       const writeStream = createWriteStream(tempFilePath);
-
-      // Write to the file and handle errors
       writeStream.write(jsonStringData, (err) => {
         if (err) {
           console.error('Error writing JSON to file:', err);
@@ -77,34 +80,15 @@ export class AdminController {
             unlink(tempFilePath, (err) => {
               if (err) {
                 console.error('Error deleting temporary file:', err);
-                // Handle the error (maybe log it) but don't throw
               }
             });
           });
         }
       });
-      //   const jsonStringData = JSON.stringify(userData);
-      // console.log('json string data', jsonStringData);
-
-      /*
-      res.set({
-        'Content-Type': 'application/json',
-        'Content-Disposition': 'attachment; filename="backup.json"',
-      });
-*/
-      /*
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename=${downloadFileName}`,
-      );
-      const _file = createReadStream(stfFilePath);
-      _file.pipe(res);*/
-      //console.log('backup data?', userData);
-      //return userData;
     } catch (error) {
       console.error('Failed to backup:', error);
       throw new HttpException(
-        'Failed to backup' + error,
+        'Failed to backup: ' + error.message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

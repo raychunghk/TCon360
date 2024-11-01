@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { Role, StaffContract, User } from '@prisma/client';
 import { UpdateUserDto } from '../models/customDTOs';
+import { stringify } from 'querystring';
 
 @Injectable()
 export class AdminService {
@@ -31,6 +32,16 @@ export class AdminService {
   // adjust the date value to Hong Kong Time
 
   async userBackup(userId: string): Promise<any> {
+    // Define an interface or a class for BackupData
+    interface BackupData {
+      // leaveRequests: any[]; // Replace 'any' with the actual type of leaveRequest
+      // staffContracts: any[]; // Replace 'any' with the actual type of staffContract
+      // activeStaffContract: any | null; // Replace 'any' with the actual type of staffContract
+      staff: any[]; // Replace 'any' with the actual type of staff
+      //staffFiles: any[]; // Replace 'any' with the actual type of staffFile
+      user: any; // Replace 'any' with the actual type of user
+    }
+    console.log('Now backing up for user id:', userId);
     const staff = await this.prisma.staff.findMany({
       where: { userId },
       include: {
@@ -56,14 +67,19 @@ export class AdminService {
       }
     }
 
-    return {
-      leaveRequests,
-      staffContracts,
-      activeStaffContract, // Now included in the return object
-      staff,
-      staffFiles,
-      user,
+    const backupData: { backupData: BackupData } = {
+      // Wrap in "backupData" object
+      backupData: {
+        staff,
+
+        user,
+      },
     };
+
+    const jsonStringData = JSON.stringify(backupData, null, 2);
+
+    //const jsonStringData = JSON.stringify(userData, null, 2); // Stringify with pretty printing (optional)
+    return jsonStringData;
   }
   icsFilePath() {
     const prismaDirectory = 'prisma';

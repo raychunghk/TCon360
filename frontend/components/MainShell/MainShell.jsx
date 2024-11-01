@@ -74,6 +74,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
   };
   const { activeUser, activeStaff, status, isAuthenticated } = useStaffData();
   useEffect(() => {
+    setMainshellOverlayVisible(false);
     const checksession = async () => {
       let sess = await getMySession();
       setMainshellOverlayVisible(false);

@@ -41,8 +41,8 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
   const pathname = usePathname();
   const handleClick = () => {
     //setMainshellOverlayVisible(true);
-    console.log('href?', href);
-    console.log('pathname', pathname);
+    console.log('customLink:href?', href);
+    console.log('customLink:pathname', pathname);
     if (pathname === href) {
       setMainshellOverlayVisible(false); // Hide overlay if the same route is clicked
     } else {
