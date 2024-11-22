@@ -1,26 +1,18 @@
-import React from 'react';
-import { ThemeIcon, UnstyledButton, Group, Text, Anchor, NavLink } from '@mantine/core';
-import Link from 'next/link';
+import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import '@mantine/core/styles.css';
 import {
-  IconHome2,
-  IconGauge,
-  IconFingerprint,
-  IconCalendarPlus,
-  IconEyeglass,
   IconClock,
-  IconLogout,
-  IconSunset2,
-  IconTree,
-  IconSwitchHorizontal,
-  IconUserEdit,
+  IconHome2,
   IconSettings,
+  IconSunset2,
+  IconUserEdit
 } from '@tabler/icons-react';
+import Link from 'next/link';
+import React from 'react';
 
-import { default as useRouter } from '@/components/useCustRouter';
-import styles from './mainlinks.module.css';
-import { usePathname } from 'next/navigation';
 import useStore from '@/components/stores/zstore';
+import { usePathname } from 'next/navigation';
+import styles from './mainlinks.module.css';
 type LinkItemProps = {
   icon: React.ReactNode;
   color: string;
@@ -95,7 +87,7 @@ export default function MainLinks() {
     {
       icon: <IconSunset2 size={defaultIconSize} />,
       color: 'grape',
-      label: 'Leave Request',
+      label: 'Vacations',
       link: '/leaverequest',
     },
     {

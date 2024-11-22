@@ -2,45 +2,41 @@
 import styles from './MainShell.module.css';
 //import '@mantine/core/styles.css';
 
-import linkstyle from './NavBar/mainlinks.module.css';
-import '@mantine/core/styles/UnstyledButton.css';
 import '@mantine/core/styles/Button.css';
-import AppShellNavBar from './NavBar/AppShellNavBar';
-import Link from 'next/link';
-import React, { useEffect, useState, useContext } from 'react';
+import '@mantine/core/styles/UnstyledButton.css';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import AppShellNavBar from './NavBar/AppShellNavBar';
+import linkstyle from './NavBar/mainlinks.module.css';
 
-import '@mantine/dates/styles.css';
-import HeaderPopover from './LayoutHeader/HeaderPopover';
 import {
-  Title,
   AppShell,
-  Center,
-  ThemeIcon,
-
-  Text,
-  Group,
   Burger,
   Button,
+  Center,
+  Group,
+  LoadingOverlay,
+  Text,
+  ThemeIcon,
+  Title,
   UnstyledButton,
   useMantineTheme,
-  LoadingOverlay,
 } from '@mantine/core';
-import { IconLogout, IconLogin } from '@tabler/icons-react';
+import '@mantine/dates/styles.css';
+import { IconLogin, IconLogout } from '@tabler/icons-react';
+import HeaderPopover from './LayoutHeader/HeaderPopover';
 
 import { destroyCookie, parseCookies } from 'nookies';
 
 
+import { baseconfig } from '@/../baseconfig';
+import { getMySession } from '@/app/lib/auth-action';
 import { useStaffData } from '@/components/hooks/useStaffData';
-import useTokenExpiration from '@/components/hooks/useTokenExpiration';
-import * as classes from './MainShell.css';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
-import { baseconfig } from '@/../baseconfig';
-import { child } from 'winston';
 import useCustRouter from '../useCustRouter';
-import { getMySession } from '@/app/lib/auth-action';
-import LoginBody from '../login/LoginBody';
+import * as classes from './MainShell.css';
 //export function MainShell({ children: any, home, contentpadding = '10px' }) {
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
@@ -137,7 +133,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
                 <Title className={classes.title} ta="center" mt={5}>
                   Welcome to{' '}
                   <Text inherit variant="gradient" component="span">
-                    {siteTitle} - Timesheet and Leave Form manager
+                    {siteTitle} - Timesheet and Vacations manager
                   </Text>
                 </Title>
               </Group>

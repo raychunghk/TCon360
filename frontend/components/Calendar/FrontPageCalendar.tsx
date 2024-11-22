@@ -1,25 +1,19 @@
 'user client'
-import { Button, Drawer, Text } from '@mantine/core';
-import { differenceInBusinessDays, format, subDays } from 'date-fns';
-import { useEffect, useState, useRef } from 'react';
-import React, { memo, useMemo, useCallback } from 'react';
-import interactionPlugin from '@fullcalendar/interaction';
-import FullCalendar from '@fullcalendar/react';
-import listPlugin from '@fullcalendar/list';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import dayGridPlugin from '@fullcalendar/daygrid';
 import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
+import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import { Button, Drawer, Text } from '@mantine/core';
 import axios from 'axios';
-import styles from './calendar.module.css';
-import { useDisclosure, useInputState } from '@mantine/hooks';
-import { destroyCookie, parseCookies, setCookie } from 'nookies';
-import { signOut, useSession } from 'next-auth/react';
+import { differenceInBusinessDays, format, subDays } from 'date-fns';
+import { signOut } from 'next-auth/react';
+import { destroyCookie, parseCookies } from 'nookies';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-
-  isPublicHoliday,
-  handleSelectAllow,
-  isSameDate,
+  handleSelectAllow
 } from './calendar.util';
 import CustomView from './customeView';
 
@@ -27,7 +21,6 @@ import { getBusinessDays } from '@/components/util/leaverequest.util';
 
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
-import useCustRouter from '../useCustRouter';
 import { useShallow } from 'zustand/react/shallow';
 import { usePublicHolidays } from '../util/usePublicHolidays';
 
@@ -358,7 +351,7 @@ const FrontPageCalendar = () => {
   return (
     <>
       {formType && (
-        <Drawer opened={drawerOpened} onClose={setDrawerClose} size={550} title="Leave Request">
+        <Drawer opened={drawerOpened} onClose={setDrawerClose} size={550} title="Vacation">
           {/* Drawer content */}
           {leaveRequestId >= 0 && (
             <LeaveRequestForm
@@ -410,7 +403,7 @@ const FrontPageCalendar = () => {
             },
             cv: {
               component: (props) => <CustomView {...props} userStaff={activeStaff} />,
-              buttonText: 'Leave Requests',
+              buttonText: 'Vacations',
               events: calendarEvents,
               // Pass the events object to the custom view component
             },
