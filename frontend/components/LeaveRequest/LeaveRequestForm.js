@@ -593,9 +593,9 @@ const [nuts, honey] = useBearStore(
             <Grid.Col span={6}>
               <Select
                 label="Leave end: AM/PM/Whole day"
+                defaultValue="AMPM"
                 data={leaveRequest.leavePeriodEnd ? ampmOptionsEnd : ampmOptionsEndNoDate}
                 value={leaveRequest.AMPMEnd}
-                defaultValue="AMPM"
                 onChange={(value) =>
                   setLeaveRequest({
                     ...leaveRequest,
