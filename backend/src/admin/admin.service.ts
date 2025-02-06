@@ -1,14 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from '../prisma/prisma.service';
-import ical2json from 'ical2json';
 
-import { isValid, parseISO, parse } from 'date-fns';
+import { Role, StaffContract, User } from '@prisma/client';
+import { parse, parseISO } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
-import { Role, StaffContract, User } from '@prisma/client';
 import { UpdateUserDto } from '../models/customDTOs';
-import { stringify } from 'querystring';
 
 @Injectable()
 export class AdminService {
@@ -39,16 +37,17 @@ export class AdminService {
       // activeStaffContract: any | null; // Replace 'any' with the actual type of staffContract
       staff: any[]; // Replace 'any' with the actual type of staff
       //staffFiles: any[]; // Replace 'any' with the actual type of staffFile
-      user: any; // Replace 'any' with the actual type of user
+      // user: any; // Replace 'any' with the actual type of user
     }
     console.log('Now backing up for user id:', userId);
     const staff = await this.prisma.staff.findMany({
       where: { userId },
       include: {
         // Use include to eagerly load relations
+        user: true, // Include related user data
         leaveRequests: true,
         contracts: true,
-        staffFiles: true,
+        //   staffFiles: true,
       },
     });
 
@@ -56,7 +55,7 @@ export class AdminService {
 
     const leaveRequests = staff.flatMap((s) => s.leaveRequests);
     const staffContracts = staff.flatMap((s) => s.contracts);
-    const staffFiles = staff.flatMap((s) => s.staffFiles);
+    // const staffFiles = staff.flatMap((s) => s.staffFiles);
 
     // Find the active contract (if any)
     let activeStaffContract: StaffContract | null = null;
@@ -72,7 +71,7 @@ export class AdminService {
       backupData: {
         staff,
 
-        user,
+        //  user,
       },
     };
 
@@ -127,6 +126,114 @@ export class AdminService {
 
     return holidays;
   }
+  async restoreUserData(staffArray: any[]) {
+    for (const staffMember of staffArray) {
+      try {
+        // Extract user, staff data, leaveRequests, contracts, and staffFiles
+        const { user, leaveRequests, contracts, staffFiles, ...staffData } =
+          staffMember;
+
+        // Upsert the user data
+        const restoredUser = await this.prisma.user.upsert({
+          where: { username: user.username }, // Use a unique field
+          update: user,
+          create: user,
+        });
+        console.log('Restoring user data for:', restoredUser);
+
+        // Upsert the staff data
+        const restoredStaff = await this.prisma.staff.upsert({
+          where: { id: staffData.id },
+          update: { ...staffData, userId: restoredUser.id },
+          create: { ...staffData, userId: restoredUser.id },
+        });
+        console.log(`Successfully restored staff data for ID: ${staffData.id}`);
+
+        // Upsert contracts and create a mapping for contract IDs
+        const contractIdMap = {};
+        for (const contract of contracts) {
+          const restoredContract = await this.prisma.staffContract.upsert({
+            where: { id: contract.id }, // Assuming contract has a unique ID
+            update: {
+              ContractStartDate: new Date(contract.ContractStartDate),
+              ContractEndDate: new Date(contract.ContractEndDate),
+              AnnualLeave: contract.AnnualLeave,
+              IsActive: contract.IsActive,
+            },
+            create: {
+              ContractStartDate: new Date(contract.ContractStartDate),
+              ContractEndDate: new Date(contract.ContractEndDate),
+              AnnualLeave: contract.AnnualLeave,
+              IsActive: contract.IsActive,
+              staffId: restoredStaff.id, // Associate with the restored staff
+            },
+          });
+          contractIdMap[contract.id] = restoredContract.id; // Map original contract ID to new contract ID
+        }
+
+        // Upsert staffFiles and create a mapping for file IDs
+        const fileIdMap = {};
+        for (const file of staffFiles) {
+          const restoredFile = await this.prisma.staffFiles.upsert({
+            where: { id: file.id }, // Assuming staff file has a unique ID
+            update: {
+              filePath: file.filePath,
+              fileType: file.fileType,
+              staffId: restoredStaff.id, // Associate with the restored staff
+            },
+            create: {
+              filePath: file.filePath,
+              fileType: file.fileType,
+              staffId: restoredStaff.id, // Associate with the restored staff
+            },
+          });
+          fileIdMap[file.id] = restoredFile.id; // Map original file ID to new file ID
+        }
+
+        // Update leave requests
+        for (const request of leaveRequests) {
+          await this.prisma.leaveRequest.upsert({
+            where: { id: request.id }, // Assuming leave request has a unique ID
+            update: {
+              leavePeriodStart: request.leavePeriodStart,
+              AMPMStart: request.AMPMStart,
+              leavePeriodEnd: request.leavePeriodEnd,
+              AMPMEnd: request.AMPMEnd,
+              leaveDays: request.leaveDays,
+              dateOfReturn: request.dateOfReturn,
+              staffSignDate: request.staffSignDate,
+              leavePurpose: request.leavePurpose,
+              leaveType: request.leaveType,
+              fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
+              contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
+              staffId: restoredStaff.id, // Associate with the restored staff
+            },
+            create: {
+              leavePeriodStart: request.leavePeriodStart,
+              AMPMStart: request.AMPMStart,
+              leavePeriodEnd: request.leavePeriodEnd,
+              AMPMEnd: request.AMPMEnd,
+              leaveDays: request.leaveDays,
+              dateOfReturn: request.dateOfReturn,
+              staffSignDate: request.staffSignDate,
+              leavePurpose: request.leavePurpose,
+              leaveType: request.leaveType,
+              fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
+              contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
+              staffId: restoredStaff.id, // Associate with the restored staff
+            },
+          });
+        }
+      } catch (error) {
+        console.error(
+          `Error restoring data for staff member ID ${staffMember.id}:`,
+          error,
+        );
+        throw error;
+      }
+    }
+  }
+
   async createHolidayRecords(holidays: any[]): Promise<void> {
     await this.prisma.publicHoliday.deleteMany();
     for (const holiday of holidays) {

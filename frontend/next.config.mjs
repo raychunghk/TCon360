@@ -1,9 +1,9 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
-//https://poe.com/s/1XIh5Ypw2UL25fudpAIl
-const withVanillaExtract = createVanillaExtractPlugin();
 import dotenv from 'dotenv';
 import baseconf from '../baseconfig.js';
+//https://poe.com/s/1XIh5Ypw2UL25fudpAIl
+const withVanillaExtract = createVanillaExtractPlugin();
 
 import { default as feconfig } from './frontendconfig.js';
 console.log('feconfig', feconfig);

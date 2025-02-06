@@ -4,25 +4,31 @@ import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
 const withVanillaExtract = createVanillaExtractPlugin();
 import dotenv from 'dotenv';
 import baseconf from '../baseconfig.js';
+
+import { default as feconfig } from './frontendconfig.js';
+console.log('feconfig', feconfig);
+//const { feconfig } = require("./frontend/frontendconfig");
 // Import base configuration
 const { baseconfig } = baseconf;
 // Load environment variables from .env file
 dotenv.config();
 const _basepath = baseconfig.prefix;
- 
- 
-console.log('next config _basepath?', _basepath);
-const _assetPrefix = `${baseconfig.proxypath}/${baseconfig.frontendport}`;
-console.log('next config  asset prefix?', _assetPrefix);
-// Define Next.js configuration object
-const nextConfig = {
- 
-  // Set the base path for the application (commented out)
-  //basePath: _basepath,
+//const _basepath = feconfig.feprefix;
+const _assetPrefix = feconfig.feprefix;
 
+console.log('feconfig', feconfig);
+console.log('next config _basepath?', _basepath);
+console.log('next config  asset prefix?', _assetPrefix);
+const useReverseProxy = feconfig.useReverseProxy;
+const nextConfig = {
+
+  // Set the base path for the application (commented out)
+  //basePath: feconfig.feprefix,
+  // Set the base path for the application
+  ...(useReverseProxy === false ? { basePath: feconfig.feprefix } : {}),
   // Set the asset prefix for the application (used behind a proxy)
-  assetPrefix: _basepath,
-  //assetPrefix: _assetPrefix,
+  assetPrefix: useReverseProxy ? _basepath : feconfig.feprefix,
+  //assetPrefix: feconfig.feprefix,
 
   // Disable React's strict mode
   reactStrictMode: false,
@@ -40,7 +46,7 @@ const nextConfig = {
   // },
   // Enable experimental package import optimization
   experimental: {
-    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
+    optimizePackageImports: ['@mantine/core', '@mantine/hooks', 'next-auth'],
   },
   experimental: {
     serverActions: {
@@ -50,7 +56,7 @@ const nextConfig = {
   // Define environment variables
   env: {
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
-    basepath: _basepath,
+    basepath: useReverseProxy ? _basepath : feconfig.feprefix,
   },
 
   // Enable SWC minification
@@ -70,12 +76,27 @@ const nextConfig = {
         source: '/:path*',
         destination: `${_basepath}/:path*`,
       },
+      ...(useReverseProxy === false ? [
+        {
+          source: '/api/auth/:path*',
+          destination: 'http://localhost:3000/api/auth/:path*', // proxy to self
+        },
+        {
+          source: '/api/:path*',
+          destination: 'http://127.0.0.1:3800/api/:path*', // proxy to Backend
+        },
+
+        {
+          source: '/absproxy/3000/api/:path*',
+          destination: 'http://127.0.0.1:3800/api/:path*', // proxy to Backend
+        }
+      ] : []),
     ];
   },
 
   // Configure image loader
   images: {
-    path: `${_basepath}/_next/image`,
+    path: `${useReverseProxy ? _basepath : feconfig.feprefix}/_next/image`,
   },
 
   // Configure Webpack
@@ -110,7 +131,6 @@ const nextConfig = {
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
-
+console.log('next config', nextConfig);
 // Export Next.js configuration with bundle analysis plugin
-//export default withBundleAnalyzer(nextConfig);
 export default withVanillaExtract(withBundleAnalyzer(nextConfig));

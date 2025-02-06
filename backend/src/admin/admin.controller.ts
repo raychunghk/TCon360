@@ -9,21 +9,25 @@ import {
   Put,
   Req,
   Res,
-  StreamableFile,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { AdminService } from './admin.service';
-import { Role, User } from '@prisma/client';
-import { UpdateUserDto } from 'src/models/customDTOs';
 import { AuthGuard } from '@nestjs/passport';
-import { createReadStream, createWriteStream, unlink } from 'fs';
-import { join } from 'path';
-import { stringify } from 'querystring';
-import { Readable } from 'stream';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Role, User } from '@prisma/client';
 import type { Response } from 'express';
+import * as fs from 'fs';
+import { createReadStream, unlink } from 'fs';
+import * as path from 'path';
+import { join } from 'path';
+import { UpdateUserDto } from 'src/models/customDTOs';
+import { AdminService } from './admin.service';
+
 @Controller('api/admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
   @Get('users')
   async getAllUsers() {
     try {
@@ -32,9 +36,71 @@ export class AdminController {
       return { users, roles };
     } catch (error) {
       console.error('Failed to get users and roles:', error);
-      throw new Error('Failed to get users and roles');
+      throw new HttpException(
+        'Failed to get users and roles',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
+
+  @Post('userrestore')
+  @UseInterceptors(FileInterceptor('jsonFile'))
+  async userRestore(
+    @UploadedFile() jsonFile: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    if (!jsonFile) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
+
+    const uploadsDir = path.join(__dirname, '..', '..', '..', 'uploads');
+    const tempFilePath = path.join(uploadsDir, jsonFile.originalname);
+
+    try {
+      // Ensure the uploads directory exists
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir);
+      }
+
+      // Save uploaded file to disk
+      fs.writeFileSync(tempFilePath, jsonFile.buffer);
+
+      // Read the JSON file
+      const jsonData = fs.readFileSync(tempFilePath, 'utf-8');
+      console.log('JSON data:', jsonData); // Debugging line
+      const restoreData = JSON.parse(jsonData);
+
+      // Access the staff array from the backupData object
+      const staffData = restoreData.backupData.staff;
+
+      // Check if the expected structure is present
+      if (Array.isArray(staffData)) {
+        // Process the restoration logic
+        await this.adminService.restoreUserData(staffData);
+      } else {
+        console.error('Expected "staff" to be an array in the backup data.');
+      }
+      return res
+        .status(200)
+        .json({ message: 'User data restored successfully.' });
+    } catch (error) {
+      console.error('Error restoring user data:', error);
+      return res.status(500).json({
+        message: 'Failed to restore user data.',
+        error: error.message,
+      });
+    } finally {
+      // Clean up the uploaded file
+      try {
+        if (fs.existsSync(tempFilePath)) {
+          fs.unlinkSync(tempFilePath);
+        }
+      } catch (cleanupError) {
+        console.error('Error cleaning up temporary file:', cleanupError);
+      }
+    }
+  }
+
   @Get('userbackup')
   @UseGuards(AuthGuard('jwt'))
   async userBackup(@Req() req, @Res() res: Response) {
@@ -46,44 +112,35 @@ export class AdminController {
       const userData = await this.adminService.userBackup(userId);
       const jsonStringData = JSON.stringify(userData, null, 2);
 
-      //const jsonStringData = JSON.stringify(userData);
-      console.log('backup data:', jsonStringData);
-
       // Create a temporary file path
       const tempFilePath = join(process.cwd(), 'temp-backup.json');
 
       // Write the JSON string to the file
-      const writeStream = createWriteStream(tempFilePath);
-      writeStream.write(jsonStringData, (err) => {
-        if (err) {
-          console.error('Error writing JSON to file:', err);
-          throw new HttpException(
-            'Failed to create backup file',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        } else {
-          // Create a read stream from the temporary file
-          const fileStream = createReadStream(tempFilePath);
+      fs.writeFileSync(tempFilePath, jsonStringData);
 
-          // Set headers for file download
-          res.setHeader('Content-Type', 'application/json');
-          res.setHeader(
-            'Content-Disposition',
-            'attachment; filename=backup.json',
-          );
+      // Format the current date and time
+      const now = new Date();
+      const formattedDate = now
+        .toISOString()
+        .replace(/[-T:.Z]/g, '')
+        .slice(0, 14);
+      const fileName = `tcon360_backup_${formattedDate}.json`;
 
-          // Pipe the read stream to the response
-          fileStream.pipe(res);
+      // Set headers for file download
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
 
-          // Optionally delete the temporary file after sending
-          fileStream.on('close', () => {
-            unlink(tempFilePath, (err) => {
-              if (err) {
-                console.error('Error deleting temporary file:', err);
-              }
-            });
-          });
-        }
+      // Create a read stream from the temporary file
+      const fileStream = createReadStream(tempFilePath);
+      fileStream.pipe(res);
+
+      // Optionally delete the temporary file after sending
+      fileStream.on('close', () => {
+        unlink(tempFilePath, (err) => {
+          if (err) {
+            console.error('Error deleting temporary file:', err);
+          }
+        });
       });
     } catch (error) {
       console.error('Failed to backup:', error);
@@ -101,9 +158,13 @@ export class AdminController {
       return roles;
     } catch (error) {
       console.error('Failed to get roles:', error);
-      throw new Error('Failed to get roles');
+      throw new HttpException(
+        'Failed to get roles',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
+
   @Put('updateuser/:id')
   async updateUser(
     @Param('id') id: string,
@@ -113,8 +174,7 @@ export class AdminController {
       const user = await this.adminService.updateUser(id, updateUserDto);
       return user;
     } catch (error) {
-      console.log('error', error);
-      // Handle the error appropriately (e.g., log, return custom response)
+      console.log('Error updating user:', error);
       throw new HttpException(
         'Failed to update user',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -125,8 +185,8 @@ export class AdminController {
   @Post('publicholiday')
   async createPublicHoliday(@Body() data: { icsUrl: string }) {
     const { icsUrl } = data;
-    const icsfielurltype = typeof icsUrl;
-    console.log('icsfielurltype', icsfielurltype);
+    console.log('icsUrl type:', typeof icsUrl);
+
     // Call the corresponding service method to handle the calendar data
     await this.adminService.createPublicHoliday(icsUrl);
     return { message: 'Calendar Database updated successfully' };

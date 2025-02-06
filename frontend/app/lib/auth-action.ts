@@ -1,5 +1,5 @@
 'use server';
-import { signIn, auth } from '@/auth';
+import { auth, signIn } from '@/auth';
 
 export async function SignIn(tokenCookie: String) {
   console.log('Next server side called');

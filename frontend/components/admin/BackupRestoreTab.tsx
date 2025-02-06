@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Text, Button, LoadingOverlay, TextInput, Card, Box, Tooltip, Group, Input, FileInput, Divider, Flex, Paper } from '@mantine/core';
-import commonstyle from '/styles/common.module.css';
 import MyModal from '@/components/MyModal';
 import useStore from '@/components/stores/zstore';
-import { useShallow } from 'zustand/react/shallow';
-import axios, { AxiosError } from 'axios';
+import { Box, Button, Card, Divider, FileInput, Flex, LoadingOverlay, Paper, Text } from '@mantine/core';
 import { IconCloudDownload, IconJson, IconUpload } from '@tabler/icons-react';
+import axios from 'axios';
 import { parseCookies } from 'nookies';
+import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+import commonstyle from '/styles/common.module.css';
 
 const BackupRestoreTab = () => {
     const [loading, setLoading] = useState(false);
@@ -42,7 +42,12 @@ const BackupRestoreTab = () => {
             const response = await axios.get(api, {
                 headers,
             });
-            const fileName = 'backup.json';
+            const now = new Date();
+            const formattedDate = now
+                .toISOString()
+                .replace(/[-T:.Z]/g, '')
+                .slice(0, 14);
+            const fileName = `tcon360_backup_${formattedDate}.json`;
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -73,7 +78,7 @@ const BackupRestoreTab = () => {
             return;
         }
 
-        const api = `${basepath}/api/admin/user-restore`;
+        const api = `${basepath}/api/admin/userrestore`;
         setLoading(true);
 
         try {
@@ -126,6 +131,7 @@ const BackupRestoreTab = () => {
                             placeholder="Select a JSON file"
                             leftSection={<IconJson />}
                             onChange={handleFileChange}
+                            mb={'10px'}
                         />
                         <Button color="green" leftSection={<IconUpload />} onClick={handleRestore}>
                             Restore

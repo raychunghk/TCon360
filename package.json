@@ -4,20 +4,23 @@
   "private": true,
   "scripts": {
     "startdev": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
-    "fdev": "concurrently   \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
+    "startdevx": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
+    "fdevxx": "concurrently   \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
     "fdev2": "cd frontend && npm run dev2",
-    "bdev": "concurrently \"cd backend && npm run start:dev\"   ",
+    "bdev": "cd backend && npm run start:dev",
     "bdev2": "concurrently \"cd backend && npm run start:dev\"   \"node proxyserver.js\"",
     "backend": " concurrently \"cd backend && npm run start:dev\"   ",
     "startb": "concurrently \"cd backend && npm run start:prod\" \"cd frontend && npm run build && npm run start\" \"node proxyserver.js\""
   },
   "dependencies": {
-    "@fastify/http-proxy": "^9.4.0",
-    "@tabler/icons-react": "^2.47.0",
-    "concurrently": "^8.2.2",
-    "fastify": "^4.26.2",
+    "@fastify/http-proxy": "^11.0.1",
+    "@tabler/icons-react": "^3.29.0",
+    "concurrently": "^9.1.2",
+    "fastify": "^5.2.1",
+    "fs-extra": "^11.3.0",
     "http-proxy": "^1.18.1",
-    "next-auth": "^4.24.6",
+    "next-auth": "5.0.0-beta.21",
+    "node-netstat": "^1.9.0",
     "nookies": "^2.5.2",
     "react-hook-form": "^7.52.2"
   }

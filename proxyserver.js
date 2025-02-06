@@ -13,7 +13,7 @@ const _backendurl = `http://127.0.0.1:${backendport}`;
 
 console.log("_frontendurl", _frontendurl);
 console.log("_backendurl", _backendurl);
-
+// it is not used because it is changed to proxy api call in the realm of the next.js frontend.
 // Proxy for /api/auth/* requests to frontend
 fastify.register(proxy, {
   upstream: `${_frontendurl}/api/auth`,

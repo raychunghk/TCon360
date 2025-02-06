@@ -2,21 +2,17 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  Post,
-  Req,
-  Request,
-  UseGuards,
-  Logger,
   HttpException,
   HttpStatus,
+  Logger,
+  Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local-auth.guard';
-import { Prisma, User } from '@prisma/client';
 import { AuthGuard } from '@nestjs/passport';
-import { UsersService } from './users.service';
 import { signupUserDTO } from 'src/models/customDTOs';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
 
 interface LoginDto {
   identifier: string;
@@ -35,29 +31,36 @@ export class UsersController {
   async login(
     @Body() loginDto: LoginDto,
   ): Promise<{ accessToken: string; tokenMaxAge: Number }> {
-    console.log('login controller');
-    console.log('loginDto', loginDto);
-    const { identifier, password } = loginDto;
-    const accessToken = await this.authService.login(identifier, password);
-    console.log('accessToken');
-    console.log(accessToken);
-    const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
-    return { accessToken, tokenMaxAge };
+    try {
+      const { identifier, password } = loginDto;
+      const accessToken = await this.authService.login(identifier, password);
+      const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+      return { accessToken, tokenMaxAge };
+    } catch (error) {
+      Logger.error('Login error', error);
+      throw new HttpException(
+        'Login failed',
+        HttpStatus.UNAUTHORIZED, // More specific error code
+      );
+    }
   }
+
   @Post('user/validateuser')
-  //async signUp(@Request() req) {
   async validateUser(@Body() data: { username: string; email: string }) {
-    const { username, email } = data;
-    const existingUser = await this.authService.userExists(username, email);
-    if (existingUser) {
-      // Username or email already exists, return an error response
-      return {
-        message: 'Username or email already exists',
-      };
-    } else {
-      return {
-        message: 'ok',
-      };
+    try {
+      const { username, email } = data;
+      const existingUser = await this.authService.userExists(username, email);
+      if (existingUser) {
+        return { message: 'Username or email already exists' };
+      } else {
+        return { message: 'ok' };
+      }
+    } catch (error) {
+      Logger.error('Validation error', error);
+      throw new HttpException(
+        'An error occurred during validation',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   @Post('user/signup')
