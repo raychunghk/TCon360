@@ -1,14 +1,7 @@
-import {
-  Injectable,
-  Inject,
-  ConsoleLogger,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { Staff, Prisma, StaffContract } from '@prisma/client';
-import { PrismaClient } from '@prisma/client';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Prisma, PrismaClient, Staff, StaffContract } from '@prisma/client';
 import { UpdateStaffDto } from 'src/models/customDTOs';
+import { PrismaService } from '../../prisma/prisma.service';
 
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
@@ -104,6 +97,11 @@ export class StaffService {
 
   async deleteContract(id: number): Promise<void> {
     try {
+      await this.prisma.leaveRequest.deleteMany({
+        where: {
+          contractId: id,
+        },
+      });
       await this.prisma.staffContract.delete({ where: { id } });
     } catch (error) {
       Logger.log('error', error);

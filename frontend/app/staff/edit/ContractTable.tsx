@@ -1,28 +1,26 @@
-import { Button, Flex, Group, Box, Text, Title, Tooltip, ActionIcon, Code } from '@mantine/core';
-import { ModalsProvider, modals } from '@mantine/modals';
+import { ActionIcon, Box, Button, Group, Text, Title, Tooltip } from '@mantine/core';
+import { modals } from '@mantine/modals';
 
+import useStore from '@/components/stores/zstore';
+import { myRenderDay } from '@/components/util/leaverequest.util';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
+import axios from 'axios';
+import { format } from 'date-fns';
+import {
+  MantineReactTable,
+  useMantineReactTable
+} from 'mantine-react-table';
 import 'mantine-react-table/styles.css';
+import { useEffect, useState } from 'react';
+import { ContractDatePicker } from './ContractDatePicker';
+import CreateContractForm from './CreateContractForm';
 import EditIsActiveCell, {
   AnnualLeaveEditor,
   DateCell,
   EditContractModalContent,
   validationSchema,
 } from './edit.util';
-import { excludeHoliday, myRenderDay } from '@/components/util/leaverequest.util';
-import { useEffect, useState } from 'react';
-import {
-  MRT_EditActionButtons,
-  MantineReactTable,
-  useMantineReactTable,
-} from 'mantine-react-table';
-import axios from 'axios';
-import CreateContractForm from './CreateContractForm';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { ContractDatePicker } from './ContractDatePicker';
-import useStore from '@/components/stores/zstore';
-import { format } from 'date-fns';
 
-import { useShallow } from 'zustand/react/shallow';
 export default function ContractTable({
   formValues,
   setFormValues,
@@ -250,7 +248,7 @@ export default function ContractTable({
       },
 
       mantineEditTextInputProps: ({ cell }) => ({
-        onBlur: (event) => {},
+        onBlur: (event) => { },
       }),
       positionActionsColumn: 'last',
       initialState: { density: 'xs' },
@@ -316,4 +314,3 @@ export default function ContractTable({
     </>
   );
 }
- 

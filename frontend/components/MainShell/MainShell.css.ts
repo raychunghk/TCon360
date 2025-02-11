@@ -38,6 +38,10 @@ export const title = style({
     },
   },
 });
+export const body = style({
+  display: 'flex',
+ 
+});
 export const header = style({
   display: 'flex',
   alignItems: 'center',

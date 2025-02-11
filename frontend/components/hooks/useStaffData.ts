@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { baseconfig } from '@/../baseconfig';
+import useStore from '@/components/stores/zstore';
 import axios from 'axios';
 import { parseCookies } from 'nookies';
-import useStore from '@/components/stores/zstore';
-import { useShallow } from 'zustand/react/shallow';
-import { baseconfig } from '@/../baseconfig';
+import { useEffect, useState } from 'react';
 
 interface StaffData {
   activeUser: any;
@@ -11,6 +10,7 @@ interface StaffData {
   activeContract: any;
   isAuthenticated: boolean;
   status: string;
+  refreshFormValues:any;
 }
 
 export function useStaffData(): StaffData {
@@ -86,6 +86,6 @@ export function useStaffData(): StaffData {
     activeStaff,
     activeContract,
     isAuthenticated,
-    status,
+    status,refreshFormValues,
   };
 }

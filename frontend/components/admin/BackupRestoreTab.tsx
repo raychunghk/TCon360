@@ -6,6 +6,7 @@ import axios from 'axios';
 import { parseCookies } from 'nookies';
 import { useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+import { useStaffData } from '../hooks/useStaffData';
 import commonstyle from '/styles/common.module.css';
 
 const BackupRestoreTab = () => {
@@ -14,7 +15,7 @@ const BackupRestoreTab = () => {
     const [modalMsg, setModalMsg] = useState('');
     const [jsonFile, setJsonFile] = useState(null);
     const [basepath] = useStore(useShallow((state) => [state.basepath]));
-
+    const { refreshFormValues } = useStaffData();
     const handleModalClose = () => {
         setModalOpen(false);
     };
@@ -90,6 +91,8 @@ const BackupRestoreTab = () => {
                 console.log('User data restored successfully.');
                 setModalMsg(response.data.message);
                 setModalOpen(true);
+
+                await refreshFormValues();
             } else {
                 console.error('Error restoring user data:', response.statusText);
                 setModalMsg(`Error: ${response.statusText}`);

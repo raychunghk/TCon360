@@ -1,1 +1,1 @@
-yarn run backend
+pnpm run backend

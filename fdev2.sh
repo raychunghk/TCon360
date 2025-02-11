@@ -1,1 +1,1 @@
-yarn run fdev2
+pnpm run fdev2

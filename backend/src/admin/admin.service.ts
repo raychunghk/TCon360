@@ -3,7 +3,7 @@ import axios from 'axios';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { Role, StaffContract, User } from '@prisma/client';
-import { parse, parseISO } from 'date-fns';
+import { parse, parseISO, startOfDay } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
 import { UpdateUserDto } from '../models/customDTOs';
@@ -126,6 +126,7 @@ export class AdminService {
 
     return holidays;
   }
+
   async restoreUserData(staffArray: any[]) {
     for (const staffMember of staffArray) {
       try {
@@ -151,24 +152,70 @@ export class AdminService {
 
         // Upsert contracts and create a mapping for contract IDs
         const contractIdMap = {};
+
         for (const contract of contracts) {
-          const restoredContract = await this.prisma.staffContract.upsert({
-            where: { id: contract.id }, // Assuming contract has a unique ID
-            update: {
-              ContractStartDate: new Date(contract.ContractStartDate),
-              ContractEndDate: new Date(contract.ContractEndDate),
+          // Parse and normalize dates to the start of the day
+          const contractStartDate = contract.ContractStartDate
+            ? startOfDay(new Date(contract.ContractStartDate))
+            : null;
+          const contractEndDate = contract.ContractEndDate
+            ? startOfDay(new Date(contract.ContractEndDate))
+            : null;
+
+          // Validate dates after parsing
+          if (
+            contract.ContractStartDate &&
+            isNaN(contractStartDate.getTime())
+          ) {
+            console.warn(
+              `Invalid ContractStartDate: ${contract.ContractStartDate}. Skipping contract.`,
+            );
+            continue; // Skip this contract if the start date is invalid
+          }
+
+          if (contract.ContractEndDate && isNaN(contractEndDate.getTime())) {
+            console.warn(
+              `Invalid ContractEndDate: ${contract.ContractEndDate}. Skipping contract.`,
+            );
+            continue; // Skip this contract if the end date is invalid
+          }
+
+          // Check if a contract with the same properties already exists
+          const existingContract = await this.prisma.staffContract.findFirst({
+            where: {
+              staffId: restoredStaff.id,
+              ContractStartDate: contractStartDate,
+              ContractEndDate: contractEndDate,
               AnnualLeave: contract.AnnualLeave,
-              IsActive: contract.IsActive,
-            },
-            create: {
-              ContractStartDate: new Date(contract.ContractStartDate),
-              ContractEndDate: new Date(contract.ContractEndDate),
-              AnnualLeave: contract.AnnualLeave,
-              IsActive: contract.IsActive,
-              staffId: restoredStaff.id, // Associate with the restored staff
             },
           });
-          contractIdMap[contract.id] = restoredContract.id; // Map original contract ID to new contract ID
+
+          if (existingContract) {
+            // Update the existing contract
+            const updatedContract = await this.prisma.staffContract.update({
+              where: { id: existingContract.id },
+              data: {
+                IsActive: contract.IsActive, // Update IsActive and any other relevant fields
+              },
+            });
+            contractIdMap[contract.id] = updatedContract.id;
+            console.log(
+              `Updated existing contract with ID ${existingContract.id}`,
+            );
+          } else {
+            // Create a new contract
+            const createdContract = await this.prisma.staffContract.create({
+              data: {
+                ContractStartDate: contractStartDate,
+                ContractEndDate: contractEndDate,
+                AnnualLeave: contract.AnnualLeave,
+                IsActive: contract.IsActive,
+                staffId: restoredStaff.id,
+              },
+            });
+            contractIdMap[contract.id] = createdContract.id;
+            console.log(`Created new contract with ID ${createdContract.id}`);
+          }
         }
 
         // Upsert staffFiles and create a mapping for file IDs
@@ -192,37 +239,56 @@ export class AdminService {
 
         // Update leave requests
         for (const request of leaveRequests) {
-          await this.prisma.leaveRequest.upsert({
-            where: { id: request.id }, // Assuming leave request has a unique ID
-            update: {
-              leavePeriodStart: request.leavePeriodStart,
-              AMPMStart: request.AMPMStart,
-              leavePeriodEnd: request.leavePeriodEnd,
-              AMPMEnd: request.AMPMEnd,
-              leaveDays: request.leaveDays,
-              dateOfReturn: request.dateOfReturn,
-              staffSignDate: request.staffSignDate,
-              leavePurpose: request.leavePurpose,
-              leaveType: request.leaveType,
-              fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
-              contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
-              staffId: restoredStaff.id, // Associate with the restored staff
+          // Check if a leave request with the same properties already exists
+          const existingLeaveRequest = await this.prisma.leaveRequest.findFirst(
+            {
+              where: {
+                staffId: restoredStaff.id,
+                leavePeriodStart: request.leavePeriodStart,
+                leavePeriodEnd: request.leavePeriodEnd,
+                leaveType: request.leaveType,
+                leavePurpose: request.leavePurpose,
+              },
             },
-            create: {
-              leavePeriodStart: request.leavePeriodStart,
-              AMPMStart: request.AMPMStart,
-              leavePeriodEnd: request.leavePeriodEnd,
-              AMPMEnd: request.AMPMEnd,
-              leaveDays: request.leaveDays,
-              dateOfReturn: request.dateOfReturn,
-              staffSignDate: request.staffSignDate,
-              leavePurpose: request.leavePurpose,
-              leaveType: request.leaveType,
-              fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
-              contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
-              staffId: restoredStaff.id, // Associate with the restored staff
-            },
-          });
+          );
+
+          if (existingLeaveRequest) {
+            // Update the existing leave request
+            await this.prisma.leaveRequest.update({
+              where: { id: existingLeaveRequest.id },
+              data: {
+                AMPMStart: request.AMPMStart,
+                AMPMEnd: request.AMPMEnd,
+                leaveDays: request.leaveDays,
+                dateOfReturn: request.dateOfReturn,
+                staffSignDate: request.staffSignDate,
+                fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
+                contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
+              },
+            });
+            console.log(
+              `Updated existing leave request with ID ${existingLeaveRequest.id}`,
+            );
+          } else {
+            // Create a new leave request
+            await this.prisma.leaveRequest.create({
+              data: {
+                leavePeriodStart: request.leavePeriodStart,
+                AMPMStart: request.AMPMStart,
+                leavePeriodEnd: request.leavePeriodEnd,
+                AMPMEnd: request.AMPMEnd,
+                leaveDays: request.leaveDays,
+                dateOfReturn: request.dateOfReturn,
+                staffSignDate: request.staffSignDate,
+                leavePurpose: request.leavePurpose,
+                leaveType: request.leaveType,
+                fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
+                contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
+                staffId: restoredStaff.id,
+              },
+            });
+            console.log(`Created new leave request`);
+          }
         }
       } catch (error) {
         console.error(

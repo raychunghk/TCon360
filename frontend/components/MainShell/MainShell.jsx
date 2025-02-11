@@ -1,9 +1,9 @@
 'use client';
 import styles from './MainShell.module.css';
 //import '@mantine/core/styles.css';
-
 import '@mantine/core/styles/Button.css';
 import '@mantine/core/styles/UnstyledButton.css';
+import '@mantine/notifications/styles.layer.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
