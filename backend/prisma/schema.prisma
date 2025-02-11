@@ -146,6 +146,7 @@ model StaffContract {
   staff    Staff   @relation("staffToContracts", fields: [staffId], references: [id])
   staffId  Int
   IsActive Boolean @default(false) // New field to indicate the active contract
+  IsArchived Boolean @default(false) // ADD THIS LINE
 }
 
 model LeaveRequest {
@@ -166,6 +167,7 @@ model LeaveRequest {
   fileId           Int
   staffId          Int
   contractId       Int                @map("contractId")
+  IsArchived     Boolean            @default(false) // ADD THIS LINE
 }
 
 model staffFiles {
@@ -196,6 +198,7 @@ view viewEvents {
   LeaveRequestId   Int?
   leaveDays        Float?
   contractId       Int
+  IsArchived       Boolean? // Add this line
 }
 
 view ViewUserRole {

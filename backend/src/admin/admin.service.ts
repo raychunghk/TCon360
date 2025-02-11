@@ -151,7 +151,19 @@ export class AdminService {
         console.log(`Successfully restored staff data for ID: ${staffData.id}`);
 
         // Upsert contracts and create a mapping for contract IDs
-        const contractIdMap = {};
+        const contractIdMap: { [key: number]: number } = {}; // Explicit type
+
+        // 1. Get existing active contracts for this staff member BEFORE upserting
+        const existingActiveContracts =
+          await this.prisma.staffContract.findMany({
+            where: {
+              staffId: restoredStaff.id,
+              IsActive: true,
+              IsArchived: false,
+            },
+          });
+
+        const replacedContractIds: number[] = []; // To store IDs of contracts being replaced
 
         for (const contract of contracts) {
           // Parse and normalize dates to the start of the day
@@ -196,6 +208,7 @@ export class AdminService {
               where: { id: existingContract.id },
               data: {
                 IsActive: contract.IsActive, // Update IsActive and any other relevant fields
+                IsArchived: false, // Ensure it's not archived during update
               },
             });
             contractIdMap[contract.id] = updatedContract.id;
@@ -210,6 +223,7 @@ export class AdminService {
                 ContractEndDate: contractEndDate,
                 AnnualLeave: contract.AnnualLeave,
                 IsActive: contract.IsActive,
+                IsArchived: false, // Ensure new contracts are not archived
                 staffId: restoredStaff.id,
               },
             });
@@ -218,8 +232,41 @@ export class AdminService {
           }
         }
 
+        // 2. Archive the old active contracts that are NOT in the restored data
+        for (const existingContract of existingActiveContracts) {
+          const contractIsInRestoredData = contracts.some(
+            (restoredContract) =>
+              startOfDay(
+                new Date(restoredContract.ContractStartDate),
+              ).getTime() ===
+                startOfDay(
+                  new Date(existingContract.ContractStartDate),
+                ).getTime() &&
+              startOfDay(
+                new Date(restoredContract.ContractEndDate),
+              ).getTime() ===
+                startOfDay(
+                  new Date(existingContract.ContractEndDate),
+                ).getTime() &&
+              restoredContract.AnnualLeave === existingContract.AnnualLeave,
+          );
+
+          if (!contractIsInRestoredData) {
+            // This contract is not in the restored data, so archive it
+            await this.prisma.staffContract.update({
+              where: { id: existingContract.id },
+              data: {
+                IsActive: false,
+                IsArchived: true,
+              },
+            });
+            replacedContractIds.push(existingContract.id);
+            console.log(`Archived old contract with ID ${existingContract.id}`);
+          }
+        }
+
         // Upsert staffFiles and create a mapping for file IDs
-        const fileIdMap = {};
+        const fileIdMap: { [key: number]: number } = {};
         for (const file of staffFiles) {
           const restoredFile = await this.prisma.staffFiles.upsert({
             where: { id: file.id }, // Assuming staff file has a unique ID
@@ -239,7 +286,6 @@ export class AdminService {
 
         // Update leave requests
         for (const request of leaveRequests) {
-          // Check if a leave request with the same properties already exists
           const existingLeaveRequest = await this.prisma.leaveRequest.findFirst(
             {
               where: {
@@ -252,6 +298,8 @@ export class AdminService {
             },
           );
 
+          const contractId = contractIdMap[request.contractId] || null;
+
           if (existingLeaveRequest) {
             // Update the existing leave request
             await this.prisma.leaveRequest.update({
@@ -263,7 +311,8 @@ export class AdminService {
                 dateOfReturn: request.dateOfReturn,
                 staffSignDate: request.staffSignDate,
                 fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
-                contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
+                contractId: contractId, // Use the mapped contract ID
+                IsArchived: false, // Ensure it's not archived during update
               },
             });
             console.log(
@@ -283,13 +332,31 @@ export class AdminService {
                 leavePurpose: request.leavePurpose,
                 leaveType: request.leaveType,
                 fileId: fileIdMap[request.fileId] || null, // Use the mapped file ID
-                contractId: contractIdMap[request.contractId] || null, // Use the mapped contract ID
+                contractId: contractId, // Use the mapped contract ID
                 staffId: restoredStaff.id,
+                IsArchived: false, // Ensure new leave requests are not archived
               },
             });
             console.log(`Created new leave request`);
           }
         }
+
+        // 3. Archive leave requests associated with the replaced contracts
+        await this.prisma.leaveRequest.updateMany({
+          where: {
+            contractId: {
+              in: replacedContractIds,
+            },
+          },
+          data: {
+            IsArchived: true,
+          },
+        });
+        console.log(
+          `Archived leave requests associated with replaced contracts: ${replacedContractIds.join(
+            ', ',
+          )}`,
+        );
       } catch (error) {
         console.error(
           `Error restoring data for staff member ID ${staffMember.id}:`,

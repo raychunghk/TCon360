@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import getEvents from './ics.mjs';
-import path from 'path';
 import argon2 from 'argon2';
+import path from 'path';
+import getEvents from './ics.mjs';
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
 import privatedata from './privatedata.mjs';
@@ -75,7 +75,8 @@ async function createViewCalendarIfNotExists() {
       LEFT JOIN
         PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
       LEFT JOIN
-        LeaveRequest LR ON LR.id = V.LeaveRequestId;
+        LeaveRequest LR ON LR.id = V.LeaveRequestId
+      where     (LR.IsArchived = 0 OR LR.IsArchived IS NULL);;
   `;
   await createView(viewname, createViewSQL);
 }
@@ -194,7 +195,8 @@ async function createViewEventsIfNotExists() {
           WHEN PH.Summary IS NOT NULL THEN 1
           ELSE NULL
         END AS leaveDays,
-        LR.contractId 
+        LR.contractId ,
+          COALESCE(LR.IsArchived, 0) AS IsArchived
       FROM
         CalendarMaster C
       LEFT JOIN
@@ -214,7 +216,7 @@ async function createViewEventsIfNotExists() {
 )
        
       WHERE
-        HolidaySummary IS NOT NULL;
+        HolidaySummary IS NOT NULL and   (LR.IsArchived = 0 OR LR.IsArchived IS NULL);
   `;
   await createView(viewname, createViewSQL);
 }
@@ -243,7 +245,7 @@ async function genholiday() {
   }
 }
 
-async function genContract() {}
+async function genContract() { }
 async function genStaffInfo() {
   /*
   id            Int            @id @default(autoincrement())

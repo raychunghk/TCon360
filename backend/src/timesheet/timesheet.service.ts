@@ -1,22 +1,13 @@
-import { Catch, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 //import * as fs from 'fs';
-import * as XLSX from 'xlsx';
-import * as ExcelJS from 'exceljs';
+import { viewCalendarTimeSheet, viewEvents } from '@prisma/client';
 import { spawn } from 'child_process';
-import { PrismaService } from '../prisma/prisma.service';
-import {
-  Staff,
-  Prisma,
-  viewCalendarTimeSheet,
-  viewEvents,
-} from '@prisma/client';
 import { format } from 'date-fns';
+import * as ExcelJS from 'exceljs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as libre from 'libreoffice-convert'; //import * as XlsxPopulate from 'xlsx-populate';
-import * as unoconv from 'node-unoconv';
-
-import { Decimal } from 'decimal.js';
+import * as XLSX from 'xlsx';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TimesheetService {
