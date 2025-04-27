@@ -11,7 +11,7 @@ export async function handleLoginSuccess(response, router) {
   console.log(_maxAge);
   // set the user's session token in localStorage
   setCookie(null, 'token', token, {
-    maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
+    maxAge: parseInt(_maxAge||'1800'), // cookie expiration time (in seconds)
     path: '/', // cookie path
   });
 

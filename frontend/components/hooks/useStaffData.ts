@@ -1,5 +1,6 @@
-import { baseconfig } from '@/../baseconfig';
+'use client'
 import useStore from '@/components/stores/zstore';
+ 
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 import { useEffect, useState } from 'react';
@@ -16,7 +17,7 @@ interface StaffData {
 export function useStaffData(): StaffData {
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
-
+ 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [status, setStatus] = useState('loading');
 
@@ -28,7 +29,7 @@ export function useStaffData(): StaffData {
     activeUser,
     setActiveUser,
     userStatus,
-    basepath,
+    basepath,useReverseProxy,
     setBasepath,
   } = useStore();
 
@@ -63,14 +64,14 @@ export function useStaffData(): StaffData {
       setStatus('unauthenticated');
     }
   };
-
+/*
   useEffect(() => {
-    const _basepath = baseconfig.basepath;
+    const _basepath = config.basepath;
     if (!basepath) {
       setBasepath(_basepath);
     }
   }, [basepath, setBasepath]);
-
+*/
   useEffect(() => {
     if (basepath) {
       fetchData();

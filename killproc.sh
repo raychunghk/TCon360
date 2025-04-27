@@ -1,1 +1,1 @@
- sudo kill -9 $(netstat -lntp | grep ":3800" | awk '{print $7}' | cut -d'/' -f1)sudo 
+ sudo kill -9 $(netstat -lntp | grep ":3232" | awk '{print $7}' | cut -d'/' -f1) 

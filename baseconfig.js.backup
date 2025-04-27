@@ -2,7 +2,7 @@
 
 //const { feconfig } = require("./frontend/frontendconfig");
 //import * as feconfig from './frontend/frontendconfig'; // Correct relative path
-const feconfig = require('./frontend/frontendconfig');
+const feconfig = require('./frontend/frontendconfig.js');
 
 const baseconfig = {
   ...feconfig,

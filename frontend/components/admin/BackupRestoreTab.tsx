@@ -141,7 +141,7 @@ const BackupRestoreTab = () => {
                         </Button>
                     </Paper>
                     <Divider my="sm" />
-                    <Paper bd={'2px'} p='md' bd="1px solid gray.3">
+                    <Paper p='md' bd="1px solid gray.3">
                         <Button color="blue" aria-label="Backup" leftSection={<IconCloudDownload />} onClick={handleBackup}>
                             Backup Data
                         </Button></Paper>

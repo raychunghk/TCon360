@@ -1,5 +1,5 @@
 //import { create } from 'zustand';
-import { createWithEqualityFn as create } from 'zustand/traditional'
+import { createWithEqualityFn as create } from 'zustand/traditional';
 
 const useStore = create((set) => ({
   // State variables
@@ -69,6 +69,7 @@ const useStore = create((set) => ({
   MainshellOverlayVisible: false,
   authOverlayVisible: false,
   useReverseProxy: false,
+  config: null,
   setUseReverseProxy: (isUse) => set(() => ({ useReverseProxy: isUse })),
   setAuthOverlayVisible: (visible) => set(() => ({ authOverlayVisible: visible })),
   setMainshellOverlayVisible: (visible) => set(() => ({ MainshellOverlayVisible: visible })),
@@ -107,6 +108,7 @@ const useStore = create((set) => ({
   setTimesheetDefaultDate: (date) => set(() => ({ timesheetDefaultDate: date })),
   setUser: (user) => set(() => ({ user: user })),
   setUserStatus: (status) => set(() => ({ userStatus: status })),
+  setConfig: (conf) => set(() => ({ config: conf })),
   setSelectedMonth: (date) => set(() => ({ selectedMonth: date })),
   setIsFrontCalendarChangeEvent: (event) => set(() => ({ isFrontCalendarChangeEvent: event })),
   setIsMonthPickerChangeEvent: (event) => set(() => ({ isMonthPickerChangeEvent: event })),

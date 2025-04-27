@@ -30,11 +30,12 @@ import HeaderPopover from './LayoutHeader/HeaderPopover';
 import { destroyCookie, parseCookies } from 'nookies';
 
 
-import { baseconfig } from '@/../baseconfig';
+//import { baseconfig } from '@/../baseconfig';
 import { getMySession } from '@/app/lib/auth-action';
 import { useStaffData } from '@/components/hooks/useStaffData';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
+//import { config } from '@tcon360/config';
 import useCustRouter from '../useCustRouter';
 import * as classes from './MainShell.css';
 //export function MainShell({ children: any, home, contentpadding = '10px' }) {
@@ -50,6 +51,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
     setBasepath,
     MainshellOverlayVisible,
     setMainshellOverlayVisible,
+    config,
   } = useStore();
 
   const [opened, setOpened] = useState(false);
@@ -128,7 +130,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
                   mr="sm"
                 />{' '}
                 <Link href="/">
-                  <Image src={`${baseconfig.basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
+                  <Image src={`${config.basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
                 </Link>
                 <Title className={classes.title} ta="center" mt={5}>
                   Welcome to{' '}
@@ -161,7 +163,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
                   </>
                 ) : (
                   <Group>
-                    <Link href={`${baseconfig.basepath}/auth/login`} passHref>
+                    <Link href={`${config.basepath}/auth/login`} passHref>
                       <Button
                         className={styles.clsSignupBtn}
                         leftSection={

@@ -1,13 +1,13 @@
-import NextAuth from 'next-auth';
 import jwt from 'jsonwebtoken';
+import NextAuth from 'next-auth';
 
-import { parseCookies, setCookie } from 'nookies';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import { parseCookies } from 'nookies';
+//import CredentialsProvider from 'next-auth/providers/credentials';
 import { format, parseISO } from 'date-fns';
-//const config = require('@base/baseconfig');
-import { default as baseconfig } from '@/frontendconfig';
- 
-const { prefix: _prefix, frontendport, backendport, mainport } = baseconfig;
+
+//import { default as baseconfig } from '@/frontendconfig';
+import { config } from '@tcon360/config';
+const { prefix: _prefix, frontendport, backendport, mainport } = config;
 const _frontendurl = `http://127.0.0.1:${frontendport}`;
 const _backendurl = `http://127.0.0.1:${backendport}`;
 // import Providers from "next-auth/providers"
@@ -188,10 +188,10 @@ export const authOptions = {
       return true;
     },
   },
-  jwt: {
-    secret: process.env.JWT_SECRET,
-    maxAge: parseInt(process.env.TOKEN_MAX_AGE),
-  },
+  /* jwt: {
+     secret: process.env.JWT_SECRET,
+     maxAge: parseInt(process.env.TOKEN_MAX_AGE),
+   },*/
   session: {
     jwt: true,
     maxAge: parseInt(process.env.TOKEN_MAX_AGE),

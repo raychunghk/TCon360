@@ -1,7 +1,6 @@
-import { format, parseISO, isWeekend } from 'date-fns';
-import { useContext } from 'react';
-
 import useStore from '@/components/stores/zstore';
+import { format, isWeekend } from 'date-fns';
+import * as Yup from 'yup';
 import { usePublicHolidays } from './usePublicHolidays';
 let arrPublicHoliday;
 export function setPublicHolidays(holidays) {
@@ -262,3 +261,14 @@ export const excludeHoliday = (date) => {
     return null;
   }
 };
+
+
+
+export const leaveRequestValidationSchema = Yup.object().shape({
+  leavePurpose: Yup.string().required('Leave Request is required'),
+  leaveType: Yup.string().required('Leave Type is required'),
+  leavePeriodStart: Yup.date().required('Leave period start is required'),
+  AMPMStart: Yup.string().required('Leave start: AM/PM/Whole day is required'),
+  staffSignDate: Yup.date().required('Staff sign date is required'),
+  dateOfReturn: Yup.date().required('Date of Return is required'),
+});

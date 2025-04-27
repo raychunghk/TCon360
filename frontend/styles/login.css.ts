@@ -1,9 +1,9 @@
 import { style } from '@vanilla-extract/css';
 
-import backgroundImg from '@/public/images/loginbg1.webp';
-import { default as baseconfig } from '@/frontendconfig';
-console.log(baseconfig);
-const bgImage = `${baseconfig.prefix}/images/loginbg1.webp`;
+//import { default as config } from '@/frontendconfig';
+import { config } from '@tcon360/config';
+console.log(config);
+const bgImage = `${config.prefix}/images/loginbg1.webp`;
 export const wrapper = style({
   backgroundSize: 'cover',
   backgroundImage: `url('${bgImage}')`,

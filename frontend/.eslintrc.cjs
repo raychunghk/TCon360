@@ -13,5 +13,8 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
     'import/extensions': 'off',
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/no-explicit-any": "off", // Change from "error" to "off"
   },
 };

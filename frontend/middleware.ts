@@ -1,5 +1,4 @@
 //import { NextRequest, NextResponse } from 'next/server';
-import { auth as authMiddleware } from '@/auth';
 /*
 export function middleware(request: NextRequest) {
   console.log(`Next Request URL: ${request.url}`);
@@ -7,9 +6,9 @@ export function middleware(request: NextRequest) {
 }
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { default as feconfig } from './frontendconfig';
 import { getMySession } from './app/lib/auth-action';
+///import { default as config } from './frontendconfig';
+import { config } from '@tcon360/config';
 
 export async function middleware(request: NextRequest) {
 
@@ -18,6 +17,7 @@ export async function middleware(request: NextRequest) {
 
   // Exclude static files and Next.js internal paths
   if (pathname.match('(/_next)|(/api)') || pathname.match(/\.(js|css|webp|png|jpg|jpeg|svg|css)$/)) {
+    console.log(`pathname:${pathname}`);
     return NextResponse.next();
   }
 
@@ -27,17 +27,17 @@ export async function middleware(request: NextRequest) {
     const sess = await getMySession();
 
     if (!sess) {
-      const loginUrl = new URL(`${feconfig.basepath}/auth/login`, request.url);
+      const loginUrl = new URL(`${config.basepath}/auth/login`, request.url);
        return NextResponse.redirect(loginUrl);
     }
   }else{
       return NextResponse.next();
   }
   console.log(`Next Request URL: ${request.url}`);
-  if (request.url.indexOf(`:${feconfig.frontendport}`) > 0) {
-    console.log(`middleware :URL contains port ${feconfig.frontendport}: ${request.url}`);
+  if (request.url.indexOf(`:${config.frontendport}`) > 0) {
+    console.log(`middleware :URL contains port ${config.frontendport}: ${request.url}`);
     //  const updatedUrl = request.nextUrl.clone();
-    const updatedUrl = request.url.replace(feconfig.feprefix, '')
+    const updatedUrl = request.url.replace(config.feprefix, '')
     console.log('updated url ', updatedUrl);
     //updatedUrl.port = '2000';
     //return NextResponse.rewrite(updatedUrl);

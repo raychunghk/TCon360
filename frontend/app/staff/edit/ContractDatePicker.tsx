@@ -1,17 +1,22 @@
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput, DayOfWeek } from '@mantine/dates';
 import { useEffect } from 'react';
 
 import useStore from '@/components/stores/zstore';
 import { useEdit } from './useEdit';
+interface UseEditReturn {
+  value: string | Date;  // adjust this type based on what useEdit actually returns
+  handleOnChange: (value: any) => void;
+  handleBlur: () => void;
+}
 
 export function ContractDatePicker({ param, columnKey, myRenderDay, error }) {
   const { renderedCellValue, cell, table, column, row } = param;
-  const { value, handleOnChange, handleBlur } = useEdit(param);
+  const { value, handleOnChange, handleBlur } = useEdit(param) as UseEditReturn;;
 
   function getEditDatePickerProps(fieldName: string) {
     const dtPickerProps = {
       valueFormat: 'DD-MM-YYYY',
-      firstDayOfWeek: 0,
+      firstDayOfWeek: 0 as DayOfWeek,
       name: fieldName,
     };
 
@@ -56,15 +61,15 @@ export function ContractDatePicker({ param, columnKey, myRenderDay, error }) {
         minDate={isContractEndDate && contractEndMinDate}
         maxDate={isContractStartDate && contractStartMaxDate}
         onChange={async (newValue) => {
-          const newDate = new Date(newValue);
+          //  const newDate = new Date(newValue);
           console.log('onchange param', param);
           if (isContractStartDate) {
-            setContractStartDate(newDate);
+            setContractStartDate(newValue);
           }
           if (isContractEndDate) {
-            setContractEndDate(newDate);
+            setContractEndDate(newValue);
           }
-          handleOnChange(newDate);
+          handleOnChange(newValue);
         }}
       />
     </>

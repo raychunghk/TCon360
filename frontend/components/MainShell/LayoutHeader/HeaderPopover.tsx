@@ -1,16 +1,22 @@
-import styles from '../MainShell.module.css';
 import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
+import styles from '../MainShell.module.css';
 //import { IconSquareRoundedX, IconUser } from '@tabler/icons';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import useStore from '@/components/stores/zstore';
+interface UserField {
+  label: string;
+  value: string | number;
+  subValue?: string;
+  subValue2?: string;
+}
+
 export default function HeaderPopover({ }) {
   const [openedPop, setOpenedPop] = useState(false);
-  const [userFields, setuserFields] = useState(null);
-
+  //const [userFields, setuserFields] = useState(null);
+  const [userFields, setuserFields] = useState<UserField[] | null>(null);
   const { activeStaff, activeContract, activeUser, staffVacation } = useStore();
 
   useEffect(() => {

@@ -12,10 +12,11 @@ import * as session from 'express-session';
 //import Fastify from 'fastify';
 
 //import Next from 'next';
-import { baseconfig } from '../../baseconfig.js';
+//import { baseconfig } from '../../baseconfig.js';
+import { config } from '@tcon360/config';
 import { INestApplication } from '@nestjs/common';
 async function bootstrap() {
-  console.log('basepath', baseconfig);
+  console.log('basepath', config);
   let app: INestApplication;
   const usefastify = false;
   if (usefastify) {
@@ -46,7 +47,7 @@ async function bootstrap() {
       }),
     );
   }
-  await app.listen(baseconfig.backendport);
+  await app.listen(config.backendport);
   /* if (module.hot) {
      module.hot.accept();
      module.hot.dispose(() => app.close());

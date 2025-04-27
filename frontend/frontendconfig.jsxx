@@ -1,10 +1,10 @@
-
+// frontendconfig.mjs
 const proxypath = "/absproxy";
 const frontendport = 3000;
 const useReverseProxy = false;
 const mainport = useReverseProxy ? 3333 : frontendport;
 
-module.exports = {
+const feconfig = {
   proxypath: proxypath,
   useReverseProxy: useReverseProxy,
   frontendport,
@@ -13,3 +13,5 @@ module.exports = {
   basepath: `${proxypath}/${mainport}`,
   feprefix: `${proxypath}/${frontendport}`,
 };
+
+export default feconfig;

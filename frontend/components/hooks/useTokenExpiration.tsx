@@ -1,18 +1,18 @@
 import { useEffect } from 'react';
 
-import { parseCookies, destroyCookie } from 'nookies';
-import { format, addSeconds, differenceInSeconds } from 'date-fns';
 import useStore from '@/components/stores/zstore';
+import { differenceInSeconds, format } from 'date-fns';
+import { usePathname } from 'next/navigation'; // Add this import
+import { destroyCookie, parseCookies } from 'nookies';
 
-import { useShallow } from 'zustand/react/shallow';
 import { default as useRouter } from '@/components/useCustRouter';
 
 export default function useTokenExpiration() {
   const router = useRouter();
-  const { activeUser } = useStore();
-  console.log('router pathname', router.pathname);
+  const { activeUser } = useStore(); const pathname = usePathname();
+  console.log('router pathname', pathname);
   useEffect(() => {
-    if (['/user/login', '/user/signup'].includes(router.pathname)) {
+    if (['/user/login', '/user/signup'].includes(pathname)) {
       // Skip token expiration logic for '/user/login' page
       return;
     }

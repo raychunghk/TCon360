@@ -1,12 +1,13 @@
 'user client'
 import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
+
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { Button, Drawer, Text } from '@mantine/core';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
@@ -21,8 +22,8 @@ import { getBusinessDays } from '@/components/util/leaverequest.util';
 
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
+import router from 'next/router';
 import { useShallow } from 'zustand/react/shallow';
-import { usePublicHolidays } from '../util/usePublicHolidays';
 
 const FrontPageCalendar = () => {
   const handleSignout = () => {
@@ -35,7 +36,8 @@ const FrontPageCalendar = () => {
     setLeaveRequestPeriod(period);
     period;
   };
-  const [leavePurpose, setleavePurpose] = useState(null);
+  //const [leavePurpose, setleavePurpose] = useState(null);
+  const [leavePurpose, setleavePurpose] = useState<string | null>(null);
 
   const [formType, setFormType] = useState('');
   const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
@@ -43,11 +45,8 @@ const FrontPageCalendar = () => {
     setLeaveRequestPeriod,
     setStaffVacation,
     setCalendarEvents,
-
     setIsFrontCalendarChangeEvent,
-
     setSelectedMonth,
-
     clearAllState,
     timesheetDefaultDate,
     calendarEvents,
@@ -66,14 +65,14 @@ const FrontPageCalendar = () => {
       state.basepath
     ])
   );
-
   const { isEventUpdated, setIsEventUpdated } = useUIStore();
   const [renderCount, setRenderCount] = useState(0);
-  const calendarRef = useRef(null);
+  const calendarRef = useRef<FullCalendar | null>(null);
+  //const calendarRef = useRef<FullCalendarType | null>(null);
   const [currentCalendarDate, setCurrentCalendarDate] = useState(null);
   const [customTitle, setCustomTitle] = useState('');
   const [hasCalendar, setHasCalendar] = useState(true);
-  const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
+
 
   useEffect(() => {
     setRenderCount(renderCount + 1);
@@ -89,11 +88,9 @@ const FrontPageCalendar = () => {
       const headers = {
         Authorization: `Bearer ${_token}`,
       };
-      const response = await axios.get(apiurl, {
-        headers,
-      });
+      const response = await axios.get(apiurl, { headers });
       if ([200, 201].includes(response.status)) {
-        const events = await response.data;
+        const events = response.data;
         if (!calendarEvents || isEventUpdated || events.length !== calendarEvents.length) {
           await setCalendarEvents(events);
         }
@@ -104,10 +101,15 @@ const FrontPageCalendar = () => {
         console.error('Failed to fetch events:', response);
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        handleSignout();
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response?.status === 401) {
+          handleSignout();
+        } else {
+          console.error('Error! Failed to fetch events:', axiosError);
+        }
       } else {
-        console.error('Error! Failed to fetch events:', error);
+        console.error('Unexpected error:', error);
       }
     }
   }, [basepath, calendarEvents, isEventUpdated]);
@@ -171,9 +173,10 @@ const FrontPageCalendar = () => {
   const handleJumpToMonth = (_date) => {
     try {
       if (calendarRef.current) {
-        const calendarApi = calendarRef.current.getApi();
+        // const calendarApi = calendarRef.current.getApi();
         console.log('timesheet default date _date in handleJumpToMonth', _date);
-        calendarApi.gotoDate(_date);
+        calendarRef.current.getApi().gotoDate(_date);
+        //calendarApi.gotoDate(_date);
       }
     } catch (error) {
       console.log(error);
@@ -362,6 +365,7 @@ const FrontPageCalendar = () => {
               LeaveRequestPeriod={LeaveRequestPeriod}
               leavePurpose={leavePurpose}
               CalendarDate={currentCalendarDate}
+              isCalendarIntegrated={true} // Default to false for standalone pages
             />
           )}
         </Drawer>

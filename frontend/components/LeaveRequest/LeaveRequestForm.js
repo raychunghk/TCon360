@@ -1,40 +1,37 @@
 'use client';
-import * as Yup from 'yup';
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { parseCookies } from 'nookies';
-import { Button, TextInput, Grid, useMantineTheme, Card, Select, Text, Flex } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
-import axios from 'axios';
 import MyCard from '@/components/MyCard';
 import MyModal from '@/components/MyModal';
-import { format, parseISO, isWeekend } from 'date-fns';
-import Head from 'next/head';
-
-import { getSession, useSession } from 'next-auth/react';
 import {
-  getBusinessDays,
-  formatResponseDate,
   adjustTimeZoneVal,
-  excludeHoliday,
-  myRenderDay,
-  getNextWorkingDate,
   ampmOptions,
   ampmOptionsEnd,
   ampmOptionsEndNoDate,
-  leaveTypes,
+  excludeHoliday,
+  formatResponseDate,
+  getBusinessDays,
+  getNextWorkingDate, leaveRequestValidationSchema, leaveTypes,
+  myRenderDay
 } from '@/components/util/leaverequest.util';
+import { leaveRequestService } from '@/services/leaveRequestService';
+import { Button, Card, Flex, Grid, Select, Text, TextInput, useMantineTheme } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import {
   IconCalendarPlus,
-  IconCalendarX,
   IconCalendarUp,
+  IconCalendarX,
   IconFileSpreadsheet,
 } from '@tabler/icons-react';
+import { format } from 'date-fns';
+import Head from 'next/head';
+import { parseCookies } from 'nookies';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { LeaveRequestStaffInfo } from './leaveRequestStaffInfo';
 
+import { getMySession } from '@/app/lib/auth-action';
+import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
 import { useShallow } from 'zustand/react/shallow';
-import useUIStore from '@/components/stores/useUIStore';
-import { getMySession } from '@/app/lib/auth-action';
 
 export default function LeaveRequestForm({
   formType,
@@ -44,15 +41,12 @@ export default function LeaveRequestForm({
   LeaveRequestPeriod,
   leavePurpose,
   CalendarDate,
+  isCalendarIntegrated = false, // Default to false for standalone pages
 }) {
   console.log('form type?', formType);
   console.log('leave Request ID?', leaveRequestId);
   console.log('leave purpose?', leavePurpose);
-  /*
 
-const [nuts, honey] = useBearStore(
-  useShallow((state) => [state.nuts, state.honey]),
-)*/
 
   const [publicHolidays, activeUser, activeStaff, activeContract, basepath, timesheetDefaultDate, setTimesheetDefaultDate, setIsMonthPickerChangeEvent, selectedMonth, setSelectedMonth] = useStore(
     useShallow((state) => [
@@ -79,7 +73,7 @@ const [nuts, honey] = useBearStore(
   const [modalOpen, setModalOpen] = useState(false);
   const [showAsError, setShowAsError] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
-
+  const [isFetchingData, setIsFetchingData] = useState(false);
   const staff = activeStaff;
   const [errors, setErrors] = useState({});
   const { reset, handleSubmit } = useForm();
@@ -150,43 +144,32 @@ const [nuts, honey] = useBearStore(
     };
   };
 
+  // Fetch leave request data for edit mode
   useEffect(() => {
-    if (basepath && formType === 'edit') {
+    if (basepath && formType === 'edit' && leaveRequestId) {
       const getLeaveRequestData = async () => {
         try {
-          const headers = {
-            Authorization: `Bearer ${tokenCookie}`,
-          };
-
-          const response = await axios.get(`${basepath}/api/leaverequest/${leaveRequestId}`, {
-            headers,
-          });
-
+          const response = await leaveRequestService.getLeaveRequest(leaveRequestId, tokenCookie, basepath);
           if (response.status === 200) {
             console.log('leaverequest response data', response.data);
-            const { leavePeriodStart, leavePeriodEnd, dateOfReturn, staffSignDate, ...rest } =
-              response.data;
-
+            const { leavePeriodStart, leavePeriodEnd, dateOfReturn, staffSignDate, ...rest } = response.data;
             const formattedData = {
               ...rest,
               leavePeriodStart: leavePeriodStart ? new Date(leavePeriodStart) : null,
               leavePeriodEnd: leavePeriodEnd ? new Date(leavePeriodEnd) : null,
-              dateOfReturn: new Date(dateOfReturn),
+              dateOfReturn: dateOfReturn ? new Date(dateOfReturn) : null,
               staffSignDate: new Date(staffSignDate),
             };
-            if (!leaveRequest) {
-              console.log('in useeffect FormType, leaveRequest is null');
-            }
             setLeaveRequest(formattedData);
           }
         } catch (error) {
-          console.error('Failed to fetch staff data:', error);
+          console.error('Failed to fetch leave request data:', error);
         }
       };
-
-      if (formType) getLeaveRequestData();
+      getLeaveRequestData();
     }
-  }, [formType]);
+  }, [formType, leaveRequestId, basepath, tokenCookie]);
+
 
   useEffect(() => {
     const handleFormValueChange = async () => {
@@ -258,61 +241,40 @@ const [nuts, honey] = useBearStore(
     leaveRequest.leavePeriodEnd,
   ]);
 
-  const deleteOnClick = async (e) => {
-    leaveRequestId = leaveRequest.id;
-    console.log('Delete click Timesheet default date ', timesheetDefaultDate)
-    //console.log('Delete click   _date ', _date)
+  const deleteOnClick = async () => {
+    if (!leaveRequest.id) {
+      setModalMsg('No leave request ID provided');
+      setModalOpen(true);
+      return;
+    }
+    console.log('Delete click Timesheet default date ', timesheetDefaultDate);
     setSubmitting(true);
-    const url = `${basepath}/api/leaverequest/${leaveRequestId}`;
     try {
-
-      const response = await axios.delete(
-        url,
-
-        {
-          headers: headers,
-        }
-      );
-
+      const response = await leaveRequestService.deleteLeaveRequest(leaveRequest.id, tokenCookie, basepath);
       if ([200, 201].includes(response.status)) {
-
         console.log('Delete Response', formatResponseDate(response.data));
-        setSelectedMonth(CalendarDate)
-        await setTimesheetDefaultDate(CalendarDate)
-        await onDeleteEvent(leaveRequestId, timesheetDefaultDate);
+        if (isCalendarIntegrated) {
+          setSelectedMonth(CalendarDate);
+          await setTimesheetDefaultDate(CalendarDate);
+        }
+        await onDeleteEvent(leaveRequest.id, timesheetDefaultDate);
         setModalMsg('Leave Record Deleted Successfully');
         setModalOpen(true);
         reset();
-
-      } else {
-        console.error('Failed to create leave request:', response);
       }
-
-      // Do something with the response data
     } catch (error) {
-      console.error(error);
-      // Handle error
+      console.error('Failed to delete leave request:', error);
+      setModalMsg('Failed to delete leave request');
+      setModalOpen(true);
     }
-
     setSubmitting(false);
   };
 
-  const validationSchema = Yup.object().shape({
-    leavePurpose: Yup.string().required('Leave Request is required'),
-    leaveType: Yup.string().required('Leave Type is required'),
-    leavePeriodStart: Yup.date().required('Leave period start is required'),
-    AMPMStart: Yup.string().required('Leave start: AM/PM/Whole day is required'),
-    // leavePeriodEnd: Yup.date().required('Leave period end is required'),
-    // AMPMEnd: Yup.string().required('Leave end: AM/PM/Whole day is required'),
-    staffSignDate: Yup.date().required('Staff sign date is required'),
-    dateOfReturn: Yup.date().required('Date of Return is required'),
-  });
-
-  const onSubmit = async (e) => {
+  const handleFormSubmit = async (formTypeOverride) => {
     setSubmitting(true);
-    const state = useStore.getState(); // Access the entire store state
-
-    console.log('all zustand states:', state); // Print the state object to the console
+    const effectiveFormType = formTypeOverride || formType;
+    const state = useStore.getState();
+    console.log('all zustand states:', state);
 
     const newData = {
       leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
@@ -329,123 +291,69 @@ const [nuts, honey] = useBearStore(
     console.log('newdata: ', newData);
 
     try {
-      await validationSchema.validate(leaveRequest, { abortEarly: false });
-      const response = await axios[formType === 'create' ? 'post' : 'put'](
-        `${basepath}/api/leaverequest/`,
-        newData,
-        {
-          headers: headers,
+      await leaveRequestValidationSchema.validate(leaveRequest, { abortEarly: false });
+      let response;
+      if (effectiveFormType === 'create') {
+        response = await leaveRequestService.createLeaveRequest(newData, tokenCookie, basepath);
+      } else {
+        if (!leaveRequest.id) {
+          throw new Error('No leave request ID provided for update');
         }
-      );
+        response = await leaveRequestService.updateLeaveRequest(leaveRequest.id, newData, tokenCookie, basepath);
+      }
 
       if ([200, 201].includes(response.status)) {
         if (response.data.error) {
-          // Handle the error
-          console.error('Failed to create leave request:', response.data.error);
+          console.error('Failed to process leave request:', response.data.error);
           setShowAsError(true);
           setModalMsg(response.data.error);
           setModalOpen(true);
         } else {
-          setSelectedMonth(CalendarDate)
-          await setTimesheetDefaultDate(CalendarDate)
-          setModalMsg('Leave Record Created Successfully');
+          if (isCalendarIntegrated) {
+            setSelectedMonth(CalendarDate);
+            await setTimesheetDefaultDate(CalendarDate);
+          }
+          setModalMsg(`Leave Record ${effectiveFormType === 'create' ? 'Created' : 'Updated'} Successfully`);
           setModalOpen(true);
           reset();
 
           let _data = formatResponseDate(response.data);
           console.log('responsedata', _data);
 
-          setLeaveRequest({
-            ..._data,
-          });
+          setLeaveRequest({ ..._data });
           setErrors({});
           setIsEventUpdated(true);
         }
       } else {
-        console.error('Failed to create leave request:', response);
+        console.error('Failed to process leave request:', response);
       }
     } catch (err) {
-      if (error.response && error.response.status === 401) {
-        // Handle session timeout
-        setModalMsg("Session timeout, you are not authorized, please login again");
+      if (err.name === 'ValidationError') {
+        const newErrors = {};
+        err.inner.forEach((error) => {
+          newErrors[error.path] = error.message;
+        });
+        setErrors(newErrors);
+      } else if (err.response && err.response.status === 401) {
+        setModalMsg('Session timeout, you are not authorized, please login again');
         setModalOpen(true);
-      }
-      if (err.response) {
-        // Handle backend validation errors
+      } else if (err.response) {
         const errorData = err.response.data;
         const newErrors = {};
-
         Object.keys(errorData).forEach((key) => {
           newErrors[key] = errorData[key].join(', ');
         });
-
         setErrors(newErrors);
       } else {
-        // Handle other errors
-        console.error('Error creating leave request:', err);
-        setModalMsg('Failed to create leave request');
+        console.error('Error processing leave request:', err);
+        setModalMsg('Failed to process leave request');
         setModalOpen(true);
       }
     }
     setSubmitting(false);
   };
-  const updateOnClick = async () => {
-    setSubmitting(true);
-    const state = useStore.getState(); // Access the entire store state
 
-    // console.log('all Zustand states:', state); // Print the state object to the console
 
-    const newData = {
-      leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
-      leavePeriodEnd: adjustTimeZoneVal(leaveRequest.leavePeriodEnd),
-      AMPMEnd: leaveRequest.AMPMEnd,
-      AMPMStart: leaveRequest.AMPMStart,
-      leaveDays: leaveRequest.leaveDays,
-      dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
-      staffSignDate: leaveRequest.staffSignDate,
-      leavePurpose: leaveRequest.leavePurpose,
-      leaveType: leaveRequest.leaveType,
-      contractId: activeContract.id,
-    };
-    console.log('newData:', newData);
-
-    try {
-      await validationSchema.validate(leaveRequest, { abortEarly: false });
-      const response = await axios.put(`${basepath}/api/leaverequest/${leaveRequest.id}`, newData, {
-        headers: headers,
-      });
-
-      if ([200, 201].includes(response.status)) {
-        setModalMsg('Leave Record Updated Successfully');
-        setModalOpen(true);
-        reset();
-
-        let _data = formatResponseDate(response.data);
-        console.log('responseData:', _data);
-
-        setLeaveRequest({
-          ..._data,
-        });
-        setErrors({});
-
-        setSelectedMonth(newData.leavePeriodStart)
-        await setTimesheetDefaultDate(CalendarDate)
-        await setIsEventUpdated(true);
-        // await fetchEvents();
-      } else {
-        console.error('Failed to update leave request:', response);
-      }
-    } catch (err) {
-      const newErrors = {};
-      err.inner.forEach((error) => {
-        newErrors[error.path] = error.message;
-      });
-      setErrors(newErrors);
-      console.error('Error submitting form:', err);
-      // Handle error
-    }
-    setSubmitting(false);
-  };
   const disabledDates = {
     daysOfWeek: [0, 6], // 0 is Sunday, 6 is Saturday
   };
@@ -487,21 +395,13 @@ const [nuts, honey] = useBearStore(
       <Head>
         <title>{title}</title>
       </Head>
-      <form method="post" onSubmit={handleSubmit(onSubmit)}>
+      <form method="post" onSubmit={handleSubmit(() => handleFormSubmit(formType))}>
         <MyCard title={title}>
           <Grid gutter={theme.spacing.md} py={20}>
-            <Grid.Col span={6}>
-              <Text fw={500}>Staff Name:</Text>
-              <Text>{staff && staff.StaffName}</Text>
+            <Grid.Col span={12}>
+              <LeaveRequestStaffInfo staff={staff} />
             </Grid.Col>
-            <Grid.Col span={6}>
-              <Text fw={500}>Agent Name:</Text>
-              <Text>{staff && staff.AgentName}</Text>
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <Text fw={500}>Staff Category:</Text>
-              <Text>{staff && staff.StaffCategory}</Text>
-            </Grid.Col>
+
 
             <Grid.Col span={12}>
               {leaveRequest.leavePeriodStart &&
@@ -521,7 +421,9 @@ const [nuts, honey] = useBearStore(
               <TextInput
                 {...getTextinputProps('leavePurpose')}
                 label="Leave purpose"
+                loading={isFetchingData}
                 value={leaveRequest.leavePurpose}
+                aria-label="Enter the purpose of the leave"
                 onChange={(event) => {
                   const updatedLeaveRequest = {
                     ...leaveRequest,
@@ -548,8 +450,10 @@ const [nuts, honey] = useBearStore(
             <Grid.Col span={6}>
               <DatePickerInput
                 clearable
+                loading={isFetchingData}
                 label="Leave period start"
                 required
+                //   description="Holidays and weekends are excluded"
                 onChange={(_date) =>
                   handleLeaveStartSelect(_date, {
                     ...leaveRequest,
@@ -563,6 +467,7 @@ const [nuts, honey] = useBearStore(
               <Select
                 label="Leave start: AM/PM/Whole day"
                 data={ampmOptions}
+                loading={isFetchingData}
                 defaultValue="AMPM"
                 value={leaveRequest.AMPMStart}
                 onChange={(value) =>
@@ -683,15 +588,18 @@ const [nuts, honey] = useBearStore(
                   Create Leave Request
                 </Button>
               )}
-
               {formType === 'edit' && (
                 <>
                   <Button
+                    type="submit"
                     loading={submitting}
                     maw={250}
                     radius="md"
                     leftSection={<IconCalendarUp />}
-                    onClick={updateOnClick}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSubmit(() => handleFormSubmit('edit'))();
+                    }}
                   >
                     Update
                   </Button>

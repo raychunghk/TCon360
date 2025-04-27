@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "outDir": "./dist",
+    "target": "es2021"
+  },
+  "include": ["src/**/*", "node_modules/@t3-oss/env-nextjs/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

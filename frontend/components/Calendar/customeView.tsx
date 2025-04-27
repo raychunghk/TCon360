@@ -1,6 +1,23 @@
-import { Card, Text, Container } from '@mantine/core';
+import { Card, Container, Text } from '@mantine/core';
 import { format } from 'date-fns';
+// Define interfaces for your event structures
+interface EventResult {
+  eventType: string;
+  ID: string;
+  HolidaySummary: string;
+  leavePeriodStart: string;
+  leavePeriodEnd: string;
+  leaveDays: number;
+  [key: string]: any; // For any other properties
+}
 
+interface EventDef {
+  groupId: string;
+  extendedProps: {
+    result: EventResult;
+  };
+  [key: string]: any; // For any other properties
+}
 export default function CustomView({ userStaff, ...props }) {
   console.log('user staff:', userStaff);
   console.log('props', props);
@@ -9,15 +26,20 @@ export default function CustomView({ userStaff, ...props }) {
 
   const publicholidays = Object.values(evtdef)
     .filter(
-      (event) =>
-        event.extendedProps.result.eventType === 'weekend' ||
-        event.extendedProps.result.eventType === 'publicholiday',
+      (event) => {
+        // Type assertion to tell TypeScript what type 'event' is
+        const typedEvent = event as EventDef;
+        return (
+          typedEvent.extendedProps?.result?.eventType === 'weekend' ||
+          typedEvent.extendedProps?.result?.eventType === 'publicholiday'
+        );
+      }
     )
-    .map((event) => event.extendedProps.result);
+    .map((event) => (event as EventDef).extendedProps.result);
   console.log('public holidays?', publicholidays);
   const filteredEvents = Object.values(evtdef)
-    .filter((event) => event.groupId !== '')
-    .map((event) => event.extendedProps.result);
+    .filter((event) => (event as EventDef).groupId !== '')
+    .map((event) => (event as EventDef).extendedProps.result);
   console.log(filteredEvents);
   // Render the events from all months together
   // Customize this component to meet your specific requirements
@@ -37,7 +59,7 @@ export default function CustomView({ userStaff, ...props }) {
             background: 'linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%)',
             fontFamily: 'monospace',
           }}
-          hover
+
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Text

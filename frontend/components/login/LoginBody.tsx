@@ -1,57 +1,47 @@
 'use client';
-import { parseCookies, setCookie } from 'nookies';
-import {
-  Paper,
-  TextInput,
-  Container,
-  PasswordInput,
-  Checkbox,
-  Button,
-  Title,
-  Text,
-  Anchor,
-  LoadingOverlay,
-} from '@mantine/core';
-import { default as useRouter } from '@/components/useCustRouter';
-
 import { SignIn } from '@/app/lib/auth-action';
-import { useDisclosure } from '@mantine/hooks';
-import { useRef, useState } from 'react';
-import { siteTitle } from '@/components/util/label';
 import useStore from '@/components/stores/zstore';
+import { default as useRouter } from '@/components/useCustRouter';
+import { siteTitle } from '@/components/util/label';
 import * as classes from '@/styles/login.css';
+import {
+  Anchor,
+  Button,
+  Checkbox,
+  Container,
+  LoadingOverlay,
+  Paper,
+  PasswordInput,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import '@mantine/core/styles.css';
-import { feconfig } from '@/frontendconfig';
+import { useDisclosure } from '@mantine/hooks';
+//import { config } from '@tcon360/config';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-/*async function getProviders() {
-  const basepath = feconfig.prefix;
-  const loginURL = `${basepath}/api/user/login`;
-  //const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/providers`);
-  const res = await fetch(`${basepath}/api/auth/providers`);
+import { parseCookies, setCookie } from 'nookies';
+import { useRef, useState } from 'react';
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch providers');
-  } else {
-    console.log(res.body);
-  }
-
-  return res.json();
-}*/
 export default function LoginBody(props: any) {
   const router = useRouter();
-  const passwordInputRef = useRef(null);
-  const { setAuthtoken, basepath, setBasepath } = useStore();
-  const handleKeyDown = (event) => {
-    console.log('event.key', event.key);
+  const passwordInputRef = useRef<HTMLInputElement>(null); // Specify HTMLInputElement type
+  const { setAuthtoken, basepath } = useStore();
+
+  // Sync basepath with config.feprefix on mount
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Tab') {
-      event.preventDefault(); // Prevent the default tab behavior
-      passwordInputRef.current.focus(); // Focus on the password input
+      event.preventDefault();
+      if (passwordInputRef.current) {
+        passwordInputRef.current.focus(); // Safe with null check
+      }
     }
   };
-  // const resp: ReturnType<typeof getProviders> = (await getProviders()) || {};
+
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
-  const [loginStatus, setLoginStatus] = useState(''); // add login status state variable
+  const [loginStatus, setLoginStatus] = useState('');
   const [visible, { toggle, open, close }] = useDisclosure(false);
 
   async function handleLoginSuccess(response: Response, router: AppRouterInstance | string[]) {
@@ -59,15 +49,12 @@ export default function LoginBody(props: any) {
       const data = await response.json();
       const token = data.accessToken;
       setAuthtoken(token);
-      //const _maxAge = process.env.TOKEN_MAX_AGE;
       const _maxAge = data.tokenMaxAge;
 
-      console.log('_maxage in handleLoginSuccess', _maxAge);
-      // set the user's session token in localStorage
       if (_maxAge) {
         await setCookie(null, 'token', token, {
-          maxAge: parseInt(_maxAge), // cookie expiration time (in seconds)
-          path: '/', // cookie path
+          maxAge: parseInt(_maxAge),
+          path: '/',
         });
       } else {
         console.error('TOKEN_MAX_AGE is not defined');
@@ -76,39 +63,38 @@ export default function LoginBody(props: any) {
       const cookies = parseCookies();
       const tokenCookie = cookies.token;
       console.log('token cookie', tokenCookie);
-      console.log('Token max age(process.env.TOKEN_MAX_AGE/cookies.maxAge):', cookies.maxAge);
+      console.log('Token max age:', cookies.maxAge);
 
       const signInResult = await SignIn(tokenCookie);
       if (signInResult.error) {
         console.error('Error during sign in:', signInResult.error);
       }
-      router.push(`/`); // redirect to the dashboard page on successful login
+      router.push('/');
     } catch (error) {
       console.error('Error in handleLoginSuccess:', error);
     }
   }
 
-  const handleLogin = async (event: { preventDefault: () => void }) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
+    console.log(`basepath:${basepath}`);
     open();
-    //const basepath = feconfig.prefix;
     const loginURL = `${basepath}/api/user/login`;
     console.log('login url?', loginURL);
 
     const response = await fetch(loginURL, {
-      // the URL of your Nest.js API endpoint
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ identifier, password }), // send the identifier (username or email) and password in the request body
+      body: JSON.stringify({ identifier, password }),
     });
 
     if (response.ok) {
       await handleLoginSuccess(response, router);
     } else {
       close();
-      setLoginStatus('Login failed.'); // set the login status to a failure message
+      setLoginStatus('Login failed.');
     }
   };
 
@@ -126,14 +112,11 @@ export default function LoginBody(props: any) {
           <Text c="red" fw={700} fz="md" ta="center">
             {loginStatus}
           </Text>
-        )}{' '}
-        {/* show the login status message if present */}
+        )}
         <form onSubmit={handleLogin}>
           <LoadingOverlay
             visible={visible}
-            overlayProps={{
-              blur: 2,
-            }}
+            overlayProps={{ blur: 2 }}
             transitionProps={{ duration: 500 }}
           />
           <TextInput
@@ -141,7 +124,8 @@ export default function LoginBody(props: any) {
             placeholder="hello@gmail.com"
             size="md"
             value={identifier}
-            onChange={(event) => setIdentifier(event.target.value)} onKeyDown={handleKeyDown} // Add the key down handler
+            onChange={(event) => setIdentifier(event.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <PasswordInput
             label="Password"
@@ -158,7 +142,7 @@ export default function LoginBody(props: any) {
           </Button>
         </form>
         <Text ta="center" mt="md">
-          Don&apos;t have an account?{' '}
+          Don't have an account?{' '}
           <Anchor<'a'> href="#" fw={700} onClick={handleSignupClick}>
             Sign Up
           </Anchor>

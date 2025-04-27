@@ -1,46 +1,44 @@
 'use client';
-import { useState, useEffect, useContext, useRef, useLayoutEffect, SetStateAction } from 'react';
 import { default as useRouter } from '@/components/useCustRouter';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 
 import * as classes from '@/styles/login.css';
 import {
-  Paper,
-  TextInput,
-  Container,
-  PasswordInput,
-  Button,
-  Title,
-  Text,
   Anchor,
-  LoadingOverlay,
-  Group,
+  Button,
+  Container,
   Grid,
+  Group,
+  LoadingOverlay,
   Notification,
-  Stepper,
   NumberInput,
+  Paper,
+  PasswordInput,
+  Stepper,
+  Text,
+  TextInput,
+  Title,
 } from '@mantine/core';
 
 import Head from 'next/head';
 
-import Link from 'next/link';
-import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
 import Signupcard from '@/components/Signupcard';
+import { useForm } from '@mantine/form';
+import Link from 'next/link';
 //import { handleLoginSuccess } from '@/components/handleLoginSuccess';
 import { useLogin } from '@/components/handleLoginSuccess';
-import { DatePickerInput } from '@mantine/dates';
-import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 import {
   excludeHoliday,
   myRenderDay,
-
 } from '@/components/util/leaverequest.util';
+import { DatePickerInput } from '@mantine/dates';
+import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 
-import axios from 'axios';
 import { IconX } from '@tabler/icons-react';
+import axios from 'axios';
 
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore';
-import { baseconfig } from '@base/baseconfig';
 import { usePublicHolidays } from '@/components/util/usePublicHolidays';
 export default function SignupPage() {
   interface iStaffModel {
@@ -83,8 +81,9 @@ export default function SignupPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [signUpError, setsignUpError] = useState('');
   const { publicHolidays, loading, loadPublicHolidays } = usePublicHolidays();
-  const inputRefs = useRef([]);
-
+  //const inputRefs = useRef([]);
+  const inputRefs = useRef<(HTMLInputElement | HTMLButtonElement | null)[]>([]);
+  const datePickerRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const { siteTitle } = useUIStore();
   const { authOverlayVisible, setAuthOverlayVisible, basepath } = useStore();
@@ -156,8 +155,14 @@ export default function SignupPage() {
         if (!values.AnnualLeave) {
           errors.AnnualLeave = 'AnnualLeave is required';
         }
-        if (values.ContractEndDate <= values.ContractStartDate) {
-          errors.ContractEndDate = 'Contract end date should be later than Contract start date';
+        if (values.ContractEndDate && values.ContractStartDate) {
+          const endDate = new Date(values.ContractEndDate);
+          const startDate = new Date(values.ContractStartDate);
+          //  const minDate = new Date('1900-01-01');
+
+          if (endDate <= startDate) {
+            errors.ContractEndDate = 'Contract end date should be later than Contract start date and valid';
+          }
         }
         console.log(`error on step ${active}`, errors);
         return errors;
@@ -288,7 +293,7 @@ export default function SignupPage() {
   };
 
   //const onKeyDown = useHotkeys([['mod+Enter', nextStep]]);
-  const hotkeyConfig = [['mod+Enter', nextStep]];
+  const hotkeyConfig: [string, () => void][] = [['mod+Enter', nextStep]];
 
   const handleTabKey = (event, stepStartIndex, stepEndIndex) => {
     if (event.key === 'Tab') {
@@ -327,7 +332,9 @@ export default function SignupPage() {
               Create an Account
             </Title>
 
-            <Stepper active={active} onStepClick={handleStepClick} breakpoint="sm">
+            <Stepper active={active} onStepClick={handleStepClick}
+            //breakpoint="sm"
+            >
               <Stepper.Step label="First step" description="Enter login details">
                 <Paper shadow="sm" p="xs" withBorder>
                   <Title order={2}  >
@@ -370,12 +377,17 @@ export default function SignupPage() {
                             placeholder={field.placeholder}
                             size="md"
                             value={field.value}
-                            onChange={field.onChange}
+                            //   onChange={field.onChange}
                             onKeyDown={(event) => {
                               getHotkeyHandler(hotkeyConfig)(event);
                               handleTabKey(event, 0, 2);
                             }}
-                            {...form.getInputProps(field.name)}
+                            {...form.getInputProps(field.name, {
+                              onChange: (event) => {
+                                field.onChange(event);
+                                // Additional onChange logic if needed
+                              }
+                            })}
                             ref={(ref) => {
                               inputRefs.current[index] = ref;
                             }}
@@ -471,11 +483,16 @@ export default function SignupPage() {
                               label={field.label}
                               placeholder={field.placeholder}
                               name={field.name}
-                              onChange={handleInputChange}
+                              //onChange={handleInputChange}
                               value={field.value}
                               valueFormat="DD-MM-YYYY"
                               firstDayOfWeek={0}
-                              {...form.getInputProps(field.name)}
+                              {...form.getInputProps(field.name, {
+                                onChange: (event) => {
+                                  handleInputChange(event);
+                                  // Additional onChange logic if needed
+                                }
+                              })}
                               excludeDate={excludeHoliday}
                               renderDay={myRenderDay}
                               ref={(ref) => {
@@ -491,14 +508,20 @@ export default function SignupPage() {
                               label={field.label}
                               placeholder={field.placeholder}
                               name={field.name}
-                              onChange={handleInputChange}
+
+
                               value={field.value}
                               min={0}
                               onKeyDown={(event) => {
                                 getHotkeyHandler(hotkeyConfig)(event);
                                 handleTabKey(event, 3, 10);
                               }}
-                              {...form.getInputProps(field.name)}
+                              {...form.getInputProps(field.name, {
+                                onChange: (event) => {
+                                  handleInputChange(event);
+                                  // Additional onChange logic if needed
+                                }
+                              })}
                               ref={(ref) => {
                                 inputRefs.current[refIndex] = ref;
                               }}
@@ -508,13 +531,18 @@ export default function SignupPage() {
                               label={field.label}
                               placeholder={field.placeholder}
                               name={field.name}
-                              onChange={handleInputChange}
+                              //   onChange={handleInputChange}
                               value={field.value}
                               onKeyDown={(event) => {
                                 getHotkeyHandler(hotkeyConfig)(event);
                                 handleTabKey(event, 3, 10);
                               }}
-                              {...form.getInputProps(field.name)}
+                              {...form.getInputProps(field.name, {
+                                onChange: (event) => {
+                                  handleInputChange(event);
+                                  // Additional onChange logic if needed
+                                }
+                              })}
                               ref={(ref) => {
                                 inputRefs.current[refIndex] = ref;
                               }}
@@ -558,13 +586,18 @@ export default function SignupPage() {
                             label={field.label}
                             placeholder={field.placeholder}
                             name={field.name}
-                            onChange={handleInputChange}
+                            //  onChange={handleInputChange}
                             onKeyDown={(event) => {
                               getHotkeyHandler(hotkeyConfig)(event);
                               handleTabKey(event, 11, 13); // Adjust indices for the final step
                             }}
                             value={field.value}
-                            {...form.getInputProps(field.name)}
+                            {...form.getInputProps(field.name, {
+                              onChange: (event) => {
+                                handleInputChange(event);
+                                // Additional onChange logic if needed
+                              }
+                            })}
                             ref={(ref) => {
                               inputRefs.current[refIndex] = ref;
                             }}

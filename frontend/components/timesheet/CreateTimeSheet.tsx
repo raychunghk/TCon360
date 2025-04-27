@@ -21,7 +21,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
   const [modalOpen, setModalOpen] = useState(false);
   const { handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
-  const [fileid, setfileid] = useState(false);
+  const [fileid, setfileid] = useState<boolean | null>(null);
 
   const [monthValue, setMonthValue] = useState<Date | null>(new Date());
 

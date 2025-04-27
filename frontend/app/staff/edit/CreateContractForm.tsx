@@ -1,27 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import useStore from '@/components/stores/zstore';
+import { myRenderDay } from '@/components/util/leaverequest.util';
 import {
+  Button,
+  Container,
+  Flex,
   Grid,
+  Modal,
   NumberInput,
   Switch,
-  Dialog,
-  Paper,
-  Container,
   Text,
   Title,
-  Modal,
-  Button,
-  useMantineTheme,
-  Flex,
   rem,
+  useMantineTheme
 } from '@mantine/core';
-
-import { DatePickerInput } from '@mantine/dates';
-import axios from 'axios';
-import { validationSchema } from './edit.util';
+import { DatePickerInput, DayOfWeek } from '@mantine/dates';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { myRenderDay } from '@/components/util/leaverequest.util';
-import useStore from '@/components/stores/zstore';
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { validationSchema } from './edit.util';
 
 interface CreateModalProps {
   onSubmit: () => void;
@@ -39,7 +37,16 @@ export default function CreateContractForm({
   const [errors, setErrors] = useState({});
   const { register, handleSubmit } = useForm();
   const { nextContractStartDate, basepath, activeStaff } = useStore();
-  const initialState = {
+  interface ContractState {
+    id: number | null;
+    ContractStartDate: Date | null;
+    ContractEndDate: Date | null;
+    AnnualLeave: number;
+    IsActive: boolean,
+    activeStaff: any,
+    staffId: number,
+  }
+  const initialState: ContractState = {
     id: null,
     ContractStartDate: null,
     ContractEndDate: null,
@@ -105,27 +112,53 @@ export default function CreateContractForm({
       // err.inner.forEach((error) => {
       //   newErrors[error.path] = error.message;
       // });
-      setErrors(err);
+      if (axios.isAxiosError(err)) {
+        // Handle Axios errors
+        setErrors(err);
+        const axiosError = err as AxiosError;
+        modalCallback.setModalContent(axiosError.message);
+      } else if (err instanceof Error) {
+        setErrors(err);
+        // Handle other types of errors
+        modalCallback.setModalContent(err.message);
+      } else {
+
+        // Fallback for unexpected errors
+        modalCallback.setModalContent('An unexpected error occurred');
+      }
+
       console.error('Error creating contract:', err);
-      modalCallback.setModalContent('Error');
+
       modalCallback.setModalOpen(false);
       return;
     }
   };
 
-  const handleDateInputSelect = async (date, stateObj) => {
+  const handleDateInputSelect = async (date: any, stateObj: any) => {
     console.log('handle date input select', date);
-    if (errors.ContractEndDate || errors.ContractStartDate) {
-      try {
-        await validationSchema.validate(contract, { abortEarly: false });
-      } catch (error) {
-        const newErrors = {};
-        error.inner.forEach((error) => {
-          newErrors[error.path] = error.message;
-        });
-        setErrors(newErrors);
+
+    // Check if there are existing validation errors
+    if (yup.ValidationError.isError(errors)) {
+      // Check for specific error properties
+      if ('ContractEndDate' in errors || 'ContractStartDate' in errors) {
+        try {
+          // Validate the contract object
+          await validationSchema.validate(stateObj, { abortEarly: false });
+        } catch (error) {
+          if (yup.ValidationError.isError(error)) {
+            const newErrors: Record<string, string> = {};
+            (error as yup.ValidationError).inner.forEach((err) => {
+              if (err.path) {
+                newErrors[err.path] = err.message;
+              }
+            });
+            setErrors(newErrors);
+          }
+        }
       }
     }
+
+    // Update the contract state
     setContract(stateObj);
   };
 
@@ -149,7 +182,7 @@ export default function CreateContractForm({
   function getDatePickerProps(fieldName) {
     return {
       valueFormat: 'DD-MM-YYYY',
-      firstDayOfWeek: 0,
+      firstDayOfWeek: 0 as DayOfWeek,
       name: fieldName,
       error: errors[fieldName],
     };
@@ -180,8 +213,8 @@ export default function CreateContractForm({
                     })
                   }
                   maxDate={
-                    contract.ContractEndDate &&
-                    new Date(new Date(contract.ContractEndDate).getTime() - 24 * 60 * 60 * 1000)
+                    (contract.ContractEndDate &&
+                      new Date(new Date(contract.ContractEndDate).getTime() - 24 * 60 * 60 * 1000)) as Date | undefined
                   }
                 />
               </Grid.Col>
@@ -192,8 +225,10 @@ export default function CreateContractForm({
                   required
                   {...getDatePickerProps('ContractEndDate')}
                   minDate={
-                    contract.ContractStartDate &&
-                    new Date(new Date(contract.ContractStartDate).getTime() + 24 * 60 * 60 * 1000)
+
+                    contract.ContractStartDate
+                      ? new Date(new Date(contract.ContractStartDate).getTime() + 24 * 60 * 60 * 1000)
+                      : undefined
                   }
                   onChange={(_date) =>
                     handleDateInputSelect(_date, {
@@ -213,7 +248,7 @@ export default function CreateContractForm({
                   onChange={(_annauleave) => {
                     setContract({
                       ...contract,
-                      AnnualLeave: parseInt(_annauleave),
+                      AnnualLeave: parseInt(_annauleave.toString()),
                     });
                   }}
                 />

@@ -1,17 +1,17 @@
-import { ActionIcon, Box, Button, Group, Text, Title, Tooltip } from '@mantine/core';
-import { modals } from '@mantine/modals';
-
 import useStore from '@/components/stores/zstore';
 import { myRenderDay } from '@/components/util/leaverequest.util';
+import { ActionIcon, Box, Button, Group, Text, Title, Tooltip } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { format } from 'date-fns';
 import {
   MantineReactTable,
   useMantineReactTable
 } from 'mantine-react-table';
 import 'mantine-react-table/styles.css';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
+import * as yup from 'yup';
 import { ContractDatePicker } from './ContractDatePicker';
 import CreateContractForm from './CreateContractForm';
 import EditIsActiveCell, {
@@ -20,7 +20,11 @@ import EditIsActiveCell, {
   EditContractModalContent,
   validationSchema,
 } from './edit.util';
-
+interface ContractErrors {
+  ContractStartDate?: string;
+  ContractEndDate?: string;
+  // ... other error fields
+}
 export default function ContractTable({
   formValues,
   setFormValues,
@@ -32,7 +36,7 @@ export default function ContractTable({
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<ContractErrors>({});
   const [saving, setSaving] = useState(false);
   const [columns, setColumns] = useState([]);
 
@@ -133,7 +137,7 @@ export default function ContractTable({
         maxContractEndDate.setDate(maxContractEndDate.getDate() + 1);
         setNextContractStartDate(maxContractEndDate);
       }
-      setColumns(newColumns);
+      setColumns(newColumns as SetStateAction<never[]>);
     }
   }, [editing, basepath, formValues.contracts]);
 
@@ -165,14 +169,22 @@ export default function ContractTable({
     } catch (err) {
       // Handle error
       console.log(err);
-      const newErrors = {};
-      err.inner.forEach((error) => {
-        newErrors[error.path] = error.message;
-      });
+      const newErrors: Record<string, string> = {};
 
-      setErrors(newErrors);
-      setEditErrors(newErrors);
-      setSaving(false);
+      if (yup.ValidationError.isError(err)) {
+        err.inner.forEach((error: yup.ValidationError) => {
+          if (error.path) {
+            newErrors[error.path] = error.message;
+          }
+        });
+
+        setErrors(newErrors);
+        setEditErrors(newErrors);
+        setSaving(false);
+      }
+
+
+
     }
     setSaving(false);
     // Handle saving the edited row here
@@ -217,7 +229,17 @@ export default function ContractTable({
       }
     } catch (error) {
       // Handle error
-      setModalContent(error.message);
+      if (axios.isAxiosError(error)) {
+        // Handle Axios errors
+        const axiosError = error as AxiosError;
+        setModalContent(axiosError.message);
+      } else if (error instanceof Error) {
+        // Handle other types of errors
+        setModalContent(error.message);
+      } else {
+        // Fallback for unexpected errors
+        setModalContent('An unexpected error occurred');
+      }
       setModalOpen(true);
     }
   };
