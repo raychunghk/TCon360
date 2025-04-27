@@ -13,7 +13,7 @@ import {
   myRenderDay
 } from '@/components/util/leaverequest.util';
 import { leaveRequestService } from '@/services/leaveRequestService';
-import { Button, Card, Flex, Grid, Select, Text, TextInput, useMantineTheme } from '@mantine/core';
+import { Button, Card, Flex, Grid, LoadingOverlay, Select, Text, TextInput, useMantineTheme } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import {
   IconCalendarPlus,
@@ -136,34 +136,38 @@ export default function LeaveRequestForm({
       fetchSessionData();
     }
   }, [activeStaff]); // Depend on activeStaff to trigger only on changes
-  const getTextinputProps = (fieldName) => {
+  function getTextinputProps(fieldName) {
     return {
       name: fieldName,
       id: fieldName,
       error: errors[fieldName],
+      disabled: isFetchingData || submitting,
     };
-  };
+  }
 
   // Fetch leave request data for edit mode
   useEffect(() => {
     if (basepath && formType === 'edit' && leaveRequestId) {
       const getLeaveRequestData = async () => {
+        setIsFetchingData(true);
         try {
           const response = await leaveRequestService.getLeaveRequest(leaveRequestId, tokenCookie, basepath);
           if (response.status === 200) {
-            console.log('leaverequest response data', response.data);
             const { leavePeriodStart, leavePeriodEnd, dateOfReturn, staffSignDate, ...rest } = response.data;
-            const formattedData = {
+            setLeaveRequest({
               ...rest,
               leavePeriodStart: leavePeriodStart ? new Date(leavePeriodStart) : null,
               leavePeriodEnd: leavePeriodEnd ? new Date(leavePeriodEnd) : null,
               dateOfReturn: dateOfReturn ? new Date(dateOfReturn) : null,
               staffSignDate: new Date(staffSignDate),
-            };
-            setLeaveRequest(formattedData);
+            });
           }
         } catch (error) {
-          console.error('Failed to fetch leave request data:', error);
+          setModalMsg('Failed to fetch leave request data');
+          setShowAsError(true);
+          setModalOpen(true);
+        } finally {
+          setIsFetchingData(false);
         }
       };
       getLeaveRequestData();
@@ -173,72 +177,68 @@ export default function LeaveRequestForm({
 
   useEffect(() => {
     const handleFormValueChange = async () => {
+      const { leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd } = leaveRequest;
+      if (!leavePeriodStart) {
+        setLeaveRequest((prev) => ({
+          ...prev,
+          leavePeriodEnd: null,
+          leaveDays: 0,
+          dateOfReturn: null,
+          AMPMEnd: '',
+        }));
+        return;
+      }
+
       const startDate = new Date(leavePeriodStart);
       const endDate = leavePeriodEnd ? new Date(leavePeriodEnd) : null;
-      let _leavedays = 0;
+      let leaveDays = 0;
       let returnDate = null;
-      let _ampmend = AMPMEnd;
-      let _ampmstart = AMPMStart;
-      if (!leavePeriodStart) {
-        leaveRequest.leavePeriodEnd = null;
-        leaveRequest.leaveDays = 0;
-        leaveRequest.dateOfReturn = null;
+      let ampmEnd = AMPMEnd || 'NA';
+      let ampmStart = AMPMStart;
+
+      if (publicHolidays.some(h => h.StartDate === startDate.toISOString().split('T')[0])) {
+        setErrors({ leavePeriodStart: 'Start date cannot be a holiday' });
+        return;
       }
+
       if (endDate) {
-        if (!AMPMEnd || AMPMEnd === 'NA') {
-          _ampmend = 'AMPM';
-        }
-        if (AMPMStart === 'AM') {
-          _ampmstart = 'AMPM';
-        }
-        const startIsAM = AMPMStart === 'AM' || AMPMStart === 'AMPM';
-        const startIsPM = AMPMStart === 'PM';
-        const endIsAM = AMPMEnd === 'AM';
-        const endIsPM = AMPMEnd === 'AMPM';
-        if (startIsAM && endIsAM) {
-          _leavedays = getBusinessDays(startDate, endDate) - 0.5;
-          returnDate = endDate;
-        } else if (startIsPM && endIsPM) {
-          _leavedays = getBusinessDays(startDate, endDate) - 0.5;
-          returnDate = getNextWorkingDate(endDate);
-        } else if (startIsPM && endIsAM) {
-          _leavedays = getBusinessDays(startDate, endDate) - 1;
-          returnDate = endDate;
-        } else if (startIsAM && endIsPM) {
-          _leavedays = getBusinessDays(startDate, endDate);
-          returnDate = getNextWorkingDate(endDate);
-          console.log('return to work date?', returnDate);
-        }
+        if (!AMPMEnd || AMPMEnd === 'NA') ampmEnd = 'AMPM';
+        if (AMPMStart === 'AM') ampmStart = 'AMPM';
+        const startIsAM = ampmStart === 'AM' || ampmStart === 'AMPM';
+        const startIsPM = ampmStart === 'PM';
+        const endIsAM = ampmEnd === 'AM';
+        const endIsPM = ampmEnd === 'AMPM';
+        leaveDays = getBusinessDays(startDate, endDate);
+        if (startIsAM && endIsAM) leaveDays -= 0.5;
+        else if (startIsPM && endIsPM) leaveDays -= 0.5;
+        else if (startIsPM && endIsAM) leaveDays -= 1;
+        returnDate = endIsPM ? getNextWorkingDate(endDate) : endDate;
       } else {
-        _ampmend = 'NA';
-        if (AMPMStart === 'AMPM') {
-          _leavedays = 1;
+        ampmEnd = 'NA';
+        if (ampmStart === 'AMPM') {
+          leaveDays = 1;
           returnDate = getNextWorkingDate(startDate);
-        } else if (AMPMStart === 'AM') {
-          _leavedays = 0.5;
-          returnDate = startDate;
-        } else if (AMPMStart === 'PM') {
-          _leavedays = 0.5;
-          returnDate = getNextWorkingDate(startDate);
+        } else {
+          leaveDays = 0.5;
+          returnDate = ampmStart === 'AM' ? startDate : getNextWorkingDate(startDate);
         }
       }
-      console.log('leavedays?', _leavedays);
-      console.log('In use Effect LeaveRequest form value change, prevRequest:', leaveRequest);
-      setLeaveRequest((prevRequest) => ({
-        ...prevRequest,
-        AMPMEnd: _ampmend,
-        AMPMStart: _ampmstart,
-        leaveDays: _leavedays,
+
+      setLeaveRequest((prev) => ({
+        ...prev,
+        AMPMEnd: ampmEnd,
+        AMPMStart: ampmStart,
+        leaveDays,
         dateOfReturn: returnDate,
       }));
     };
-    const { leavePeriodStart, leavePeriodEnd, AMPMStart, AMPMEnd } = leaveRequest;
-    if (leavePeriodStart) handleFormValueChange();
+
+    if (leaveRequest.leavePeriodStart) handleFormValueChange();
   }, [
-    leaveRequest.AMPMStart,
-    leaveRequest.AMPMEnd,
     leaveRequest.leavePeriodStart,
     leaveRequest.leavePeriodEnd,
+    leaveRequest.AMPMStart,
+    leaveRequest.AMPMEnd,
   ]);
 
   const deleteOnClick = async () => {
@@ -270,26 +270,29 @@ export default function LeaveRequestForm({
     setSubmitting(false);
   };
 
+  function normalizeDate(date) {
+    if (!date) return null;
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  }
   const handleFormSubmit = async (formTypeOverride) => {
     setSubmitting(true);
     const effectiveFormType = formTypeOverride || formType;
     const state = useStore.getState();
     console.log('all zustand states:', state);
-
     const newData = {
-      leavePeriodStart: adjustTimeZoneVal(leaveRequest.leavePeriodStart),
-      leavePeriodEnd: adjustTimeZoneVal(leaveRequest.leavePeriodEnd),
+      leavePeriodStart: effectiveFormType === 'create' ? adjustTimeZoneVal(leaveRequest.leavePeriodStart) : normalizeDate(leaveRequest.leavePeriodStart),
+      leavePeriodEnd: effectiveFormType === 'create' ? adjustTimeZoneVal(leaveRequest.leavePeriodEnd) : normalizeDate(leaveRequest.leavePeriodEnd),
       AMPMEnd: leaveRequest.AMPMEnd,
       AMPMStart: leaveRequest.AMPMStart,
       leaveDays: leaveRequest.leaveDays,
-      dateOfReturn: adjustTimeZoneVal(leaveRequest.dateOfReturn),
-      staffSignDate: leaveRequest.staffSignDate,
+      dateOfReturn: effectiveFormType === 'create' ? adjustTimeZoneVal(leaveRequest.dateOfReturn) : normalizeDate(leaveRequest.dateOfReturn),
+      staffSignDate: effectiveFormType === 'create' ? adjustTimeZoneVal(leaveRequest.staffSignDate) : normalizeDate(leaveRequest.staffSignDate),
       leavePurpose: leaveRequest.leavePurpose,
       leaveType: leaveRequest.leaveType,
       contractId: activeContract.id,
     };
     console.log('newdata: ', newData);
-
+    setErrors({});
     try {
       await leaveRequestValidationSchema.validate(leaveRequest, { abortEarly: false });
       let response;
@@ -299,6 +302,7 @@ export default function LeaveRequestForm({
         if (!leaveRequest.id) {
           throw new Error('No leave request ID provided for update');
         }
+        newData.leavePeriodStart = normalizeDate(newData.leavePeriodStart)
         response = await leaveRequestService.updateLeaveRequest(leaveRequest.id, newData, tokenCookie, basepath);
       }
 
@@ -385,6 +389,7 @@ export default function LeaveRequestForm({
       name: fieldName,
       error: errors[fieldName],
       value: leaveRequest[fieldName],
+      disabled: isFetchingData || submitting,
     };
 
     return dtPickerProps;
@@ -397,6 +402,7 @@ export default function LeaveRequestForm({
       </Head>
       <form method="post" onSubmit={handleSubmit(() => handleFormSubmit(formType))}>
         <MyCard title={title}>
+          <LoadingOverlay visible={isFetchingData || submitting} />
           <Grid gutter={theme.spacing.md} py={20}>
             <Grid.Col span={12}>
               <LeaveRequestStaffInfo staff={staff} />
@@ -425,6 +431,7 @@ export default function LeaveRequestForm({
                 value={leaveRequest.leavePurpose}
                 aria-label="Enter the purpose of the leave"
                 onChange={(event) => {
+                  setErrors((prev) => ({ ...prev, leavePurpose: undefined }));
                   const updatedLeaveRequest = {
                     ...leaveRequest,
                     leavePurpose: event.target.value,
@@ -581,9 +588,10 @@ export default function LeaveRequestForm({
                   type="submit"
                   fullWidth
                   loading={submitting}
-                  leftSection={<IconCalendarPlus />}
-                  maw={250}
+                  leftSection={<IconCalendarPlus size={18} />}
+                  maw={{ base: '100%', sm: 250 }}
                   radius="md"
+                  size="md"
                 >
                   Create Leave Request
                 </Button>
