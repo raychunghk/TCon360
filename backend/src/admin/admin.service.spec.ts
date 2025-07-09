@@ -1,13 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AdminService } from './admin.service';
-import { PrismaService } from '../prisma/prisma.service';
-import {
-  Staff,
-  LeaveRequest,
-  StaffContract,
-  staffFiles,
-  User,
-} from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { AdminService } from './admin.service.js';
 
 describe('AdminService', () => {
   let adminService: AdminService;

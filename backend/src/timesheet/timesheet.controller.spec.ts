@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TimesheetController } from './timesheet.controller';
-import { TimesheetService } from './timesheet.service';
-import { LeaveRequestService } from '../leaverequest/service/leaverequest.service';
-import { StaffService } from '../staff/service/staff.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { StaffFilesService } from '../shared/staffFiles.service';
-import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../auth/users.service';
-import { AuthReqInterface } from '../AuthReqInterface';
 import { User } from '@prisma/client';
+import { AuthService } from '../auth/auth.service.js';
+import { UsersService } from '../auth/users.service.js';
+import { LeaveRequestService } from '../leaverequest/service/leaverequest.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { StaffFilesService } from '../shared/staffFiles.service.js';
+import { StaffService } from '../staff/service/staff.service.js';
+import { TimesheetController } from './timesheet.controller.js';
+import { TimesheetService } from './timesheet.service.js';
 
 describe('TimesheetController', () => {
   let controller: TimesheetController;

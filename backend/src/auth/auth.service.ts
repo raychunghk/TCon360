@@ -1,14 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { UsersService } from './users.service';
-import { User, Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import { JwtPayload } from './jwtpayload.interface';
-import { StaffService } from '../staff/service/staff.service';
-import { signupUserDTO } from 'src/models/customDTOs';
 import { differenceInSeconds, format } from 'date-fns';
+import * as jwt from 'jsonwebtoken';
+import { signupUserDTO } from 'src/models/customDTOs.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { StaffService } from '../staff/service/staff.service.js';
+import { UsersService } from './users.service.js';
 
 @Injectable()
 export class AuthService {

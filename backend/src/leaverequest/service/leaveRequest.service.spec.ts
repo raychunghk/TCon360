@@ -1,10 +1,10 @@
-import { Test } from '@nestjs/testing';
-import { LeaveRequestService } from './leaverequest.service';
-import { PrismaService } from '../../prisma/prisma.service';
-import { StaffService } from '../../staff/service/staff.service';
-import { StaffFilesService } from '../../shared/staffFiles.service';
 import { Logger } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import { Prisma, Staff } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { StaffFilesService } from '../../shared/staffFiles.service.js';
+import { StaffService } from '../../staff/service/staff.service.js';
+import { LeaveRequestService } from './leaverequest.service.js';
 
 describe('LeaveRequestService', () => {
   let leaveRequestService: LeaveRequestService;

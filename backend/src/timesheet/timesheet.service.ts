@@ -7,7 +7,7 @@ import * as ExcelJS from 'exceljs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 @Injectable()
 export class TimesheetService {

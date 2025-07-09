@@ -1,10 +1,10 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import argon2 from 'argon2';
 import path from 'path';
-import getEvents from './ics.mjs';
+import getEvents from './ics.mjs.js';
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
-import privatedata from './privatedata.mjs';
+import privatedata from './privatedata.mjs.js';
 const prisma = new PrismaClient();
 async function main() {
   await gencalendar();

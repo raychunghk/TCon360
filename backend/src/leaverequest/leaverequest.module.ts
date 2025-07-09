@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { LeaveRequestController } from './leaverequest.controller';
-import { LeaveRequestService } from './service/leaverequest.service';
-import { PrismaService } from '../prisma/prisma.service';
-//import { LeaveRequestResolver } from './leaverequest.resolver';
-import { StaffService } from '../staff/service/staff.service';
-import { StaffFilesService } from '../shared/staffFiles.service';
-import { UsersService } from '../auth/users.service';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { LeaveRequestController } from './leaverequest.controller.js';
+import { LeaveRequestService } from './service/leaverequest.service.js';
+//import { LeaveRequestResolver } from './leaverequest.resolver.js';
+import { UsersService } from '../auth/users.service.js';
+import { StaffFilesService } from '../shared/staffFiles.service.js';
+import { StaffService } from '../staff/service/staff.service.js';
 
 @Module({
   controllers: [LeaveRequestController],

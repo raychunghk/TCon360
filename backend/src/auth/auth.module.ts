@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { StaffService } from '../staff/service/staff.service';
+import { PassportModule } from '@nestjs/passport';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { StaffService } from '../staff/service/staff.service.js';
+import { AuthService } from './auth.service.js';
+import { JwtStrategy } from './jwt.strategy.js';
+import { LocalStrategy } from './local.strategy.js';
+import { UsersController } from './users.controller.js';
+import { UsersService } from './users.service.js';
 
 @Module({
   imports: [

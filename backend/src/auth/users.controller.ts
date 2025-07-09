@@ -10,9 +10,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { signupUserDTO } from 'src/models/customDTOs';
-import { AuthService } from './auth.service';
-import { UsersService } from './users.service';
+import { signupUserDTO } from 'src/models/customDTOs.js';
+import { AuthService } from './auth.service.js';
+import { UsersService } from './users.service.js';
 
 interface LoginDto {
   identifier: string;

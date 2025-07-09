@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 import { Role, StaffContract, User } from '@prisma/client';
 import { parse, parseISO, startOfDay } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
-import { UpdateUserDto } from '../models/customDTOs';
+import { UpdateUserDto } from '../models/customDTOs.js';
 
 @Injectable()
 export class AdminService {

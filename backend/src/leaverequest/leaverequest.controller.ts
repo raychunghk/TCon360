@@ -1,22 +1,20 @@
 import {
-  Logger,
   Body,
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
-  UseGuards,
   Req,
+  UseGuards,
 } from '@nestjs/common';
-import type { Response } from 'express';
-import type { Prisma, LeaveRequest } from '@prisma/client';
-import { LeaveRequestService } from './service/leaverequest.service';
-import { StaffFilesService } from '../shared/staffFiles.service';
-import { createReadStream } from 'fs';
 import { AuthGuard } from '@nestjs/passport';
-import { UsersService } from '../auth/users.service';
+import type { LeaveRequest, Prisma } from '@prisma/client';
+import { UsersService } from '../auth/users.service.js';
+import { StaffFilesService } from '../shared/staffFiles.service.js';
+import { LeaveRequestService } from './service/leaverequest.service.js';
 
 @Controller('/api/leaverequest')
 export class LeaveRequestController {

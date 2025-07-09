@@ -1,17 +1,16 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { LeaveRequest, Prisma, PublicHoliday } from '@prisma/client';
+import { format } from 'date-fns';
+import Docxtemplater from 'docxtemplater';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
-import { format } from 'date-fns';
 //import { staffFiles } from 'src/models/staffFiles';
 
-import { file } from 'jszip';
-import { StaffFilesService } from '../../shared/staffFiles.service';
-import { StaffService } from '../../staff/service/staff.service';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { StaffFilesService } from '../../shared/staffFiles.service.js';
+import { StaffService } from '../../staff/service/staff.service.js';
 //js/NxTime/src/server/leaverequest/service/leaverequest.service.ts
 
 @Injectable()

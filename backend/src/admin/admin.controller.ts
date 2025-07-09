@@ -21,8 +21,8 @@ import * as fs from 'fs';
 import { createReadStream, unlink } from 'fs';
 import * as path from 'path';
 import { join } from 'path';
-import { UpdateUserDto } from 'src/models/customDTOs';
-import { AdminService } from './admin.service';
+import { UpdateUserDto } from 'src/models/customDTOs.js';
+import { AdminService } from './admin.service.js';
 
 @Controller('api/admin')
 export class AdminController {

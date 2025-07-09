@@ -1,35 +1,31 @@
 import {
-  Controller,
-  Get,
-  Param,
-  Post,
   Body,
-  Put,
+  Controller,
   Delete,
+  Get,
+  Headers,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
-  InternalServerErrorException,
+  Param,
+  Post,
+  Put,
+  Req,
   Res,
   UseGuards,
-  StreamableFile,
-  UseInterceptors,
-  Req,
-  Header,
-  Headers,
-  HttpStatus,
 } from '@nestjs/common';
-import { StaffService } from './service/staff.service';
-import { Prisma, Staff, StaffContract } from '@prisma/client';
-//import LeaveRequestService from '../leaverequest/service/leaverequest.service';
-import { StaffFilesService } from 'src/shared/staffFiles.service';
-import { createReadStream } from 'fs';
-import { JwtAuthGuard } from '../guards/JwtAuthGuard';
+import { Prisma, Staff } from '@prisma/client';
+import { StaffService } from './service/staff.service.js';
+//import LeaveRequestService from '../leaverequest/service/leaverequest.service.js';
 import type { Response } from 'express';
-import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../auth/users.service';
+import { createReadStream } from 'fs';
+import { StaffFilesService } from 'src/shared/staffFiles.service.js';
+import { AuthService } from '../auth/auth.service.js';
+import { UsersService } from '../auth/users.service.js';
+import { JwtAuthGuard } from '../guards/JwtAuthGuard.js';
 //import type { Request  } from 'express';
-import type { AuthReqInterface } from 'src/shared/AuthReqInterface';
-import { UpdateStaffDto } from 'src/models/customDTOs';
+import { UpdateStaffDto } from 'src/models/customDTOs.js';
+import type { AuthReqInterface } from 'src/shared/AuthReqInterface.js';
 @Controller('api/staff')
 export class StaffController {
   /**

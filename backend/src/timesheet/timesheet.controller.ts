@@ -2,21 +2,17 @@ import {
   Body,
   Controller,
   Get,
-  Res,
-  Post,
-  UseGuards,
   Headers,
+  Post,
   Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
-import * as fs from 'fs';
-import * as xlsx from 'xlsx';
-import { TimesheetService } from './timesheet.service';
-import { LeaveRequestService } from '../leaverequest/service/leaverequest.service';
-import { JwtAuthGuard } from '../guards/JwtAuthGuard';
-import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../auth/users.service';
-import type { AuthReqInterface } from '../shared/AuthReqInterface';
-import { setDefaultResultOrder } from 'dns';
+import { AuthService } from '../auth/auth.service.js';
+import { UsersService } from '../auth/users.service.js';
+import { JwtAuthGuard } from '../guards/JwtAuthGuard.js';
+import { LeaveRequestService } from '../leaverequest/service/leaverequest.service.js';
+import { TimesheetService } from './timesheet.service.js';
 @Controller('api/timesheet')
 export class TimesheetController {
   constructor(

@@ -1,15 +1,16 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { HelloModule } from './hello/hello.module';
-import { StaffModule } from './staff/staff.module';
-import { TimesheetModule } from './timesheet/timesheet.module';
-import { LeaveRequestModule } from './leaverequest/leaverequest.module';
-import { VacationsModule } from './vacations/vacations.module';
-import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { AdminModule } from './admin/admin.module';
-import { LoggerMiddleware } from './common/logger.middleware';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { AdminModule } from './admin/admin.module.js';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { AuthModule } from './auth/auth.module.js';
+import { LoggerMiddleware } from './common/logger.middleware.js';
+import { HelloModule } from './hello/hello.module.js';
+import { LeaveRequestModule } from './leaverequest/leaverequest.module.js';
+import { StaffModule } from './staff/staff.module.js';
+import { TimesheetModule } from './timesheet/timesheet.module.js';
+import { VacationsModule } from './vacations/vacations.module.js';
+
 @Module({
   imports: [
     HelloModule,

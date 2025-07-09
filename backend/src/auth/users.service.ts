@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from '../prisma/prisma.service';
-//import { User } from '.prisma/client';
+import { PrismaService } from '../prisma/prisma.service.js';
+//import { User } from '.prisma/client.js';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}

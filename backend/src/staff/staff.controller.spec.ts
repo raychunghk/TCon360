@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
-import { StaffController } from './staff.controller';
-import { StaffService } from './service/staff.service';
-import { StaffFilesService } from '../shared/staffFiles.service';
-import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../auth/users.service';
 import { Prisma } from '@prisma/client';
+import { AuthService } from '../auth/auth.service.js';
+import { UsersService } from '../auth/users.service.js';
+import { StaffFilesService } from '../shared/staffFiles.service.js';
+import { StaffService } from './service/staff.service.js';
+import { StaffController } from './staff.controller.js';
 
 describe('StaffController', () => {
   let staffController: StaffController;

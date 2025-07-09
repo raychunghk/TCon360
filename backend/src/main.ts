@@ -1,20 +1,17 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { fastifyStatic } from 'fastify-static';
-import { join } from 'path';
-//import { RenderService } from 'nest-next';
+
 import secureSession from '@fastify/secure-session';
 import * as session from 'express-session';
 //import Fastify from 'fastify';
-
-//import Next from 'next';
 //import { baseconfig } from '../../baseconfig.js';
-import { config } from '@tcon360/config';
 import { INestApplication } from '@nestjs/common';
+import { config } from '@tcon360/config';
+import { AppModule } from './app.module.js';
 async function bootstrap() {
   console.log('basepath', config);
   let app: INestApplication;
@@ -25,8 +22,6 @@ async function bootstrap() {
       new FastifyAdapter({ logger: true }),
     );
 
-    //const appPrefix = `/absproxy/${basepath.backendport}`;
-    // app.setGlobalPrefix(appPrefix);
 
     await app.use(secureSession, {
       secret: 'averylogphrasebiggerthanthirtytwochars',
@@ -34,9 +29,8 @@ async function bootstrap() {
     });
   } else {
     app = await NestFactory.create(AppModule);
-    //app.setGlobalPrefix(appPrefix);
 
-    //const service = app.get(RenderService);
+
     console.log('using express');
     app.use(
       session({
