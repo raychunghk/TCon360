@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "noImplicitAny": false,
-    "types": ["node", "jest", "@testing-library/jest-dom"],
+    "types": ["node", "jest", "jest-dom"], // Removed "@testing-library/jest-dom"
+    "typeRoots": ["./node_modules/@testing-library","./node_modules/@types", "./types"],
     "paths": {
       "@/*": ["./*"],
       "@base/*": ["../*"]
@@ -23,5 +24,5 @@
     "plugins": [{ "name": "next" }]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "**/__tests__/**", "**/*.test.*", "jest.setup.cjs"]
 }

@@ -1,10 +1,10 @@
 import { Card, SimpleGrid, Text, useMantineTheme } from '@mantine/core';
 
-interface Staff {
+export interface Staff {
     id: number;
     StaffName: string;
-    AgentName: string;
-    StaffCategory: string;
+    AgentName?: string;
+    StaffCategory?: string;
 }
 
 interface LeaveRequestStaffInfoProps {
@@ -21,12 +21,12 @@ export function LeaveRequestStaffInfo({ staff }: LeaveRequestStaffInfoProps) {
             radius="md"
             bg={theme.colors.gray[0]}
             withBorder
-            sx={{ borderColor: theme.colors.gray[2] }}
+
         >
             <SimpleGrid
                 cols={2}
                 spacing={theme.spacing.md}
-                breakpoints={[{ maxWidth: 'sm', cols: 1, spacing: 'sm' }]}
+
             >
                 <div>
                     <Text fw={700} size="md" color={theme.colors.dark[7]}>

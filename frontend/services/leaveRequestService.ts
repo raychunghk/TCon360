@@ -10,12 +10,13 @@ interface LeaveRequestData {
   AMPMEnd: string;
   leaveDays: number;
   dateOfReturn: Date | null;
-  staffSignDate: Date;
+  staffSignDate: Date | null;
   leavePurpose: string;
   leaveType: string;
   contractId: number;
   staffId?: number;
   fileId?: number;
+  title?: string|null|undefined,
   error?: Record<string, string> | null;
   helper?: Record<string, string> | null;
 }

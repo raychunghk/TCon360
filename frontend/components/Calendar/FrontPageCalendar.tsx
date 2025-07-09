@@ -12,7 +12,6 @@ import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { signOut } from 'next-auth/react';
 import { destroyCookie, parseCookies } from 'nookies';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
 import {
   handleSelectAllow
 } from './calendar.util';
@@ -31,7 +30,7 @@ const FrontPageCalendar = () => {
     clearAllState();
     signOut();
   };
-
+  type FormType = 'create' | 'edit';
   const setLeaveRequestPeriodAction = (period) => {
     setLeaveRequestPeriod(period);
     period;
@@ -39,7 +38,7 @@ const FrontPageCalendar = () => {
   //const [leavePurpose, setleavePurpose] = useState(null);
   const [leavePurpose, setleavePurpose] = useState<string | null>(null);
 
-  const [formType, setFormType] = useState('');
+  const [formType, setFormType] = useState<FormType | undefined>(undefined);
   const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
   const {
     setLeaveRequestPeriod,

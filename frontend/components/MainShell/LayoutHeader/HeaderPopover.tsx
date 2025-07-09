@@ -73,7 +73,7 @@ export default function HeaderPopover({ }) {
       trapFocus
       position="bottom"
       withArrow
-      shadow="md"
+
       opened={openedPop}
       onClose={handleClose}
     >
@@ -93,10 +93,10 @@ export default function HeaderPopover({ }) {
           {activeUser?.name}
         </Button>
       </Popover.Target>
-      <Popover.Dropdown className={styles.PopoverDropdown} style={{ borderRadius: '8px !important;' }}>
+      <Popover.Dropdown className={styles.PopoverDropdown} style={{ borderRadius: '8px !important' }}>
         <ActionIcon
           variant="filled"
-          size="md"
+
           style={{
             position: 'absolute',
             top: '5px',
@@ -105,7 +105,7 @@ export default function HeaderPopover({ }) {
           }}
           onClick={handleClose}
         >
-          <IconSquareRoundedX size="md" color="white" />
+          <IconSquareRoundedX color="white" />
         </ActionIcon>
         <Grid gutter="sm">
           {userFields
