@@ -5,6 +5,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
 import { LoggerMiddleware } from './common/logger.middleware.js';
+import { HealthModule } from './healthcheck/healthcheck.module.js';
 import { HelloModule } from './hello/hello.module.js';
 import { LeaveRequestModule } from './leaverequest/leaverequest.module.js';
 import { StaffModule } from './staff/staff.module.js';
@@ -21,6 +22,7 @@ import { VacationsModule } from './vacations/vacations.module.js';
     VacationsModule,
     AuthModule,
     AdminModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,13 +19,13 @@ import { StaffService } from './service/staff.service.js';
 //import LeaveRequestService from '../leaverequest/service/leaverequest.service.js';
 import type { Response } from 'express';
 import { createReadStream } from 'fs';
-import { StaffFilesService } from 'src/shared/staffFiles.service.js';
 import { AuthService } from '../auth/auth.service.js';
 import { UsersService } from '../auth/users.service.js';
 import { JwtAuthGuard } from '../guards/JwtAuthGuard.js';
+import { StaffFilesService } from '../shared/staffFiles.service.js';
 //import type { Request  } from 'express';
-import { UpdateStaffDto } from 'src/models/customDTOs.js';
-import type { AuthReqInterface } from 'src/shared/AuthReqInterface.js';
+import { UpdateStaffDto } from '../models/customDTOs.js';
+import type { AuthReqInterface } from '../shared/AuthReqInterface.js';
 @Controller('api/staff')
 export class StaffController {
   /**

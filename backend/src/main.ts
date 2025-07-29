@@ -1,19 +1,16 @@
+import secureSession from '@fastify/secure-session';
+import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-
-import secureSession from '@fastify/secure-session';
-import * as session from 'express-session';
-//import Fastify from 'fastify';
-//import { baseconfig } from '../../baseconfig.js';
-import { INestApplication } from '@nestjs/common';
-import { config } from '@tcon360/config';
+import { env } from '@tcon360/config';
+import session from 'express-session';
 import { AppModule } from './app.module.js';
+
 async function bootstrap() {
-  console.log('basepath', config);
+  console.log('basepath:', env);
   let app: INestApplication;
   const usefastify = false;
   if (usefastify) {
@@ -21,30 +18,23 @@ async function bootstrap() {
       AppModule,
       new FastifyAdapter({ logger: true }),
     );
-
-
     await app.use(secureSession, {
-      secret: 'averylogphrasebiggerthanthirtytwochars',
+      secret: env.JWT_SECRET,
       salt: 'mq9hDxBVDbspDR6n',
     });
   } else {
     app = await NestFactory.create(AppModule);
-
-
     console.log('using express');
     app.use(
       session({
-        secret: 'my-secret',
+        secret: env.JWT_SECRET,
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: 1800000 },
       }),
     );
   }
-  await app.listen(config.backendport);
-  /* if (module.hot) {
-     module.hot.accept();
-     module.hot.dispose(() => app.close());
-   }*/
+  console.log('backend port', env.BACKEND_PORT);
+  await app.listen(env.BACKEND_PORT);
 }
 bootstrap();

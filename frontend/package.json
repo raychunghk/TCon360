@@ -7,6 +7,7 @@
     "dev2": "next dev  ",
     "dev2x": "node nxserver.js",
     "build": "next build",
+    "build2": " JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=113000 next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

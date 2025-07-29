@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import { env } from '@tcon360/config';
 import * as argon2 from 'argon2';
 import { differenceInSeconds, format } from 'date-fns';
-import * as jwt from 'jsonwebtoken';
-import { signupUserDTO } from 'src/models/customDTOs.js';
+import { signupUserDTO } from '../models/customDTOs.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { StaffService } from '../staff/service/staff.service.js';
 import { UsersService } from './users.service.js';
@@ -14,7 +14,6 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-
     private readonly prisma: PrismaService,
     private staffService: StaffService,
   ) {}
@@ -29,25 +28,17 @@ export class AuthService {
   }
 
   decodejwt(token: string): any {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded;
+    return this.jwtService.verify(token);
   }
 
   async signUp(payload: signupUserDTO): Promise<User> {
-    console.log('signup layload', payload);
-    let userReturn;
-    // const { staff, ...userData } = user;
-    // const stf: any = { ...staff };
-    // console.log('staff?');
-    // console.log(stf);
+    console.log('signup payload', payload);
     const { email, password, username, staff } = payload;
-
-    // Create the objects
 
     const hashedPassword = await argon2.hash(password, {
       type: argon2.argon2id,
     });
-    //user: { connect: { id: _userId } }
+
     try {
       const createdUserWithStaff = await this.prisma.user.create({
         data: {
@@ -90,6 +81,7 @@ export class AuthService {
         where: { id: createdUserWithStaff.id },
         data: { staffId: createdUserWithStaff.staff[0].id },
       });
+
       const userWithStaff = await this.prisma.user.findFirst({
         include: {
           viewStaff: true,
@@ -98,24 +90,26 @@ export class AuthService {
               contracts: true,
             },
           },
-        }, // Include staffContract relation
+        },
         where: { username: updatedUser.username },
       });
+
       return userWithStaff;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
+
   async userExists(_username: string, _email: string) {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ email: _email }, { username: _username }],
       },
     });
-    let rtn = false;
-    if (user) rtn = true;
-    return rtn;
+    return !!user;
   }
+
   async login(identifier: string, password: string) {
     let token = '';
     try {
@@ -128,10 +122,11 @@ export class AuthService {
           OR: [{ email: identifier }, { username: identifier }],
         },
       });
+
       if (!user) {
         throw new Error('Invalid credentials');
       }
-      console.log('argon2', argon2);
+
       const isPasswordValid = await argon2.verify(user.password, password);
       if (!isPasswordValid) {
         throw new Error('Invalid credentials');
@@ -144,41 +139,37 @@ export class AuthService {
         email: user.email,
         staff: user.viewStaff,
       };
-      const tokenage = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+
+      // Use JwtModule's configured expiresIn, fallback to TOKEN_MAX_AGE
+      const tokenage = (env.TOKEN_MAX_AGE || 113000) / 1000 / 60; // Convert ms to minutes
       console.log(
-        'creating token on server , token max age in seconds',
+        'creating token on server, token max age in minutes',
         tokenage,
       );
-      const options = {
-        expiresIn: `${tokenage}m`, // token expires in 1 minute
-      };
-      console.log('jwt options', options);
 
-      token = this.jwtService.sign(payload, options);
+      token = this.jwtService.sign(payload); // No options needed, JwtModule handles expiresIn
 
       // Verify the token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = this.jwtService.verify(token);
 
-      // Print the decoded token
       console.log('just signed in decoded token in nest.js');
       console.log(decoded);
       console.log('now?', new Date());
 
-      const iat = new Date(decoded['iat'] * 1000);
+      const iat = new Date(decoded.iat * 1000);
+      console.log('Token iat on:', iat);
 
-      console.log('Token iat  on:', iat);
-      const expDate = decoded['exp'] * 1000;
-
+      const expDate = decoded.exp * 1000;
       const formattedExpDate = format(expDate, 'yyyy-MM-dd hh:mm:ss');
-      console.log('formattedExpDate:', formattedExpDate); // Output: 2023-02-06 07:12:17
+      console.log('formattedExpDate:', formattedExpDate);
 
       const timeToExpInSeconds = differenceInSeconds(expDate, Date.now());
       console.log('time to expire from now (seconds):', timeToExpInSeconds);
+
+      return token;
     } catch (error) {
       console.log('error', error);
       throw error;
     }
-
-    return token;
   }
 }

@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { signupUserDTO } from 'src/models/customDTOs.js';
+import { signupUserDTO } from '../models/customDTOs.js';
 import { AuthService } from './auth.service.js';
 import { UsersService } from './users.service.js';
 

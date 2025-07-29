@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
-//import * as fs from 'fs';
 import { viewCalendarTimeSheet, viewEvents } from '@prisma/client';
 import { spawn } from 'child_process';
 import { format } from 'date-fns';
-import * as ExcelJS from 'exceljs';
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service.js';
-
+//import { Workbook } from 'exceljs'; // Named import for Workbook
+//const ExcelJS = require('exceljs');
+import ExcelJS from 'exceljs';
 @Injectable()
 export class TimesheetService {
   private projectRoot = process.cwd();
   private readonly xlsfilename = 'T26TimeSheet.xlsx';
   constructor(private prisma: PrismaService) {}
+
   getContent() {
     const filePath = this.getFilePath(this.xlsfilename);
     const fileContent = fs.readFileSync(filePath);
@@ -21,11 +23,11 @@ export class TimesheetService {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     return XLSX.utils.sheet_to_json(sheet);
   }
+
   getFilePath(filename: string) {
-    //return `${__dirname}/../../../../timesheet/${filename}`;
     return path.join(this.projectRoot, 'timesheet', filename);
   }
-  //async getCalendarEvents(year: number, month: number): Promise<any[]> {
+
   async getCalendarEvents(staffid): Promise<any[]> {
     const results = await this.prisma.viewEvents.findMany({
       where: {
@@ -59,13 +61,9 @@ export class TimesheetService {
             .toISOString()
             .substring(0, 10)
         : '';
-      const IsWeekend = title.startsWith('S');
-      //const _groupid = result.LeaveRequestId ? result.LeaveRequestId : '';
       const _groupid = result.LeaveRequestId || '';
 
       const mapEventStyle = new Map();
-
-      // Add key-value pairs to the hashmap
       mapEventStyle.set('weekend', 'clsweekend');
       mapEventStyle.set('publicholiday', 'clsPublicHoliday');
       mapEventStyle.set('vacation', 'clsVacation');
@@ -86,6 +84,7 @@ export class TimesheetService {
       };
     });
   }
+
   async writeStaffInfoJsonToExcel(
     jsonObj: any,
     fieldmap: Record<string, string>,
@@ -93,11 +92,11 @@ export class TimesheetService {
   ) {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(destPath);
-    const worksheet = workbook.getWorksheet(1); // Write the values to the worksheet
+    const worksheet = workbook.getWorksheet(1);
     for (const field of Object.keys(fieldmap)) {
       const cell = worksheet.getCell(fieldmap[field]);
       cell.value = jsonObj[field];
-    } // Save the workbook to the destination path
+    }
     await workbook.xlsx.writeFile(destPath);
     console.log('Data written to Excel file successfully!');
     return destPath;
@@ -109,16 +108,19 @@ export class TimesheetService {
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}${mm}${dd}`;
   }
+
   async copyAndRenameFile(
     srcFileName: string,
     destFileName: string,
   ): Promise<void> {
-    await fs.copy(srcFileName, destFileName);
+    await fsPromises.copyFile(srcFileName, destFileName);
   }
+
   writeCellValue(worksheet, cellId, value) {
     const cell = worksheet.getCell(cellId);
     cell.value = value;
   }
+
   formatMonth(month, year) {
     const months = [
       'JAN',
@@ -134,16 +136,10 @@ export class TimesheetService {
       'NOV',
       'DEC',
     ];
-    const monthName = months[month - 1]; // month index starts at 0
+    const monthName = months[month - 1];
     return `${monthName}${year}`;
   }
-  /**
-   * Get calendar for a specific staff member for a given year and month
-   * @param staffId - The ID of the staff member
-   * @param year - The year for the calendar
-   * @param month - The month for the calendar
-   * @returns Promise<Array<CalendarTimeSheet>> - An array of calendar time sheet entries
-   */
+
   async getCalendar(staffId: number, year: number, month: number) {
     const viewCalendarTimeSheet = (await this.prisma.$queryRawUnsafe(`
 SELECT c.CalendarDate,
@@ -151,7 +147,7 @@ SELECT c.CalendarDate,
        c.WeekDayName,
        c.Year,
        c.Month,
-      CAST( IFNULL(vc.VacationChargable, 0.0) as REAL) AS VacationChargable,
+       CAST(IFNULL(vc.VacationChargable, 0.0) AS REAL) AS VacationChargable,
        IFNULL(vc.PublicHolidayChargable, 0.0) AS PublicHolidayChargable,
        vc.HolidaySummary,
        vc.LeaveRequestId,
@@ -176,10 +172,10 @@ WHERE Year = ${year}
   AND Month = ${month}
 ORDER BY c.CalendarDate;
 `)) as viewCalendarTimeSheet[];
-    //`)) as Prisma.viewCalendarTimeSheetCreateInput[]; // viewCalendarTimeSheet[];
     console.log('viewCalendarTimeSheet', viewCalendarTimeSheet);
     return viewCalendarTimeSheet;
   }
+
   async getCalendarx(staffId: number, year: number, month: number) {
     const arrCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
       distinct: ['CalendarDate'],
@@ -208,6 +204,7 @@ ORDER BY c.CalendarDate;
     console.log('arrcalendar', arrCalendar);
     return arrCalendar;
   }
+
   async makeTimeSheet(
     staffId: number,
     year: number,
@@ -220,6 +217,9 @@ ORDER BY c.CalendarDate;
     const timesheetFileDate = this.formatMonth(month, year);
     const sourcePath = this.getFilePath(this.xlsfilename);
     const stf = await this.prisma.staff.findUnique({ where: { id: staffId } });
+    if (!stf) {
+      throw new Error(`Staff with ID ${staffId} not found`);
+    }
     const stfname = stf.StaffName.replace(/[_\s]/g, '');
     const destPath = this.getFilePath(
       `T26TimeSheet_${stfname}_${timesheetFileDate}.xlsx`,
@@ -228,19 +228,15 @@ ORDER BY c.CalendarDate;
 
     console.log(destPath);
     if (fs.existsSync(destPath)) {
-      console.log('TimeSheet :Destination file already exists!');
+      console.log('TimeSheet: Destination file already exists!');
       fs.unlinkSync(destPath);
     }
 
     try {
-      // Copy the file
       console.log(`source path, ${sourcePath}`);
       console.log(`dest source path, ${destPath}`);
-      const data = await fs.promises.readFile(sourcePath);
-      await fs.promises.writeFile(destPath, data);
+      await fsPromises.copyFile(sourcePath, destPath);
       console.log('File copied successfully!');
-
-      // Load the workbook
 
       console.log(stf);
       const fieldmap = {
@@ -255,30 +251,6 @@ ORDER BY c.CalendarDate;
       };
       await this.writeStaffInfoJsonToExcel(stf, fieldmap, destPath);
       const objCalendar = await this.getCalendar(staffId, year, month);
-      // const objCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
-      //   distinct: ['CalendarDate'],
-      //   where: {
-      //     Year: year,
-      //     Month: month,
-      //     OR: [{ staffId: staffId }, { staffId: null }],
-      //   },
-      //   orderBy: [
-      //     {
-      //       CalendarDate: 'asc',
-      //     },
-      //   ],
-      //   select: {
-      //     CalendarDate: true,
-      //     CalendarDateStr: true,
-      //     WeekDayName: true,
-      //     Year: true,
-      //     Month: true,
-      //     VacationChargable: true,
-      //     PublicHolidayChargable: true,
-      //     HolidaySummary: false,
-      //     staffId: true,
-      //   },
-      // });
       const firstdatecell = 20;
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(destPath);
@@ -301,7 +273,6 @@ ORDER BY c.CalendarDate;
         format(objCalendar.slice(-1)[0].CalendarDate, 'dd-MMM-yyyy'),
       );
       let total = 0;
-      const isHoliday = 0;
       for (let i = 0; i < 31; i++) {
         cellid = 'C' + datecellpos;
         const cell = worksheet.getCell(cellid);
@@ -311,31 +282,24 @@ ORDER BY c.CalendarDate;
             const dt = objCalendar[i];
             console.log('calendar item??');
             console.log(dt);
-            //cell.value = dt.WeekDayName.toUpperCase().startsWith('S') ? "0.0" : "1.0";
             const holidayCell = worksheet.getCell('L' + datecellpos);
             const vacationLeaveCell = worksheet.getCell('J' + datecellpos);
             let isHoliday = 0;
             const one = 1;
             const zero = 0;
             console.log(
-              'type of dt.publicholidaychargable',
+              'type of dt.PublicHolidayChargable',
               typeof dt.PublicHolidayChargable,
             );
-            //if (new Decimal(dt.PublicHolidayChargable).greaterThan(0)) {
             if (Number(dt.PublicHolidayChargable) > 0) {
               cell.value = zero;
               holidayCell.value = one;
               isHoliday = 1;
             }
-            //if (dt.VacationChargable > 0 && isHoliday == 0) {
-            // if (
-            //   new Decimal(dt.VacationChargable).greaterThan(0) &&
-            //   isHoliday === 0
-            // ) {
             if (Number(dt.VacationChargable) > 0 && isHoliday === 0) {
               const cellval = Number(1 - Number(dt.VacationChargable));
               cell.value = cellval;
-              vacationLeaveCell.value = Number(dt.VacationChargable); //objCalendar.VacationChargable;
+              vacationLeaveCell.value = Number(dt.VacationChargable);
               if (cellval > 0) {
                 total += cellval;
               }
@@ -355,8 +319,8 @@ ORDER BY c.CalendarDate;
             });
           }
         } catch (error) {
-          throw error;
           console.log(error);
+          throw error;
         }
         datecellpos++;
       }
@@ -375,8 +339,8 @@ ORDER BY c.CalendarDate;
       });
       return _file.id;
     } catch (err) {
-      console.error('Error copying file:', err);
-      return 0;
+      console.error('Error processing file:', err);
+      throw err;
     }
   }
 
@@ -398,23 +362,23 @@ ORDER BY c.CalendarDate;
       });
     });
   }
+
   async getCalendaryMonthByYearMonth(month, year) {
     const currentcalendar = await this.prisma.calendarMaster.findMany({
       where: {
-        Year: 2023,
+        Year: year,
         Month: month,
       },
     });
     return currentcalendar;
   }
+
   async getCurrentMonthCalendar(tsmonth) {
     const dt = new Date();
-    console.log(dt.getFullYear());
-    console.log(dt.getMonth() + 1);
     const currentYear = dt.getFullYear();
     const objCalendar = await this.prisma.calendarMaster.findMany({
       where: {
-        Year: 2023,
+        Year: currentYear,
         Month: tsmonth,
       },
     });

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma, PrismaClient, Staff, StaffContract } from '@prisma/client';
-import { UpdateStaffDto } from 'src/models/customDTOs.js';
+import { UpdateStaffDto } from '../../models/customDTOs.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 
 // Get ICS text however you like, example below
