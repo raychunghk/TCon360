@@ -12,8 +12,6 @@ datasource db {
   url      = "file:./TCon360.db"
 }
 
- 
-
 model Account {
   id                 String    @id @default(cuid())
   userId             String
@@ -96,8 +94,6 @@ model Staff {
   staffFiles    staffFiles[]
 }
 
- 
-
 model CalendarMaster {
   CalendarDate DateTime @id
   WeekDayName  String?
@@ -143,9 +139,9 @@ model StaffContract {
 
   LeaveRequest LeaveRequest[]
 
-  staff    Staff   @relation("staffToContracts", fields: [staffId], references: [id])
-  staffId  Int
-  IsActive Boolean @default(false) // New field to indicate the active contract
+  staff      Staff   @relation("staffToContracts", fields: [staffId], references: [id])
+  staffId    Int
+  IsActive   Boolean @default(false) // New field to indicate the active contract
   IsArchived Boolean @default(false) // ADD THIS LINE
 }
 
@@ -167,7 +163,7 @@ model LeaveRequest {
   fileId           Int
   staffId          Int
   contractId       Int                @map("contractId")
-  IsArchived     Boolean            @default(false) // ADD THIS LINE
+  IsArchived       Boolean            @default(false) // ADD THIS LINE
 }
 
 model staffFiles {
@@ -251,4 +247,3 @@ view viewStaff {
   contractId        Int
   user              User     @relation(fields: [userId], references: [id])
 }
- 

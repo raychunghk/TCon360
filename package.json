@@ -13,9 +13,9 @@
     "startb": "concurrently \"cd backend && npm run start:prod\" \"cd frontend && npm run build && npm run start\" \"node proxyserver.js\""
   },
   "dependencies": {
-    "@fastify/http-proxy": "^11.0.1",
-    "concurrently": "^9.1.2",
-    "fastify": "^5.2.1",
+    "@fastify/http-proxy": "^11.3.0",
+    "concurrently": "^9.2.0",
+    "fastify": "^5.4.0",
     "fs-extra": "^11.3.0",
     "http-proxy": "^1.18.1",
     "node-netstat": "^1.9.0",

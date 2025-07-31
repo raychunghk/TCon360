@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { LeaveRequest, Prisma, PublicHoliday } from '@prisma/client';
 import { format } from 'date-fns';
 import Docxtemplater from 'docxtemplater';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 import PizZip from 'pizzip';
 //import { staffFiles } from 'src/models/staffFiles';
@@ -42,10 +42,8 @@ export class LeaveRequestService {
     const isDevelopment = process.env.NODE_ENV === 'development';
     /*const rootPath = isDevelopment
       ? path.resolve('.')
-      : path.resolve(__dirname, '..', '..', '..', '..');*/
-    const rootPath = isDevelopment
-      ? path.resolve('.')
-      : path.resolve(__dirname, '..', '..', '..');
+      : path.resolve(__dirname, '..', '..', '..');*/
+    const rootPath = path.resolve('.');
     const filePath = path.join(rootPath, 'timesheet', fileName);
     console.log('get file path file name', filePath);
     return filePath;

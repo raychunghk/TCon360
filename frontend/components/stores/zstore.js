@@ -1,6 +1,6 @@
 //import { create } from 'zustand';
 import { createWithEqualityFn as create } from 'zustand/traditional';
-
+const _navbarwidth = 260;
 const useStore = create((set) => ({
   // State variables
   activeContract: null,
@@ -27,7 +27,7 @@ const useStore = create((set) => ({
       LeaveRequestPeriod: null,
       leavePurpose: null,
       leaveRequestId: null,
-      navbarwidth: 230,
+      navbarwidth: _navbarwidth,
       publicHolidays: null,
       staff: null,
       staffVacation: { total: 0, used: 0, balance: 0 },
@@ -55,7 +55,7 @@ const useStore = create((set) => ({
   leavePurpose: null,
   leaveRequestId: null,
   LeaveRequestPeriod: null,
-  navbarwidth: 260,
+  navbarwidth: _navbarwidth,
   nextContractStartDate: null,
   publicHolidays: null,
   selectedDatesCount: 0,

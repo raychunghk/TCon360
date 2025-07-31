@@ -6,7 +6,7 @@ export const env = createEnv({
         NODE_ENV: z
             .enum(["development", "production", "test"])
             .default("development"),
-        JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
+        JWT_SECRET: z.string().min(32, "aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789"),
         PROXY_PATH: z.string().default("/absproxy"),
         FRONTEND_PORT: z.coerce.number().default(3000),
         BACKEND_PORT: z.coerce.number().default(3800),

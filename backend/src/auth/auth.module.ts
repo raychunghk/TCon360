@@ -15,7 +15,7 @@ import { UsersService } from './users.service.js';
     JwtModule.register({
       secret: env.JWT_SECRET,
       signOptions: {
-        expiresIn: `${(env.TOKEN_MAX_AGE || 113000) / 1000 / 60}m`,
+        expiresIn: `${(env.TOKEN_MAX_AGE || 1200000) / 1000 / 60}m`,
       },
     }),
   ],

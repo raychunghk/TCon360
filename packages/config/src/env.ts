@@ -20,7 +20,7 @@ export const env = createEnv({
       .number()
       .int()
       .min(1000, "TOKEN_MAX_AGE must be at least 1000 ms")
-      .default(113000),
+      .default(1200000),
   },
   client: {},
   runtimeEnv: {

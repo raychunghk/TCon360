@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
+import fs from 'fs';
 //import * as Docxtemplater from 'docxtemplater';
-import * as JSZip from 'jszip';
 //import * as PizZip from 'pizzip';
-const PizZip = require("pizzip");
-const Docxtemplater = require("docxtemplater");
+const PizZip = require('pizzip');
+const Docxtemplater = require('docxtemplater');
 @Injectable()
 export class DocxService {
-  async writeFieldsToDocx(fields: Record<string, string>, templatePath: string, outputPath: string): Promise<void> {
+  async writeFieldsToDocx(
+    fields: Record<string, string>,
+    templatePath: string,
+    outputPath: string,
+  ): Promise<void> {
     // Read the contents of the DOCX file into a buffer
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);

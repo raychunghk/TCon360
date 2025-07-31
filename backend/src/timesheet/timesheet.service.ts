@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { viewCalendarTimeSheet, viewEvents } from '@prisma/client';
 import { spawn } from 'child_process';
 import { format } from 'date-fns';
-import * as fs from 'fs';
-import { promises as fsPromises } from 'fs';
+import fs, { promises as fsPromises } from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service.js';
-//import { Workbook } from 'exceljs'; // Named import for Workbook
-//const ExcelJS = require('exceljs');
+
 import ExcelJS from 'exceljs';
 @Injectable()
 export class TimesheetService {
