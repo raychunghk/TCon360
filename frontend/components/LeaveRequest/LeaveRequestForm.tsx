@@ -294,8 +294,9 @@ export default function LeaveRequestForm({
         setSubmitting(false);
     };
 
-    const normalizeDate = (date: Date | null): Date | null => {
-        if (!date) return null;
+    const normalizeDate = (dateInput: Date | null): Date | null => {
+        if (!dateInput) return null;
+        const date = new Date(dateInput);
         return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     };
 
@@ -455,12 +456,12 @@ export default function LeaveRequestForm({
                                 leaveRequest.AMPMStart &&
                                 leaveRequest.leavePeriodEnd &&
                                 leaveRequest.AMPMEnd && (
-                                    <p>
+                                    <>
                                         <Text fw={500}>Leave Period:</Text>
                                         {`${format(leaveRequest.leavePeriodStart, 'dd-MMM-yyyy')} ${leaveRequest.AMPMStart === 'AMPM' ? '' : leaveRequest.AMPMStart
                                             } to ${format(leaveRequest.leavePeriodEnd, 'dd-MMM-yyyy')} ${leaveRequest.AMPMEnd === 'AMPM' ? '' : leaveRequest.AMPMEnd
                                             } `}
-                                    </p>
+                                    </>
                                 )}
                         </Grid.Col>
                         <Grid.Col span={6}>

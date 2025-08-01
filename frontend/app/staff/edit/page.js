@@ -1,12 +1,11 @@
 'use client';
-import * as Yup from 'yup';
-import { useState, useEffect } from 'react';
-import createContractForm from './CreateContractForm';
-import { useForm as useHookForm } from 'react-hook-form';
-import { parseCookies } from 'nookies';
+import { Button, Card, Code, Grid, TextInput } from '@mantine/core';
 import axios from 'axios';
 import Head from 'next/head';
-import { TextInput, Grid, Button, Text, Code, Card } from '@mantine/core';
+import { parseCookies } from 'nookies';
+import { useEffect, useState } from 'react';
+import { useForm as useHookForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 import { default as useRouter } from '@/components/useCustRouter';
 
@@ -17,20 +16,19 @@ import MyCard from '@/components/MyCard';
 import MyModal from '@/components/MyModal';
 //import { useDispatch } from 'react-redux';
 
-import commonstyle from '@/styles/common.module.css';
 
 import { useForm, yupResolver } from '@mantine/form';
 
 
-import { usePublicHolidays } from '@/components/util/usePublicHolidays';
 import { setDatepickerPlDay } from '@/components/util/leaverequest.util';
+import { usePublicHolidays } from '@/components/util/usePublicHolidays';
 import { format } from 'date-fns';
 import { inputFields, staffModel } from './edit.util';
 
-import ContractTable from './ContractTable';
 import useStore from '@/components/stores/zstore';
 import { useStaffData } from '@/components/useStaffData';
-require('dotenv').config();
+import ContractTable from './ContractTable';
+//require('dotenv').config();
 
 export default function EditStaff() {
   const { activeUser, activeStaff, activeContract, isAuthenticated } = useStaffData();

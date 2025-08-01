@@ -235,7 +235,8 @@ export const getSummaryByDate = (date) => {
 
   return event ? event.Summary : 'Week End';
 };
-export const myRenderDay = (date) => {
+export const myRenderDay = (dateInput) => {
+  const date = new Date(dateInput);
   const isDisabled = !excludeHoliday(date);
   const day = date.getDate();
   const tootip = isDisabled ? '' : getSummaryByDate(date);

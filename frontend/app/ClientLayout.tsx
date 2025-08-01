@@ -1,12 +1,12 @@
-'use client';
+// app/ClientLayout.tsx
+'use client'; // Mark as a Client Component
 
 import Providers from '@/components/providers';
 import useStore from '@/components/stores/zstore';
 import { usePublicHolidays } from '@/components/util/usePublicHolidays';
-import '@/styles/styles.css';
-import { ColorSchemeScript } from '@mantine/core';
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
+
+
+
 import { useEffect } from 'react';
 
 type ConfigProps = {
@@ -22,33 +22,26 @@ export default function ClientLayout({
     children: React.ReactNode;
     config: ConfigProps;
 }) {
-    const faviconUrl = `${config.prefix}/favicon.svg`;
+    // faviconUrl is no longer needed here as the <link> tag is in RootLayout
     const { basepath, setBasepath, setUseReverseProxy, setConfig } = useStore();
-    const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
+    const { publicHolidays, loadPublicHolidays } = usePublicHolidays(); // This hook might be better placed within Providers if it depends on context
+
     useEffect(() => {
         console.log('on layout');
+        // This conditional ensures the state is set only once or if basepath is not yet initialized
         if (!basepath) {
             setBasepath(config.basepath);
             setUseReverseProxy(config.useReverseProxy);
-            setConfig(config);
+            setConfig(config); // Added setConfig to update the full config object
         }
-    }, [basepath, setBasepath, setUseReverseProxy, config.basepath, config.useReverseProxy]);
+    }, [basepath, setBasepath, setUseReverseProxy, config, setConfig]); // Added 'config' and 'setConfig' to dependency array
 
+    // Remove the conditional rendering of the entire layout.
+    // The layout structure (<html>, <body>, <head>) is handled by the server component.
+    // This client component simply provides the client-side context/providers.
+    // If 'basepath' is critical for rendering content within 'Providers' or 'children',
+    // those components should handle their own loading states or conditional rendering.
     return (
-        basepath && (
-            <>
-                <head>
-                    <ColorSchemeScript />
-                    <link rel="shortcut icon" href={faviconUrl} />
-                    <meta
-                        name="viewport"
-                        content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-                    />
-                </head>
-                <body>
-                    <Providers>{children}</Providers>
-                </body>
-            </>
-        )
+        <Providers>{children}</Providers>
     );
 }

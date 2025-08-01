@@ -95,7 +95,8 @@ export function MainShell({ children, contentpadding = '10px' }) {
             </Link>
             <Title className={classes.title} ta="center" mt={5}>
               Welcome to{' '}
-              <Text inherit variant="gradient" component="span">
+              <Text inherit   variant="gradient"
+      gradient={{ from: 'violet', to: 'red', deg: 90 }} span>
                 {siteTitle} - Timesheet and Vacations manager
               </Text>
             </Title>

@@ -8,6 +8,7 @@ export default function LoginPage(props: any) {
 
     <LoginBody />
 
+
   );
 }
 
