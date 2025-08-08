@@ -50,10 +50,12 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination: 'http://127.0.0.1:3800/api/:path*',
+        //destination: 'http://192.168.0.189:8255/api/:path*',
       },
       {
         source: '/absproxy/3000/api/:path*',
         destination: 'http://127.0.0.1:3800/api/:path*',
+        //destination: 'http://192.168.0.189:8255/api/:path*',
       },
     ];
   },

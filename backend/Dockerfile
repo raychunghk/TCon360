@@ -18,7 +18,7 @@ RUN cd packages/config && pnpm build
 RUN cd backend && npx prisma generate
 # Copy backend source and build
 COPY backend/ ./backend/
-RUN cd backend && pnpm run build
+RUN cd backend && npx prisma generate && pnpm run build
 # Set environment variables
 ENV JWT_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789
 ENV DATABASE_URL=file:./TCon360.db

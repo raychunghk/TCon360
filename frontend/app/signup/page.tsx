@@ -89,25 +89,16 @@ export default function SignupPage() {
   const { authOverlayVisible, setAuthOverlayVisible, basepath } = useStore();
   const mainpage = '/';
 
+  // In nextStep
   const nextStep = async () => {
     if (active === 0) {
       const isValid = await validateStep0(form.values.username, form.values.email);
-      if (!isValid) {
-        return;
-      }
+      if (!isValid) return;
     }
     const errors = await form.validate();
-    console.log('set active step error', errors);
-    if (form.validate().hasErrors) {
-      return;
-    }
-
-    setActive((current) => {
-      return current < 3 ? current + 1 : current;
-    });
-    if (active === 3) {
-      handleSubmit(form.values);
-    }
+    if (form.validate().hasErrors) return;
+    setActive((current) => (current < 3 ? current + 1 : current));
+    if (active === 3) handleSubmit(form.values);
   };
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
@@ -189,110 +180,67 @@ export default function SignupPage() {
   });
 
   const handleInputChange = (event) => {
-    console.log(form);
-    console.log('handle change');
-    console.log(formValues);
+    console.log(`handle input change`, formValues);
     setFormValues({
       ...formValues,
       [event.target.name]: event.target.value,
     });
   };
-
-  async function handleSubmit(form) {
-    // event.preventDefault();
-    console.log('form?', form);
+  async function handleSubmit(form: typeof formValues & { username: string; password: string; email: string }) {
     setAuthOverlayVisible(true);
     const { email, password, username, ...staff } = form;
-    const user = { email, password, username, staff };
     setFormValues({ ...staff });
-
-    console.log('form values', formValues);
-    console.log('user', user);
-
     try {
       const response = await fetch(`${basepath}/api/user/signup`, {
         method: 'POST',
-        body: JSON.stringify(user),
+        body: JSON.stringify({ email, password, username, staff }),
         headers: { 'Content-Type': 'application/json' },
       });
-
       if (response.ok) {
-        // router.push(mainpage);
         await handleLoginSuccess(response);
       } else if (response.status === 400) {
-        // Display an error message and jump to stepper page 1
         const data = await response.json();
-        console.error('Error signing up:', data.message);
-
-        // Set the stepper activeStep to 0 (page 1)
+        setsignUpError(data.message || 'Username or email already exists');
         setActive(0);
-
-        // Scroll to the top of the page
         window.scrollTo(0, 0);
       } else {
-        console.error('Error signing up:', response.statusText);
-        setsignUpError('Fail to Signup:Server error');
-        setAuthOverlayVisible(false);
-        return;
+        setsignUpError('Failed to sign up: Server error');
       }
     } catch (error) {
-      setsignUpError('Fail to Signup:Server error');
+      setsignUpError('Failed to sign up: Server error');
+    } finally {
       setAuthOverlayVisible(false);
-      console.error(error);
-    } /* finally {
-      setLoading(false);
-    }*/
-  }
-
-  const formKeydown = () => { };
-  const handleStepClick = (stepIndex) => {
-    // Perform validation before switching to Step 1
-    console.log('stepIndex', stepIndex);
-    if (stepIndex === 1) {
-      const isValid = validateStep0(form.values.username, form.values.email); // Custom validation function for Step 0
-      if (!isValid) {
-        return; // Do not switch to Step 1 if validation fails
-      }
     }
-
-    setActive(stepIndex);
   };
-
-  const validateStep0 = async (_username, _email) => {
-    console.log('form.values.username', form.values.username);
-    // const _username = form.values.username;
-    // const _email = form.values.email;
-    const postval = {
-      username: _username,
-      email: _email,
-    };
-    console.log('postval', postval);
+  const validateStep0 = async (_username: string, _email: string) => {
     try {
-      // Make an HTTP request to the server to validate the user
       const response = await axios.post(`${basepath}/api/user/validateuser`, {
         username: _username,
         email: _email,
       });
-
       if (response.data.message === 'ok') {
         setErrorMessage('');
-        // Validation successful, return true
         return true;
       } else {
-        // Validation failed, return false
-        // You can display an error message or perform any necessary actions
-        const errmsg = 'Username or email already exists';
-        console.error(errmsg);
-        setErrorMessage(errmsg);
+        setErrorMessage('Username or email already exists');
         return false;
       }
     } catch (error) {
-      console.error('Error validating user:', error);
+      setErrorMessage('Error validating user');
       return false;
     }
   };
 
-  //const onKeyDown = useHotkeys([['mod+Enter', nextStep]]);
+  // In handleStepClick
+  const handleStepClick = (stepIndex: number) => {
+    if (stepIndex === 1) {
+      const isValid = validateStep0(form.values.username, form.values.email);
+      if (!isValid) return;
+    }
+    setActive(stepIndex);
+  };
+
+
   const hotkeyConfig: [string, () => void][] = [['mod+Enter', nextStep]];
 
   const handleTabKey = (event, stepStartIndex, stepEndIndex) => {

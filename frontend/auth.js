@@ -19,23 +19,7 @@ export const authOptions = {
     {
       id: 'custom-provider',
       name: 'Custom Provider',
-      // type: "oauth",
-      // version: "2.0",
-      // client_id:"123",
-      // clientid:"456",
-      // scope: "openid profile email",
-      // params: { grant_type: "authorization_code" },
-      // accessTokenUrl: "https://example.com/oauth2/token",
-      // authorizationUrl: "https://example.com/oauth2/auth",
-      // profileUrl: "https://example.com/api/user",
-      // profile: (profile) => {
-      // return {
-      //     id: "test-user",
-      //     name: "Test User",
-      //     email: "testuser@example.com",
-      //     image: "https://example.com/testuser.jpg",
-      // };
-      // },
+
       type: 'credentials',
       authorize: async (credentials) => {
         console.log('credentials?');
@@ -81,7 +65,7 @@ export const authOptions = {
       },
     },
   ],
-  basePath: '/absproxy/3333/api/auth',
+  basePath: '/absproxy/3000/api/auth',
   callbacks: {
     // async jwt(token, user, account, profile, isNewUser) {
 
@@ -201,12 +185,5 @@ function logCallback(context, description, ...args) {
   const prefixedDescription = `${context} callback: ${description}`;
   console.log(prefixedDescription, ...args);
 }
-// export default (req, res) => NextAuth(req, res, options)
 
-//const handler = NextAuth(authOptions);
-
-/*
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [],
-})*/
 export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);

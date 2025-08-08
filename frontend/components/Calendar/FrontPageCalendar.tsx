@@ -1,45 +1,42 @@
 'user client'
 import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
+import useUIStore from '@/components/stores/useUIStore';
+import useStore from '@/components/stores/zstore';
+import { getBusinessDays } from '@/components/util/leaverequest.util';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
+
 import { Button, Drawer, Text } from '@mantine/core';
 import axios, { AxiosError } from 'axios';
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { signOut } from 'next-auth/react';
-import { destroyCookie, parseCookies } from 'nookies';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  handleSelectAllow
-} from './calendar.util';
-import CustomView from './customeView';
-
-import { getBusinessDays } from '@/components/util/leaverequest.util';
-
-import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore';
 import router from 'next/router';
+import { destroyCookie, parseCookies } from 'nookies';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-const FrontPageCalendar = () => {
-  const handleSignout = () => {
-    destroyCookie(null, 'token');
-    clearAllState();
-    signOut();
-  };
-  type FormType = 'create' | 'edit';
-  const setLeaveRequestPeriodAction = (period) => {
-    setLeaveRequestPeriod(period);
-    period;
-  };
-  //const [leavePurpose, setleavePurpose] = useState(null);
-  const [leavePurpose, setleavePurpose] = useState<string | null>(null);
+import { handleSelectAllow } from './calendar.util';
+import CustomView from './customeView';
 
+const FrontPageCalendar = () => {
+  type FormType = 'create' | 'edit';
+
+  // State management
+  const [leavePurpose, setLeavePurpose] = useState<string | null>(null);
   const [formType, setFormType] = useState<FormType | undefined>(undefined);
-  const { drawerOpened, setDrawerOpen, setDrawerClose } = useUIStore();
+  const [currentCalendarDate, setCurrentCalendarDate] = useState<Date | null>(null);
+  const [customTitle, setCustomTitle] = useState('');
+  const [hasCalendar, setHasCalendar] = useState(true);
+
+  // Refs
+  const calendarRef = useRef<FullCalendar | null>(null);
+
+  // Store hooks
+  const { drawerOpened, setDrawerOpen, setDrawerClose, isEventUpdated, setIsEventUpdated } = useUIStore();
   const {
     setLeaveRequestPeriod,
     setStaffVacation,
@@ -51,43 +48,49 @@ const FrontPageCalendar = () => {
     calendarEvents,
     setChargeableDays,
     setLeaveRequestId,
-    leaveRequestId, activeStaff, setTimesheetDefaultDate
-
+    leaveRequestId,
+    activeStaff,
+    setTimesheetDefaultDate,
   } = useStore();
-  const [LeaveRequestPeriod, isMonthPickerChangeEvent, isFrontCalendarChangeEvent, activeUser, activeContract, basepath] = useStore(
-    useShallow((state) => [
-      state.LeaveRequestPeriod,
-      state.isMonthPickerChangeEvent,
-      state.isFrontCalendarChangeEvent,
-      state.activeUser,
-      state.activeContract,
-      state.basepath
-    ])
+
+  const {
+    LeaveRequestPeriod,
+    isMonthPickerChangeEvent,
+    activeUser,
+    activeContract,
+    basepath,
+  } = useStore(
+    useShallow((state) => ({
+      LeaveRequestPeriod: state.LeaveRequestPeriod,
+      isMonthPickerChangeEvent: state.isMonthPickerChangeEvent,
+      activeUser: state.activeUser,
+      activeContract: state.activeContract,
+      basepath: state.basepath,
+    }))
   );
-  const { isEventUpdated, setIsEventUpdated } = useUIStore();
-  const [renderCount, setRenderCount] = useState(0);
-  const calendarRef = useRef<FullCalendar | null>(null);
-  //const calendarRef = useRef<FullCalendarType | null>(null);
-  const [currentCalendarDate, setCurrentCalendarDate] = useState(null);
-  const [customTitle, setCustomTitle] = useState('');
-  const [hasCalendar, setHasCalendar] = useState(true);
 
+  const handleSignout = async () => {
+    destroyCookie(null, 'token');
+    clearAllState();
+    await signOut();
+  };
 
-  useEffect(() => {
-    setRenderCount(renderCount + 1);
-  }, []);
   const fetchEvents = useCallback(async () => {
     try {
       const apiurl = `${basepath}/api/timesheet/calendar`;
       const cookies = parseCookies();
       const _token = cookies.token;
+
       if (!_token) {
         return;
       }
+
       const headers = {
         Authorization: `Bearer ${_token}`,
       };
+
       const response = await axios.get(apiurl, { headers });
+
       if ([200, 201].includes(response.status)) {
         const events = response.data;
         if (!calendarEvents || isEventUpdated || events.length !== calendarEvents.length) {
@@ -111,77 +114,67 @@ const FrontPageCalendar = () => {
         console.error('Unexpected error:', error);
       }
     }
-  }, [basepath, calendarEvents, isEventUpdated]);
+  }, [basepath, calendarEvents, isEventUpdated, handleSignout, setCalendarEvents]);
+
   useEffect(() => {
-    if (isEventUpdated === true) {
+    if (isEventUpdated) {
       fetchEvents();
       setIsEventUpdated(false);
     }
-  }, [isEventUpdated]);
-  const memoizedFetchEvents = useMemo(() => fetchEvents, [basepath, handleSignout]);
+  }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
+
   useEffect(() => {
     if (basepath) {
-      memoizedFetchEvents();
+      fetchEvents();
     }
-  }, [basepath, activeStaff]);
-
-
+  }, [basepath, activeStaff, fetchEvents]);
 
   useEffect(() => {
     // Calculate total chargeable days whenever calendar events or date changes
     if (calendarEvents && calendarEvents.length > 0) {
-      //setTitle(timesheetDefaultDate);
       if (activeUser) {
         setVacationSummary(activeUser, calendarEvents);
       }
       if (timesheetDefaultDate) {
-        console.log('use effect: timesheet default date:', timesheetDefaultDate);
         setTitle(timesheetDefaultDate);
-
         setIsFrontCalendarChangeEvent(true);
         handleJumpToMonth(timesheetDefaultDate);
       }
     }
-  }, [calendarEvents, timesheetDefaultDate]);
-  function handleMonthYearChange(info, isUserClick = false) {
-    console.log('isMonthPickerChangeEvent, ', isMonthPickerChangeEvent);
-    if (calendarEvents.length === 0) {
-      fetchEvents();
-    }
-    const _timesheetDefaultDate = info.view.currentStart;
-    console.log('fullcalendar date', _timesheetDefaultDate);
+  }, [calendarEvents, timesheetDefaultDate, activeUser, setIsFrontCalendarChangeEvent]); // Added missing dependencies
 
-    //setTimesheetDefaultDate(_timesheetDefaultDate);
-    setSelectedMonth(_timesheetDefaultDate);
-    setTitle(_timesheetDefaultDate);
-    if (calendarRef.current) {
-      const view = calendarRef.current.getApi().view;
-      if (view.type === 'dayGridMonth') {
-        setCurrentCalendarDate(_timesheetDefaultDate);
-        //console.log('currentCalendarDate!!', currentCalendarDate)
-      }
-    }
-    console.log('handleMonthYearChange, current start?', _timesheetDefaultDate);
-  }
   /**
    * A function to handle jumping to a specific month on the calendar.
    *
    * @param {_date} _date - the date to jump to
    * @return {void}
    */
-  const handleJumpToMonth = (_date) => {
+  const handleJumpToMonth = useCallback((_date: Date) => {
     try {
       if (calendarRef.current) {
-        // const calendarApi = calendarRef.current.getApi();
-        console.log('timesheet default date _date in handleJumpToMonth', _date);
         calendarRef.current.getApi().gotoDate(_date);
-        //calendarApi.gotoDate(_date);
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error jumping to month:', error);
     }
+  }, []);
 
-  };
+  function handleMonthYearChange(info: any) {
+    if (calendarEvents.length === 0) {
+      fetchEvents();
+    }
+    const _timesheetDefaultDate = info.view.currentStart;
+
+    setSelectedMonth(_timesheetDefaultDate);
+    setTitle(_timesheetDefaultDate);
+
+    if (calendarRef.current) {
+      const view = calendarRef.current.getApi().view;
+      if (view.type === 'dayGridMonth') {
+        setCurrentCalendarDate(_timesheetDefaultDate);
+      }
+    }
+  }
 
   const handleOpenAdminPage = () => {
     router.push({
@@ -189,34 +182,20 @@ const FrontPageCalendar = () => {
       query: { tab: 'calendarManagement' },
     });
   };
-  if (!hasCalendar || !calendarEvents) {
-    return (
-      <>
-        <Text fw={500}>Calendar database is not initialized</Text>
-        <Button variant="filled" onClick={handleOpenAdminPage}>
-          Click to initialize Calendar in setting page
-        </Button>
-      </>
-    );
-  } else if (calendarEvents.length < 1) {
-    return <Text>Loading Calendar...</Text>;
-  }
 
-  const handleDeleteEvent = async (eventId, _evtdate) => {
+  const handleDeleteEvent = async (eventId: string, _evtdate: Date) => {
     // Call FullCalendar's removeEvent method to remove the event
     try {
-
+      // Logic for deleting the event from the backend would go here
+      // For now, just trigger a re-fetch to update the calendar
       setIsEventUpdated(true);
-
-
     } catch (error) {
-      console.log('error', error);
+      console.error('Error deleting event:', error);
       throw error;
     }
   };
 
-  const fnEventclick = (e) => {
-    console.log('event click', e.event);
+  const fnEventclick = (e: any) => {
     const _leaveRequestid = e.event.extendedProps.result.LeaveRequestId;
     setLeaveRequestId(_leaveRequestid);
 
@@ -226,8 +205,8 @@ const FrontPageCalendar = () => {
     }
   };
 
-  function setVacationSummary(_user, _events) {
-    if (!_user) {
+  function setVacationSummary(_user: any, _events: any[]) {
+    if (!_user || !activeContract) {
       return;
     }
 
@@ -242,7 +221,7 @@ const FrontPageCalendar = () => {
       return (
         evt.LeaveRequestId !== null &&
         _leaveperiodstart <= ContractEndDate &&
-        (_leaveperiodend !== null || _leaveperiodstart > ContractStartDate)
+        (_leaveperiodend === null || _leaveperiodstart > ContractStartDate || _leaveperiodend >= ContractStartDate)
       );
     });
 
@@ -267,7 +246,8 @@ const FrontPageCalendar = () => {
         return sum + getBusinessDays(_leaveperiodstart, ContractEndDate);
       }
 
-      // If the event start date is before the contract start date and the event end date is after the contract start date, count the number of leave days from the contract start date to the event end date
+      // If the event start date is before the contract start date and the event end date is after the contract start date,
+      // count the number of leave days from the contract start date to the event end date
       if (_leaveperiodend > ContractStartDate && _leaveperiodstart < ContractStartDate) {
         return sum + getBusinessDays(ContractStartDate, _leaveperiodend);
       }
@@ -287,9 +267,10 @@ const FrontPageCalendar = () => {
       balance: activeContract.AnnualLeave - vacationLeaveDays,
     });
   }
-  function setTitle(newDate = new Date()) {
+
+  function setTitle(newDate: Date = new Date()) {
     const currentYear = newDate.getFullYear();
-    const currentMonth = newDate.getMonth();
+    const currentMonth = newDate.getMonth(); // 0-indexed
 
     const formattedFirstDay = format(new Date(currentYear, currentMonth, 1), 'd-MMM-yyyy');
     const formattedLastDay = format(new Date(currentYear, currentMonth + 1, 0), 'd-MMM-yyyy');
@@ -319,36 +300,41 @@ const FrontPageCalendar = () => {
     setCustomTitle(_customTitle);
     setChargeableDays(_chargeableDays);
   }
-  const handleDateSelect = (selectInfo) => {
-    console.log(selectInfo);
 
+  const handleDateSelect = (selectInfo: any) => {
     const _start = selectInfo.start;
     const _end = selectInfo.end;
     const count = differenceInBusinessDays(_end, _start);
-    console.log(`datediffer? ${count}`);
-    const leaveRequestPeriodEnd = count == 1 ? null : subDays(_end, 1);
+    const leaveRequestPeriodEnd = count === 1 ? null : subDays(_end, 1);
 
-    setLeaveRequestPeriodAction({
+    setLeaveRequestPeriod({
       start: selectInfo.start,
       end: leaveRequestPeriodEnd,
     });
-
-    // Access the events data from the FullCalendar component
-
-    // Iterate through the events to check if any events intersect with the selected date
 
     const _leavePurpose = prompt(
       `Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`
     );
     if (_leavePurpose) {
-      setleavePurpose(_leavePurpose);
+      setLeavePurpose(_leavePurpose);
       setFormType('create');
-
       setLeaveRequestId(0);
-
       setDrawerOpen();
     }
   };
+
+  if (!hasCalendar || !calendarEvents) {
+    return (
+      <>
+        <Text fw={500}>Calendar database is not initialized</Text>
+        <Button variant="filled" onClick={handleOpenAdminPage}>
+          Click to initialize Calendar in setting page
+        </Button>
+      </>
+    );
+  } else if (calendarEvents.length < 1) {
+    return <Text>Loading Calendar...</Text>;
+  }
 
   return (
     <>
@@ -379,7 +365,6 @@ const FrontPageCalendar = () => {
           headerToolbar={{
             center: 'title',
             start: 'dayGridMonth,cv',
-
             end: 'prev,next today',
           }}
           titleFormat={() => customTitle}
@@ -388,8 +373,8 @@ const FrontPageCalendar = () => {
           selectable={true}
           selectAllow={(selectinfo) => handleSelectAllow(selectinfo, calendarEvents)}
           datesSet={(info) => {
-            handleMonthYearChange(info, isMonthPickerChangeEvent);
-          }} // Pass isUserClick = true
+            handleMonthYearChange(info);
+          }}
           select={handleDateSelect} // Specify callback function for date range selection
           views={{
             dayGridMonth: {
@@ -397,7 +382,6 @@ const FrontPageCalendar = () => {
             },
             listWeek: {
               type: 'list',
-              //  duration: { weeks: 1 },
               buttonText: 'List',
             },
             timeGridFourDay: {
@@ -412,7 +396,6 @@ const FrontPageCalendar = () => {
             },
           }}
         />
-        {/* {renderCount} */}
       </div>
     </>
   );

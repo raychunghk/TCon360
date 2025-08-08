@@ -1,5 +1,5 @@
 'use client';
-// useCustomRouter.js
+
 import useStore from '@/components/stores/zstore';
 import { useRouter } from 'next/navigation';
 
@@ -7,7 +7,7 @@ const useCustRouter = () => {
   const router = useRouter();
   const { basepath, useReverseProxy } = useStore();
 
-  console.log('useReverseProxy in useCustRouter:', useReverseProxy);
+  //console.log('useReverseProxy in useCustRouter:', useReverseProxy);
 
   if (!useReverseProxy) {
     return router;
