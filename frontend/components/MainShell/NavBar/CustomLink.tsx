@@ -1,8 +1,7 @@
- 
+
 import { useRouter } from 'next/router';
- 
-import Link from 'next/link';
-import useStore from '@/components/stores/zstore';
+
+import useStore from '@/components/stores/zstore.js';
 
 const CustomLink = ({ href, children, ...props }) => {
   const { setMainshellOverlayVisible } = useStore();

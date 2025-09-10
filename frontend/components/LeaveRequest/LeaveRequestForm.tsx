@@ -15,7 +15,7 @@ import { getMySession } from '@/app/lib/auth-action';
 import MyCard from '@/components/MyCard';
 import MyModal from '@/components/MyModal';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import {
     adjustTimeZoneVal,
     ampmOptions,

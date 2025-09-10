@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { differenceInSeconds, format } from 'date-fns';
 import { usePathname } from 'next/navigation'; // Add this import
 import { destroyCookie, parseCookies } from 'nookies';

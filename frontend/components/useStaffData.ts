@@ -1,5 +1,5 @@
 'use client';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 import { useCallback, useEffect, useRef, useState } from 'react';

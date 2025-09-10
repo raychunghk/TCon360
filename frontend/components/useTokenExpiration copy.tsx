@@ -1,11 +1,9 @@
+import useStore from '@/components/stores/zstore.js';
+import { differenceInSeconds, format } from 'date-fns';
+import { usePathname, useRouter } from 'next/navigation';
+import { destroyCookie, parseCookies } from 'nookies';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { parseCookies, destroyCookie } from 'nookies';
-import { format, addSeconds, differenceInSeconds } from 'date-fns';
-import useStore from '@/components/stores/zstore';
-import { usePathname } from 'next/navigation';
 
-import { useShallow } from 'zustand/react/shallow';
 
 export default function useTokenExpiration() {
   const router = useRouter();

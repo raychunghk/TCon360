@@ -1,7 +1,7 @@
 import { DatePickerInput, DayOfWeek } from '@mantine/dates';
 import { useEffect } from 'react';
 
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { useEdit } from './useEdit';
 interface UseEditReturn {
   value: string | Date;  // adjust this type based on what useEdit actually returns

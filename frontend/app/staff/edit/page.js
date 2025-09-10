@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card, Code, Grid, TextInput } from '@mantine/core';
+import { Button, Card, Code, Grid, LoadingOverlay, TextInput } from '@mantine/core';
 import axios from 'axios';
 import Head from 'next/head';
 import { parseCookies } from 'nookies';
@@ -7,31 +7,21 @@ import { useEffect, useState } from 'react';
 import { useForm as useHookForm } from 'react-hook-form';
 import * as Yup from 'yup';
 
-import { default as useRouter } from '@/components/useCustRouter';
-
-//import Layout from '@/components/layout';
 import { MainShell } from '@/components/MainShell/MainShell';
 import MyCard from '@/components/MyCard';
-
 import MyModal from '@/components/MyModal';
-//import { useDispatch } from 'react-redux';
-
-
-import { useForm, yupResolver } from '@mantine/form';
-
-
+import { useStaffData } from '@/components/hooks/useStaffData';
+import useStore from '@/components/stores/zstore.js';
+import { default as useRouter } from '@/components/useCustRouter';
 import { setDatepickerPlDay } from '@/components/util/leaverequest.util';
 import { usePublicHolidays } from '@/components/util/usePublicHolidays';
+import { useForm, yupResolver } from '@mantine/form';
 import { format } from 'date-fns';
+import ContractTable from './ContractTable';
 import { inputFields, staffModel } from './edit.util';
 
-import useStore from '@/components/stores/zstore';
-import { useStaffData } from '@/components/useStaffData';
-import ContractTable from './ContractTable';
-//require('dotenv').config();
-
 export default function EditStaff() {
-  const { activeUser, activeStaff, activeContract, isAuthenticated } = useStaffData();
+  const { activeUser, status } = useStaffData();
   const [formValues, setFormValues] = useState(staffModel);
   const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -41,19 +31,19 @@ export default function EditStaff() {
   const [showAsError, setShowAsError] = useState(false);
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
-  //const setActiveContract = useStore((state) => state.setActiveContract);
-  const { setActiveContract, setActiveStaff, setBasepath, nextContractStartDate, basepath } =
-    useStore();
+  const { setActiveContract, setActiveStaff, nextContractStartDate, basepath } = useStore();
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
+
   const getStaffData = async () => {
     try {
       const headers = {
         Authorization: `Bearer ${tokenCookie}`,
       };
-
-      const response = await axios.get(`${basepath}/api/user/myuser`, {
+      const url = `${basepath}/api/user/myuser`
+      console.log(`my user url:`, url);
+      const response = await axios.get(url, {
         headers,
       });
 
@@ -63,7 +53,6 @@ export default function EditStaff() {
         setFormValues(_staff);
         setEditing(true);
         form.setValues(_staff);
-
         setActiveStaff(_staff);
         const activeContract = _staff.contracts.filter((contract) => contract.IsActive === true);
         setActiveContract(activeContract ? activeContract[0] : null);
@@ -75,31 +64,28 @@ export default function EditStaff() {
         setModalOpen(true);
         setShowAsError(true);
         const timeout = setTimeout(() => {
-          // Token has expired, perform logout action
           console.log('Logging out, now is:', format(Date.now(), 'yyyy-MM-dd hh:mm:ss'));
-
-          router.push('/auth/login'); // Redirect to the login page or any other appropriate route
+          router.push('/');
         }, 5 * 1000);
 
         return () => clearTimeout(timeout);
       }
     }
   };
+
   const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
 
   useEffect(() => {
     getStaffData();
-    setBasepath(basepath);
     setDatepickerPlDay(publicHolidays);
   }, [publicHolidays]);
+
   const handleModalClose = () => {
     setModalOpen(false);
   };
 
   const handleInputChange = (event) => {
     let val = event.target.value;
-
-    // Check if the value is a valid date
     if (val instanceof Date) {
       val = new Date(val);
       val.setHours(0, 0, 0, 0);
@@ -120,6 +106,7 @@ export default function EditStaff() {
     console.log('form is valid', form.isValid());
     console.log('submit values', form.values);
   };
+
   const submitform = async () => {
     setSubmitting(true);
     console.log('form errors', form.errors);
@@ -158,6 +145,7 @@ export default function EditStaff() {
 
     setSubmitting(false);
   };
+
   const validationSchema = Yup.object().shape({
     StaffName: Yup.string().required('Name of Staff is required'),
     AgentName: Yup.string().required('Name of T-contractor is required'),
@@ -174,9 +162,15 @@ export default function EditStaff() {
     validateInputOnBlur: true,
     validate: yupResolver(validationSchema),
   });
-  if (!activeUser) {
-    //router.push('/');
+
+  if (!basepath || status === 'loading') {
+    return (
+      <MainShell>
+        <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
+      </MainShell>
+    );
   }
+
   return (
     <MainShell home>
       <Head>
@@ -185,7 +179,6 @@ export default function EditStaff() {
       {activeUser ? (
         <>
           <form name="frmHeader" onSubmit={handleSubmit(submitform)}>
-            {/* <form onSubmit={form.onSubmit((values) => submitform(values))}> */}
             <MyCard title="Staff Info" cardwidth={850}>
               <Grid pb={20} pt={10}>
                 {inputFields.map((field, id) => (
@@ -251,7 +244,7 @@ export default function EditStaff() {
             msg={modalContent}
             isError={showAsError}
           />
-          <Code>{JSON.stringify(formValues, null, 2)}</Code>{' '}
+          <Code>{JSON.stringify(formValues, null, 2)}</Code>
         </>
       ) : null}
     </MainShell>

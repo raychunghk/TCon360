@@ -1,4 +1,4 @@
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { format, isWeekend } from 'date-fns';
 import * as Yup from 'yup';
 import { usePublicHolidays } from './usePublicHolidays';

@@ -1,28 +1,37 @@
 'use client';
-import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
-
+import useStore from '@/components/stores/zstore.js';
 import { Button, Card, Center, Grid, Group, MantineSize, Modal, Text } from '@mantine/core';
 import { MonthPicker } from '@mantine/dates';
 import { IconTableExport } from '@tabler/icons-react';
-import { useForm as useReactHookForm } from 'react-hook-form';
-
-import MyCard from '../MyCard';
-
+import axios from 'axios';
 import download from 'downloadjs';
-
-import useStore from '@/components/stores/zstore';
+import { useEffect, useRef, useState } from 'react';
+import { useForm as useReactHookForm } from 'react-hook-form';
+import MyCard from '../MyCard';
 import styles from './mp.module.css';
+
 interface CreateTimesheetPageProps {
-  pickersize?: MantineSize; // Specify the type here
+  pickersize?: MantineSize;
 }
+
+// Utility function to format Date to "YYYY-MM-DD" string
+// Utility function to format Date to "YYYY-MM-DD" string, adding one day
+const formatDateToString = (date: Date): string => {
+  const nextDay = new Date(date);
+  nextDay.setDate(date.getDate() + 1); // Add one day as requested
+  const year = nextDay.getFullYear();
+  const month = String(nextDay.getMonth() + 1).padStart(2, '0'); // Months are 0-based, add 1
+  const day = String(nextDay.getDate()).padStart(2, '0');
+  const rtnval = `${year}-${month}-${day}`;
+  console.log('formatDateToString:', rtnval);
+  return rtnval;
+};
 
 export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const { handleSubmit, reset } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState<boolean | null>(null);
-
   const [monthValue, setMonthValue] = useState<Date | null>(new Date());
 
   const {
@@ -32,29 +41,25 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
     setSelectedMonth,
     isMonthPickerChangeEvent,
     setIsMonthPickerChangeEvent,
-    isFrontCalendarChangeEvent, basepath
+    isFrontCalendarChangeEvent,
+    basepath,
   } = useStore();
+
   const [defaultdate, setDefaultDate] = useState(new Date());
   const monthPickerRef = useRef(null);
-  useEffect(
-    () => {
-      if (isFrontCalendarChangeEvent) {
-        console.log(
-          'selected month change triggered by frontpagecalendar',
-          selectedMonth,
-        );
-        if (timesheetDefaultDate != selectedMonth) {
-          //setTimesheetDefaultDate(selectedMonth);
-        }
+
+  useEffect(() => {
+    if (isFrontCalendarChangeEvent) {
+      console.log('selected month change triggered by frontpagecalendar', selectedMonth);
+      if (timesheetDefaultDate !== selectedMonth) {
+        // setTimesheetDefaultDate(selectedMonth);
       }
-      return () => { };
-    },
-    //eslint-disable-next-line
-    [selectedMonth],
-  );
+    }
+    return () => { };
+  }, [selectedMonth]);
+
   useEffect(() => {
     console.log('timesheetDefaultDate?', timesheetDefaultDate);
-
     const _defaultDate = new Date(timesheetDefaultDate.getFullYear(), 1);
     const _selectedMonth = new Date(
       timesheetDefaultDate.getFullYear(),
@@ -62,26 +67,46 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
       1,
     );
 
-    // Check if it's not a month picker change event
     if (!isMonthPickerChangeEvent) {
     }
 
-    // Reset the isMonthPickerChangeEvent state
     if (isMonthPickerChangeEvent) setIsMonthPickerChangeEvent(false);
   }, [timesheetDefaultDate, isMonthPickerChangeEvent]);
-  const handleMonthChange = (_date) => {
+
+  const handleMonthChange = (value: string | null) => {
     if (fileid) {
       setfileid(null);
     }
-    console.log('handle month change', _date);
-    setIsMonthPickerChangeEvent(true);
-    setTimesheetDefaultDate(_date);
+    console.log('handle month change', value);
+
+    // Handle null or invalid input
+    if (!value) {
+      console.warn('No date selected (null value received)');
+      return;
+    }
+
+    // Parse the incoming "YYYY-MM-DD" string
+    const [year, month] = value.split('-').map(Number);
+    if (!year || !month || isNaN(year) || isNaN(month)) {
+      console.error('Invalid date string format:', value);
+      return;
+    }
+
+    // Create a Date object for the first day of the selected month in local timezone
+    const dateValue = new Date(year, month - 1, 1); // month is 1-based in string, 0-based in Date
+
+    // Validate the date
+    if (!isNaN(dateValue.getTime())) {
+      setIsMonthPickerChangeEvent(true);
+      setTimesheetDefaultDate(dateValue);
+      setSelectedMonth(dateValue); // Update selectedMonth for consistency
+    } else {
+      console.error('Invalid date created from:', value);
+    }
   };
 
   const onSubmit = async (event) => {
     setSubmitting(true);
-    //  const year = timesheetDefaultDate.getFullYear();
-    //    const month = timesheetDefaultDate.getMonth() + 1;
     const year = selectedMonth.getFullYear();
     const month = selectedMonth.getMonth() + 1;
 
@@ -97,6 +122,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
       console.error('Failed to create timesheet record:', response);
     }
   };
+
   const handleDownloadFile = async () => {
     const url = `${basepath}/api/staff/download/${fileid}`;
     const response = await axios.get(url, { responseType: 'blob' });
@@ -106,6 +132,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
     const filename = matches ? matches[1] : `${fileid}.xml`;
     download(response.data, filename);
   };
+
   const handleModalClose = () => {
     setModalOpen(false);
     if (fileid) {
@@ -120,15 +147,11 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
-
                 <MonthPicker
-
                   size={pickersize}
-                  onDateChange={handleMonthChange}
-                  ref={monthPickerRef}
-                  value={selectedMonth}
-                  date={selectedMonth}
                   onChange={handleMonthChange}
+                  ref={monthPickerRef}
+                  value={selectedMonth ? formatDateToString(selectedMonth) : null}
                   className={styles.monthPickerButtons}
                 />
               </Group>
@@ -140,7 +163,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
                     component="a"
                     target="_blank"
                     leftSection={<IconTableExport size="1rem" />}
-                    href={`${basepath}/api/staff/download/${fileid}`}
+                    href={`${basepath}/api/staff/download/${fileid} `}
                   >
                     Download TimeSheet
                   </Button>

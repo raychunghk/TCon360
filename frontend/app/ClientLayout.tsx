@@ -1,13 +1,7 @@
-// app/ClientLayout.tsx
-'use client'; // Mark as a Client Component
-
+'use client';
 import Providers from '@/components/providers';
-import useStore from '@/components/stores/zstore';
-import { usePublicHolidays } from '@/components/util/usePublicHolidays';
-
-
-
-import { useEffect } from 'react';
+import useStore from '@/components/stores/zstore.js';
+import { useEffect, useMemo } from 'react';
 
 type ConfigProps = {
     basepath: string;
@@ -22,26 +16,28 @@ export default function ClientLayout({
     children: React.ReactNode;
     config: ConfigProps;
 }) {
-    // faviconUrl is no longer needed here as the <link> tag is in RootLayout
-    const { basepath, setBasepath, setUseReverseProxy, setConfig } = useStore();
-    const { publicHolidays, loadPublicHolidays } = usePublicHolidays(); // This hook might be better placed within Providers if it depends on context
+    const { basepath, setBasepath, setUseReverseProxy, setConfig, publicHolidays, loadPublicHolidays } = useStore();
+    const memoizedConfig = useMemo(() => config, [config]);
 
     useEffect(() => {
-        console.log('on layout');
-        // This conditional ensures the state is set only once or if basepath is not yet initialized
-        if (!basepath) {
-            setBasepath(config.basepath);
-            setUseReverseProxy(config.useReverseProxy);
-            setConfig(config); // Added setConfig to update the full config object
-        }
-    }, [basepath, setBasepath, setUseReverseProxy, config, setConfig]); // Added 'config' and 'setConfig' to dependency array
+        console.log('ClientLayout useEffect triggered', { basepath, publicHolidays });
+        let isMounted = true;
 
-    // Remove the conditional rendering of the entire layout.
-    // The layout structure (<html>, <body>, <head>) is handled by the server component.
-    // This client component simply provides the client-side context/providers.
-    // If 'basepath' is critical for rendering content within 'Providers' or 'children',
-    // those components should handle their own loading states or conditional rendering.
-    return (
-        <Providers>{children}</Providers>
-    );
+        if (!basepath && memoizedConfig.basepath) {
+            setBasepath(memoizedConfig.basepath);
+            setUseReverseProxy(memoizedConfig.useReverseProxy);
+            setConfig(memoizedConfig);
+        }
+        if (basepath && (!publicHolidays || publicHolidays.length === 0) && isMounted) {
+            console.log('ClientLayout triggering loadPublicHolidays');
+            loadPublicHolidays();
+        }
+
+        return () => {
+            console.log('ClientLayout useEffect cleanup');
+            isMounted = false;
+        };
+    }, [basepath, memoizedConfig, setBasepath, setUseReverseProxy, setConfig, publicHolidays, loadPublicHolidays]);
+
+    return <Providers>{children}</Providers>;
 }

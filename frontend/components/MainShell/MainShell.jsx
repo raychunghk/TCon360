@@ -1,10 +1,10 @@
 'use client';
+import { SignOut as clientSignOut } from '@/app/lib/auth-action';
 import { useStaffData } from '@/components/hooks/useStaffData';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore';
-import { AppShell, Burger, Button, Center, Group, LoadingOverlay, Text, ThemeIcon, Title, UnstyledButton, useMantineTheme } from '@mantine/core';
+import useStore from '@/components/stores/zstore.js';
+import { AppShell, Burger, Button, Center, Group, LoadingOverlay, Text, Title, useMantineTheme } from '@mantine/core';
 import '@mantine/core/styles/Button.css';
-import '@mantine/core/styles/UnstyledButton.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.layer.css';
 import { IconLogin, IconLogout } from '@tabler/icons-react';
@@ -17,56 +17,53 @@ import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
 import styles from './MainShell.module.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
-import linkstyle from './NavBar/mainlinks.module.css';
 
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
-  const { navbarwidth, basepath, setBasepath, MainshellOverlayVisible, setMainshellOverlayVisible, config } = useStore();
+  const { navbarwidth, basepath, setBasepath, MainshellOverlayVisible, setMainshellOverlayVisible, config, fetchStaffData } = useStore();
+  const { activeUser, status, isAuthenticated } = useStaffData();
   const [opened, setOpened] = useState(false);
   const router = useCustRouter();
-  const { activeUser, status, isAuthenticated } = useStaffData();
 
   const clearAllCookies = useCallback(() => {
     const cookies = parseCookies();
     Object.keys(cookies).forEach((cookieName) => {
       destroyCookie(null, cookieName, { path: '/' });
     });
-    console.log('All cookies cleared');
+    console.log('MainShell: All cookies cleared');
   }, []);
 
   const handleSignout = useCallback(() => {
+    console.log('MainShell: Initiating sign-out');
     clearAllCookies();
-    router.push('/auth/login');
-  }, [clearAllCookies, router]);
+    clientSignOut();
+  }, [clearAllCookies]);
 
   useEffect(() => {
+    console.log('MainShell: Setting basepath and fetching staff data', { basepath });
     setMainshellOverlayVisible(false);
     if (!basepath) {
       setBasepath(process.env.NEXT_PUBLIC_BASEPATH || 'http://localhost:3800');
     }
-  }, [basepath, setBasepath, setMainshellOverlayVisible]);
+    if (basepath) {
+      fetchStaffData();
+    }
+  }, [basepath, setBasepath, setMainshellOverlayVisible, fetchStaffData]);
 
   useEffect(() => {
     if (status === 'unauthenticated' && !isAuthenticated) {
+      console.log('MainShell: Redirecting to login', { status, isAuthenticated });
       router.push('/auth/login');
     }
   }, [status, isAuthenticated, router]);
 
   if (status === 'loading') {
+    console.log('MainShell: Rendering loading state');
     return <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />;
   }
 
-  const buttonStyles = (theme) => ({
-    display: 'block',
-    width: '115px',
-    padding: theme.spacing.xs,
-    borderRadius: theme.radius.xs,
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-    '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    },
-  });
+  console.log('MainShell: Rendering main content', { activeUser, siteTitle });
 
   return (
     <AppShell
@@ -80,7 +77,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
       padding="md"
     >
       <AppShell.Header className={classes.header}>
-        <Group justify="space-between" pl={15} w={'100%'}>
+        <Group justify="space-between" pl={15} w="100%">
           <Group>
             <Burger
               hiddenFrom="xs"
@@ -91,12 +88,16 @@ export function MainShell({ children, contentpadding = '10px' }) {
               mr="sm"
             />
             <Link href="/">
-              <Image src={`${config.basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
+              <Image src={`${config?.basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
             </Link>
             <Title className={classes.title} ta="center" mt={5}>
               Welcome to{' '}
-              <Text inherit   variant="gradient"
-      gradient={{ from: 'violet', to: 'red', deg: 90 }} span>
+              <Text
+                inherit
+                variant="gradient"
+                gradient={{ from: 'violet', to: 'red', deg: 90 }}
+                span
+              >
                 {siteTitle} - Timesheet and Vacations manager
               </Text>
             </Title>
@@ -125,7 +126,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
               </>
             ) : (
               <Group>
-                <Link href={`${config.basepath}/auth/login`} passHref>
+                <Link href={`${config?.basepath}/auth/login`} passHref>
                   <Button
                     className={styles.clsSignupBtn}
                     leftSection={
@@ -141,22 +142,21 @@ export function MainShell({ children, contentpadding = '10px' }) {
                     <Text>Login</Text>
                   </Button>
                 </Link>
-                <Link href={`${basepath}/auth/signup`} className={linkstyle.links}>
-                  <UnstyledButton className={classes.headerButtonsStyle}>
-                    <Group style={{ width: '150px' }}>
-                      <ThemeIcon variant="light">
-                        <IconLogin />
-                      </ThemeIcon>
-                      <Text size="sm">Signup</Text>
-                    </Group>
-                  </UnstyledButton>
+                <Link href={`${basepath}/auth/signup`} className={styles.links}>
+                  <Button
+                    variant="subtle"
+                    className={styles.headerButtonsStyle}
+                    leftSection={<IconLogin size="1rem" />}
+                  >
+                    <Text size="sm">Signup</Text>
+                  </Button>
                 </Link>
               </Group>
             )}
           </Group>
         </Group>
       </AppShell.Header>
-      {activeUser ? <AppShellNavBar opened={opened} /> : null}
+      {activeUser && <AppShellNavBar opened={opened} />}
       <AppShell.Main>
         <LoadingOverlay
           visible={MainshellOverlayVisible}
@@ -167,7 +167,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
       </AppShell.Main>
       <AppShell.Footer h={30}>
         <Center h={30}>
-          <div>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</div>
+          <Text size="sm">Developed by Ray &#x2B1C;&#x1F538;&#x2502;</Text>
         </Center>
       </AppShell.Footer>
     </AppShell>

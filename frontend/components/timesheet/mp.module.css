@@ -1,5 +1,6 @@
 .monthPickerButtons button {
   width: 50px; /* Adjust the width as needed */
+  
 }
 
 .month-picker-buttons button {
@@ -8,4 +9,10 @@
 .monthButton {
   justify-content: center;
   width: 800px;
+
+}
+/* Override for selected month button */
+.monthPickerButtons button[data-selected] {
+  background-color: var(--mantine-primary-color-filled)  !important;
+  color: var(--mantine-primary-color-contrast, var(--mantine-color-white));
 }

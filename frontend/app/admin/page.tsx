@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { MainShell } from '@/components/MainShell/MainShell';
 import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
 import UserManagementTab from '@/components/admin/UserManagerTab';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { Tabs } from '@mantine/core';
 import Head from 'next/head';
 
@@ -54,20 +54,20 @@ export default function Page() {
                     /*const cookies = document.cookie.split('; ');
                     const tokenCookie = cookies.find((cookie) => cookie.startsWith('token='));
                     *//*
-    const cookies = parseCookies();
-    const tokenCookie = cookies.token;
-    const token = tokenCookie ? tokenCookie.split('=')[1] : null;
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+const cookies = parseCookies();
+const tokenCookie = cookies.token;
+const token = tokenCookie ? tokenCookie.split('=')[1] : null;
+const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    const response = await axios.put(
-        `${basepath}/api/admin/${formValues.id}`,
-        formValues,
-        { headers }
-    );
+const response = await axios.put(
+`${basepath}/api/admin/${formValues.id}`,
+formValues,
+{ headers }
+);
 
-    if (response.status !== 200) {
-        console.error('Failed to update record:', response);
-    }
+if (response.status !== 200) {
+console.error('Failed to update record:', response);
+}
 }
 } catch (error) {
 console.error('Failed to update record:', error);
@@ -84,8 +84,8 @@ setSubmitting(false);
 
             <Tabs
                 defaultValue={"userManagement"}
-              //  value={activeTab}
-               // onChange={setActiveTab}
+                //  value={activeTab}
+                // onChange={setActiveTab}
                 style={{ width: '100%', height: '100%' }}
             >
                 <Tabs.List>

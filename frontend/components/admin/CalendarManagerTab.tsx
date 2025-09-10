@@ -1,23 +1,27 @@
+'use client';
+import MyModal from '@/components/MyModal';
+import useStore from '@/components/stores/zstore.js';
 import { Box, Button, Card, LoadingOverlay, Text, TextInput, Tooltip } from '@mantine/core';
+import { IconCalendarEvent } from '@tabler/icons-react';
+import axios from 'axios';
 import { useState } from 'react';
-
+import { useShallow } from 'zustand/react/shallow';
 import commonstyle from '/styles/common.module.css';
 
-import MyModal from '@/components/MyModal';
-import useStore from '@/components/stores/zstore';
-import { IconCalendarEvent } from '@tabler/icons-react';
-import axios from 'axios'; // Import AxiosError
-import { useShallow } from 'zustand/react/shallow';
+import { SignOut } from '@/app/lib/auth-action';
+import { usePublicHolidays } from '../util/usePublicHolidays';
+
 const CalendarManagementTab = () => {
   const [icsUrl, setIcsUrl] = useState('https://www.1823.gov.hk/common/ical/tc.json');
-  const [loading, setLoading] = useState(false); // State to handle loading overlay
+  const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMsg, setModalMsg] = useState('Calendar is updated'); // Default modal message
+  const [modalMsg, setModalMsg] = useState('Calendar is updated');
+  const { loadPublicHolidays, publicHolidays } = usePublicHolidays();
+  const [basepath, setIsUnauthorized] = useStore(useShallow((state) => [state.basepath, state.setIsUnauthorized]));
+
   const handleModalClose = () => {
     setModalOpen(false);
   };
-  const [basepath] = useStore(useShallow((state) => [state.basepath]));
-
 
   const handleGeneratePublicHoliday = async (event) => {
     event.preventDefault();
@@ -25,41 +29,44 @@ const CalendarManagementTab = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(api, {
-        icsUrl: icsUrl,
-      });
-
+      const response = await axios.post(api, { icsUrl });
       if ([200, 201].includes(response.status)) {
-        console.log('Public holiday records generated successfully.');
+        console.log('Public holiday records generated successfully');
+        if (!publicHolidays || publicHolidays.length === 0) {
+          console.log('No public holidays in state, refreshing');
+          await loadPublicHolidays();
+        } else {
+          console.log('Public holidays already in state, skipping refresh');
+        }
         setModalMsg(response.data.message);
         setModalOpen(true);
       } else {
-        // Handle non-200/201 responses as errors
         console.error('Error generating public holiday records:', response.statusText);
         setModalMsg(`Error: ${response.statusText}`);
         setModalOpen(true);
       }
     } catch (error) {
-      // Use AxiosError for better type safety
       if (axios.isAxiosError(error)) {
         console.error('Axios Error:', error.message);
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          console.error('Data:', error.response.data);
-          console.error('Status:', error.response.status);
-          console.error('Headers:', error.response.headers);
+        if (error.response?.status === 401) {
+          console.log('Received 401 Unauthorized, initiating sign-out');
+          setIsUnauthorized(true);
+          try {
+            await SignOut();
+            console.log('Sign-out successful');
+            setModalMsg('Unauthorized: You have been signed out.');
+          } catch (signOutError) {
+            console.error('Sign-out failed:', signOutError);
+            setModalMsg('Error: Sign-out failed.');
+          }
+        } else if (error.response) {
           setModalMsg(`Error: ${error.response.data.message || error.message}`);
         } else if (error.request) {
-          // The request was made but no response was received
-          console.error('Request:', error.request);
           setModalMsg('Error: No response from server.');
         } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Error:', error.message);
           setModalMsg(`Error: ${error.message}`);
         }
       } else {
-        // Handle unexpected errors
         console.error('Unexpected Error:', error);
         setModalMsg('An unexpected error occurred.');
       }
@@ -95,7 +102,7 @@ const CalendarManagementTab = () => {
               Update Public Holiday Database
             </Button>
           </Tooltip>
-        </form>{' '}
+        </form>
         <MyModal open={modalOpen} onClose={handleModalClose} msg={modalMsg} />
       </Card>
     </Box>

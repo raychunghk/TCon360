@@ -1,18 +1,17 @@
 'use client'
-import 'mantine-react-table/styles.css';
-import { useMemo, useEffect, useState } from 'react';
-import { Text, Card } from '@mantine/core';
+import commonstyle from '@/styles/common.module.css';
+import { Card, Text } from '@mantine/core';
+import axios from 'axios';
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
-
 } from 'mantine-react-table';
-import axios from 'axios';
-import commonstyle from '@/styles/common.module.css';
+import 'mantine-react-table/styles.css';
+import { useEffect, useMemo, useState } from 'react';
 
+import useStore from '@/components/stores/zstore.js';
 import { useShallow } from 'zustand/react/shallow';
-import useStore from '@/components/stores/zstore';
 type UserRole = {
   userId: string;
   username?: string;

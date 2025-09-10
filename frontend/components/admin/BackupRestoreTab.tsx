@@ -1,5 +1,5 @@
 import MyModal from '@/components/MyModal';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { Box, Button, Card, Divider, FileInput, Flex, LoadingOverlay, Paper, Text } from '@mantine/core';
 import { IconCloudDownload, IconJson, IconUpload } from '@tabler/icons-react';
 import axios from 'axios';

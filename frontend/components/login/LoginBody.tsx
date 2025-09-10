@@ -1,6 +1,6 @@
 'use client';
 import { SignIn } from '@/app/lib/auth-action';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { default as useRouter } from '@/components/useCustRouter';
 import { siteTitle } from '@/components/util/label';
 import * as classes from '@/styles/login.css';

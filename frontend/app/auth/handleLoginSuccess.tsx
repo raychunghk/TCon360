@@ -1,6 +1,6 @@
+import useStore from '@/components/stores/zstore.js';
 import { signIn } from 'next-auth/react';
 import { parseCookies, setCookie } from 'nookies';
-import useStore from '@/components/stores/zstore';
 //import { setAuthtoken } from 'pages/reducers/calendarReducer';
 export async function handleLoginSuccess(response, router) {
   const data = await response.json();
@@ -11,7 +11,7 @@ export async function handleLoginSuccess(response, router) {
   console.log(_maxAge);
   // set the user's session token in localStorage
   setCookie(null, 'token', token, {
-    maxAge: parseInt(_maxAge||'1800'), // cookie expiration time (in seconds)
+    maxAge: parseInt(_maxAge || '1800'), // cookie expiration time (in seconds)
     path: '/', // cookie path
   });
 

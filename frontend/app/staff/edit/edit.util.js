@@ -1,8 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useEdit } from './useEdit';
-import axios from 'axios';
-import * as Yup from 'yup';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
+import {
+  Button,
+  Container,
+  Flex,
+  Grid,
+  NumberInput,
+  Paper,
+  Switch,
+  Text,
+  Title,
+  Tooltip,
+  rem,
+  useMantineTheme,
+} from '@mantine/core';
+import { IconCheck, IconX } from '@tabler/icons-react';
+import { format } from 'date-fns';
 import {
   // MantineReactTable,
   // useMantineReactTable,
@@ -11,23 +23,8 @@ import {
   // type MRT_TableOptions,
   MRT_EditActionButtons,
 } from 'mantine-react-table';
-import {
-  Switch,
-  NumberInput,
-  Text,
-  useMantineTheme,
-  Tooltip,
-  Button,
-  Paper,
-  Title,
-  Grid,
-  Flex,
-  Container,
-  rem,
-} from '@mantine/core';
-import { format } from 'date-fns';
-import { DatePickerInput } from '@mantine/dates';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import * as Yup from 'yup';
+import { useEdit } from './useEdit';
 
 export const inputFields = [
   {
@@ -89,25 +86,28 @@ export const inputFields = [
   },
 ];
 export function AnnualLeaveEditor({ param, formValues, setFormValues }) {
-  const { renderedCellValue, cell, table, column, row } = param;
-  // const [leaveVal, setLeaveVal] = useState(cell.getValue());
-  // const editingRow = table.getState().editingRow;
-  // const cellval = cell.getValue();
+  console.log('AnnualLeaveEditor rendered', param);
   const editErrors = useStore((state) => state.editErrors);
   const { value, handleOnChange, handleBlur } = useEdit(param);
-  // useEffect(() => {
-  //   setLeaveVal(cellval);
-  // }, [cellval]);
-  //console.log(error);
   return (
     <NumberInput
       value={value}
-      onChange={handleOnChange}
+      onChange={(value) => {
+        console.log('AnnualLeaveEditor handleOnChange', value);
+        handleOnChange(value);
+        setFormValues({
+          ...formValues,
+          contracts: formValues.contracts.map((contract) =>
+            contract.id === param.cell.row.original.id
+              ? { ...contract, AnnualLeave: value }
+              : contract
+          ),
+        });
+      }}
       required
       min={0}
       max={200}
       error={editErrors?.AnnualLeave}
-      //  clampBehavior="strict"
     />
   );
 }
@@ -151,15 +151,14 @@ export function DateCell({ cell }) {
   }
   return <Text>{val}</Text>;
 }
-
-export default function EditIsActiveCell(param, formValues, setFormValues) {
+export function EditIsActiveCell(param, formValues, setFormValues) {
+  console.log('EditIsActiveCell rendered', param);
   const { cell } = param;
-  const [cellval, setCellValue] = useState(cell.getValue());
   const theme = useMantineTheme();
   const { value, handleOnChange, handleBlur } = useEdit(param);
   return (
     <>
-      {cellval ? (
+      {value ? (
         <Container>
           <Tooltip label="To disable the contract, please turn on the next contract">
             <Button variant="outline">Active</Button>
@@ -169,7 +168,17 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
         <Switch
           checked={value}
           onChange={(event) => {
+            console.log('EditIsActiveCell handleOnChange', event.currentTarget.checked);
             handleOnChange(event.currentTarget.checked);
+            // Update formValues to reflect change in parent
+            setFormValues({
+              ...formValues,
+              contracts: formValues.contracts.map((contract) =>
+                contract.id === cell.row.original.id
+                  ? { ...contract, IsActive: event.currentTarget.checked }
+                  : contract
+              ),
+            });
           }}
           onLabel={'Active'}
           offLabel={'InActive'}
@@ -186,7 +195,6 @@ export default function EditIsActiveCell(param, formValues, setFormValues) {
               />
             ) : (
               <IconX
-                //color={theme.colors.red[theme.fn.primaryShade()]}
                 style={{ width: rem(16), height: rem(16) }}
                 stroke={2.5}
                 color={theme.colors.red[6]}

@@ -38,7 +38,7 @@ import { IconX } from '@tabler/icons-react';
 import axios from 'axios';
 
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { usePublicHolidays } from '@/components/util/usePublicHolidays';
 export default function SignupPage() {
   interface iStaffModel {

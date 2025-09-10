@@ -5,7 +5,7 @@ import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 interface UserField {
   label: string;
   value: string | number;

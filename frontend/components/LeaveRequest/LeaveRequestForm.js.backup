@@ -30,7 +30,7 @@ import { LeaveRequestStaffInfo } from './leaveRequestStaffInfo';
 
 import { getMySession } from '@/app/lib/auth-action';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore';
+import useStore from '@/components/stores/zstore.js';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function LeaveRequestForm({
