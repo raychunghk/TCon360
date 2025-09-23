@@ -31,7 +31,9 @@ const nextConfig = {
       allowedOrigins: ['localhost:*', '127.0.0.1:*', '*.raygor.cc', '*.raygor.cc:*'],
     },
   },
-  swcMinify: true,
+  compiler: {
+    styledComponents: true,
+  },
   trailingSlash: true,
   async rewrites() {
     return [

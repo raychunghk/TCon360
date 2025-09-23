@@ -14,7 +14,7 @@ import { useStaffData } from '@/components/hooks/useStaffData';
 import useStore from '@/components/stores/zstore.js';
 import { default as useRouter } from '@/components/useCustRouter';
 import { setDatepickerPlDay } from '@/components/util/leaverequest.util';
-import { usePublicHolidays } from '@/components/util/usePublicHolidays';
+import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import { useForm, yupResolver } from '@mantine/form';
 import { format } from 'date-fns';
 import ContractTable from './ContractTable';

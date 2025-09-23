@@ -16,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly prisma: PrismaService,
     private staffService: StaffService,
-  ) {}
+  ) { }
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
@@ -142,11 +142,11 @@ export class AuthService {
 
       // Use JwtModule's configured expiresIn, fallback to TOKEN_MAX_AGE
       const tokenage = (env.TOKEN_MAX_AGE || 113000) / 1000 / 60; // Convert ms to minutes
+      console.log(`env.TOKEN_MAX_AGE`, env.TOKEN_MAX_AGE);
       console.log(
         'creating token on server, token max age in minutes',
         tokenage,
       );
-
       token = this.jwtService.sign(payload); // No options needed, JwtModule handles expiresIn
 
       // Verify the token

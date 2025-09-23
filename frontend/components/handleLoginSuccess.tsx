@@ -22,8 +22,9 @@ export const useLogin = () => {
 
       await SignIn(accessToken);
 
-      setAuthOverlayVisible(false);
+
       router.push('/'); // redirect to the dashboard page on successful login
+      setAuthOverlayVisible(false);
     } catch (error) {
       setAuthOverlayVisible(false);
       console.error('Login failed:', error);

@@ -4,17 +4,21 @@ import { parseCookies } from 'nookies';
 
 export async function fetchStaffData(get, set) {
     const { basepath, isUnauthorized, isExiting } = get();
+    if (isExiting) {
+        console.log('fetchStaffData: Skipping due to isExiting=true');
+        return;
+    }
     const cookies = parseCookies();
     const tokenCookie = cookies.token;
 
-    if (isUnauthorized || isExiting || !tokenCookie) {
-        console.log('Skipping staff data fetch', { isUnauthorized, isExiting, tokenCookie });
-        set({ status: 'unauthenticated', isAuthenticated: false });
+    if (isUnauthorized || !tokenCookie) {
+        console.log('fetchStaffData: Skipping due to unauthorized or no token', { isUnauthorized, tokenCookie });
+        set({ status: 'unauthenticated', isAuthenticated: false, isUnauthorized: true });
         return;
     }
 
     try {
-        console.log('Fetching staff data in store');
+        console.log('fetchStaffData: Fetching staff data', { basepath });
         const response = await axios.get(`${basepath}/api/user/myuser`, {
             headers: { Authorization: `Bearer ${tokenCookie}` },
         });
@@ -33,20 +37,18 @@ export async function fetchStaffData(get, set) {
             throw new Error('Invalid response status');
         }
     } catch (error) {
-        console.error('Failed to fetch staff data in store:', error);
+        console.error('fetchStaffData: Failed to fetch staff data:', error);
         if (axios.isAxiosError(error) && error.response?.status === 401) {
-            console.log('Received 401 Unauthorized, initiating sign-out in store');
-            set({ isUnauthorized: true, isExiting: true });
+            console.log('fetchStaffData: Received 401 Unauthorized, initiating sign-out');
+            set({ isUnauthorized: true, isExiting: true, status: 'unauthenticated', isAuthenticated: false });
             try {
                 await SignOut();
-                console.log('Sign-out successful in store');
+                console.log('fetchStaffData: Sign-out successful');
             } catch (signOutError) {
-                console.error('Sign-out failed in store:', signOutError);
-            } finally {
-                set({ isExiting: false, isAuthenticated: false, status: 'unauthenticated' });
+                console.error('fetchStaffData: Sign-out failed:', signOutError);
             }
         } else {
-            set({ isAuthenticated: false, status: 'unauthenticated' });
+            set({ isAuthenticated: false, status: 'unauthenticated', isUnauthorized: true });
         }
     }
 }

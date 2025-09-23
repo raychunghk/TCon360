@@ -22,21 +22,21 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { parseCookies, setCookie } from 'nookies';
 import { useRef, useState } from 'react';
 
-// Helper function to decode JWT payload (client-side)
-// This function extracts the payload from a JWT and decodes it.
-// Note: This does not verify the JWT signature, so it should not be used for security-critical checks.
 function decodeJwt(token: string) {
   try {
     const base64Url = token.split('.')[1];
-    // Replace URL-safe characters with standard base64 characters
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    // Decode base64 and then decode URI components for UTF-8 support
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
     return JSON.parse(jsonPayload);
   } catch (e) {
-    console.error("Failed to decode JWT:", e);
+    console.error('Failed to decode JWT:', e);
     return null;
   }
 }
@@ -44,7 +44,7 @@ function decodeJwt(token: string) {
 export default function LoginBody(props: any) {
   const router = useRouter();
   const passwordInputRef = useRef<HTMLInputElement>(null);
-  const { setAuthtoken, basepath } = useStore();
+  const { setAuthtoken, basepath, setIsUnauthorized, setStatus, setIsAuthenticated, fetchStaffData } = useStore();
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Tab') {
@@ -60,16 +60,17 @@ export default function LoginBody(props: any) {
   const [loginStatus, setLoginStatus] = useState('');
   const [visible, { open, close }] = useDisclosure(false);
 
-  // Variable to store the client-side timestamp before the login API call
   let clientLoginInitiatedTime: number | null = null;
 
-  async function handleLoginSuccess(response: Response, router: AppRouterInstance | string[]) {
+  async function handleLoginSuccess(response: Response, router: AppRouterInstance) {
     try {
       const data = await response.json();
       const token = data.accessToken;
       setAuthtoken(token);
-      const _maxAge = data.tokenMaxAge; // This is the duration in seconds
-
+      setStatus('authenticated');
+      setIsAuthenticated(true);
+      setIsUnauthorized(false);
+      const _maxAge = data.tokenMaxAge;
       if (_maxAge) {
         await setCookie(null, 'token', token, {
           maxAge: parseInt(_maxAge),
@@ -79,14 +80,14 @@ export default function LoginBody(props: any) {
         console.error('TOKEN_MAX_AGE is not defined by the server.');
       }
 
-      // Decode the token to get the expiry time (exp) and issued at time (iat)
+      // Fetch staff data to populate activeUser
+      await fetchStaffData();
+
       const decodedToken = decodeJwt(token);
       if (decodedToken) {
-        // --- Logging for token expiry time ---
         if (typeof decodedToken.exp === 'number') {
           const expiryTimestampSeconds = decodedToken.exp;
-          const expiryDate = new Date(expiryTimestampSeconds * 1000); // Convert to milliseconds
-
+          const expiryDate = new Date(expiryTimestampSeconds * 1000);
           const now = new Date();
           const timeRemainingMs = expiryDate.getTime() - now.getTime();
 
@@ -104,13 +105,10 @@ export default function LoginBody(props: any) {
           console.warn('[Token Expiry] Could not determine token expiry from JWT (exp claim missing or invalid).');
         }
 
-        // --- Logging for iat vs. client login time ---
         if (typeof decodedToken.iat === 'number' && clientLoginInitiatedTime !== null) {
           const iatTimestampSeconds = decodedToken.iat;
-          const iatDate = new Date(iatTimestampSeconds * 1000); // Convert to milliseconds
-
+          const iatDate = new Date(iatTimestampSeconds * 1000);
           const clientInitiatedDate = new Date(clientLoginInitiatedTime);
-
           const timeDifferenceMs = iatDate.getTime() - clientLoginInitiatedTime;
 
           console.log(
@@ -119,28 +117,26 @@ export default function LoginBody(props: any) {
             `[Time Sync Check] Difference (iat - client_initiated): ${timeDifferenceMs} ms`
           );
 
-          if (Math.abs(timeDifferenceMs) > 5000) { // Example threshold: 5 seconds
+          if (Math.abs(timeDifferenceMs) > 5000) {
             console.warn('[Time Sync Check] Significant time difference detected between client initiation and token iat!');
           } else {
             console.log('[Time Sync Check] Time difference is within acceptable limits.');
           }
-
         } else {
           console.warn('[Time Sync Check] Could not perform iat time sync check (iat claim missing or client timestamp not captured).');
         }
-
       } else {
-        console.error("Failed to decode token for time checks.");
+        console.error('Failed to decode token for time checks.');
       }
 
       const cookies = parseCookies();
       const tokenCookie = cookies.token;
-
       const signInResult = await SignIn(tokenCookie);
       if (signInResult.error) {
         console.error('Error during sign in:', signInResult.error);
+      } else {
+        router.push('/');
       }
-      router.push('/'); // This line was commented out in the original code.
     } catch (error) {
       console.error('Error in handleLoginSuccess:', error);
     }
@@ -148,12 +144,10 @@ export default function LoginBody(props: any) {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    open(); // Show loading overlay
+    open();
 
-    // Capture the client-side timestamp right before the API call
     clientLoginInitiatedTime = Date.now();
     console.log(`[Client] Login process initiated at: ${new Date(clientLoginInitiatedTime).toLocaleString()} (Unix ms: ${clientLoginInitiatedTime})`);
-
 
     const loginURL = `${basepath}/api/user/login`;
 
@@ -176,7 +170,7 @@ export default function LoginBody(props: any) {
       console.error('Network or unexpected error during login:', error);
       setLoginStatus('An unexpected error occurred. Please try again.');
     } finally {
-      close(); // Hide loading overlay
+      close();
     }
   };
 

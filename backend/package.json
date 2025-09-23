@@ -11,7 +11,7 @@
     "build2": "DATABASE_URL='file:./TCon360.db' JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=1200000 pnpm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": " DATABASE_URL='file:./TCon360.db' JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=1200000  nest start --watch",
+    "start:dev": " DATABASE_URL='file:./TCon360.db' JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=12000  nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

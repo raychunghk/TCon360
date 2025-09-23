@@ -43,7 +43,7 @@ const useStore = create((set, get) => ({
   isUnauthorized: false,
   isExiting: false,
   isAuthenticated: false,
-  status: 'loading',
+  status: 'unauthenticated', // Changed to 'unauthenticated'
   setActiveContract: (contract) => set(() => ({ activeContract: contract })),
   setActiveStaff: (staff) => set(() => ({ activeStaff: staff })),
   setActiveUser: (user) => set(() => ({ activeUser: user })),
@@ -91,8 +91,9 @@ const useStore = create((set, get) => ({
   setStatus: (status) => set(() => ({ status })),
   loadPublicHolidays: () => loadPublicHolidays(get, set),
   fetchStaffData: () => fetchStaffData(get, set),
-  clearAllState: () =>
-    set(() => ({
+  clearAllState: (options = {}) => {
+    const { preserve = [] } = options;
+    const defaultState = {
       activeContract: null,
       activeStaff: null,
       activeUser: null,
@@ -131,8 +132,14 @@ const useStore = create((set, get) => ({
       isUnauthorized: false,
       isExiting: false,
       isAuthenticated: false,
-      status: 'loading',
-    })),
+      status: 'unauthenticated', // Changed to 'unauthenticated'
+    };
+    const preservedState = {};
+    preserve.forEach((key) => {
+      preservedState[key] = get()[key];
+    });
+    set(() => ({ ...defaultState, ...preservedState }));
+  },
 }));
 
 export default useStore;

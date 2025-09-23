@@ -1,24 +1,21 @@
-'use client'
+'use client';
+import { SignOut as clientSignOut } from '@/app/lib/auth-action';
 import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.js';
 import { getBusinessDays } from '@/components/util/leaverequest.util';
-
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-
-import { SignOut as clientSignOut } from '@/app/lib/auth-action';
 import { Button, Drawer, Text } from '@mantine/core';
 import axios, { AxiosError } from 'axios';
 import { differenceInBusinessDays, format, subDays } from 'date-fns';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
 
@@ -43,7 +40,6 @@ const FrontPageCalendar = () => {
     setCalendarEvents,
     setIsFrontCalendarChangeEvent,
     setSelectedMonth,
-    clearAllState,
     timesheetDefaultDate,
     calendarEvents,
     setChargeableDays,
@@ -51,6 +47,10 @@ const FrontPageCalendar = () => {
     leaveRequestId,
     activeStaff,
     setTimesheetDefaultDate,
+    setStatus,
+    setIsAuthenticated,
+    setIsUnauthorized,
+    setIsExiting,
   } = useStore();
 
   const {
@@ -59,6 +59,7 @@ const FrontPageCalendar = () => {
     activeUser,
     activeContract,
     basepath,
+    isExiting,
   } = useStore(
     useShallow((state) => ({
       LeaveRequestPeriod: state.LeaveRequestPeriod,
@@ -66,26 +67,37 @@ const FrontPageCalendar = () => {
       activeUser: state.activeUser,
       activeContract: state.activeContract,
       basepath: state.basepath,
+      isExiting: state.isExiting,
     }))
   );
 
+  const router = useRouter();
+
   const handleSignout = async () => {
+    console.log('FrontPageCalendar: Initiating sign-out');
     destroyCookie(null, 'token');
-    clearAllState();
     await clientSignOut();
-    //router.push('/');
+    setStatus('unauthenticated');
+    setIsAuthenticated(false);
+    setIsUnauthorized(true);
+    setIsExiting(true);
+    // Rely on ClientLayout.tsx for navigation
   };
 
   const fetchEvents = useCallback(async () => {
+    if (isExiting) {
+      console.log('fetchEvents: Skipping due to isExiting=true');
+      return;
+    }
     try {
       const apiurl = `${basepath}/api/timesheet/calendar`;
       const cookies = parseCookies();
       const token = cookies.token;
 
       if (!token) {
-        // If no token, user is not logged in or session expired on client-side
+        console.warn('fetchEvents: No token found, initiating sign-out');
         await handleSignout();
-        return; // <--- IMPORTANT: Exit immediately after calling signout
+        return;
       }
 
       const headers = {
@@ -112,7 +124,7 @@ const FrontPageCalendar = () => {
         if (axiosError.response?.status === 401) {
           console.warn('Authentication error (401) during fetchEvents. Signing out.');
           await handleSignout();
-          return; // <--- IMPORTANT: Exit immediately after calling signout
+          return;
         } else {
           console.error('Error! Failed to fetch events:', axiosError);
         }
@@ -120,7 +132,7 @@ const FrontPageCalendar = () => {
         console.error('Unexpected error:', error);
       }
     }
-  }, [basepath, calendarEvents, isEventUpdated, handleSignout, setCalendarEvents]);
+  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting]);
 
   useEffect(() => {
     if (isEventUpdated) {
@@ -130,13 +142,12 @@ const FrontPageCalendar = () => {
   }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
 
   useEffect(() => {
-    if (basepath) {
+    if (basepath && !isExiting) {
       fetchEvents();
     }
-  }, [basepath, activeStaff, fetchEvents]);
+  }, [basepath, activeStaff, fetchEvents, isExiting]);
 
   useEffect(() => {
-    // Calculate total chargeable days whenever calendar events or date changes
     if (calendarEvents && calendarEvents.length > 0) {
       if (activeUser) {
         setVacationSummary(activeUser, calendarEvents);
@@ -149,12 +160,6 @@ const FrontPageCalendar = () => {
     }
   }, [calendarEvents, timesheetDefaultDate, activeUser, setIsFrontCalendarChangeEvent]);
 
-  /**
-   * A function to handle jumping to a specific month on the calendar.
-   *
-   * @param {Date} targetDate - the date to jump to
-   * @return {void}
-   */
   const handleJumpToMonth = useCallback((targetDate: Date) => {
     try {
       if (calendarRef.current) {
@@ -189,11 +194,8 @@ const FrontPageCalendar = () => {
     });
   };
 
-  const handleDeleteEvent = async (eventId: string, eventDate: Date) => {
-    // Call FullCalendar's removeEvent method to remove the event
+  const handleDeleteEvent = async () => {
     try {
-      // Logic for deleting the event from the backend would go here
-      // For now, just trigger a re-fetch to update the calendar
       setIsEventUpdated(true);
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -237,33 +239,26 @@ const FrontPageCalendar = () => {
       const leavePeriodStart = new Date(evt.leavePeriodStart);
       const leavePeriodEnd = evt.LeavePeriodEnd ? new Date(evt.LeavePeriodEnd) : null;
 
-      // If the event ends before the contract start date, don't count it
       if (eventEndDate < ContractStartDate) {
         return sum;
       }
 
-      // If the event has no end date, count the full number of leave days
       if (!leavePeriodEnd) {
         return sum + evt.leaveDays;
       }
 
-      // If the event end date is after the contract end date, count the number of leave days up to the contract end date
       if (ContractEndDate < leavePeriodEnd) {
         return sum + getBusinessDays(leavePeriodStart, ContractEndDate);
       }
 
-      // If the event start date is before the contract start date and the event end date is after the contract start date,
-      // count the number of leave days from the contract start date to the event end date
       if (leavePeriodEnd > ContractStartDate && leavePeriodStart < ContractStartDate) {
         return sum + getBusinessDays(ContractStartDate, leavePeriodEnd);
       }
 
-      // If the event end date is before the contract start date, don't count it
       if (leavePeriodEnd < ContractStartDate) {
         return sum;
       }
 
-      // Otherwise, count the full number of leave days
       return sum + evt.leaveDays;
     }, 0);
 
@@ -346,7 +341,6 @@ const FrontPageCalendar = () => {
     <>
       {formType && (
         <Drawer opened={drawerOpened} onClose={setDrawerClose} size={550} title="Vacation">
-          {/* Drawer content */}
           {leaveRequestId >= 0 && (
             <LeaveRequestForm
               formType={formType}

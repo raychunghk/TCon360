@@ -1,7 +1,7 @@
+import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import useStore from '@/components/stores/zstore.js';
 import { format, isWeekend } from 'date-fns';
 import * as Yup from 'yup';
-import { usePublicHolidays } from './usePublicHolidays';
 let arrPublicHoliday;
 export function setPublicHolidays(holidays) {
   arrPublicHoliday = holidays;
@@ -202,20 +202,10 @@ const getPublicHolidays = () => {
     // await plHoliday.loadPublicHolidays();
 
   }
-  //zustand api call method when getting state outside of comonents.
+ 
   return state.publicHolidays;
 };
-// const getPublicHolidays = () => {
-//   if (arrPublicHoliday === null) {
-//     // Assuming `publicHolidays` is the React Redux state
-//     const { publicHolidays } = useSelector((state) => ({
-//       publicHolidays: state.calendar.publicHolidays,
-//     }));
-//     return publicHolidays;
-//   } else {
-//     return arrPublicHoliday;
-//   }
-// };
+ 
 export const isPublicHoliday = (date) => {
   const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   //const _publicholidays = useContext(PublicHolidaysContext);

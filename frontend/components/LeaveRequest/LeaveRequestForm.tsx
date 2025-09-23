@@ -69,7 +69,7 @@ interface Errors {
 interface LeaveRequestFormProps {
     formType: FormType;
     leaveRequestId?: number;
-    onDeleteEvent: (id: number, date: Date) => Promise<void>;
+    onDeleteEvent: () => Promise<void>;
     onClose?: () => void;
     LeaveRequestPeriod?: LeaveRequestPeriod;
     leavePurpose?: string | null;

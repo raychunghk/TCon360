@@ -2,7 +2,6 @@
 import { auth, signOut as authSignOut, signIn } from '@/auth';
 import { Session, User } from 'next-auth';
 import { redirect } from 'next/navigation';
-
 export async function SignIn(tokenCookie: String) {
   console.log('Next server side called');
   return await signIn('custom-provider', {
@@ -32,7 +31,7 @@ export async function SignOut() {
   // after signing out. This allows the client-side code to handle the navigation
   // after any local state cleanup.
   await authSignOut({ redirect: false });
-  redirect('/');
+  redirect('/auth/login');
   // You can return a success status if the client needs to confirm the action.
   return { success: true };
 }

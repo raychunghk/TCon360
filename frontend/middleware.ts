@@ -23,15 +23,15 @@ export async function middleware(request: NextRequest) {
 
   // Check if the path is not the login page
   if (!/\/auth\/login\/?$/.test(pathname)) {
-    console.log('is login path')
+    console.log('is not login path, pathname', pathname)
     const sess = await getMySession();
 
     if (!sess) {
       const loginUrl = new URL(`${config.basepath}/auth/login`, request.url);
-       return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(loginUrl);
     }
-  }else{
-      return NextResponse.next();
+  } else {
+    return NextResponse.next();
   }
   console.log(`Next Request URL: ${request.url}`);
   if (request.url.indexOf(`:${config.frontendport}`) > 0) {

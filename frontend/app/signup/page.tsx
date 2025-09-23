@@ -37,9 +37,9 @@ import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import axios from 'axios';
 
+import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.js';
-import { usePublicHolidays } from '@/components/util/usePublicHolidays';
 export default function SignupPage() {
   interface iStaffModel {
     StaffName: string;

@@ -5,7 +5,7 @@ import { parseCookies, setCookie } from 'nookies';
 export async function handleLoginSuccess(response, router) {
   const data = await response.json();
   const token = data.accessToken;
-  const { setAuthtoken } = useStore();
+  const { setAuthtoken, setIsUnauthorized } = useStore();
   const _maxAge = process.env.TOKEN_MAX_AGE;
   console.log('_maxage in handleLoginSuccess');
   console.log(_maxAge);
@@ -26,6 +26,6 @@ export async function handleLoginSuccess(response, router) {
     token: tokenCookie,
     redirect: false,
   });
-
+  setIsUnauthorized(true);
   router.push('/'); // redirect to the dashboard page on successful login
 }

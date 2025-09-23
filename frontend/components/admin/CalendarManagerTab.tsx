@@ -9,7 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import commonstyle from '/styles/common.module.css';
 
 import { SignOut } from '@/app/lib/auth-action';
-import { usePublicHolidays } from '../util/usePublicHolidays';
+import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 
 const CalendarManagementTab = () => {
   const [icsUrl, setIcsUrl] = useState('https://www.1823.gov.hk/common/ical/tc.json');

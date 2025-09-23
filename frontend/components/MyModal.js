@@ -1,7 +1,5 @@
-// Modal.js
 
-import { useState } from 'react';
-import { Modal, Text, Button, Center } from '@mantine/core';
+import { Button, Center, Modal, Text } from '@mantine/core';
 
 export default function MyModal({ open, onClose, msg, isError = false }) {
   const title = isError ? 'Failed' : 'Success';

@@ -23,7 +23,7 @@ export class UsersController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
-  ) {}
+  ) { }
 
   //@HttpCode(200)
   //@UseGuards(LocalAuthGuard)
@@ -35,6 +35,7 @@ export class UsersController {
       const { identifier, password } = loginDto;
       const accessToken = await this.authService.login(identifier, password);
       const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+      console.log(`In login , token max age`, tokenMaxAge);
       return { accessToken, tokenMaxAge };
     } catch (error) {
       Logger.error('Login error', error);
@@ -92,14 +93,14 @@ export class UsersController {
     } catch (error) {
       Logger.error('Signup error', error);
       console.log(error);
-      //console.log(error);
+
       throw new HttpException(
         'An error occurred',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
-      //throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
-    // Handle sign-up logic here
+
   }
 
   @Get('user/myuser')

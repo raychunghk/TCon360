@@ -1,12 +1,10 @@
-import { destroyCookie } from 'nookies';
 import { signOut } from 'next-auth/react';
-import { useDispatch } from 'react-redux';
-
-//import { clearAllState } from 'pages/reducers/calendarReducer';
-//const dispatch = useDispatch();
+import { destroyCookie } from 'nookies';
+import { createContext } from 'react';
+import { dispatch } from 'react-redux';
+export const UtilsContext = createContext();
 export const handleSignout = () => {
   destroyCookie(null, 'token');
-  //dispatch(clearAllState());
-
+  dispatch(clearAllState());
   signOut();
 };
