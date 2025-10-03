@@ -62,3 +62,13 @@ body {
   background: #ff9933 !important;
 }
 /* Change the button radius */
+.ctrtblhead {
+  white-space: pre-wrap !important;
+}
+.ctrtblhead  .mrt-table-head-cell-content-wrapper,
+.ctrtblhead > div {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+
+ 

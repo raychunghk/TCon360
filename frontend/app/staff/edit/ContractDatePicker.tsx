@@ -3,15 +3,17 @@ import { useEffect } from 'react';
 
 import useStore from '@/components/stores/zstore.js';
 import { useEdit } from './useEdit';
+
 interface UseEditReturn {
-  value: string | Date;  // adjust this type based on what useEdit actually returns
+  value: string | Date;
   handleOnChange: (value: any) => void;
   handleBlur: () => void;
 }
 
 export function ContractDatePicker({ param, columnKey, myRenderDay, error }) {
   const { renderedCellValue, cell, table, column, row } = param;
-  const { value, handleOnChange, handleBlur } = useEdit(param) as UseEditReturn;;
+  const { value, handleOnChange, handleBlur } = useEdit(param) as UseEditReturn;
+  const { contractStartDate, contractEndDate, contractStartMaxDate, setContractStartDate, setContractEndDate, setContractStartMaxDate, setContractEndMinDate } = useStore();
 
   function getEditDatePickerProps(fieldName: string) {
     const dtPickerProps = {
@@ -19,52 +21,50 @@ export function ContractDatePicker({ param, columnKey, myRenderDay, error }) {
       firstDayOfWeek: 0 as DayOfWeek,
       name: fieldName,
     };
-
     return dtPickerProps;
   }
-  const columnid = column.id;
+
   const isContractEndDate = column.id === 'ContractEndDate';
   const isContractStartDate = column.id === 'ContractStartDate';
-  const constractStartDate = useStore((state) => state.constractStartDate);
-  const constractEndDate = useStore((state) => state.constractEndDate);
-  const contractStartMaxDate = useStore((state) => state.contractStartMaxDate);
-  const contractEndMinDate = useStore((state) => state.contractEndMinDate);
-  const setContractStartDate = useStore((state) => state.setContractStartDate);
-  const setContractEndDate = useStore((state) => state.setContractEndDate);
-  const setContractStartMaxDate = useStore((state) => state.setContractStartMaxDate);
-  const setContractEndMinDate = useStore((state) => state.setContractEndMinDate);
 
   useEffect(() => {
-    if (isContractStartDate && !constractStartDate) {
+    if (isContractStartDate && !contractStartDate) {
       setContractStartDate(new Date(value));
       setContractEndMinDate(new Date(value));
     }
-    if (isContractEndDate && !constractEndDate) {
+    if (isContractEndDate && !contractEndDate) {
       setContractEndDate(new Date(value));
-      setContractStartMaxDate(new Date(value));
     }
-  }, [constractStartDate, constractEndDate, value]);
+  }, [contractStartDate, contractEndDate, value, isContractStartDate, isContractEndDate, setContractStartDate, setContractEndMinDate, setContractEndDate]);
 
-  if (isContractEndDate) console.log('contractEndMinDate', contractEndMinDate);
+  // Console logs for ContractEndDate
+  if (isContractEndDate) {
+    console.log('ContractDatePicker: Rendering ContractEndDate', {
+      minDate: row.original.ContractStartDate ? new Date(row.original.ContractStartDate).toISOString() : null,
+      maxDate: null,
+      currentValue: value ? new Date(value).toISOString() : null,
+      rowId: row.original.id,
+      isActive: row.original.IsActive,
+    });
+  }
+
   return (
     <>
       <DatePickerInput
-        ///firstDayOfWeek={0}
-        {...getEditDatePickerProps('ContractStartDate')}
+        {...getEditDatePickerProps(columnKey)}
         size="sm"
         error={error}
-        value={new Date(value)}
+        value={value ? new Date(value) : null}
         withCellSpacing={false}
-        // excludeDate={excludeHoliday}
         renderDay={myRenderDay}
         style={{ zIndex: 9999 }}
-        minDate={isContractEndDate && contractEndMinDate}
-        maxDate={isContractStartDate && contractStartMaxDate}
+        minDate={isContractEndDate ? (row.original.ContractStartDate ? new Date(row.original.ContractStartDate) : undefined) : undefined}
+        maxDate={isContractStartDate ? contractStartMaxDate : undefined}
         onChange={async (newValue) => {
-          //  const newDate = new Date(newValue);
-          console.log('onchange param', param);
+          console.log('ContractDatePicker: onChange', { columnKey, newValue });
           if (isContractStartDate) {
             setContractStartDate(newValue);
+            setContractEndMinDate(newValue ? new Date(newValue) : null);
           }
           if (isContractEndDate) {
             setContractEndDate(newValue);

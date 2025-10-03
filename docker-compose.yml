@@ -3,17 +3,33 @@
 version: "3.8"
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: tcon360_backend
+    container_name: tcbackend
     ports:
-      - "3000:3000"
+      - "3800:3800" # Updated to map host port 3800 to container port 3800
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
+      - JWT_SECRET=${JWT_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - BACKEND_PORT=3800
+      - TOKEN_MAX_AGE=${TOKEN_MAX_AGE}
 
   frontend:
-    build: ./frontend
+    image: tcon360_frontend
     ports:
-      - "8235:3000"
+      - "8255:8255" # Frontend remains on 8255
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
+      - JWT_SECRET=${JWT_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - BACKEND_PORT=3800 # Align with backend port
+      - TOKEN_MAX_AGE=${TOKEN_MAX_AGE}
+      - FRONTEND_PORT=8255
+      - USE_REVERSE_PROXY=false
+      - PROXY_PATH=/absproxy
+      - NEXT_PUBLIC_BASEPATH=${NEXT_PUBLIC_BASEPATH}
     depends_on:
       - backend

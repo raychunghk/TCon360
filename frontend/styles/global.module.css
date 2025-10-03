@@ -26,3 +26,11 @@ img {
   max-width: 100%;
   display: block;
 }
+.ctrtblhead {
+  white-space: pre-wrap !important;
+}
+
+.ctrtblhead > div {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}

@@ -1,0 +1,894 @@
+.
+├── a.jpg
+├── backend
+│   ├── build.sh
+│   ├── dist
+│   │   ├── admin
+│   │   │   ├── admin.controller.d.ts
+│   │   │   ├── admin.controller.js
+│   │   │   ├── admin.controller.js.map
+│   │   │   ├── admin.module.d.ts
+│   │   │   ├── admin.module.js
+│   │   │   ├── admin.module.js.map
+│   │   │   ├── admin.service.d.ts
+│   │   │   ├── admin.service.js
+│   │   │   └── admin.service.js.map
+│   │   ├── app.controller.d.ts
+│   │   ├── app.controller.js
+│   │   ├── app.controller.js.map
+│   │   ├── app.module.d.ts
+│   │   ├── app.module.js
+│   │   ├── app.module.js.map
+│   │   ├── app.service.d.ts
+│   │   ├── app.service.js
+│   │   ├── app.service.js.map
+│   │   ├── auth
+│   │   │   ├── auth.module.d.ts
+│   │   │   ├── auth.module.js
+│   │   │   ├── auth.module.js.map
+│   │   │   ├── auth.service.d.ts
+│   │   │   ├── auth.service.js
+│   │   │   ├── auth.service.js.map
+│   │   │   ├── jawAuthGuard.d.ts
+│   │   │   ├── jawAuthGuard.js
+│   │   │   ├── jawAuthGuard.js.map
+│   │   │   ├── jwtpayload.interface.d.ts
+│   │   │   ├── jwtpayload.interface.js
+│   │   │   ├── jwtpayload.interface.js.map
+│   │   │   ├── jwt.strategy.d.ts
+│   │   │   ├── jwt.strategy.js
+│   │   │   ├── jwt.strategy.js.map
+│   │   │   ├── local-auth.guard.d.ts
+│   │   │   ├── local-auth.guard.js
+│   │   │   ├── local-auth.guard.js.map
+│   │   │   ├── local.strategy.d.ts
+│   │   │   ├── local.strategy.js
+│   │   │   ├── local.strategy.js.map
+│   │   │   ├── passport.strategy.d.ts
+│   │   │   ├── passport.strategy.js
+│   │   │   ├── passport.strategy.js.map
+│   │   │   ├── users.controller.d.ts
+│   │   │   ├── users.controller.js
+│   │   │   ├── users.controller.js.map
+│   │   │   ├── users.service.d.ts
+│   │   │   ├── users.service.js
+│   │   │   └── users.service.js.map
+│   │   ├── common
+│   │   │   ├── logger.middleware.d.ts
+│   │   │   ├── logger.middleware.js
+│   │   │   └── logger.middleware.js.map
+│   │   ├── docx
+│   │   │   ├── docx.controller.d.ts
+│   │   │   ├── docx.controller.js
+│   │   │   ├── docx.controller.js.map
+│   │   │   ├── docx.service.d.ts
+│   │   │   ├── docx.service.js
+│   │   │   └── docx.service.js.map
+│   │   ├── guards
+│   │   │   ├── JwtAuthGuard.d.ts
+│   │   │   ├── JwtAuthGuard.js
+│   │   │   └── JwtAuthGuard.js.map
+│   │   ├── healthcheck
+│   │   │   ├── healthcheck.controller.d.ts
+│   │   │   ├── healthcheck.controller.js
+│   │   │   ├── healthcheck.controller.js.map
+│   │   │   ├── healthcheck.module.d.ts
+│   │   │   ├── healthcheck.module.js
+│   │   │   └── healthcheck.module.js.map
+│   │   ├── hello
+│   │   │   ├── hello
+│   │   │   │   ├── hello.controller.d.ts
+│   │   │   │   ├── hello.controller.js
+│   │   │   │   └── hello.controller.js.map
+│   │   │   ├── hello.module.d.ts
+│   │   │   ├── hello.module.js
+│   │   │   └── hello.module.js.map
+│   │   ├── leaverequest
+│   │   │   ├── leaverequest.controller.d.ts
+│   │   │   ├── leaverequest.controller.js
+│   │   │   ├── leaverequest.controller.js.map
+│   │   │   ├── leaverequest.module.d.ts
+│   │   │   ├── leaverequest.module.js
+│   │   │   ├── leaverequest.module.js.map
+│   │   │   └── service
+│   │   │       ├── leaverequest.service.d.ts
+│   │   │       ├── leaverequest.service.js
+│   │   │       └── leaverequest.service.js.map
+│   │   ├── main.d.ts
+│   │   ├── main.js
+│   │   ├── main.js.map
+│   │   ├── models
+│   │   │   ├── customDTOs.d.ts
+│   │   │   ├── customDTOs.js
+│   │   │   └── customDTOs.js.map
+│   │   ├── prisma
+│   │   │   ├── prisma.service.d.ts
+│   │   │   ├── prisma.service.js
+│   │   │   └── prisma.service.js.map
+│   │   ├── shared
+│   │   │   ├── AuthReqInterface.d.ts
+│   │   │   ├── AuthReqInterface.js
+│   │   │   ├── AuthReqInterface.js.map
+│   │   │   ├── staffFiles.service.d.ts
+│   │   │   ├── staffFiles.service.js
+│   │   │   └── staffFiles.service.js.map
+│   │   ├── staff
+│   │   │   ├── service
+│   │   │   │   ├── staff.service.d.ts
+│   │   │   │   ├── staff.service.js
+│   │   │   │   └── staff.service.js.map
+│   │   │   ├── staff.controller.d.ts
+│   │   │   ├── staff.controller.js
+│   │   │   ├── staff.controller.js.map
+│   │   │   ├── staff.module.d.ts
+│   │   │   ├── staff.module.js
+│   │   │   └── staff.module.js.map
+│   │   ├── timesheet
+│   │   │   ├── timesheet.controller.d.ts
+│   │   │   ├── timesheet.controller.js
+│   │   │   ├── timesheet.controller.js.map
+│   │   │   ├── timesheet.module.d.ts
+│   │   │   ├── timesheet.module.js
+│   │   │   ├── timesheet.module.js.map
+│   │   │   ├── timesheet.service.d.ts
+│   │   │   ├── timesheet.service.js
+│   │   │   └── timesheet.service.js.map
+│   │   ├── tsconfig.build.tsbuildinfo
+│   │   └── vacations
+│   │       ├── vacations
+│   │       │   ├── vacations.service.d.ts
+│   │       │   ├── vacations.service.js
+│   │       │   └── vacations.service.js.map
+│   │       ├── vacations.controller.d.ts
+│   │       ├── vacations.controller.js
+│   │       ├── vacations.controller.js.map
+│   │       ├── vacations.module.d.ts
+│   │       ├── vacations.module.js
+│   │       └── vacations.module.js.map
+│   ├── Dockerfile
+│   ├── Dockerfile copy
+│   ├── nest-cli.json
+│   ├── node_modules
+│   │   ├── argon2 -> ../../node_modules/.pnpm/argon2@0.41.1/node_modules/argon2
+│   │   ├── @auth
+│   │   │   └── express -> ../../../node_modules/.pnpm/@auth+express@0.11.0_express@5.1.0/node_modules/@auth/express
+│   │   ├── axios -> ../../node_modules/.pnpm/axios@1.11.0/node_modules/axios
+│   │   ├── bcryptjs -> ../../node_modules/.pnpm/bcryptjs@2.4.3/node_modules/bcryptjs
+│   │   ├── cache-manager -> ../../node_modules/.pnpm/cache-manager@6.4.3/node_modules/cache-manager
+│   │   ├── class-transformer -> ../../node_modules/.pnpm/class-transformer@0.5.1/node_modules/class-transformer
+│   │   ├── class-validator -> ../../node_modules/.pnpm/class-validator@0.14.2/node_modules/class-validator
+│   │   ├── clsx -> ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx
+│   │   ├── date-fns -> ../../node_modules/.pnpm/date-fns@4.1.0/node_modules/date-fns
+│   │   ├── dayjs -> ../../node_modules/.pnpm/dayjs@1.11.13/node_modules/dayjs
+│   │   ├── decimal.js -> ../../node_modules/.pnpm/decimal.js@10.6.0/node_modules/decimal.js
+│   │   ├── docxtemplater -> ../../node_modules/.pnpm/docxtemplater@3.65.2/node_modules/docxtemplater
+│   │   ├── dotenv -> ../../node_modules/.pnpm/dotenv@16.6.1/node_modules/dotenv
+│   │   ├── downloadjs -> ../../node_modules/.pnpm/downloadjs@1.4.7/node_modules/downloadjs
+│   │   ├── eslint -> ../../node_modules/.pnpm/eslint@9.34.0_jiti@2.5.1/node_modules/eslint
+│   │   ├── eslint-config-prettier -> ../../node_modules/.pnpm/eslint-config-prettier@10.1.8_eslint@9.34.0_jiti@2.5.1_/node_modules/eslint-config-prettier
+│   │   ├── eslint-plugin-prettier -> ../../node_modules/.pnpm/eslint-plugin-prettier@5.5.3_@types+eslint@9.6.1_eslint-config-prettier@10.1.8_eslint@9_16b0447084c6a02aef2d22f1cfe30b97/node_modules/eslint-plugin-prettier
+│   │   ├── exceljs -> ../../node_modules/.pnpm/exceljs@4.4.0/node_modules/exceljs
+│   │   ├── express-session -> ../../node_modules/.pnpm/express-session@1.18.2/node_modules/express-session
+│   │   ├── @fastify
+│   │   │   ├── secure-session -> ../../../node_modules/.pnpm/@fastify+secure-session@8.2.0/node_modules/@fastify/secure-session
+│   │   │   └── static -> ../../../node_modules/.pnpm/@fastify+static@8.2.0/node_modules/@fastify/static
+│   │   ├── ical2json -> ../../node_modules/.pnpm/ical2json@4.1.0/node_modules/ical2json
+│   │   ├── jest -> ../../node_modules/.pnpm/jest@29.7.0_@types+node@22.17.0_babel-plugin-macros@3.1.0_ts-node@10.9.2_@types+node@22.17.0_typescript@5.8.3_/node_modules/jest
+│   │   ├── jsonwebtoken -> ../../node_modules/.pnpm/jsonwebtoken@9.0.2/node_modules/jsonwebtoken
+│   │   ├── jszip -> ../../node_modules/.pnpm/jszip@3.10.1/node_modules/jszip
+│   │   ├── md5 -> ../../node_modules/.pnpm/md5@2.3.0/node_modules/md5
+│   │   ├── multer -> ../../node_modules/.pnpm/multer@2.0.2/node_modules/multer
+│   │   ├── @nestjs
+│   │   │   ├── cache-manager -> ../../../node_modules/.pnpm/@nestjs+cache-manager@3.0.1_@nestjs+common@11.1.5_class-transformer@0.5.1_class-validat_0d8a6f51e5ad30f20204c3e89931d5f0/node_modules/@nestjs/cache-manager
+│   │   │   ├── cli -> ../../../node_modules/.pnpm/@nestjs+cli@11.0.10_@types+node@22.17.0/node_modules/@nestjs/cli
+│   │   │   ├── common -> ../../../node_modules/.pnpm/@nestjs+common@11.1.5_class-transformer@0.5.1_class-validator@0.14.2_reflect-metadata@0.2.2_rxjs@7.8.2/node_modules/@nestjs/common
+│   │   │   ├── core -> ../../../node_modules/.pnpm/@nestjs+core@11.1.5_@nestjs+common@11.1.5_class-transformer@0.5.1_class-validator@0.14._d5af0b00dd249ba01eff1b1c70e5f934/node_modules/@nestjs/core
+│   │   │   ├── jwt -> ../../../node_modules/.pnpm/@nestjs+jwt@11.0.0_@nestjs+common@11.1.5_class-transformer@0.5.1_class-validator@0.14.2_80c3dce4be0ede8bef6ef5d14f44b9c9/node_modules/@nestjs/jwt
+│   │   │   ├── passport -> ../../../node_modules/.pnpm/@nestjs+passport@11.0.5_@nestjs+common@11.1.5_class-transformer@0.5.1_class-validator@0_53b9361df06616b1bc62aaacaecf0769/node_modules/@nestjs/passport
+│   │   │   ├── platform-express -> ../../../node_modules/.pnpm/@nestjs+platform-express@11.1.5_@nestjs+common@11.1.5_class-transformer@0.5.1_class-val_7e6f88effafabec82ab6d823de011d37/node_modules/@nestjs/platform-express
+│   │   │   ├── platform-fastify -> ../../../node_modules/.pnpm/@nestjs+platform-fastify@11.1.5_@fastify+static@8.2.0_@nestjs+common@11.1.5_class-trans_7f0bf567fdfcc45726eff91eef19df6f/node_modules/@nestjs/platform-fastify
+│   │   │   ├── schematics -> ../../../node_modules/.pnpm/@nestjs+schematics@11.0.7_chokidar@4.0.3_typescript@5.8.3/node_modules/@nestjs/schematics
+│   │   │   ├── swagger -> ../../../node_modules/.pnpm/@nestjs+swagger@11.2.0_@fastify+static@8.2.0_@nestjs+common@11.1.5_class-transformer@0._be20ba1e411db75c87f41dcffb38465c/node_modules/@nestjs/swagger
+│   │   │   └── testing -> ../../../node_modules/.pnpm/@nestjs+testing@11.1.5_@nestjs+common@11.1.5_class-transformer@0.5.1_class-validator@0._7be3567c2e402cc1db1654c0d7e5e3d0/node_modules/@nestjs/testing
+│   │   ├── node-unoconv -> ../../node_modules/.pnpm/node-unoconv@1.0.5/node_modules/node-unoconv
+│   │   ├── passport -> ../../node_modules/.pnpm/passport@0.7.0/node_modules/passport
+│   │   ├── passport-jwt -> ../../node_modules/.pnpm/passport-jwt@4.0.1/node_modules/passport-jwt
+│   │   ├── passport-local -> ../../node_modules/.pnpm/passport-local@1.0.0/node_modules/passport-local
+│   │   ├── path -> ../../node_modules/.pnpm/path@0.12.7/node_modules/path
+│   │   ├── pizzip -> ../../node_modules/.pnpm/pizzip@3.2.0/node_modules/pizzip
+│   │   ├── prettier -> ../../node_modules/.pnpm/prettier@3.6.2/node_modules/prettier
+│   │   ├── @prisma
+│   │   │   └── client -> ../../../node_modules/.pnpm/@prisma+client@6.12.0_prisma@6.12.0_typescript@5.8.3__typescript@5.8.3/node_modules/@prisma/client
+│   │   ├── prisma -> ../../node_modules/.pnpm/prisma@6.12.0_typescript@5.8.3/node_modules/prisma
+│   │   ├── reflect-metadata -> ../../node_modules/.pnpm/reflect-metadata@0.2.2/node_modules/reflect-metadata
+│   │   ├── rxjs -> ../../node_modules/.pnpm/rxjs@7.8.2/node_modules/rxjs
+│   │   ├── source-map-support -> ../../node_modules/.pnpm/source-map-support@0.5.21/node_modules/source-map-support
+│   │   ├── sqlite3 -> ../../node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3
+│   │   ├── supertest -> ../../node_modules/.pnpm/supertest@7.1.4/node_modules/supertest
+│   │   ├── @tcon360
+│   │   │   └── config -> ../../../packages/config
+│   │   ├── tsconfig-paths -> ../../node_modules/.pnpm/tsconfig-paths@4.2.0/node_modules/tsconfig-paths
+│   │   ├── ts-jest -> ../../node_modules/.pnpm/ts-jest@29.4.0_@babel+core@7.28.3_@jest+transform@30.1.2_@jest+types@30.0.5_babel-jest@_505a9ce9a66e557a7f915f12bfd90c3a/node_modules/ts-jest
+│   │   ├── ts-loader -> ../../node_modules/.pnpm/ts-loader@9.5.2_typescript@5.8.3_webpack@5.100.2/node_modules/ts-loader
+│   │   ├── ts-node -> ../../node_modules/.pnpm/ts-node@10.9.2_@types+node@22.17.0_typescript@5.8.3/node_modules/ts-node
+│   │   ├── @types
+│   │   │   ├── cache-manager -> ../../../node_modules/.pnpm/@types+cache-manager@5.0.0/node_modules/@types/cache-manager
+│   │   │   ├── express -> ../../../node_modules/.pnpm/@types+express@5.0.3/node_modules/@types/express
+│   │   │   ├── jest -> ../../../node_modules/.pnpm/@types+jest@29.5.14/node_modules/@types/jest
+│   │   │   ├── multer -> ../../../node_modules/.pnpm/@types+multer@2.0.0/node_modules/@types/multer
+│   │   │   ├── node -> ../../../node_modules/.pnpm/@types+node@22.17.0/node_modules/@types/node
+│   │   │   └── supertest -> ../../../node_modules/.pnpm/@types+supertest@6.0.3/node_modules/@types/supertest
+│   │   ├── typescript -> ../../node_modules/.pnpm/typescript@5.8.3/node_modules/typescript
+│   │   ├── @typescript-eslint
+│   │   │   ├── eslint-plugin -> ../../../node_modules/.pnpm/@typescript-eslint+eslint-plugin@7.18.0_@typescript-eslint+parser@7.18.0_eslint@9.34.0__bd532d74b2eb4753f14f230b9934c567/node_modules/@typescript-eslint/eslint-plugin
+│   │   │   └── parser -> ../../../node_modules/.pnpm/@typescript-eslint+parser@7.18.0_eslint@9.34.0_jiti@2.5.1__typescript@5.8.3/node_modules/@typescript-eslint/parser
+│   │   ├── winston -> ../../node_modules/.pnpm/winston@3.17.0/node_modules/winston
+│   │   └── xlsx -> ../../node_modules/.pnpm/xlsx@0.18.5/node_modules/xlsx
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── pnpm-lock.yaml
+│   ├── prisma
+│   │   ├── backup
+│   │   │   ├── TCon360.db.backup2024sep20
+│   │   │   ├── TCon360.db.backupjan.db
+│   │   │   ├── TCon360.db.good.db
+│   │   │   ├── TCon360.db-shm
+│   │   │   ├── TCon360.db-wal
+│   │   │   └── TCon360.new.v6.db
+│   │   ├── ics.mjs
+│   │   ├── migrations
+│   │   │   ├── 20240308083112_init
+│   │   │   │   └── migration.sql
+│   │   │   ├── 20250211090410_first
+│   │   │   │   └── migration.sql
+│   │   │   └── migration_lock.toml
+│   │   ├── privatedata.mjs
+│   │   ├── schema.prisma
+│   │   ├── seed.mjs
+│   │   ├── tc.ics
+│   │   ├── TCon360.backup10feb2005.db
+│   │   ├── TCon360 copy.db
+│   │   ├── TCon360.db
+│   │   ├── TCon360.db.feb
+│   │   ├── TCon360.db.feb copy.db
+│   │   └── TCon360.db-shm
+│   ├── README.md
+│   ├── src
+│   │   ├── admin
+│   │   │   ├── admin.controller.spec.ts
+│   │   │   ├── admin.controller.ts
+│   │   │   ├── admin.module.ts
+│   │   │   ├── admin.service.spec.ts
+│   │   │   └── admin.service.ts
+│   │   ├── app.controller.spec.ts
+│   │   ├── app.controller.ts
+│   │   ├── app.module.ts
+│   │   ├── app.service.ts
+│   │   ├── auth
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── jawAuthGuard.ts
+│   │   │   ├── jwtpayload.interface.ts
+│   │   │   ├── jwt.strategy.ts
+│   │   │   ├── local-auth.guard.ts
+│   │   │   ├── local.strategy.ts
+│   │   │   ├── passport.strategy.ts
+│   │   │   ├── users.controller.spec.ts
+│   │   │   ├── users.controller.ts
+│   │   │   ├── users.service.spec.ts
+│   │   │   └── users.service.ts
+│   │   ├── common
+│   │   │   └── logger.middleware.ts
+│   │   ├── docx
+│   │   │   ├── docx.controller.ts
+│   │   │   └── docx.service.ts
+│   │   ├── excel
+│   │   │   └── readExcelFile.js
+│   │   ├── guards
+│   │   │   └── JwtAuthGuard.ts
+│   │   ├── healthcheck
+│   │   │   ├── healthcheck.controller.ts
+│   │   │   └── healthcheck.module.ts
+│   │   ├── hello
+│   │   │   ├── hello
+│   │   │   │   ├── hello.controller.spec.ts
+│   │   │   │   └── hello.controller.ts
+│   │   │   └── hello.module.ts
+│   │   ├── leaverequest
+│   │   │   ├── leaverequest.controller.ts
+│   │   │   ├── leaverequest.module.ts
+│   │   │   └── service
+│   │   │       ├── leaveRequest.service.spec.ts
+│   │   │       ├── leaverequest.service.ts
+│   │   │       └── makeview.sql
+│   │   ├── main.ts
+│   │   ├── models
+│   │   │   └── customDTOs.ts
+│   │   ├── prisma
+│   │   │   └── prisma.service.ts
+│   │   ├── shared
+│   │   │   ├── AuthReqInterface.ts
+│   │   │   └── staffFiles.service.ts
+│   │   ├── staff
+│   │   │   ├── service
+│   │   │   │   ├── staff.service.ts
+│   │   │   │   └── user.service.spec.ts
+│   │   │   ├── staff.controller.spec.ts
+│   │   │   ├── staff.controller.ts
+│   │   │   └── staff.module.ts
+│   │   ├── timesheet
+│   │   │   ├── controller
+│   │   │   ├── service
+│   │   │   ├── timesheet.controller.spec.ts
+│   │   │   ├── timesheet.controller.ts
+│   │   │   ├── timesheet.module.ts
+│   │   │   ├── timesheet.service.spec.ts
+│   │   │   └── timesheet.service.ts
+│   │   └── vacations
+│   │       ├── vacations
+│   │       │   └── vacations.service.ts
+│   │       ├── vacations.controller.ts
+│   │       └── vacations.module.ts
+│   ├── tc.json
+│   ├── test
+│   │   ├── app.e2e-spec.ts
+│   │   └── jest-e2e.json
+│   ├── timesheet
+│   │   ├── 2023-03 - Ray Signed Time Sheet.pdf
+│   │   ├── backup
+│   │   │   ├── T26TimeSheet.xls
+│   │   │   └── T26TimeSheet.xlsx
+│   │   ├── LeaveAppForm_01282025060531.docx
+│   │   ├── LeaveAppForm_02052025071157.docx
+│   │   ├── LeaveAppForm_04262025110644.docx
+│   │   ├── LeaveAppForm_04262025111859.docx
+│   │   ├── LeaveAppForm_04262025115644.docx
+│   │   ├── LeaveAppForm_04262025125355.docx
+│   │   ├── LeaveAppForm_04262025125411.docx
+│   │   ├── LeaveAppForm_04262025155722.docx
+│   │   ├── LeaveAppForm_04262025160047.docx
+│   │   ├── LeaveAppForm_04262025160155.docx
+│   │   ├── LeaveAppForm_04262025161651.docx
+│   │   ├── LeaveAppForm_04262025180633.docx
+│   │   ├── LeaveAppForm_04262025180653.docx
+│   │   ├── LeaveAppForm_04262025180704.docx
+│   │   ├── LeaveAppForm_04262025180721.docx
+│   │   ├── LeaveAppForm_04272025050801.docx
+│   │   ├── LeaveAppForm_04272025050818.docx
+│   │   ├── LeaveAppForm_04272025055435.docx
+│   │   ├── LeaveAppForm_04272025055512.docx
+│   │   ├── LeaveAppForm_04272025055559.docx
+│   │   ├── LeaveAppForm_04272025055616.docx
+│   │   ├── LeaveAppForm_04272025055626.docx
+│   │   ├── LeaveAppForm_04272025055640.docx
+│   │   ├── LeaveAppForm_04272025055834.docx
+│   │   ├── LeaveAppForm_04272025055852.docx
+│   │   ├── LeaveAppForm_04272025055905.docx
+│   │   ├── LeaveAppForm_04272025061335.docx
+│   │   ├── LeaveAppForm_04272025061532.docx
+│   │   ├── LeaveAppForm_04272025061621.docx
+│   │   ├── LeaveAppForm_04272025061637.docx
+│   │   ├── LeaveAppForm_04272025061701.docx
+│   │   ├── LeaveAppForm_04272025061738.docx
+│   │   ├── LeaveAppForm_04272025062422.docx
+│   │   ├── LeaveAppForm_04272025062442.docx
+│   │   ├── LeaveAppForm_04272025062640.docx
+│   │   ├── LeaveAppForm_04272025062858.docx
+│   │   ├── LeaveAppForm_04272025062943.docx
+│   │   ├── LeaveAppForm_04272025063002.docx
+│   │   ├── LeaveAppForm_04272025063120.docx
+│   │   ├── LeaveAppForm_04272025063321.docx
+│   │   ├── LeaveAppForm_04272025064151.docx
+│   │   ├── LeaveAppForm_04272025064209.docx
+│   │   ├── LeaveAppForm_04272025064223.docx
+│   │   ├── LeaveAppForm_04272025064234.docx
+│   │   ├── LeaveAppForm_04272025065236.docx
+│   │   ├── LeaveAppForm_04272025065250.docx
+│   │   ├── LeaveAppForm_04272025065256.docx
+│   │   ├── LeaveAppForm_04272025065302.docx
+│   │   ├── LeaveAppForm_04272025065315.docx
+│   │   ├── LeaveAppForm_04272025065321.docx
+│   │   ├── LeaveAppForm_04272025065329.docx
+│   │   ├── LeaveAppForm_04272025065339.docx
+│   │   ├── LeaveAppForm_04272025065914.docx
+│   │   ├── LeaveAppForm_04272025080755.docx
+│   │   ├── LeaveAppForm_04272025081210.docx
+│   │   ├── LeaveAppForm_04272025081227.docx
+│   │   ├── LeaveAppForm_04272025081822.docx
+│   │   ├── LeaveAppForm_04272025081832.docx
+│   │   ├── LeaveAppForm_04272025081844.docx
+│   │   ├── LeaveAppForm_04272025082639.docx
+│   │   ├── LeaveAppForm_04272025082847.docx
+│   │   ├── LeaveAppForm_04272025082955.docx
+│   │   ├── LeaveAppForm_04272025083041.docx
+│   │   ├── LeaveAppForm_04272025083950.docx
+│   │   ├── LeaveAppForm_04272025084010.docx
+│   │   ├── LeaveAppForm_04272025084024.docx
+│   │   ├── LeaveAppForm_04272025084956.docx
+│   │   ├── LeaveAppForm_04272025085006.docx
+│   │   ├── LeaveAppForm_06062025050718.docx
+│   │   ├── LeaveAppForm_06182025090206.docx
+│   │   ├── LeaveAppForm_07312025064946.docx
+│   │   ├── LeaveAppForm_07312025094505.docx
+│   │   ├── LeaveAppForm_07312025094521.docx
+│   │   ├── LeaveAppForm_08012025065501.docx
+│   │   ├── LeaveAppForm_08012025065516.docx
+│   │   ├── LeaveAppForm_08012025065538.docx
+│   │   ├── LeaveAppForm_08012025065848.docx
+│   │   ├── LeaveAppForm_08012025071146.docx
+│   │   ├── LeaveAppForm_08012025071154.docx
+│   │   ├── LeaveAppForm_08012025071208.docx
+│   │   ├── LeaveAppForm_08012025071226.docx
+│   │   ├── LeaveAppForm_08082025082606.docx
+│   │   ├── LeaveAppForm_08082025082631.docx
+│   │   ├── LeaveAppForm_08082025083544.docx
+│   │   ├── LeaveAppForm_08082025083553.docx
+│   │   ├── LeaveAppForm_08082025084321.docx
+│   │   ├── LeaveAppForm_08112025024053.docx
+│   │   ├── LeaveAppForm_09092024093353.docx
+│   │   ├── LeaveAppForm_09092024093410.docx
+│   │   ├── LeaveAppForm_09092024094124.docx
+│   │   ├── LeaveAppForm_09102024093049.docx
+│   │   ├── LeaveAppForm_09102024093300.docx
+│   │   ├── LeaveAppForm_09102024093350.docx
+│   │   ├── LeaveAppForm_09102024094601.docx
+│   │   ├── LeaveAppForm_09112024020114.docx
+│   │   ├── LeaveAppForm_09112024020422.docx
+│   │   ├── LeaveAppForm_09112024020658.docx
+│   │   ├── LeaveAppForm_09112024022854.docx
+│   │   ├── LeaveAppForm_09112024023134.docx
+│   │   ├── LeaveAppForm_09112024024016.docx
+│   │   ├── LeaveAppForm_09112024024321.docx
+│   │   ├── LeaveAppForm_09112024024347.docx
+│   │   ├── LeaveAppForm_09172024082659.docx
+│   │   ├── LeaveAppForm_09172024082722.docx
+│   │   ├── LeaveAppForm_09172024085651.docx
+│   │   ├── LeaveAppForm_09172024093043.docx
+│   │   ├── LeaveAppForm_09202024014048.docx
+│   │   ├── LeaveAppForm_09202024021336.docx
+│   │   ├── LeaveAppForm_09202024025414.docx
+│   │   ├── LeaveAppForm_09242024030407.docx
+│   │   ├── LeaveAppForm_09302024091843.docx
+│   │   ├── LeaveAppForm_09302024091908.docx
+│   │   ├── LeaveAppForm_10022024015319.docx
+│   │   ├── LeaveAppForm_10022024023927.docx
+│   │   ├── LeaveAppForm_10022024025744.docx
+│   │   ├── LeaveAppForm_10022024032837.docx
+│   │   ├── LeaveAppForm_10022024032931.docx
+│   │   ├── LeaveAppForm_10022024055251.docx
+│   │   ├── LeaveAppForm_10022024055302.docx
+│   │   ├── LeaveAppForm_10022024055841.docx
+│   │   ├── LeaveAppForm_10022024055856.docx
+│   │   ├── LeaveAppForm_10022024060125.docx
+│   │   ├── LeaveAppForm_10022024060524.docx
+│   │   ├── LeaveAppForm_10022024060530.docx
+│   │   ├── LeaveAppForm_10022024060558.docx
+│   │   ├── LeaveAppForm_10022024060620.docx
+│   │   ├── LeaveAppForm_10022024061019.docx
+│   │   ├── LeaveAppForm_10022024061502.docx
+│   │   ├── LeaveAppForm_10022024061509.docx
+│   │   ├── LeaveAppForm_10022024061534.docx
+│   │   ├── LeaveAppForm_10022024061545.docx
+│   │   ├── LeaveAppForm_10022024061611.docx
+│   │   ├── LeaveAppForm_10022024061617.docx
+│   │   ├── LeaveAppForm_10022024061628.docx
+│   │   ├── LeaveAppForm_10022024061635.docx
+│   │   ├── LeaveAppForm_10022024062320.docx
+│   │   ├── LeaveAppForm_10022024062444.docx
+│   │   ├── LeaveAppForm_10022024062556.docx
+│   │   ├── LeaveAppForm_10022024062653.docx
+│   │   ├── LeaveAppForm_10022024062721.docx
+│   │   ├── LeaveAppForm_10022024062916.docx
+│   │   ├── LeaveAppForm_10022024063231.docx
+│   │   ├── LeaveAppForm_10022024063427.docx
+│   │   ├── LeaveAppForm_10022024063515.docx
+│   │   ├── LeaveAppForm_10022024065500.docx
+│   │   ├── LeaveAppForm_10022024070324.docx
+│   │   ├── LeaveAppForm_10022024071109.docx
+│   │   ├── LeaveAppForm_10022024071323.docx
+│   │   ├── LeaveAppForm_10022024071332.docx
+│   │   ├── LeaveAppForm_10022024071337.docx
+│   │   ├── LeaveAppForm_10022024071443.docx
+│   │   ├── LeaveAppForm_10022024071457.docx
+│   │   ├── LeaveAppForm_10022024071513.docx
+│   │   ├── LeaveAppForm_10022024071519.docx
+│   │   ├── LeaveAppForm_10022024071532.docx
+│   │   ├── LeaveAppForm_10022024071551.docx
+│   │   ├── LeaveAppForm_10022024071851.docx
+│   │   ├── LeaveAppForm_10022024071909.docx
+│   │   ├── LeaveAppForm_10022024072113.docx
+│   │   ├── LeaveAppForm_10022024072242.docx
+│   │   ├── LeaveAppForm_10022024072326.docx
+│   │   ├── LeaveAppForm_10022024072439.docx
+│   │   ├── LeaveAppForm_10022024072649.docx
+│   │   ├── LeaveAppForm_10022024072759.docx
+│   │   ├── LeaveAppForm_10022024073127.docx
+│   │   ├── LeaveAppForm_10022024073139.docx
+│   │   ├── LeaveAppForm_10022024073432.docx
+│   │   ├── LeaveAppForm_10022024073850.docx
+│   │   ├── LeaveAppForm_10022024073856.docx
+│   │   ├── LeaveAppForm_10022024073902.docx
+│   │   ├── LeaveAppForm_10022024074138.docx
+│   │   ├── LeaveAppForm_10022024074601.docx
+│   │   ├── LeaveAppForm_10022024074605.docx
+│   │   ├── LeaveAppForm_10042024022610.docx
+│   │   ├── LeaveAppForm_10042024063426.docx
+│   │   ├── LeaveAppForm_10142024063220.docx
+│   │   ├── LeaveAppForm.docx
+│   │   ├── LeaveApplicationForm.doc
+│   │   ├── T26TimeSheet_202306102.pdf
+│   │   ├── T26TimeSheet2.ods
+│   │   ├── T26TimeSheet_chanaa_FEB2024.xlsx
+│   │   ├── T26TimeSheet_Chungaa_JAN2024.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_APR2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_AUG2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_DEC2024.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_FEB2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_JAN2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_JUL2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_JUN2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_MAR2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_MAY2025.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_NOV2024.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_OCT2024.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_SEP2024.xlsx
+│   │   ├── T26TimeSheet_ChungWaiMan_SEP2025.xlsx
+│   │   ├── T26TimeSheet.html
+│   │   ├── T26TimeSheet.html~
+│   │   ├── T26TimeSheet_html_c77e7a0d89896adf.png
+│   │   ├── T26TimeSheet_html_cf94173e2e569a18.png
+│   │   ├── T26TimeSheet.ods
+│   │   ├── T26TimeSheet.pdf
+│   │   ├── T26TimeSheet.xlsx
+│   │   ├── T26TimeSheet.xlsx.backup
+│   │   ├── timesheet2.htm
+│   │   └── timesheettemplate2.htm
+│   ├── tsconfig.build.json
+│   ├── tsconfig.json
+│   ├── xjest.config.js
+│   └── yarn.lock
+├── _backup.sql
+├── baseconfig.js.backup
+├── bdev.sh
+├── BSIRLog.zip
+├── dirstructure.txt
+├── dockerbldbackend.sh
+├── docker-compose.yml
+├── fdev2.sh
+├── frontend
+│   ├── app
+│   │   ├── admin
+│   │   │   └── page.tsx
+│   │   ├── api
+│   │   │   ├── auth
+│   │   │   │   └── [...nextauth]
+│   │   │   │       └── route.ts
+│   │   │   └── protected.js
+│   │   ├── auth
+│   │   │   ├── error
+│   │   │   │   └── page.tsx
+│   │   │   ├── handleLoginSuccess.tsx
+│   │   │   ├── login
+│   │   │   │   └── page.tsx
+│   │   │   └── useHotkey.js
+│   │   ├── ClientLayout.tsx
+│   │   ├── layout.tsx
+│   │   ├── leaverequest
+│   │   │   └── page.js
+│   │   ├── lib
+│   │   │   └── auth-action.ts
+│   │   ├── page.tsx
+│   │   ├── signup
+│   │   │   └── page.tsx
+│   │   ├── staff
+│   │   │   ├── edit
+│   │   │   │   ├── ContractDatePicker.tsx
+│   │   │   │   ├── ContractTable.tsx
+│   │   │   │   ├── CreateContractForm.tsx
+│   │   │   │   ├── edit.util.js
+│   │   │   │   ├── page.js
+│   │   │   │   └── useEdit.ts
+│   │   │   └── page.tsx
+│   │   ├── timesheet
+│   │   │   └── create
+│   │   │       └── page.tsx
+│   │   └── withSession.js
+│   ├── auth.js
+│   ├── components
+│   │   ├── admin
+│   │   │   ├── BackupRestoreTab.tsx
+│   │   │   ├── CalendarManagerTab.tsx
+│   │   │   └── UserManagerTab.tsx
+│   │   ├── Calendar
+│   │   │   ├── calendar.module.css
+│   │   │   ├── calendar.util.ts
+│   │   │   ├── customeView.tsx
+│   │   │   └── FrontPageCalendar.tsx
+│   │   ├── ColorSchemeToggle
+│   │   │   └── ColorSchemeToggle.tsx
+│   │   ├── handleLoginSuccess.tsx
+│   │   ├── hooks
+│   │   │   ├── usePublicHolidays.js
+│   │   │   ├── useStaffData.ts
+│   │   │   └── useTokenExpiration.tsx
+│   │   ├── layout.css.ts
+│   │   ├── LeaveRequest
+│   │   │   ├── LeaveRequestForm.tsx
+│   │   │   └── leaveRequestStaffInfo.tsx
+│   │   ├── login
+│   │   │   └── LoginBody.tsx
+│   │   ├── MainShell
+│   │   │   ├── LayoutHeader
+│   │   │   │   └── HeaderPopover.tsx
+│   │   │   ├── MainShell.css.ts
+│   │   │   ├── MainShell.jsx
+│   │   │   ├── MainShell.module.css
+│   │   │   └── NavBar
+│   │   │       ├── AppShellNavBar.tsx
+│   │   │       ├── CustomLink.tsx
+│   │   │       ├── mainlinks.module.css
+│   │   │       └── mainlinks.tsx
+│   │   ├── MyCard.js
+│   │   ├── MyModal.js
+│   │   ├── providers.tsx
+│   │   ├── Signupcard.js
+│   │   ├── stores
+│   │   │   ├── calendarAction.js
+│   │   │   ├── publicHolidaysUtil.js
+│   │   │   ├── staffDataUtil.js
+│   │   │   ├── useUIStore.js
+│   │   │   └── zstore.js
+│   │   ├── theme.ts
+│   │   ├── timesheet
+│   │   │   ├── createform.css.ts
+│   │   │   ├── CreateTimeSheet.tsx
+│   │   │   └── mp.module.css
+│   │   ├── useCustRouter.js
+│   │   ├── util
+│   │   │   ├── label.js
+│   │   │   ├── leaverequest.util.js
+│   │   │   └── util.js
+│   │   └── Welcome
+│   │       ├── Welcome.module.css
+│   │       ├── Welcome.story.tsx
+│   │       ├── Welcome.test.tsx
+│   │       └── Welcome.tsx
+│   ├── **Contemplating
+│   ├── dockerbuild.sh
+│   ├── Dockerfile
+│   ├── Dockerfilexx
+│   ├── eslint.config.mjs
+│   ├── frontendconfig.jsxx
+│   ├── jest.config.cjs
+│   ├── jest.setup.cjs
+│   ├── LICENCE
+│   ├── middleware.ts
+│   ├── next.config.mjs
+│   ├── next.config.mjs.backup
+│   ├── next.config.ts.x
+│   ├── next-env.d.ts
+│   ├── node_modules
+│   │   ├── argon2 -> ../../node_modules/.pnpm/argon2@0.43.1/node_modules/argon2
+│   │   ├── axios -> ../../node_modules/.pnpm/axios@1.11.0/node_modules/axios
+│   │   ├── @babel
+│   │   │   └── core -> ../../../node_modules/.pnpm/@babel+core@7.28.3/node_modules/@babel/core
+│   │   ├── babel-loader -> ../../node_modules/.pnpm/babel-loader@10.0.0_@babel+core@7.28.3_webpack@5.101.0_esbuild@0.25.8_/node_modules/babel-loader
+│   │   ├── bcryptjs -> ../../node_modules/.pnpm/bcryptjs@3.0.2/node_modules/bcryptjs
+│   │   ├── cache-manager-redis-store -> ../../node_modules/.pnpm/cache-manager-redis-store@3.0.1/node_modules/cache-manager-redis-store
+│   │   ├── class-transformer -> ../../node_modules/.pnpm/class-transformer@0.5.1/node_modules/class-transformer
+│   │   ├── class-validator -> ../../node_modules/.pnpm/class-validator@0.14.2/node_modules/class-validator
+│   │   ├── clsx -> ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx
+│   │   ├── cookie-parser -> ../../node_modules/.pnpm/cookie-parser@1.4.7/node_modules/cookie-parser
+│   │   ├── cookies-next -> ../../node_modules/.pnpm/cookies-next@6.1.0_next@15.4.6_@babel+core@7.28.3_babel-plugin-macros@3.1.0_react-dom@1_401f709ffc74e72cb1cb1b3e95214b63/node_modules/cookies-next
+│   │   ├── date-fns -> ../../node_modules/.pnpm/date-fns@4.1.0/node_modules/date-fns
+│   │   ├── dayjs -> ../../node_modules/.pnpm/dayjs@1.11.18/node_modules/dayjs
+│   │   ├── decimal.js -> ../../node_modules/.pnpm/decimal.js@10.6.0/node_modules/decimal.js
+│   │   ├── depcheck -> ../../node_modules/.pnpm/depcheck@1.4.7/node_modules/depcheck
+│   │   ├── dotenv -> ../../node_modules/.pnpm/dotenv@17.2.2/node_modules/dotenv
+│   │   ├── downloadjs -> ../../node_modules/.pnpm/downloadjs@1.4.7/node_modules/downloadjs
+│   │   ├── @emotion
+│   │   │   ├── react -> ../../../node_modules/.pnpm/@emotion+react@11.14.0_@types+react@19.1.9_react@19.1.1/node_modules/@emotion/react
+│   │   │   ├── server -> ../../../node_modules/.pnpm/@emotion+server@11.11.0/node_modules/@emotion/server
+│   │   │   └── styled -> ../../../node_modules/.pnpm/@emotion+styled@11.14.1_@emotion+react@11.14.0_@types+react@19.1.9_react@19.1.1__@types+react@19.1.9_react@19.1.1/node_modules/@emotion/styled
+│   │   ├── @eslint
+│   │   │   └── js -> ../../../node_modules/.pnpm/@eslint+js@9.32.0/node_modules/@eslint/js
+│   │   ├── eslint -> ../../node_modules/.pnpm/eslint@9.34.0_jiti@2.5.1/node_modules/eslint
+│   │   ├── eslint-config-airbnb -> ../../node_modules/.pnpm/eslint-config-airbnb@19.0.4_eslint-plugin-import@2.32.0_@typescript-eslint+parser@8.38._0229ec9bfa6ea4787921638f4379d7fd/node_modules/eslint-config-airbnb
+│   │   ├── eslint-config-airbnb-typescript -> ../../node_modules/.pnpm/eslint-config-airbnb-typescript@18.0.0_@typescript-eslint+eslint-plugin@8.38.0_@typescr_7264773785561752aef31fc11360e36f/node_modules/eslint-config-airbnb-typescript
+│   │   ├── eslint-config-mantine -> ../../node_modules/.pnpm/eslint-config-mantine@4.0.3_@eslint+js@9.32.0_eslint-plugin-jsx-a11y@6.10.2_eslint@9.34_8fd93ecddd5fb2fcbfdbcf2e027a8d8d/node_modules/eslint-config-mantine
+│   │   ├── eslint-plugin-import -> ../../node_modules/.pnpm/eslint-plugin-import@2.32.0_@typescript-eslint+parser@8.38.0_eslint@9.34.0_jiti@2.5.1___5c866c87322c81c933c87027b03baa46/node_modules/eslint-plugin-import
+│   │   ├── eslint-plugin-jest -> ../../node_modules/.pnpm/eslint-plugin-jest@29.0.1_@typescript-eslint+eslint-plugin@8.38.0_@typescript-eslint+pa_29e1e1dbca429e2fec5990babc1337ed/node_modules/eslint-plugin-jest
+│   │   ├── eslint-plugin-jsx-a11y -> ../../node_modules/.pnpm/eslint-plugin-jsx-a11y@6.10.2_eslint@9.34.0_jiti@2.5.1_/node_modules/eslint-plugin-jsx-a11y
+│   │   ├── eslint-plugin-react -> ../../node_modules/.pnpm/eslint-plugin-react@7.37.5_eslint@9.34.0_jiti@2.5.1_/node_modules/eslint-plugin-react
+│   │   ├── eslint-plugin-react-hooks -> ../../node_modules/.pnpm/eslint-plugin-react-hooks@5.2.0_eslint@9.34.0_jiti@2.5.1_/node_modules/eslint-plugin-react-hooks
+│   │   ├── eslint-plugin-testing-library -> ../../node_modules/.pnpm/eslint-plugin-testing-library@7.6.3_eslint@9.34.0_jiti@2.5.1__typescript@5.9.2/node_modules/eslint-plugin-testing-library
+│   │   ├── eslint-plugin-unused-imports -> ../../node_modules/.pnpm/eslint-plugin-unused-imports@4.1.4_@typescript-eslint+eslint-plugin@8.38.0_@typescript-_fb93a6bbd41edbe8c6aee62fcda4dc38/node_modules/eslint-plugin-unused-imports
+│   │   ├── @fullcalendar
+│   │   │   ├── core -> ../../../node_modules/.pnpm/@fullcalendar+core@6.1.18/node_modules/@fullcalendar/core
+│   │   │   ├── daygrid -> ../../../node_modules/.pnpm/@fullcalendar+daygrid@6.1.18_@fullcalendar+core@6.1.18/node_modules/@fullcalendar/daygrid
+│   │   │   ├── interaction -> ../../../node_modules/.pnpm/@fullcalendar+interaction@6.1.18_@fullcalendar+core@6.1.18/node_modules/@fullcalendar/interaction
+│   │   │   ├── list -> ../../../node_modules/.pnpm/@fullcalendar+list@6.1.18_@fullcalendar+core@6.1.18/node_modules/@fullcalendar/list
+│   │   │   ├── multimonth -> ../../../node_modules/.pnpm/@fullcalendar+multimonth@6.1.18_@fullcalendar+core@6.1.18/node_modules/@fullcalendar/multimonth
+│   │   │   ├── react -> ../../../node_modules/.pnpm/@fullcalendar+react@6.1.18_@fullcalendar+core@6.1.18_react-dom@19.1.1_react@19.1.1__react@19.1.1/node_modules/@fullcalendar/react
+│   │   │   ├── resource -> ../../../node_modules/.pnpm/@fullcalendar+resource@6.1.18_@fullcalendar+core@6.1.18/node_modules/@fullcalendar/resource
+│   │   │   ├── resource-timeline -> ../../../node_modules/.pnpm/@fullcalendar+resource-timeline@6.1.18_@fullcalendar+core@6.1.18_@fullcalendar+resource_5b5b07499e4f0e3a06d4f2384983195b/node_modules/@fullcalendar/resource-timeline
+│   │   │   └── timegrid -> ../../../node_modules/.pnpm/@fullcalendar+timegrid@6.1.18_@fullcalendar+core@6.1.18/node_modules/@fullcalendar/timegrid
+│   │   ├── globals -> ../../node_modules/.pnpm/globals@16.3.0/node_modules/globals
+│   │   ├── jest -> ../../node_modules/.pnpm/jest@30.1.3_@types+node@24.3.0_babel-plugin-macros@3.1.0_esbuild-register@3.6.0_esbuild_47d8d43bb611f2cf3a1b03044a33ee90/node_modules/jest
+│   │   ├── jest-environment-jsdom -> ../../node_modules/.pnpm/jest-environment-jsdom@30.1.2/node_modules/jest-environment-jsdom
+│   │   ├── jsonwebtoken -> ../../node_modules/.pnpm/jsonwebtoken@9.0.2/node_modules/jsonwebtoken
+│   │   ├── @mantine
+│   │   │   ├── carousel -> ../../../node_modules/.pnpm/@mantine+carousel@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+r_e4ba355eed3c725166057f0b8f62fc8c/node_modules/@mantine/carousel
+│   │   │   ├── code-highlight -> ../../../node_modules/.pnpm/@mantine+code-highlight@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@t_5339600b8781c7820681644897e3b580/node_modules/@mantine/code-highlight
+│   │   │   ├── core -> ../../../node_modules/.pnpm/@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+react@19.1.9_react-dom@19.1.1_react@19.1.1__react@19.1.1/node_modules/@mantine/core
+│   │   │   ├── dates -> ../../../node_modules/.pnpm/@mantine+dates@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+reac_1a9901ec505020bdcbb322bae9164bda/node_modules/@mantine/dates
+│   │   │   ├── dropzone -> ../../../node_modules/.pnpm/@mantine+dropzone@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+r_a72b3009e15b779fded1c8e4dfc4fe26/node_modules/@mantine/dropzone
+│   │   │   ├── form -> ../../../node_modules/.pnpm/@mantine+form@8.2.8_react@19.1.1/node_modules/@mantine/form
+│   │   │   ├── hooks -> ../../../node_modules/.pnpm/@mantine+hooks@8.2.8_react@19.1.1/node_modules/@mantine/hooks
+│   │   │   ├── modals -> ../../../node_modules/.pnpm/@mantine+modals@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+rea_8ffa835c0b19b1e8df603f66bcf62a5a/node_modules/@mantine/modals
+│   │   │   ├── notifications -> ../../../node_modules/.pnpm/@mantine+notifications@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@ty_e5a7fe1c8ef003ad9925621879dbfb47/node_modules/@mantine/notifications
+│   │   │   ├── nprogress -> ../../../node_modules/.pnpm/@mantine+nprogress@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+_0a2bab96c7987bf0b6862dbc1609ae42/node_modules/@mantine/nprogress
+│   │   │   ├── spotlight -> ../../../node_modules/.pnpm/@mantine+spotlight@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+_6f27863cd36ac3152d3f1a00683888ce/node_modules/@mantine/spotlight
+│   │   │   ├── tiptap -> ../../../node_modules/.pnpm/@mantine+tiptap@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@types+rea_b7d260b37fc02572a3405430b3ce87e1/node_modules/@mantine/tiptap
+│   │   │   └── vanilla-extract -> ../../../node_modules/.pnpm/@mantine+vanilla-extract@8.2.8_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@_2b9f73ce9db230c8b3daf4c012eed6b4/node_modules/@mantine/vanilla-extract
+│   │   ├── mantine-react-table -> ../../node_modules/.pnpm/mantine-react-table@2.0.0-beta.9_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__abc062c0a254002f452382ae608c9d4f/node_modules/mantine-react-table
+│   │   ├── @mantinex
+│   │   │   └── mantine-logo -> ../../../node_modules/.pnpm/@mantinex+mantine-logo@2.0.0_@mantine+core@8.2.8_@mantine+hooks@8.2.8_react@19.1.1__@ty_ee9a50ba273ffb044b08a09cf3a6fec1/node_modules/@mantinex/mantine-logo
+│   │   ├── @next
+│   │   │   ├── bundle-analyzer -> ../../../node_modules/.pnpm/@next+bundle-analyzer@15.4.6/node_modules/@next/bundle-analyzer
+│   │   │   └── eslint-plugin-next -> ../../../node_modules/.pnpm/@next+eslint-plugin-next@15.4.5/node_modules/@next/eslint-plugin-next
+│   │   ├── next -> ../../node_modules/.pnpm/next@15.4.6_@babel+core@7.28.3_babel-plugin-macros@3.1.0_react-dom@19.1.1_react@19.1.1__react@19.1.1/node_modules/next
+│   │   ├── next-auth -> ../../node_modules/.pnpm/next-auth@5.0.0-beta.29_next@15.4.6_@babel+core@7.28.3_babel-plugin-macros@3.1.0_react-_beb67c8e9a53b6112e889d87a8b06273/node_modules/next-auth
+│   │   ├── nookies -> ../../node_modules/.pnpm/nookies@2.5.2/node_modules/nookies
+│   │   ├── postcss -> ../../node_modules/.pnpm/postcss@8.5.6/node_modules/postcss
+│   │   ├── postcss-preset-mantine -> ../../node_modules/.pnpm/postcss-preset-mantine@1.18.0_postcss@8.5.6/node_modules/postcss-preset-mantine
+│   │   ├── postcss-simple-vars -> ../../node_modules/.pnpm/postcss-simple-vars@7.0.1_postcss@8.5.6/node_modules/postcss-simple-vars
+│   │   ├── prettier -> ../../node_modules/.pnpm/prettier@3.6.2/node_modules/prettier
+│   │   ├── @radix-ui
+│   │   │   └── react-icons -> ../../../node_modules/.pnpm/@radix-ui+react-icons@1.3.2_react@19.1.1/node_modules/@radix-ui/react-icons
+│   │   ├── react -> ../../node_modules/.pnpm/react@19.1.1/node_modules/react
+│   │   ├── react-dom -> ../../node_modules/.pnpm/react-dom@19.1.1_react@19.1.1/node_modules/react-dom
+│   │   ├── react-hook-form -> ../../node_modules/.pnpm/react-hook-form@7.62.0_react@19.1.1/node_modules/react-hook-form
+│   │   ├── @storybook
+│   │   │   ├── addon-styling-webpack -> ../../../node_modules/.pnpm/@storybook+addon-styling-webpack@2.0.0_storybook@9.1.1_@testing-library+dom@10.4.1_pret_77a01988c5f720c7f6d3d7eb2b40ed1d/node_modules/@storybook/addon-styling-webpack
+│   │   │   ├── blocks -> ../../../node_modules/.pnpm/@storybook+blocks@8.6.14_react-dom@19.1.1_react@19.1.1__react@19.1.1_storybook@9.1.1_@t_9fc4524ac586e7a3ee801d32e022e753/node_modules/@storybook/blocks
+│   │   │   ├── nextjs -> ../../../node_modules/.pnpm/@storybook+nextjs@9.1.0_babel-plugin-macros@3.1.0_esbuild@0.25.8_next@15.4.6_@babel+cor_b5efe51f0aa03cdbbf8bf0676ae3ddb7/node_modules/@storybook/nextjs
+│   │   │   └── react -> ../../../node_modules/.pnpm/@storybook+react@9.1.0_react-dom@19.1.1_react@19.1.1__react@19.1.1_storybook@9.1.1_@tes_1eeb371db59b96fbd99954e0e9ec9da7/node_modules/@storybook/react
+│   │   ├── storybook -> ../../node_modules/.pnpm/storybook@9.1.1_@testing-library+dom@10.4.1_prettier@3.6.2/node_modules/storybook
+│   │   ├── storybook-dark-mode -> ../../node_modules/.pnpm/storybook-dark-mode@4.0.2_react-dom@19.1.1_react@19.1.1__react@19.1.1_storybook@9.1.1_@_dd04566ffe2bba5f3a32c86665c975be/node_modules/storybook-dark-mode
+│   │   ├── stylelint -> ../../node_modules/.pnpm/stylelint@16.23.0_typescript@5.9.2/node_modules/stylelint
+│   │   ├── stylelint-config-standard-scss -> ../../node_modules/.pnpm/stylelint-config-standard-scss@15.0.1_postcss@8.5.6_stylelint@16.23.0_typescript@5.9.2_/node_modules/stylelint-config-standard-scss
+│   │   ├── @tabler
+│   │   │   ├── icons -> ../../../node_modules/.pnpm/@tabler+icons@3.34.1/node_modules/@tabler/icons
+│   │   │   └── icons-react -> ../../../node_modules/.pnpm/@tabler+icons-react@3.34.1_react@19.1.1/node_modules/@tabler/icons-react
+│   │   ├── @tcon360
+│   │   │   └── config -> ../../../packages/config
+│   │   ├── @testing-library
+│   │   │   ├── dom -> ../../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom
+│   │   │   ├── jest-dom -> ../../../node_modules/.pnpm/@testing-library+jest-dom@6.8.0/node_modules/@testing-library/jest-dom
+│   │   │   ├── react -> ../../../node_modules/.pnpm/@testing-library+react@16.3.0_@testing-library+dom@10.4.1_@types+react@19.1.9_react-dom_fbd7c1fd2df9de06f9de1a5320535f15/node_modules/@testing-library/react
+│   │   │   └── user-event -> ../../../node_modules/.pnpm/@testing-library+user-event@14.6.1_@testing-library+dom@10.4.1/node_modules/@testing-library/user-event
+│   │   ├── @tiptap
+│   │   │   ├── core -> ../../../node_modules/.pnpm/@tiptap+core@3.3.1_@tiptap+pm@3.3.1/node_modules/@tiptap/core
+│   │   │   ├── extension-link -> ../../../node_modules/.pnpm/@tiptap+extension-link@3.3.1_@tiptap+core@3.3.1_@tiptap+pm@3.3.1__@tiptap+pm@3.3.1/node_modules/@tiptap/extension-link
+│   │   │   ├── pm -> ../../../node_modules/.pnpm/@tiptap+pm@3.3.1/node_modules/@tiptap/pm
+│   │   │   ├── react -> ../../../node_modules/.pnpm/@tiptap+react@3.3.1_@floating-ui+dom@1.7.4_@tiptap+core@3.3.1_@tiptap+pm@3.3.1__@tiptap_c0090205631819613d409636a28e5487/node_modules/@tiptap/react
+│   │   │   └── starter-kit -> ../../../node_modules/.pnpm/@tiptap+starter-kit@3.3.1/node_modules/@tiptap/starter-kit
+│   │   ├── @toast-ui
+│   │   │   └── react-calendar -> ../../../node_modules/.pnpm/@toast-ui+react-calendar@2.1.3_react@19.1.1/node_modules/@toast-ui/react-calendar
+│   │   ├── ts-jest -> ../../node_modules/.pnpm/ts-jest@29.4.1_@babel+core@7.28.3_@jest+transform@30.1.2_@jest+types@30.0.5_babel-jest@_8d82aae0726283611c5b3c01865fe0b3/node_modules/ts-jest
+│   │   ├── @types
+│   │   │   ├── downloadjs -> ../../../node_modules/.pnpm/@types+downloadjs@1.4.6/node_modules/@types/downloadjs
+│   │   │   ├── graphql-fields -> ../../../node_modules/.pnpm/@types+graphql-fields@1.3.9/node_modules/@types/graphql-fields
+│   │   │   ├── jest -> ../../../node_modules/.pnpm/@types+jest@30.0.0/node_modules/@types/jest
+│   │   │   ├── jsonwebtoken -> ../../../node_modules/.pnpm/@types+jsonwebtoken@9.0.10/node_modules/@types/jsonwebtoken
+│   │   │   ├── node -> ../../../node_modules/.pnpm/@types+node@24.3.0/node_modules/@types/node
+│   │   │   ├── react -> ../../../node_modules/.pnpm/@types+react@19.1.9/node_modules/@types/react
+│   │   │   └── supertest -> ../../../node_modules/.pnpm/@types+supertest@6.0.3/node_modules/@types/supertest
+│   │   ├── typescript -> ../../node_modules/.pnpm/typescript@5.9.2/node_modules/typescript
+│   │   ├── @typescript-eslint
+│   │   │   ├── eslint-plugin -> ../../../node_modules/.pnpm/@typescript-eslint+eslint-plugin@8.38.0_@typescript-eslint+parser@8.38.0_eslint@9.34.0__f116d74f810ab11d186c9a0aa6f96644/node_modules/@typescript-eslint/eslint-plugin
+│   │   │   └── parser -> ../../../node_modules/.pnpm/@typescript-eslint+parser@8.38.0_eslint@9.34.0_jiti@2.5.1__typescript@5.9.2/node_modules/@typescript-eslint/parser
+│   │   ├── typescript-eslint -> ../../node_modules/.pnpm/typescript-eslint@8.38.0_eslint@9.34.0_jiti@2.5.1__typescript@5.9.2/node_modules/typescript-eslint
+│   │   ├── @vanilla-extract
+│   │   │   ├── css -> ../../../node_modules/.pnpm/@vanilla-extract+css@1.17.4_babel-plugin-macros@3.1.0/node_modules/@vanilla-extract/css
+│   │   │   └── next-plugin -> ../../../node_modules/.pnpm/@vanilla-extract+next-plugin@2.4.14_babel-plugin-macros@3.1.0_next@15.4.6_@babel+core@7_bb86f5c2bde8e404e149ee38401762d9/node_modules/@vanilla-extract/next-plugin
+│   │   ├── winston -> ../../node_modules/.pnpm/winston@3.17.0/node_modules/winston
+│   │   ├── yup -> ../../node_modules/.pnpm/yup@1.7.0/node_modules/yup
+│   │   └── zustand -> ../../node_modules/.pnpm/zustand@5.0.8_@types+react@19.1.9_immer@10.1.1_react@19.1.1_use-sync-external-store@1.5.0_react@19.1.1_/node_modules/zustand
+│   ├── nxserver2.js
+│   ├── nxserver.js
+│   ├── package.json
+│   ├── postcss.config.cjs
+│   ├── public
+│   │   ├── favicon.svg
+│   │   ├── favicon.svg.mantine
+│   │   ├── globals.css
+│   │   ├── images
+│   │   │   ├── loginbg1.webp
+│   │   │   └── park.jpg
+│   │   ├── images copy
+│   │   │   ├── loginbg1.webp
+│   │   │   └── park.jpg
+│   │   ├── loginbg1.webp
+│   │   ├── next.svg
+│   │   ├── park.jpg
+│   │   ├── styles
+│   │   │   └── globals.css
+│   │   ├── vercel.svg
+│   │   ├── wave.svg
+│   │   └── xfavicon.svg
+│   ├── README.md
+│   ├── services
+│   │   └── leaveRequestService.ts
+│   ├── static
+│   │   └── loginbg1.webp
+│   ├── styles
+│   │   ├── common.module.css
+│   │   ├── global.module.css
+│   │   ├── globals.css
+│   │   ├── Home.module.css
+│   │   ├── layout.styles.ts
+│   │   ├── login.css.ts
+│   │   ├── styles.css
+│   │   ├── theme.ts
+│   │   └── utils.module.css
+│   ├── test-utils
+│   │   ├── index.ts
+│   │   └── render.tsx
+│   ├── tsconfig.json
+│   ├── tsconfig.tsbuildinfo
+│   └── types
+│       └── next-auth.d.ts
+├── killproc.js
+├── killproc.sh
+├── node_modules
+│   ├── concurrently -> .pnpm/concurrently@9.2.0/node_modules/concurrently
+│   ├── @fastify
+│   │   └── http-proxy -> ../.pnpm/@fastify+http-proxy@11.3.0/node_modules/@fastify/http-proxy
+│   ├── fastify -> .pnpm/fastify@5.4.0/node_modules/fastify
+│   ├── fs-extra -> .pnpm/fs-extra@11.3.0/node_modules/fs-extra
+│   ├── http-proxy -> .pnpm/http-proxy@1.18.1/node_modules/http-proxy
+│   ├── node-netstat -> .pnpm/node-netstat@1.9.0/node_modules/node-netstat
+│   └── nookies -> .pnpm/nookies@2.5.2/node_modules/nookies
+├── opendb.sh
+├── package.json
+├── package-lock.json
+├── packages
+│   └── config
+│       ├── dist
+│       │   ├── env.d.ts
+│       │   ├── env.js
+│       │   ├── env.js.map
+│       │   ├── index.d.ts
+│       │   ├── index.js
+│       │   ├── index.js.map
+│       │   ├── test.d.ts
+│       │   ├── test.js
+│       │   └── test.js.map
+│       ├── node_modules
+│       │   ├── @t3-oss
+│       │   │   └── env-nextjs -> ../../../../node_modules/.pnpm/@t3-oss+env-nextjs@0.10.1_typescript@5.7.3_zod@3.24.3/node_modules/@t3-oss/env-nextjs
+│       │   ├── @types
+│       │   │   └── node -> ../../../../node_modules/.pnpm/@types+node@20.17.30/node_modules/@types/node
+│       │   ├── typescript -> ../../../node_modules/.pnpm/typescript@5.7.3/node_modules/typescript
+│       │   └── zod -> ../../../node_modules/.pnpm/zod@3.24.3/node_modules/zod
+│       ├── package.json
+│       ├── pnpm-lock.yaml
+│       ├── src
+│       │   ├── env.ts
+│       │   ├── index.ts
+│       │   └── test.ts
+│       ├── tsconfig.cjs.json
+│       └── tsconfig.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── proxyserver.js
+├── runbackenddocker.sh
+├── sshhost.sh
+├── sshvm.sh
+├── startdev copy.sh
+├── startdev.sh
+└── uploads
+
+316 directories, 576 files

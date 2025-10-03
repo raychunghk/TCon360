@@ -6,13 +6,33 @@ import { modals } from '@mantine/modals';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import {
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_Cell,
+  type MRT_ColumnDef
+} from 'mantine-react-table';
 import 'mantine-react-table/styles.css';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react'; // <-- ADDED type ReactNode
 import * as yup from 'yup';
 import { ContractDatePicker } from './ContractDatePicker';
 import CreateContractForm from './CreateContractForm';
-import { AnnualLeaveEditor, DateCell, EditContractModalContent, EditIsActiveCell, validationSchema } from './edit.util';
+import {
+  AnnualLeaveEditor,
+  DateCell,
+  EditContractModalContent,
+  EditIsActiveCell,
+  validationSchema
+} from './edit.util';
+
+// Define the shape of the contract data
+interface Contract {
+  id: string;
+  ContractStartDate: string;
+  ContractEndDate: string;
+  AnnualLeave: number;
+  IsActive: boolean;
+}
 
 interface ContractErrors {
   ContractStartDate?: string;
@@ -26,6 +46,13 @@ export default function ContractTable({
   setModalContent,
   getStaffData,
   editing,
+}: {
+  formValues: { contracts: Contract[] };
+  setFormValues: (values: any) => void;
+  setModalOpen: (open: boolean) => void;
+  setModalContent: (content: string) => void;
+  getStaffData: () => Promise<void>;
+  editing: boolean;
 }) {
   console.log('ContractTable rendered');
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -36,9 +63,9 @@ export default function ContractTable({
 
   const contracts = useMemo(() => formValues.contracts, [formValues.contracts]);
 
-  const columns = useMemo(() => {
-    console.log('columns computed');
-    return [
+  const columns = useMemo<MRT_ColumnDef<Contract>[]>(() =>
+
+    [
       {
         accessorKey: 'id',
         header: 'ID',
@@ -47,39 +74,42 @@ export default function ContractTable({
       },
       {
         accessorKey: 'ContractStartDate',
-        header: <div style={{ whiteSpace: 'pre-line' }}>Contract start date</div>,
+        // FIX: Pass the ReactNode directly instead of a function returning it
+        header: 'Contract start date',
         size: 155,
-        Edit: (param) => (
+        Edit: (params: any) => (
           <ContractDatePicker
-            param={param}
+            param={params}
             columnKey={'ContractStartDate'}
             myRenderDay={myRenderDay}
             error={errors?.ContractStartDate}
           />
         ),
-        Cell: DateCell,
+        Cell: ({ cell }: { cell: MRT_Cell<Contract, any> }) => DateCell({ cell }),
       },
       {
         accessorKey: 'ContractEndDate',
-        header: <div style={{ whiteSpace: 'pre-line' }}>Contract end date</div>,
+        // FIX: Pass the ReactNode directly instead of a function returning it
+        header: 'Contract end date',
         size: 155,
-        Edit: (param) => (
+        Edit: (params: any) => (
           <ContractDatePicker
-            param={param}
+            param={params}
             columnKey={'ContractEndDate'}
             myRenderDay={myRenderDay}
             error={errors?.ContractEndDate}
           />
         ),
-        Cell: DateCell,
+        Cell: ({ cell }: { cell: MRT_Cell<Contract, any> }) => DateCell({ cell }),
       },
       {
         accessorKey: 'AnnualLeave',
-        header: <div style={{ whiteSpace: 'pre-line' }}>Annual leaves</div>,
+        // FIX: Pass the ReactNode directly instead of a function returning it
+        header: 'Annual leaves',// header: <div style={{ whiteSpace: 'pre-line' }}>Annual leaves</div> as ReactNode,
         size: 130,
-        Edit: (param) => (
+        Edit: (params: any) => (
           <AnnualLeaveEditor
-            param={param}
+            param={params}
             formValues={formValues}
             setFormValues={setFormValues}
           />
@@ -91,11 +121,13 @@ export default function ContractTable({
         header: 'Status',
         size: 120,
         enableEditing: true,
-        Cell: (param) => <Text>{param.cell.getValue() ? 'Active' : 'Inactive'}</Text>,
-        Edit: (param) => EditIsActiveCell(param, formValues, setFormValues),
+        Cell: ({ cell }: { cell: MRT_Cell<Contract, any> }) => (
+          <Text>{cell.getValue<boolean>() ? 'Active' : 'Inactive'}</Text>
+        ),
+        Edit: (params: any) => EditIsActiveCell(params, formValues, setFormValues),
       },
-    ];
-  }, [errors, formValues, setFormValues]);
+    ]
+    , [errors, formValues, setFormValues]);
 
   useEffect(() => {
     console.log('useEffect triggered', { contracts });
@@ -116,11 +148,11 @@ export default function ContractTable({
     }
   }, [contracts, setNextContractStartDate, nextContractStartDate]);
 
-  const handleEditRowCancel = async (rowEditEvent) => {
+  const handleEditRowCancel = async (rowEditEvent: any) => {
     console.log('rowEditEvent', rowEditEvent);
   };
 
-  const handleSaveRow = async (rowEditEvent) => {
+  const handleSaveRow = async (rowEditEvent: any) => {
     console.log('handleSaveRow called', rowEditEvent.values);
     setSaving(true);
     const { row, values, exitEditingMode } = rowEditEvent;
@@ -155,7 +187,7 @@ export default function ContractTable({
     setSaving(false);
   };
 
-  const openDeleteConfirmModal = (row) => {
+  const openDeleteConfirmModal = (row: { original: Contract }) => {
     modals.openConfirmModal({
       title: <Title order={4}> Delete contract</Title>,
       children: (
@@ -177,7 +209,7 @@ export default function ContractTable({
     });
   };
 
-  const deletecontract = async (contractId) => {
+  const deletecontract = async (contractId: string) => {
     console.log('deletecontract called', contractId);
     try {
       const apiUrl = `${basepath}/api/staff/contract/${contractId}`;
@@ -225,6 +257,10 @@ export default function ContractTable({
     mantineTableBodyCellProps: {
       style: { padding: '0.35rem 0.5rem !important', textAlign: 'left' },
     },
+    mantineTableHeadCellProps: {
+
+      className: 'ctrtblhead', // Retain for additional CSS targeting if needed
+    },
     mantineEditTextInputProps: ({ cell }) => ({
       onBlur: (event) => { },
     }),
@@ -266,6 +302,7 @@ export default function ContractTable({
       isLoading: loading,
       isSaving: saving,
     },
+
   });
 
   if (!formValues) {

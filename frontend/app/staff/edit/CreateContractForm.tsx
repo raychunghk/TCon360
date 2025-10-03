@@ -1,7 +1,7 @@
 'use client';
 import useStore from '@/components/stores/zstore.js';
 import { myRenderDay } from '@/components/util/leaverequest.util';
-import { Button, Container, Flex, Grid, Modal, NumberInput, Switch, Text, Title, rem, useMantineTheme } from '@mantine/core';
+import { Button, Code, Container, Flex, Grid, Modal, NumberInput, Switch, Text, Title, rem, useMantineTheme } from '@mantine/core';
 import { DatePickerInput, DayOfWeek } from '@mantine/dates';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import axios from 'axios';
@@ -231,8 +231,10 @@ export default function CreateContractForm({
           <Button onClick={submitContract} variant="filled">
             Submit
           </Button>
+          <Code>   {contract.ContractStartDate}</Code>
         </Flex>
       </form>
+
     </Modal>
   );
 }

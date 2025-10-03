@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card, Code, Grid, LoadingOverlay, TextInput } from '@mantine/core';
+import { Button, Card, Grid, LoadingOverlay, TextInput } from '@mantine/core';
 import axios from 'axios';
 import Head from 'next/head';
 import { parseCookies } from 'nookies';
@@ -14,15 +14,12 @@ import { useStaffData } from '@/components/hooks/useStaffData';
 import useStore from '@/components/stores/zstore.js';
 import { default as useRouter } from '@/components/useCustRouter';
 import { setDatepickerPlDay } from '@/components/util/leaverequest.util';
-import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import { useForm, yupResolver } from '@mantine/form';
-import { format } from 'date-fns';
 import ContractTable from './ContractTable';
 import { inputFields, staffModel } from './edit.util';
 
 export default function EditStaff() {
   const { activeUser, status } = useStaffData();
-  const [formValues, setFormValues] = useState(staffModel);
   const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -31,73 +28,47 @@ export default function EditStaff() {
   const [showAsError, setShowAsError] = useState(false);
   const { register, handleSubmit, reset } = useHookForm();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
-  const { setActiveContract, setActiveStaff, nextContractStartDate, basepath } = useStore();
+  const { setActiveContract, setActiveStaff, nextContractStartDate, basepath, fetchStaffData, publicHolidays, loadPublicHolidays } = useStore();
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
 
-  const getStaffData = async () => {
-    try {
-      const headers = {
-        Authorization: `Bearer ${tokenCookie}`,
-      };
-      const url = `${basepath}/api/user/myuser`
-      console.log(`my user url:`, url);
-      const response = await axios.get(url, {
-        headers,
-      });
+  const validationSchema = Yup.object().shape({
+    StaffName: Yup.string().required('Name of Staff is required'),
+    AgentName: Yup.string().required('Name of T-contractor is required'),
+    StaffCategory: Yup.string().required('Staff category is required'),
+    ManagerName: Yup.string().required('Manager name is required'),
+    ManagerTitle: Yup.string().required('Manager title is required'),
+    ManagerEmail: Yup.string().email('Invalid email format').required('Manager email is required'),
+    Department: Yup.string().required('Department is required'),
+    PostUnit: Yup.string().required('Post unit is required'),
+  });
 
-      if ([200, 201].includes(response.status)) {
-        const _staff = response.data.staff[0];
-        console.log(_staff);
-        setFormValues(_staff);
-        setEditing(true);
-        form.setValues(_staff);
-        setActiveStaff(_staff);
-        const activeContract = _staff.contracts.filter((contract) => contract.IsActive === true);
-        setActiveContract(activeContract ? activeContract[0] : null);
-      }
-    } catch (error) {
-      console.error('Failed to fetch staff data:', error);
-      if (error.response.status === 401) {
-        setModalContent('User Session Expired, logout in 10 seconds');
-        setModalOpen(true);
-        setShowAsError(true);
-        const timeout = setTimeout(() => {
-          console.log('Logging out, now is:', format(Date.now(), 'yyyy-MM-dd hh:mm:ss'));
-          router.push('/');
-        }, 5 * 1000);
-
-        return () => clearTimeout(timeout);
-      }
-    }
-  };
-
-  const { publicHolidays, loadPublicHolidays } = usePublicHolidays();
+  const form = useForm({
+    initialValues: staffModel,
+    validateInputOnBlur: true,
+    validate: yupResolver(validationSchema),
+  });
 
   useEffect(() => {
-    getStaffData();
+    fetchStaffData(); // Use store's fetchStaffData
     setDatepickerPlDay(publicHolidays);
-  }, [publicHolidays]);
+  }, [publicHolidays, fetchStaffData, loadPublicHolidays]); // loadPublicHolidays added if needed for refresh
+
+  useEffect(() => {
+    if (activeUser && activeUser.staff && activeUser.staff.length > 0) {
+      const _staff = activeUser.staff[0];
+      console.log(_staff);
+      form.setValues(_staff); // Sync form with activeStaff from store
+      setEditing(true);
+      setActiveStaff(_staff);
+      const activeContract = _staff.contracts.filter((contract) => contract.IsActive === true);
+      setActiveContract(activeContract ? activeContract[0] : null);
+    }
+  }, [activeUser]);
 
   const handleModalClose = () => {
     setModalOpen(false);
-  };
-
-  const handleInputChange = (event) => {
-    let val = event.target.value;
-    if (val instanceof Date) {
-      val = new Date(val);
-      val.setHours(0, 0, 0, 0);
-    }
-    setFormValues({
-      ...formValues,
-      [event.target.name]: val,
-    });
-    form.setValues({
-      ...formValues,
-      [event.target.name]: val,
-    });
   };
 
   const onSubmit = (values) => {
@@ -112,15 +83,14 @@ export default function EditStaff() {
     console.log('form errors', form.errors);
     console.log('form is valid', form.isValid());
     console.log('submit values', form.values);
-    console.log('formvalues', formValues);
     try {
-      await validationSchema.validate(formValues, { abortEarly: false });
+      await validationSchema.validate(form.values, { abortEarly: false });
 
       const headers = {
         Authorization: `Bearer ${tokenCookie}`,
       };
 
-      const response = await axios.put(`${basepath}/api/staff/${formValues.id}`, formValues, {
+      const response = await axios.put(`${basepath}/api/staff/${form.values.id}`, form.values, {
         headers,
       });
 
@@ -128,7 +98,7 @@ export default function EditStaff() {
         setModalContent('Staff record updated successfully');
         setModalOpen(true);
         setEditing(true);
-        getStaffData();
+        fetchStaffData(); // Use store's fetchStaffData for refresh
       } else {
         console.error('Failed to update staff record:', response);
       }
@@ -146,23 +116,6 @@ export default function EditStaff() {
     setSubmitting(false);
   };
 
-  const validationSchema = Yup.object().shape({
-    StaffName: Yup.string().required('Name of Staff is required'),
-    AgentName: Yup.string().required('Name of T-contractor is required'),
-    StaffCategory: Yup.string().required('Staff category is required'),
-    ManagerName: Yup.string().required('Manager name is required'),
-    ManagerTitle: Yup.string().required('Manager title is required'),
-    ManagerEmail: Yup.string().email('Invalid email format').required('Manager email is required'),
-    Department: Yup.string().required('Department is required'),
-    PostUnit: Yup.string().required('Post unit is required'),
-  });
-
-  const form = useForm({
-    initialValues: { ...formValues },
-    validateInputOnBlur: true,
-    validate: yupResolver(validationSchema),
-  });
-
   if (!basepath || status === 'loading') {
     return (
       <MainShell>
@@ -175,7 +128,7 @@ export default function EditStaff() {
     <MainShell home>
       <Head>
         <title>Edit Staff Information</title>
-      </Head>
+      </Head>xxx
       {activeUser ? (
         <>
           <form name="frmHeader" onSubmit={handleSubmit(submitform)}>
@@ -187,21 +140,18 @@ export default function EditStaff() {
                       <TextInput
                         label={field.label}
                         placeholder={field.label}
-                        name={field.name}
-                        value={formValues[field.name]}
-                        onChange={handleInputChange}
-                        error={errors[field.name]}
+                        {...form.getInputProps(field.name)} // Use Mantine form props
                       />
                     )}
                   </Grid.Col>
                 ))}
                 {publicHolidays && (
                   <ContractTable
-                    formValues={formValues}
-                    setFormValues={setFormValues}
+                    formValues={form.values}
+                    setFormValues={form.setValues}
                     setModalOpen={setModalOpen}
                     setModalContent={setModalContent}
-                    getStaffData={getStaffData}
+                    getStaffData={fetchStaffData}
                     edting={editing}
                   />
                 )}
@@ -231,7 +181,7 @@ export default function EditStaff() {
                   radius="md"
                   color="cyan"
                   disabled={!editing || submitting}
-                  onClick={getStaffData}
+                  onClick={fetchStaffData}
                 >
                   test
                 </Button>
@@ -244,7 +194,7 @@ export default function EditStaff() {
             msg={modalContent}
             isError={showAsError}
           />
-          <Code>{JSON.stringify(formValues, null, 2)}</Code>
+          {/* <Code>{JSON.stringify(form.values, null, 2)}</Code> */}
         </>
       ) : null}
     </MainShell>
