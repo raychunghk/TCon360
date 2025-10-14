@@ -188,10 +188,12 @@ const FrontPageCalendar = () => {
   }
 
   const handleOpenAdminPage = () => {
+    /*
     router.push({
       pathname: '/admin',
       query: { tab: 'calendarManagement' },
-    });
+    });*/
+    router.push('/admin?tab=calendarManagement');
   };
 
   const handleDeleteEvent = async () => {

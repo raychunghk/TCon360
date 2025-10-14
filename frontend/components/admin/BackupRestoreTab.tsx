@@ -1,12 +1,10 @@
 import MyModal from '@/components/MyModal';
-import { useStaffData } from '@/components/hooks/useStaffData';
 import useStore from '@/components/stores/zstore.js';
 import { Box, Button, Card, Divider, FileInput, Flex, LoadingOverlay, Paper, Text } from '@mantine/core';
 import { IconCloudDownload, IconJson, IconUpload } from '@tabler/icons-react';
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 import { useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 import commonstyle from '/styles/common.module.css';
 
 const BackupRestoreTab = () => {
@@ -14,8 +12,9 @@ const BackupRestoreTab = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
     const [jsonFile, setJsonFile] = useState(null);
-    const [basepath] = useStore(useShallow((state) => [state.basepath]));
-    const { refreshFormValues } = useStaffData();
+    //const [basepath] = useStore(useShallow((state) => [state.basepath]));
+    const {   basepath, fetchStaffData  } = useStore();
+
     const handleModalClose = () => {
         setModalOpen(false);
     };
@@ -92,7 +91,7 @@ const BackupRestoreTab = () => {
                 setModalMsg(response.data.message);
                 setModalOpen(true);
 
-                await refreshFormValues();
+                await fetchStaffData();
             } else {
                 console.error('Error restoring user data:', response.statusText);
                 setModalMsg(`Error: ${response.statusText}`);

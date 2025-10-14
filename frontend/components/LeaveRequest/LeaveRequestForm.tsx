@@ -4,7 +4,7 @@
 import { Button, Card, Flex, Grid, LoadingOverlay, Select, Text, TextInput, useMantineTheme } from '@mantine/core';
 import { DatePickerInput, DayOfWeek } from '@mantine/dates';
 import { IconCalendarPlus, IconCalendarUp, IconCalendarX, IconFileSpreadsheet } from '@tabler/icons-react';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { Session } from 'next-auth';
 import Head from 'next/head';
 import { parseCookies } from 'nookies';
@@ -49,8 +49,8 @@ interface PublicHoliday {
 interface LeaveRequest {
     id?: number;
     title: string | null;
-    leavePeriodStart: Date | null;
-    leavePeriodEnd: Date | null;
+    leavePeriodStart: Date | string | null;
+    leavePeriodEnd: Date | string | null;
     AMPMStart: string;
     AMPMEnd: string;
     leaveDays: number;
@@ -125,7 +125,14 @@ export default function LeaveRequestForm({
     const [isEventUpdated, setIsEventUpdated] = useUIStore(
         useShallow((state: any) => [state.isEventUpdated as boolean, state.setIsEventUpdated as (value: boolean) => void])
     );
-
+    const parseDateString = (dateString: string | null): Date | null => {
+        if (!dateString) return null;
+        try {
+            return parse(dateString, 'yyyy-MM-dd', new Date());
+        } catch {
+            return null; // Return null if parsing fails
+        }
+    };
     const initialLeaveRequest: LeaveRequest = {
         title: LeaveRequestPeriod?.title ?? null,
         leavePeriodStart: LeaveRequestPeriod?.start ?? null,
@@ -282,7 +289,7 @@ export default function LeaveRequestForm({
                     setSelectedMonth(CalendarDate as Date);
                     await setTimesheetDefaultDate(CalendarDate as Date);
                 }
-                await onDeleteEvent(leaveRequest.id, timesheetDefaultDate);
+                await onDeleteEvent();
                 setModalMsg('Leave Record Deleted Successfully');
                 setModalOpen(true);
                 reset();
@@ -294,7 +301,7 @@ export default function LeaveRequestForm({
         setSubmitting(false);
     };
 
-    const normalizeDate = (dateInput: Date | null): Date | null => {
+    const normalizeDate = (dateInput: Date | string | null): Date | null => {
         if (!dateInput) return null;
         const date = new Date(dateInput);
         return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -409,15 +416,16 @@ export default function LeaveRequestForm({
     };
     const btnSize = 18;
 
-    const handleLeaveStartSelect = (date: Date | null, stateobj: LeaveRequest) => {
+    const handleLeaveStartSelect = (datestring: string | null, stateobj: LeaveRequest) => {
+        const date = parseDateString(datestring)
         if (!stateobj.leavePeriodEnd) {
             stateobj.dateOfReturn = date;
         }
-        handleDateInputSelect(date, stateobj);
+        handleDateInputSelect(datestring, stateobj);
     };
 
-    const handleDateInputSelect = (date: Date | null, stateobj: LeaveRequest) => {
-        if (!excludeHoliday(date)) {
+    const handleDateInputSelect = (datestring: string | null, stateobj: LeaveRequest) => {
+        if (!excludeHoliday(datestring)) {
             setLeaveRequest(stateobj);
         }
     };
@@ -432,8 +440,8 @@ export default function LeaveRequestForm({
     const getDatePickerProps = (fieldName: keyof LeaveRequest) => ({
         valueFormat: 'DD-MM-YYYY',
         firstDayOfWeek: 0 as DayOfWeek,
-        excludeDate: excludeHoliday as (date: Date) => boolean,
-        renderDay: myRenderDay as (date: Date) => React.ReactElement,
+        excludeDate: excludeHoliday,
+        renderDay: myRenderDay,
         name: fieldName,
         error: errors[fieldName],
         value: leaveRequest[fieldName] as Date | null,
@@ -497,11 +505,12 @@ export default function LeaveRequestForm({
                                 clearable
                                 label="Leave period start"
                                 required
-                                onChange={(date: Date | null) => {
+                                onChange={(dateString: string | null) => {
+
                                     setErrors((prev) => ({ ...prev, leavePeriodStart: undefined }));
-                                    handleLeaveStartSelect(date, {
+                                    handleLeaveStartSelect(dateString, {
                                         ...leaveRequest,
-                                        leavePeriodStart: date,
+                                        leavePeriodStart: dateString,
                                     });
                                 }}
                                 disabled={isFetchingData || submitting} // Disabled during fetching or submitting
@@ -532,11 +541,12 @@ export default function LeaveRequestForm({
                                         ? new Date(new Date(leaveRequest.leavePeriodStart).getTime() + 24 * 60 * 60 * 1000)
                                         : undefined
                                 }
-                                onChange={(date: Date | null) => {
+                                onChange={(dateString: string | null) => {
+                                    const date = parseDateString(dateString);
                                     setErrors((prev) => ({ ...prev, leavePeriodEnd: undefined }));
-                                    handleDateInputSelect(date, {
+                                    handleDateInputSelect(dateString, {
                                         ...leaveRequest,
-                                        leavePeriodEnd: date,
+                                        leavePeriodEnd: dateString,
                                     });
                                 }}
                                 clearable
@@ -578,9 +588,10 @@ export default function LeaveRequestForm({
                                 label="Staff sign date"
                                 clearable
                                 placeholder="Staff sign date"
-                                onChange={(date: Date | null) => {
+                                onChange={(dateString: string | null) => {
+                                    const date = parseDateString(dateString);
                                     setErrors((prev) => ({ ...prev, staffSignDate: undefined }));
-                                    handleDateInputSelect(date, {
+                                    handleDateInputSelect(dateString, {
                                         ...leaveRequest,
                                         staffSignDate: date,
                                         error: null,

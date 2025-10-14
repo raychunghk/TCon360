@@ -1,126 +1,175 @@
 'use client';
+import { Loader, Stack, Tabs, Text } from '@mantine/core';
+import { IconCalendarEvent, IconDatabasePlus, IconSunMoon, IconUser } from '@tabler/icons-react';
+import Head from 'next/head';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
+import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
 import { MainShell } from '@/components/MainShell/MainShell';
+import BackupRestoreTab from '@/components/admin/BackupRestoreTab';
 import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
 import UserManagementTab from '@/components/admin/UserManagerTab';
 import useStore from '@/components/stores/zstore.js';
-import { Tabs } from '@mantine/core';
-import Head from 'next/head';
 
-import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
+// Type Definitions
+interface User {
+    id?: number;
+    role?: { name: string; permissions?: string[] };
+}
 
-import BackupRestoreTab from '@/components/admin/BackupRestoreTab';
-import { IconCalendarEvent, IconDatabasePlus, IconSunMoon, IconUser } from '@tabler/icons-react';
-import { useSearchParams } from 'next/navigation';
-import { useShallow } from 'zustand/react/shallow';
-export default function Page() {
+interface StoreState {
+    activeUser: User | null;
+    basepath: string;
+}
 
-    const [formValues, setFormValues] = useState(null);
-    const [submitting, setSubmitting] = useState(false);
+interface TabConfig {
+    value: string;
+    label: string;
+    icon: React.ReactNode;
+    component: React.ReactNode;
+}
 
-    const [activeUser, basepath] = useStore(
-        useShallow((state) => [state.activeUser, state.basepath])
-    );
-    const [activeTab, setActiveTab] = useState('userManagement');
+// Tab Configuration
+const tabs: TabConfig[] = [
+    {
+        value: 'userManagement',
+        label: 'User Management',
+        icon: <IconUser size={20} />,
+        component: <UserManagementTab />,
+    },
+    {
+        value: 'calendarManagement',
+        label: 'Calendar Management',
+        icon: <IconCalendarEvent size={20} />,
+        component: <CalendarManagementTab />,
+    },
+    {
+        value: 'dataManagement',
+        label: 'Backup/Restore',
+        icon: <IconDatabasePlus size={20} />,
+        component: <BackupRestoreTab />,
+    },
+    {
+        value: 'themeManagement',
+        label: 'Change Theme',
+        icon: <IconSunMoon size={20} />,
+        component: <ColorSchemeToggle />,
+    },
+];
+
+// Child component to handle useSearchParams
+function AdminContent({ activeUser, basepath }: { activeUser: User | null; basepath: string }) {
+    const [activeTab, setActiveTab] = useState<string>('userManagement');
     const searchParams = useSearchParams();
+    const router = useRouter();
 
     useEffect(() => {
         const tabId = searchParams.get('tab');
-        if (tabId === 'calendarManagement') {
-            setActiveTab('calendarManagement');
+        const validTab = tabs.find((tab) => tab.value === tabId);
+        if (validTab) {
+            setActiveTab(tabId as string);
+        } else if (tabId) {
+            router.replace('/admin?tab=userManagement', { scroll: false });
         }
-    }, [searchParams]);
+    }, [searchParams, router]);
 
-    if (!activeUser || activeUser?.role?.name !== 'admin') {
+    useEffect(() => {
+        if (activeUser && activeUser?.role?.name !== 'admin') {
+            router.push('/login');
+        }
+    }, [activeUser, router]);
+
+    if (!activeUser) {
         return (
-            <MainShell contentpadding="20px">
+            <MainShell contentpadding="md">
                 <Head>
-                    <title>Admin</title>
+                    <title>Admin Dashboard</title>
                 </Head>
-                <p>
-                    {activeUser
-                        ? 'Sorry, you are not authorized to access this page.'
-                        : 'Loading...'}
-                </p>
+                <Stack align="center" mt="xl">
+                    <Loader size="lg" />
+                    <Text>Loading...</Text>
+                </Stack>
             </MainShell>
         );
     }
-    /*
-        const onSubmit = async () => {
-            setSubmitting(true);
-            try {
-                if (formValues) {
-                    /*const cookies = document.cookie.split('; ');
-                    const tokenCookie = cookies.find((cookie) => cookie.startsWith('token='));
-                    *//*
-const cookies = parseCookies();
-const tokenCookie = cookies.token;
-const token = tokenCookie ? tokenCookie.split('=')[1] : null;
-const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-const response = await axios.put(
-`${basepath}/api/admin/${formValues.id}`,
-formValues,
-{ headers }
-);
+    if (activeUser?.role?.name !== 'admin') {
+        return (
+            <MainShell contentpadding="md">
+                <Head>
+                    <title>Admin Dashboard</title>
+                </Head>
+                <Stack align="center" mt="xl">
+                    <Text size="lg" c="red">
+                        Unauthorized: You do not have permission to access this page.
+                    </Text>
+                    <Text>
+                        Please <a href="/login">log in</a> with an admin account.
+                    </Text>
+                </Stack>
+            </MainShell>
+        );
+    }
 
-if (response.status !== 200) {
-console.error('Failed to update record:', response);
-}
-}
-} catch (error) {
-console.error('Failed to update record:', error);
-} finally {
-setSubmitting(false);
-}
-};
-*/
     return (
-        <MainShell contentpadding="20px">
+        <MainShell contentpadding="md">
             <Head>
-                <title>Admin</title>
+                <title>Admin Dashboard</title>
             </Head>
-
             <Tabs
-                defaultValue={"userManagement"}
-                //  value={activeTab}
-                // onChange={setActiveTab}
+                value={activeTab}
+                onChange={(value) => {
+                    setActiveTab(value as string);
+                    router.push(`/admin?tab=${value}`, { scroll: false });
+                }}
+                aria-label="Admin dashboard tabs"
                 style={{ width: '100%', height: '100%' }}
             >
                 <Tabs.List>
-                    <Tabs.Tab value="userManagement" leftSection={<IconUser />}>
-                        User Management
-                    </Tabs.Tab>
-                    <Tabs.Tab value="calendarManagement" leftSection={<IconCalendarEvent />}>
-                        Calendar Management
-                    </Tabs.Tab>
-                    <Tabs.Tab value="dataManagement" leftSection={<IconDatabasePlus />}>
-                        Backup/Restore
-                    </Tabs.Tab>
-                    <Tabs.Tab value="themeManagement" leftSection={<IconSunMoon />}>
-                        Change Theme
-                    </Tabs.Tab>
-
+                    {tabs.map((tab) => (
+                        <Tabs.Tab key={tab.value} value={tab.value} leftSection={tab.icon}>
+                            {tab.label}
+                        </Tabs.Tab>
+                    ))}
                 </Tabs.List>
-                <Tabs.Panel value="userManagement" pt="xs" style={{ width: '100%', height: '100%' }}>
-                    <Suspense fallback={<p>Loading User Management...</p>}>
-                        <UserManagementTab />
-                    </Suspense>
-                </Tabs.Panel>
-                <Tabs.Panel value="calendarManagement" pt="xs">
-                    <Suspense fallback={<p>Loading Calendar Management...</p>}>
-                        <CalendarManagementTab />
-                    </Suspense>
-                </Tabs.Panel>
-                <Tabs.Panel value="themeManagement" pt="xs">
-                    <ColorSchemeToggle />
-                </Tabs.Panel>
-                <Tabs.Panel value="dataManagement" pt="xs">
-                    <BackupRestoreTab />
-                </Tabs.Panel>
+                {tabs.map((tab) => (
+                    <Tabs.Panel key={tab.value} value={tab.value} pt="xs">
+                        <Suspense
+                            fallback={
+                                <Stack align="center" mt="xl">
+                                    <Loader size="lg" />
+                                    <Text>Loading {tab.label}...</Text>
+                                </Stack>
+                            }
+                        >
+                            {tab.component}
+                        </Suspense>
+                    </Tabs.Panel>
+                ))}
             </Tabs>
         </MainShell>
     );
-};
+}
 
+export default function AdminPage() {
+    const [activeUser, basepath] = useStore(
+        useShallow((state: StoreState) => [state.activeUser, state.basepath])
+    );
+
+    return (
+        <Suspense
+            fallback={
+                <MainShell contentpadding="md">
+                    <Stack align="center" mt="xl">
+                        <Loader size="lg" />
+                        <Text>Loading Admin Dashboard...</Text>
+                    </Stack>
+                </MainShell>
+            }
+        >
+            <AdminContent activeUser={activeUser} basepath={basepath} />
+        </Suspense>
+    );
+}

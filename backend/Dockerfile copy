@@ -18,15 +18,14 @@ RUN cd packages/config && pnpm build
 RUN cd backend && npx prisma generate
 # Copy backend source and build
 COPY backend/ ./backend/
-RUN cd backend && pnpm run build
+RUN cd backend && npx prisma generate && pnpm run build
 # Set environment variables
 ENV JWT_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789
 ENV DATABASE_URL=file:./TCon360.db
 ENV BACKEND_PORT=3800
 ENV TOKEN_MAX_AGE=113000
-ENV PROXY_PATH=/absproxy
-ENV FRONTEND_PORT=3000
-ENV USE_REVERSE_PROXY=false
-ENV NODE_ENV=production
+#ENV FRONTEND_PORT=3000
+#ENV USE_REVERSE_PROXY=false
+#ENV NODE_ENV=production
 EXPOSE 3800
 CMD ["pnpm", "--filter", "backend", "run", "start:prod"]

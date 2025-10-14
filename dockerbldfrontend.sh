@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Load environment variables from .env file if it exists
@@ -12,6 +13,14 @@ BACKEND_PORT=${BACKEND_PORT:-3800}
 TOKEN_MAX_AGE=${TOKEN_MAX_AGE:-113000}
 NODE_ENV=${NODE_ENV:-production}
 NEXT_PUBLIC_BASEPATH=${NEXT_PUBLIC_BASEPATH:-/tcon360}
+
+# Log JWT_SECRET and file presence
+echo "dockerbldfrontend.sh: JWT_SECRET=$JWT_SECRET"
+echo "dockerbldfrontend.sh: JWT_SECRET length=${#JWT_SECRET}"
+echo "dockerbldfrontend.sh: Frontend package.json exists: $(test -f frontend/package.json && echo yes || echo no)"
+echo "dockerbldfrontend.sh: Config package.json exists: $(test -f packages/config/package.json && echo yes || echo no)"
+echo "dockerbldfrontend.sh: Frontend pnpm-workspace.yaml exists: $(test -f frontend/pnpm-workspace.yaml && echo yes || echo no)"
+echo "dockerbldfrontend.sh: Frontend pnpm-lock.yaml exists: $(test -f frontend/pnpm-lock.yaml && echo yes || echo no)"
 
 # Build the frontend image with aligned environment variables
 sudo docker build -f frontend/Dockerfile \

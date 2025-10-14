@@ -14,7 +14,7 @@ export async function loadPublicHolidays(get, set) {
         const response = await axios.get(`${basepath}/api/timesheet/publicholidays`);
         const pldays = response.data.map((holiday) => ({
             Summary: holiday.Summary,
-            StartDate: format(new Date(holiday.StartDate), 'M/d/yyyy'),
+            StartDate: format(new Date(holiday.StartDate), 'yyyy-MM-dd'),
         }));
         set({ publicHolidays: pldays });
     } catch (error) {

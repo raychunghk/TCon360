@@ -1,6 +1,6 @@
 import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import useStore from '@/components/stores/zstore.js';
-import { format, isWeekend } from 'date-fns';
+import { format, isWeekend, parse } from 'date-fns';
 import * as Yup from 'yup';
 let arrPublicHoliday;
 export function setPublicHolidays(holidays) {
@@ -128,12 +128,45 @@ export function getBusinessDays(startDate, endDate) {
 
   return businessDays;
 }
-export function adjustTimeZoneVal(dateval) {
+export function adjustTimeZoneVal(dateparam) {
+  let dateval = null;
+
+  if (typeof dateparam === 'string') {
+    // Attempt to parse the string using the expected format 'yyyy-MM-dd'
+    // We assume the date string is in 'yyyy-MM-dd' format based on the original JS logic.
+    const parsedDate = parse(dateparam, 'yyyy-MM-dd', new Date());
+
+    // Check if parsing was successful
+    if (!isNaN(parsedDate.getTime())) {
+      dateval = parsedDate;
+    } else {
+      console.warn(`adjustTimeZoneVal: Failed to parse date string: ${dateparam}. Expected format 'yyyy-MM-dd'.`);
+      return undefined;
+    }
+
+  } else if (dateparam instanceof Date && !isNaN(dateparam.getTime())) {
+    // If it's a valid Date object
+    dateval = dateparam;
+  } else if (dateparam === null || dateparam === undefined) {
+    // Null or undefined input
+    return undefined;
+  }
+
   if (dateval) {
-    const rtnval = new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString();
+    // Calculate the time in milliseconds, adjusted by the local timezone offset.
+    // Subtracting the offset ensures that when toISOString() converts the time to UTC, 
+    // it lands exactly at 00:00:00.000Z on the desired date.
+    const offsetMs = dateval.getTimezoneOffset() * 60000;
+    const adjustedTime = dateval.getTime() - offsetMs;
+
+    const adjustedDate = new Date(adjustedTime);
+    const rtnval = adjustedDate.toISOString();
+
     console.log('adjustTimeZoneVal', rtnval);
     return rtnval;
   }
+
+  return undefined;
 }
 export function getNextWorkingDate(date) {
   const dayOfWeek = date.getDay();
@@ -202,12 +235,12 @@ const getPublicHolidays = () => {
     // await plHoliday.loadPublicHolidays();
 
   }
- 
+
   return state.publicHolidays;
 };
- 
+
 export const isPublicHoliday = (date) => {
-  const formattedDate = format(date, 'M/d/yyyy'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
+  const formattedDate = format(date, 'yyyy-MM-dd'); // assuming formatDate is a function to format the date into the same format as in the events array, e.g. '1/1/2022'
   //const _publicholidays = useContext(PublicHolidaysContext);
   //const _plday = arrPublicHoliday;
   const _plday = getPublicHolidays();
@@ -238,19 +271,24 @@ export const myRenderDay = (dateInput) => {
   );
 };
 export const excludeHoliday = (date) => {
-  if (date) {
-    const isWeekendDay = isWeekend(date);
-    const formattedDate = format(date, 'M/d/yyyy');
+  try {
+    if (date) {
+      const isWeekendDay = isWeekend(date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
 
-    //const _publicholidays = useContext(PublicHolidaysContext);
-    const _publicholidays = getPublicHolidays();
-    const isHoliday = _publicholidays.some((holiday) => holiday.StartDate === formattedDate);
-    const rtn = isWeekendDay || isHoliday;
+      //const _publicholidays = useContext(PublicHolidaysContext);
+      const _publicholidays = getPublicHolidays();
+      const isHoliday = _publicholidays.some((holiday) => holiday.StartDate === formattedDate);
+      const rtn = isWeekendDay || isHoliday;
 
-    return rtn;
-  } else {
-    return null;
+      return rtn;
+    } else {
+      return null;
+    }
+  } catch (exception) {
+    console.log(`error ${date}`, exception);
   }
+
 };
 
 
