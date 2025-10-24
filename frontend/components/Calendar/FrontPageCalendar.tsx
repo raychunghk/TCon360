@@ -2,7 +2,7 @@
 import { SignOut as clientSignOut } from '@/app/lib/auth-action';
 import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { getBusinessDays } from '@/components/util/leaverequest.util';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';

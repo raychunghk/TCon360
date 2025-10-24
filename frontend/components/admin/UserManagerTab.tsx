@@ -10,7 +10,7 @@ import {
 import 'mantine-react-table/styles.css';
 import { useEffect, useMemo, useState } from 'react';
 
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { useShallow } from 'zustand/react/shallow';
 type UserRole = {
   userId: string;

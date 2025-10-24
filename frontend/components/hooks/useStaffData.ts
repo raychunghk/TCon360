@@ -1,5 +1,5 @@
 'use client';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 
 export function useStaffData() {
   const {

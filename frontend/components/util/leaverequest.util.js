@@ -1,5 +1,5 @@
 import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { format, isWeekend, parse } from 'date-fns';
 import * as Yup from 'yup';
 let arrPublicHoliday;
@@ -264,6 +264,7 @@ export const myRenderDay = (dateInput) => {
   const day = date.getDate();
   const tootip = isDisabled ? '' : getSummaryByDate(date);
   const style = isDisabled ? null : isWeekend(date) ? weekendstyle : dayStyle;
+  const parsedDate = parse(dateInput, 'yyyy-MM-dd', new Date());
   return (
     <div style={style} title={isDisabled ? '' : tootip}>
       {day}

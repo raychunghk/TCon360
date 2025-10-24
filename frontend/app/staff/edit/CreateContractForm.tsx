@@ -1,5 +1,5 @@
 'use client';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { myRenderDay } from '@/components/util/leaverequest.util';
 import { Button, Code, Container, Flex, Grid, Modal, NumberInput, Switch, Text, Title, rem, useMantineTheme } from '@mantine/core';
 import { DatePickerInput, DayOfWeek } from '@mantine/dates';

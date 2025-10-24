@@ -15,7 +15,7 @@ import { getMySession } from '@/app/lib/auth-action';
 import MyCard from '@/components/MyCard';
 import MyModal from '@/components/MyModal';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import {
     adjustTimeZoneVal,
     ampmOptions,
@@ -34,7 +34,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { LeaveRequestStaffInfo, Staff } from './leaveRequestStaffInfo';
 
 // Type Definitions
-
 interface LeaveRequestPeriod {
     title?: string | null;
     start?: Date | null;
@@ -77,6 +76,7 @@ interface LeaveRequestFormProps {
     isCalendarIntegrated?: boolean;
 }
 export type FormType = 'create' | 'edit';
+
 export default function LeaveRequestForm({
     formType,
     leaveRequestId,
@@ -125,6 +125,7 @@ export default function LeaveRequestForm({
     const [isEventUpdated, setIsEventUpdated] = useUIStore(
         useShallow((state: any) => [state.isEventUpdated as boolean, state.setIsEventUpdated as (value: boolean) => void])
     );
+
     const parseDateString = (dateString: string | null): Date | null => {
         if (!dateString) return null;
         try {
@@ -133,6 +134,7 @@ export default function LeaveRequestForm({
             return null; // Return null if parsing fails
         }
     };
+
     const initialLeaveRequest: LeaveRequest = {
         title: LeaveRequestPeriod?.title ?? null,
         leavePeriodStart: LeaveRequestPeriod?.start ?? null,
@@ -194,8 +196,11 @@ export default function LeaveRequestForm({
                         const { leavePeriodStart, leavePeriodEnd, dateOfReturn, staffSignDate, ...rest } = response.data;
                         setLeaveRequest({
                             ...rest,
-                            title: rest.title ?? null, staffId: rest.staffId ?? null, fileId: rest.fileId ?? null,
-                            error: rest.error ?? null, helper: rest.helper ?? null,
+                            title: rest.title ?? null,
+                            staffId: rest.staffId ?? null,
+                            fileId: rest.fileId ?? null,
+                            error: rest.error ?? null,
+                            helper: rest.helper ?? null,
                             leavePeriodStart: leavePeriodStart ? new Date(leavePeriodStart) : null,
                             leavePeriodEnd: leavePeriodEnd ? new Date(leavePeriodEnd) : null,
                             dateOfReturn: dateOfReturn ? new Date(dateOfReturn) : null,
@@ -417,7 +422,7 @@ export default function LeaveRequestForm({
     const btnSize = 18;
 
     const handleLeaveStartSelect = (datestring: string | null, stateobj: LeaveRequest) => {
-        const date = parseDateString(datestring)
+        const date = parseDateString(datestring);
         if (!stateobj.leavePeriodEnd) {
             stateobj.dateOfReturn = date;
         }
@@ -425,7 +430,13 @@ export default function LeaveRequestForm({
     };
 
     const handleDateInputSelect = (datestring: string | null, stateobj: LeaveRequest) => {
-        if (!excludeHoliday(datestring)) {
+        // Wrapper to cast excludeHoliday result to boolean
+        const wrappedExcludeDate = (date: string): boolean => {
+            const result = excludeHoliday(date);
+            return result === true; // Cast to boolean, treating null/undefined as false
+        };
+
+        if (!wrappedExcludeDate(datestring || '')) {
             setLeaveRequest(stateobj);
         }
     };
@@ -440,11 +451,15 @@ export default function LeaveRequestForm({
     const getDatePickerProps = (fieldName: keyof LeaveRequest) => ({
         valueFormat: 'DD-MM-YYYY',
         firstDayOfWeek: 0 as DayOfWeek,
-        excludeDate: excludeHoliday,
+        excludeDate: (date: string) => {
+            const result = excludeHoliday(date);
+            return result === true; // Cast to boolean, treating null/undefined as false
+        },
         renderDay: myRenderDay,
         name: fieldName,
         error: errors[fieldName],
         value: leaveRequest[fieldName] as Date | null,
+
     });
 
     return (
@@ -506,14 +521,13 @@ export default function LeaveRequestForm({
                                 label="Leave period start"
                                 required
                                 onChange={(dateString: string | null) => {
-
                                     setErrors((prev) => ({ ...prev, leavePeriodStart: undefined }));
                                     handleLeaveStartSelect(dateString, {
                                         ...leaveRequest,
                                         leavePeriodStart: dateString,
                                     });
                                 }}
-                                disabled={isFetchingData || submitting} // Disabled during fetching or submitting
+                                disabled={isFetchingData || submitting}
                                 {...getDatePickerProps('leavePeriodStart')}
                             />
                         </Grid.Col>
@@ -550,7 +564,7 @@ export default function LeaveRequestForm({
                                     });
                                 }}
                                 clearable
-                                disabled={!leaveRequest.leavePeriodStart || isFetchingData || submitting} // Disabled until start date is set or during fetching/submitting
+                                disabled={!leaveRequest.leavePeriodStart || isFetchingData || submitting}
                                 {...getDatePickerProps('leavePeriodEnd')}
                             />
                         </Grid.Col>
@@ -599,7 +613,7 @@ export default function LeaveRequestForm({
                                     });
                                 }}
                                 defaultDate={new Date()}
-                                disabled={!leaveRequest.leavePeriodStart || isFetchingData || submitting} // Disabled until start date is set or during fetching/submitting
+                                disabled={!leaveRequest.leavePeriodStart || isFetchingData || submitting}
                                 defaultValue={new Date()}
                                 {...getDatePickerProps('staffSignDate')}
                             />
@@ -608,7 +622,7 @@ export default function LeaveRequestForm({
                             <DatePickerInput
                                 clearable
                                 label="Date of Return"
-                                disabled={!leaveRequest.leavePeriodStart || isFetchingData || submitting} // Disabled until start date is set or during fetching/submitting
+                                disabled={!leaveRequest.leavePeriodStart || isFetchingData || submitting}
                                 {...getDatePickerProps('dateOfReturn')}
                             />
                         </Grid.Col>
@@ -619,7 +633,7 @@ export default function LeaveRequestForm({
                                         component="a"
                                         target="_blank"
                                         leftSection={<IconFileSpreadsheet />}
-                                        href={`${basepath}/api/staff/download/${leaveRequest.fileId}`}
+                                        href={`${basepath} /api/staff / download / ${leaveRequest.fileId} `}
                                     >
                                         Download Leave Form
                                     </Button>

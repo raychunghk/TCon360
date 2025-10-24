@@ -1,5 +1,5 @@
 import MyModal from '@/components/MyModal';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { Box, Button, Card, Divider, FileInput, Flex, LoadingOverlay, Paper, Text } from '@mantine/core';
 import { IconCloudDownload, IconJson, IconUpload } from '@tabler/icons-react';
 import axios from 'axios';
@@ -13,7 +13,7 @@ const BackupRestoreTab = () => {
     const [modalMsg, setModalMsg] = useState('');
     const [jsonFile, setJsonFile] = useState(null);
     //const [basepath] = useStore(useShallow((state) => [state.basepath]));
-    const {   basepath, fetchStaffData  } = useStore();
+    const { basepath, fetchStaffData } = useStore();
 
     const handleModalClose = () => {
         setModalOpen(false);

@@ -1,6 +1,6 @@
 // useLogin.js
 import { SignIn } from '@/app/lib/auth-action';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import useRouter from '@/components/useCustRouter';
 import { setCookie } from 'nookies';
 

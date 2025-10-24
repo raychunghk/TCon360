@@ -10,7 +10,7 @@ import {
 import Link from 'next/link';
 import React from 'react';
 
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { usePathname } from 'next/navigation';
 import styles from './mainlinks.module.css';
 type LinkItemProps = {

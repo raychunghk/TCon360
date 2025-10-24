@@ -1,5 +1,5 @@
 'use client';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { Button, Card, Center, Grid, Group, MantineSize, Modal, Text } from '@mantine/core';
 import { MonthPicker } from '@mantine/dates';
 import { IconTableExport } from '@tabler/icons-react';

@@ -2,7 +2,7 @@
 import { SignOut as clientSignOut } from '@/app/lib/auth-action';
 import { useStaffData } from '@/components/hooks/useStaffData.ts';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { AppShell, Burger, Button, Center, Group, LoadingOverlay, Text, Title, useMantineTheme } from '@mantine/core';
 import '@mantine/core/styles/Button.css';
 import '@mantine/dates/styles.css';
@@ -101,7 +101,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
             </Title>
           </Group>
           <Group justify="right" mr={15}>
-            {activeUser ? (
+            {(activeUser &&isAuthenticated) ? (
               <>
                 <HeaderPopover />
                 <Button

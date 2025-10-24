@@ -2,7 +2,7 @@
 'use client';
 
 import LoginBody from '@/components/login/LoginBody';
-import useStore from '@/components/stores/zstore.js'; // Import your Zustand store
+import useStore from '@/components/stores/zstore.ts'; // Import your Zustand store
 import { useEffect } from 'react'; // Import useEffect
 
 export default function LoginPage(props: any) {

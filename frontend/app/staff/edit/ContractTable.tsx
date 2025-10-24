@@ -1,5 +1,5 @@
 'use client';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { myRenderDay } from '@/components/util/leaverequest.util';
 import { ActionIcon, Box, Button, Group, Text, Title, Tooltip } from '@mantine/core';
 import { modals } from '@mantine/modals';
@@ -13,7 +13,7 @@ import {
   type MRT_ColumnDef
 } from 'mantine-react-table';
 import 'mantine-react-table/styles.css';
-import { useEffect, useMemo, useState } from 'react'; // <-- ADDED type ReactNode
+import { useEffect, useMemo, useState } from 'react';
 import * as yup from 'yup';
 import { ContractDatePicker } from './ContractDatePicker';
 import CreateContractForm from './CreateContractForm';
@@ -22,7 +22,7 @@ import {
   DateCell,
   EditContractModalContent,
   EditIsActiveCell,
-  validationSchema
+  validationSchema,
 } from './edit.util';
 
 // Define the shape of the contract data
@@ -63,9 +63,8 @@ export default function ContractTable({
 
   const contracts = useMemo(() => formValues.contracts, [formValues.contracts]);
 
-  const columns = useMemo<MRT_ColumnDef<Contract>[]>(() =>
-
-    [
+  const columns = useMemo<MRT_ColumnDef<Contract>[]>(
+    () => [
       {
         accessorKey: 'id',
         header: 'ID',
@@ -74,7 +73,6 @@ export default function ContractTable({
       },
       {
         accessorKey: 'ContractStartDate',
-        // FIX: Pass the ReactNode directly instead of a function returning it
         header: 'Contract start date',
         size: 155,
         Edit: (params: any) => (
@@ -89,7 +87,6 @@ export default function ContractTable({
       },
       {
         accessorKey: 'ContractEndDate',
-        // FIX: Pass the ReactNode directly instead of a function returning it
         header: 'Contract end date',
         size: 155,
         Edit: (params: any) => (
@@ -104,8 +101,7 @@ export default function ContractTable({
       },
       {
         accessorKey: 'AnnualLeave',
-        // FIX: Pass the ReactNode directly instead of a function returning it
-        header: 'Annual leaves',// header: <div style={{ whiteSpace: 'pre-line' }}>Annual leaves</div> as ReactNode,
+        header: 'Annual leaves',
         size: 130,
         Edit: (params: any) => (
           <AnnualLeaveEditor
@@ -126,8 +122,9 @@ export default function ContractTable({
         ),
         Edit: (params: any) => EditIsActiveCell(params, formValues, setFormValues),
       },
-    ]
-    , [errors, formValues, setFormValues]);
+    ],
+    [errors, formValues, setFormValues]
+  );
 
   useEffect(() => {
     console.log('useEffect triggered', { contracts });
@@ -189,14 +186,12 @@ export default function ContractTable({
 
   const openDeleteConfirmModal = (row: { original: Contract }) => {
     modals.openConfirmModal({
-      title: <Title order={4}> Delete contract</Title>,
+      title: <Title order={4}>Delete contract</Title>,
       children: (
         <Text>
-          Are you sure to delete the contract for the period?:
-          <p>
-            {format(new Date(row.original.ContractStartDate), 'dd-MMM-yyyy')} to{' '}
-            {format(new Date(row.original.ContractEndDate), 'dd-MMM-yyyy')}
-          </p>
+          Are you sure to delete the contract for the period?:<br />
+          {format(new Date(row.original.ContractStartDate), 'dd-MMM-yyyy')} to{' '}
+          {format(new Date(row.original.ContractEndDate), 'dd-MMM-yyyy')}<br />
           This action cannot be undone.
         </Text>
       ),
@@ -234,76 +229,77 @@ export default function ContractTable({
     }
   };
 
-  const table = publicHolidays && useMantineReactTable({
-    columns,
-    displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
-    data: contracts,
-    createDisplayMode: 'row',
-    editDisplayMode: 'modal',
-    renderEditRowModalContent: (params) => EditContractModalContent(params, 'Update Contract'),
-    onEditingRowSave: handleSaveRow,
-    onEditingRowCancel: handleEditRowCancel,
-    enableColumnResizing: true,
-    enableEditing: true,
-    enableDensityToggle: true,
-    renderTopToolbarCustomActions: ({ table }) => (
-      <Group h={{ base: 45, md: 50 }} p="sx">
-        <Button style={{ color: 'white' }} variant="filled" onClick={(e) => handleFormToggle(e)}>
-          Create New Contract
-        </Button>
-        <Text fw={500}>Manage Staff Contract Period and Annual Leaves</Text>
-      </Group>
-    ),
-    mantineTableBodyCellProps: {
-      style: { padding: '0.35rem 0.5rem !important', textAlign: 'left' },
-    },
-    mantineTableHeadCellProps: {
-
-      className: 'ctrtblhead', // Retain for additional CSS targeting if needed
-    },
-    mantineEditTextInputProps: ({ cell }) => ({
-      onBlur: (event) => { },
-    }),
-    positionActionsColumn: 'last',
-    initialState: { density: 'xs' },
-    mantineTableContainerProps: {
-      style: {
-        minHeight: '200px',
-        minWidth: '900px',
+  // Ensure table is defined with a fallback to undefined
+  const table = publicHolidays
+    ? useMantineReactTable<Contract>({
+      columns,
+      displayColumnDefOptions: { 'mrt-row-actions': { size: 150 } },
+      data: contracts,
+      createDisplayMode: 'row',
+      editDisplayMode: 'modal',
+      renderEditRowModalContent: (params) => EditContractModalContent(params, 'Update Contract'),
+      onEditingRowSave: handleSaveRow,
+      onEditingRowCancel: handleEditRowCancel,
+      enableColumnResizing: true,
+      enableEditing: true,
+      enableDensityToggle: true,
+      renderTopToolbarCustomActions: ({ table }) => (
+        <Group h={{ base: 45, md: 50 }} p="sx">
+          <Button style={{ color: 'white' }} variant="filled" onClick={(e) => handleFormToggle(e)}>
+            Create New Contract
+          </Button>
+          <Text fw={500}>Manage Staff Contract Period and Annual Leaves</Text>
+        </Group>
+      ),
+      mantineTableBodyCellProps: {
+        style: { padding: '0.35rem 0.5rem !important', textAlign: 'left' },
       },
-    },
-    renderRowActions: ({ row, table }) => {
-      const IsActive = row.original.IsActive;
-      return (
-        <Box
-          style={{
-            display: 'flex',
-            flexWrap: 'nowrap',
-            gap: '3px',
-            width: '900px',
-          }}
-        >
-          <Tooltip label="Edit">
-            <ActionIcon onClick={() => table.setEditingRow(row)}>
-              <IconEdit />
-            </ActionIcon>
-          </Tooltip>
-          {!IsActive && (
-            <Tooltip label="Delete">
-              <ActionIcon color="red" onClick={() => openDeleteConfirmModal(row)}>
-                <IconTrash />
+      mantineTableHeadCellProps: {
+        className: 'ctrtblhead', // Retain for additional CSS targeting if needed
+      },
+      mantineEditTextInputProps: ({ cell }) => ({
+        onBlur: (event) => { },
+      }),
+      positionActionsColumn: 'last',
+      initialState: { density: 'xs' },
+      mantineTableContainerProps: {
+        style: {
+          minHeight: '200px',
+          minWidth: '900px',
+        },
+      },
+      renderRowActions: ({ row, table }) => {
+        const IsActive = row.original.IsActive;
+        return (
+          <Box
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              gap: '3px',
+              width: '900px',
+            }}
+          >
+            <Tooltip label="Edit">
+              <ActionIcon onClick={() => table.setEditingRow(row)}>
+                <IconEdit />
               </ActionIcon>
             </Tooltip>
-          )}
-        </Box>
-      );
-    },
-    state: {
-      isLoading: loading,
-      isSaving: saving,
-    },
-
-  });
+            {!IsActive && (
+              <Tooltip label="Delete">
+                <ActionIcon color="red" onClick={() => openDeleteConfirmModal(row)}>
+                  <IconTrash />
+                </ActionIcon>
+              </Tooltip>
+            )}
+          </Box>
+        );
+      },
+      state: {
+        isLoading: loading,
+        isSaving: saving,
+      },
+    })
+    : undefined;
 
   if (!formValues) {
     return <div>Loading...</div>;
@@ -321,7 +317,7 @@ export default function ContractTable({
 
   return (
     <>
-      <MantineReactTable table={table} />
+      {table && <MantineReactTable table={table} />}
       {createModalOpen && (
         <CreateContractForm
           open={createModalOpen}

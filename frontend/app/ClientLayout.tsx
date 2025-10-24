@@ -1,10 +1,9 @@
 'use client';
 import Providers from '@/components/providers';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore';
 import { LoadingOverlay } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-
 type ConfigProps = {
     basepath: string;
     prefix: string;
@@ -18,37 +17,65 @@ export default function ClientLayout({
     children: React.ReactNode;
     config: ConfigProps;
 }) {
-    const { basepath, setBasepath, setUseReverseProxy, setConfig, publicHolidays, loadPublicHolidays, isExiting, status, isAuthenticated } = useStore();
+    const {
+        basepath,
+        setBasepath,
+        setUseReverseProxy,
+        setConfig,
+        publicHolidays,
+        loadPublicHolidays,
+        isExiting,
+        status,
+        isAuthenticated
+    } = useStore();
+
     const memoizedConfig = useMemo(() => config, [config]);
     const router = useRouter();
     const pathname = usePathname();
 
+    // 1. EFFECT FOR CONFIGURATION SETUP
+    // This runs to set the initial basepath if it's missing.
     useEffect(() => {
-        console.log('ClientLayout useEffect triggered', { basepath, publicHolidays, isExiting, status, pathname });
-        let isMounted = true;
+        console.log('ClientLayout Config Effect triggered', { basepath });
 
         if (!basepath && memoizedConfig.basepath) {
+            console.log('Setting initial configuration based on props.');
             setBasepath(memoizedConfig.basepath);
             setUseReverseProxy(memoizedConfig.useReverseProxy);
             setConfig(memoizedConfig);
         }
+
+        // Note: We don't need a cleanup function here as we are just setting state.
+    }, [basepath, memoizedConfig, setBasepath, setUseReverseProxy, setConfig]);
+
+
+    // 2. EFFECT FOR DATA LOADING (Public Holidays)
+    // This runs only when basepath is defined AND holidays need loading.
+    useEffect(() => {
+        console.log('ClientLayout Data Loading Effect triggered', { basepath, publicHolidays, isExiting });
+        let isMounted = true;
+
         if (basepath && (!publicHolidays || publicHolidays.length === 0) && !isExiting && isMounted) {
             console.log('ClientLayout triggering loadPublicHolidays');
             loadPublicHolidays();
         }
 
         return () => {
-            console.log('ClientLayout useEffect cleanup');
+            console.log('ClientLayout Data Loading Effect cleanup');
             isMounted = false;
         };
-    }, [basepath]);
+    }, [basepath, publicHolidays, isExiting, loadPublicHolidays]); // Dependencies ensure this runs when basepath updates
 
+    // Original authentication redirect effect (no change needed)
+    /*
     useEffect(() => {
         if ((status === 'unauthenticated' || !isAuthenticated) && !isExiting && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
             console.log('ClientLayout: Redirecting to login', { status, isAuthenticated, pathname });
             router.push('/auth/login');
         }
-    }, [status, isAuthenticated]);
+    }, [status, isAuthenticated, isExiting, pathname, router]);
+*/
+
     // Skip loading overlay for /auth/login and /auth/signup
     if (status === 'loading' && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
         console.log('ClientLayout: Rendering loading state', { pathname });

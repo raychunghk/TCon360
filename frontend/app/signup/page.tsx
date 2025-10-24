@@ -39,7 +39,7 @@ import axios from 'axios';
 
 import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import useUIStore from '@/components/stores/useUIStore';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 export default function SignupPage() {
   interface iStaffModel {
     StaffName: string;
@@ -422,6 +422,11 @@ export default function SignupPage() {
                       const refIndex = index + 3; // Adjust the index as needed
                       const _stepid = 2;
                       const autoFocus = refIndex === 3 && active === 1;
+                      const wrappedExcludeDate = (date: string): boolean => {
+                        const result = excludeHoliday(date);
+                        // Cast to boolean, treating null/undefined as false
+                        return result === true; // Explicitly convert to boolean, defaulting others to false
+                      };
                       return (
                         <Grid.Col span={6} key={field.name}>
                           {isDateTime ? (
@@ -441,7 +446,7 @@ export default function SignupPage() {
                                   // Additional onChange logic if needed
                                 }
                               })}
-                              excludeDate={excludeHoliday}
+                              excludeDate={wrappedExcludeDate}
                               renderDay={myRenderDay}
                               ref={(ref) => {
                                 inputRefs.current[refIndex] = ref;

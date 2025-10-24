@@ -1,6 +1,6 @@
 'use client';
 import MyModal from '@/components/MyModal';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { Box, Button, Card, LoadingOverlay, Text, TextInput, Tooltip } from '@mantine/core';
 import { IconCalendarEvent } from '@tabler/icons-react';
 import axios from 'axios';

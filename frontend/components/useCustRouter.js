@@ -1,6 +1,6 @@
 'use client';
 
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { useRouter } from 'next/navigation';
 
 const useCustRouter = () => {

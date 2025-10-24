@@ -25,8 +25,9 @@ export async function middleware(request: NextRequest) {
   if (!/\/auth\/login\/?$/.test(pathname)) {
     console.log('is not login path, pathname', pathname)
     const sess = await getMySession();
-
+    console.log('Middleware session check', sess)
     if (!sess) {
+      console.log('Middleware session check', 'session not available!');
       const loginUrl = new URL(`${config.basepath}/auth/login`, request.url);
       return NextResponse.redirect(loginUrl);
     }

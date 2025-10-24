@@ -11,7 +11,7 @@ import { MainShell } from '@/components/MainShell/MainShell';
 import MyCard from '@/components/MyCard';
 import MyModal from '@/components/MyModal';
 import { useStaffData } from '@/components/hooks/useStaffData';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
 import { setDatepickerPlDay } from '@/components/util/leaverequest.util';
 import { useForm, yupResolver } from '@mantine/form';

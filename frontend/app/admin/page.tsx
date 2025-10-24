@@ -11,7 +11,7 @@ import { MainShell } from '@/components/MainShell/MainShell';
 import BackupRestoreTab from '@/components/admin/BackupRestoreTab';
 import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
 import UserManagementTab from '@/components/admin/UserManagerTab';
-import useStore from '@/components/stores/zstore.js';
+import useStore from '@/components/stores/zstore';
 
 // Type Definitions
 interface User {
@@ -60,8 +60,10 @@ const tabs: TabConfig[] = [
 ];
 
 // Child component to handle useSearchParams
-function AdminContent({ activeUser, basepath }: { activeUser: User | null; basepath: string }) {
+function AdminContent() {
     const [activeTab, setActiveTab] = useState<string>('userManagement');
+    // Corrected destructuring to get activeUser and basepath
+    const [activeUser, basepath] = useStore(useShallow((state) => [state.activeUser, state.basepath]));
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -77,6 +79,7 @@ function AdminContent({ activeUser, basepath }: { activeUser: User | null; basep
 
     useEffect(() => {
         if (activeUser && activeUser?.role?.name !== 'admin') {
+            console.log('AdminContent: Redirecting to login due to non-admin role', { activeUser });
             router.push('/login');
         }
     }, [activeUser, router]);
@@ -154,10 +157,6 @@ function AdminContent({ activeUser, basepath }: { activeUser: User | null; basep
 }
 
 export default function AdminPage() {
-    const [activeUser, basepath] = useStore(
-        useShallow((state: StoreState) => [state.activeUser, state.basepath])
-    );
-
     return (
         <Suspense
             fallback={
@@ -169,7 +168,7 @@ export default function AdminPage() {
                 </MainShell>
             }
         >
-            <AdminContent activeUser={activeUser} basepath={basepath} />
+            <AdminContent />
         </Suspense>
     );
 }
