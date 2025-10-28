@@ -4,32 +4,25 @@ version: "3.8"
 services:
   backend:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     image: tcon360_backend
     container_name: tcbackend
     ports:
-      - "3800:3800" # Updated to map host port 3800 to container port 3800
+      - "8255:3800" # Map host port 8255 to container port 3800
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - JWT_SECRET=${JWT_SECRET}
-      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=development
+      - JWT_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789
+      - DATABASE_URL=file:/config/workspace/vm/js/TCon360/TCon360.db
       - BACKEND_PORT=3800
-      - TOKEN_MAX_AGE=${TOKEN_MAX_AGE}
+      - TOKEN_MAX_AGE=12000000 # Updated from 113000 to match your earlier request
+    volumes:
+      - ./:/config/workspace/vm/js/TCon360
+      - ./TCon360.db:/config/workspace/vm/js/TCon360/TCon360.db
+    command: ["pnpm", "--filter", "backend", "run", "start:dev"]
+    networks:
+      - app-network
 
-  frontend:
-    image: tcon360_frontend
-    ports:
-      - "8255:8255" # Frontend remains on 8255
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - JWT_SECRET=${JWT_SECRET}
-      - DATABASE_URL=${DATABASE_URL}
-      - BACKEND_PORT=3800 # Align with backend port
-      - TOKEN_MAX_AGE=${TOKEN_MAX_AGE}
-      - FRONTEND_PORT=8255
-      - USE_REVERSE_PROXY=false
-      - PROXY_PATH=/absproxy
-      - NEXT_PUBLIC_BASEPATH=${NEXT_PUBLIC_BASEPATH}
-    depends_on:
-      - backend
+networks:
+  app-network:
+    driver: bridge
