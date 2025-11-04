@@ -1,15 +1,9 @@
-//import { NextRequest, NextResponse } from 'next/server';
-/*
-export function middleware(request: NextRequest) {
-  console.log(`Next Request URL: ${request.url}`);
-  return NextResponse.next();
-}
- */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getMySession } from './app/lib/auth-action';
 ///import { default as config } from './frontendconfig';
 import { config } from '@tcon360/config';
-
+//console.log('middleware config from @tsconfig', config)
 export async function middleware(request: NextRequest) {
 
 

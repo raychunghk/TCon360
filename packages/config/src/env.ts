@@ -21,6 +21,11 @@ export const env = createEnv({
       .int()
       .min(1000, "TOKEN_MAX_AGE must be at least 1000 ms")
       .default(500000),
+    NEXTAUTH_SECRET: z.string().min(32),
+    BASE_PATH_ENABLED: z
+      .enum(["true", "false"])
+      .default("true")
+      .transform((val) => val === "true"),
   },
   client: {},
   runtimeEnv: {
@@ -31,6 +36,8 @@ export const env = createEnv({
     BACKEND_PORT: process.env.BACKEND_PORT,
     USE_REVERSE_PROXY: process.env.USE_REVERSE_PROXY,
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    BASE_PATH_ENABLED: process.env.BASE_PATH_ENABLED,
   },
   skipValidation: !!process.env.CI,
 });

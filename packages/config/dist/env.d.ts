@@ -7,4 +7,5 @@ export declare const env: Readonly<{
     BACKEND_PORT: number;
     USE_REVERSE_PROXY: boolean;
     TOKEN_MAX_AGE: number;
+    NEXTAUTH_SECRET: string;
 }>;

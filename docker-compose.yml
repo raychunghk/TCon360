@@ -1,6 +1,7 @@
 # @format
 
-version: "3.8"
+# version: "3.8"
+
 services:
   backend:
     build:
@@ -9,17 +10,39 @@ services:
     image: tcon360_backend
     container_name: tcbackend
     ports:
-      - "8255:3800" # Map host port 8255 to container port 3800
+      - "3800:3800" # host:container – primary backend port
+      - "3300:3800" # host:container – extra local VM access
     environment:
       - NODE_ENV=development
-      - JWT_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789
+      - JWT_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789ABCDEF
       - DATABASE_URL=file:/config/workspace/vm/js/TCon360/TCon360.db
       - BACKEND_PORT=3800
-      - TOKEN_MAX_AGE=12000000 # Updated from 113000 to match your earlier request
+      - TOKEN_MAX_AGE=12000000
     volumes:
       - ./:/config/workspace/vm/js/TCon360
       - ./TCon360.db:/config/workspace/vm/js/TCon360/TCon360.db
     command: ["pnpm", "--filter", "backend", "run", "start:dev"]
+    networks:
+      - app-network
+
+  frontend:
+    image: tcon360_frontend
+    container_name: tcfrontend
+    ports:
+      - "8255:8255" # host → container (UI)
+    environment:
+      - NODE_ENV=development
+      - PORT=8255 # ← Next.js binds to this inside the container
+      - JWT_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789
+      - NEXTAUTH_SECRET=aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789ABCDEF # ← ADD THIS
+      - BACKEND_PORT=3800
+      - TOKEN_MAX_AGE=12000000
+      - FRONTEND_PORT=8255
+      - USE_REVERSE_PROXY=false
+      - PROXY_PATH=
+      - NEXT_PUBLIC_BASEPATH=
+    depends_on:
+      - backend
     networks:
       - app-network
 

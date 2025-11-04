@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "dev2": "next dev  ",
+    "dev": "next dev ",
+    "dev2": "   next dev  ",
     "dev2x": "node nxserver.js",
     "build": "node build.js",
     "build3": "next build",

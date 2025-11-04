@@ -7,8 +7,8 @@ if [ -f .env ]; then
 fi
 
 # Set default values if not provided in .env
-JWT_SECRET=${JWT_SECRET:-aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789}
-DATABASE_URL=${DATABASE_URL:-file:./TCon360.db}
+JWT_SECRET=${JWT_SECRET:-aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789ABCDEF}
+ 
 BACKEND_PORT=${BACKEND_PORT:-3800}
 TOKEN_MAX_AGE=${TOKEN_MAX_AGE:-113000}
 NODE_ENV=${NODE_ENV:-production}

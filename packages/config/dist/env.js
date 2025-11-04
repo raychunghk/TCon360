@@ -6,7 +6,7 @@ export const env = createEnv({
         NODE_ENV: z
             .enum(["development", "production", "test"])
             .default("development"),
-        JWT_SECRET: z.string().min(32, "aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789"),
+        JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
         PROXY_PATH: z.string().default("/absproxy"),
         FRONTEND_PORT: z.coerce.number().default(3000),
         BACKEND_PORT: z.coerce.number().default(3800),
@@ -18,7 +18,8 @@ export const env = createEnv({
             .number()
             .int()
             .min(1000, "TOKEN_MAX_AGE must be at least 1000 ms")
-            .default(113000),
+            .default(500000),
+        NEXTAUTH_SECRET: z.string().min(32),
     },
     client: {},
     runtimeEnv: {
@@ -29,6 +30,7 @@ export const env = createEnv({
         BACKEND_PORT: process.env.BACKEND_PORT,
         USE_REVERSE_PROXY: process.env.USE_REVERSE_PROXY,
         TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     },
     skipValidation: !!process.env.CI,
 });
