@@ -17,7 +17,6 @@ import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
 import styles from './MainShell.module.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
-
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
@@ -25,7 +24,6 @@ export function MainShell({ children, contentpadding = '10px' }) {
   const { activeUser: staffActiveUser } = useStaffData();
   const [opened, setOpened] = useState(false);
   const pathname = usePathname();
-
   const clearAllCookies = useCallback(() => {
     const cookies = parseCookies();
     Object.keys(cookies).forEach((cookieName) => {
@@ -33,36 +31,31 @@ export function MainShell({ children, contentpadding = '10px' }) {
     });
     console.log('MainShell: All cookies cleared');
   }, []);
-
   const handleSignout = useCallback(async () => {
     console.log('MainShell: Initiating sign-out');
     clearAllCookies();
     await clientSignOut();
   }, [clearAllCookies]);
-
   useEffect(() => {
     console.log('MainShell: Setting basepath and fetching staff data', { basepath, status, isAuthenticated, activeUser });
     setMainshellOverlayVisible(false);
-    if (!basepath) {
-      setBasepath(process.env.NEXT_PUBLIC_BASEPATH || 'http://localhost:3800');
+    if (typeof basepath !== 'string' || basepath === '') {
+      const _bp = config?.basepath || ''
+      setBasepath(_bp);
     }
-    if (basepath && !activeUser && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
+    if ((basepath !== null && basepath !== undefined)  && !activeUser && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
       fetchStaffData();
     }
-  }, [basepath, setBasepath, setMainshellOverlayVisible, fetchStaffData, status, activeUser, pathname]);
-
+  }, [basepath, setBasepath, setMainshellOverlayVisible, fetchStaffData, status, activeUser, pathname, config]);
   if (status === 'loading') {
     console.log('MainShell: Rendering loading state', { pathname });
     return <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />;
   }
-
   if ((status === 'unauthenticated' || !isAuthenticated) && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
     console.log('MainShell: Unauthenticated state detected, preventing main render', { pathname, status, isAuthenticated });
     return null;
   }
-
   console.log('MainShell: Rendering main content', { activeUser, siteTitle, pathname });
-
   return (
     <AppShell
       header={{ height: 60 }}
@@ -86,7 +79,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
               mr="sm"
             />
             <Link href="/">
-              <Image src={`${config?.basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
+              <Image src={`${basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
             </Link>
             <Title className={classes.title} ta="center" mt={5}>
               Welcome to{' '}
@@ -101,7 +94,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
             </Title>
           </Group>
           <Group justify="right" mr={15}>
-            {(activeUser &&isAuthenticated) ? (
+            {(activeUser && isAuthenticated) ? (
               <>
                 <HeaderPopover />
                 <Button
@@ -124,7 +117,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
               </>
             ) : (
               <Group>
-                <Link href={`${config?.basepath}/auth/login`} passHref>
+                <Link href={`${basepath}/auth/login`} passHref>
                   <Button
                     className={styles.clsSignupBtn}
                     leftSection={

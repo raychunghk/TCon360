@@ -1,16 +1,21 @@
 {
-  "name": "mantine-next-template",
+  "name": "tcon360",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "startdev": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
-    "startdevx": "concurrently \"cd backend && npm run start:dev\"  \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
-    "fdevxx": "concurrently   \"cd frontend && npm run dev2\" \"node proxyserver.js\"",
-    "fdev2": "cd frontend && npm run dev2",
-    "bdev": "cd backend && npm run start:dev",
-    "bdev2": "concurrently \"cd backend && npm run start:dev\"   \"node proxyserver.js\"",
-    "backend": " concurrently \"cd backend && npm run start:dev\"   ",
-    "startb": "concurrently \"cd backend && npm run start:prod\" \"cd frontend && npm run build && npm run start\" \"node proxyserver.js\""
+    "startdev": "concurrently \"pnpm --dir backend start:dev\" \"pnpm --dir frontend dev2\" \"node proxyserver.js\"",
+    "startdevx": "concurrently \"pnpm --dir backend start:dev\" \"pnpm --dir frontend dev2\" \"node proxyserver.js\"",
+    "fdev2": "pnpm --dir frontend dev2",
+    "bdev": "pnpm --dir backend start:dev",
+    "reset:clean": "sudo rm -rf ./frontend/.next ./frontend/node_modules ./backend/node_modules",
+    "reset:frontend-install": "pnpm --dir frontend install",
+    "reset:backend-setup": "pnpm --dir backend install && pnpm --dir backend prisma generate",
+    "reset": "pnpm run reset:clean && pnpm run reset:frontend-install && pnpm run reset:backend-setup",
+    "bdev2": "concurrently \"pnpm --dir backend start:dev\" \"node proxyserver.js\"",
+    "backend": "concurrently \"pnpm --dir backend start:dev\"",
+    "startb": "concurrently \"pnpm --dir backend start:prod\" \"pnpm --dir frontend build && pnpm --dir frontend start\" \"node proxyserver.js\"",
+    "install:all": "pnpm install --recursive",
+    "build:all": "pnpm run build --recursive"
   },
   "dependencies": {
     "@fastify/http-proxy": "^11.3.0",

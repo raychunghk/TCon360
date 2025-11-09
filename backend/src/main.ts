@@ -6,9 +6,13 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { env } from '@tcon360/config';
+import * as dotenv from 'dotenv';
 import session from 'express-session';
+import { resolve } from 'path';
 import { AppModule } from './app.module.js';
 
+// Load .env file from project root
+//dotenv.config({ path: resolve(__dirname, '../../.env') });
 async function bootstrap() {
   console.log('basepath:', env);
   let app: INestApplication;

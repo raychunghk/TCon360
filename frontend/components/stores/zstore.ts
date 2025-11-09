@@ -132,7 +132,14 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       isAuthenticated: false,
       status: 'loading' as 'loading' | 'authenticated' | 'unauthenticated',
       setActiveContract: (contract: any) => set(() => ({ activeContract: contract })),
-      setActiveStaff: (staff: any) => set(() => ({ activeStaff: staff })),
+      setActiveStaff: (staff: any) => {
+        set((state) => {
+          // Find the active contract where IsActive is true
+          const activeContract = state.activeContract || (staff?.contracts?.find((contract: any) => contract.IsActive === true) || null);
+          console.log('zstore: setActiveStaff', { staff, activeContract });
+          return { activeStaff: staff, activeContract };
+        });
+      },
       setActiveUser: (user: any) => {
         console.log('zstore: setActiveUser', { user, isAuthenticated: !!user, status: user ? 'authenticated' : 'unauthenticated' });
         set(() => ({ activeUser: user, isAuthenticated: !!user, status: user ? 'authenticated' : 'unauthenticated' }));
@@ -197,7 +204,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
           activeStaff: null,
           activeUser: null,
           authtoken: '',
-          basepath: null,
+          basepath: '',
           calendarEvents: [],
           chargeableDays: 0,
           contractEndDate: null,
@@ -250,6 +257,10 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       } as PersistState),
       storage: {
         getItem: (name: string) => {
+          if (typeof window === 'undefined') {
+            console.log('zstore: storage.getItem skipped on server', { name });
+            return null;
+          }
           try {
             const item = localStorage.getItem(name);
             console.log('zstore: storage.getItem', { name, item });
@@ -260,16 +271,24 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
           }
         },
         setItem: (name: string, value: StorageValue<PersistState>) => {
+          if (typeof window === 'undefined') {
+            console.log('zstore: storage.setItem skipped on server', { name, value: value.state });
+            return;
+          }
           console.log('zstore: storage.setItem', { name, value: value.state });
           localStorage.setItem(name, JSON.stringify(value.state));
         },
         removeItem: (name: string) => {
+          if (typeof window === 'undefined') {
+            console.log('zstore: storage.removeItem skipped on server', { name });
+            return;
+          }
           console.log('zstore: storage.removeItem', { name });
           localStorage.removeItem(name);
         },
       },
       onRehydrateStorage: () => (state, error) => {
-        const localStorageData = localStorage.getItem('auth-storage');
+        const localStorageData = typeof window !== 'undefined' ? localStorage.getItem('auth-storage') : null;
         console.log('zstore: onRehydrateStorage', { state: { activeUser: state?.activeUser, authtoken: state?.authtoken, isAuthenticated: state?.isAuthenticated, status: state?.status }, error, localStorageData });
         if (error) {
           console.error('zstore: Rehydration error', { error });
@@ -277,23 +296,22 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
           state?.setStatus('unauthenticated');
           return;
         }
-        // Check localStorage directly if rehydrated state is invalid
         let parsedLocalStorageData: PersistState | null = null;
-        try {
-          parsedLocalStorageData = localStorageData ? JSON.parse(localStorageData) : null;
-          console.log('zstore: Parsed localStorage data', { parsedLocalStorageData });
-        } catch (parseError) {
-          console.error('zstore: Failed to parse localStorage data', { parseError });
+        if (typeof window !== 'undefined') {
+          try {
+            parsedLocalStorageData = localStorageData ? JSON.parse(localStorageData) : null;
+            console.log('zstore: Parsed localStorage data', { parsedLocalStorageData });
+          } catch (parseError) {
+            console.error('zstore: Failed to parse localStorage data', { parseError });
+          }
         }
         if (parsedLocalStorageData && parsedLocalStorageData.activeUser && parsedLocalStorageData.authtoken) {
           console.log('zstore: Restoring from localStorage due to invalid rehydrated state');
           state?.setActiveUser(parsedLocalStorageData.activeUser);
           state?.setActiveStaff(parsedLocalStorageData.activeUser.staff[0]);
-
           state?.setAuthtoken(parsedLocalStorageData.authtoken);
           state?.setIsAuthenticated(parsedLocalStorageData.isAuthenticated ?? true);
           state?.setStatus(parsedLocalStorageData.status ?? 'authenticated');
-
         } else if (state && state.activeUser && state.authtoken) {
           console.log('zstore: Rehydrating with valid session, setting authenticated');
           state.setIsAuthenticated(true);

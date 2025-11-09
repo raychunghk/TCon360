@@ -18,20 +18,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
-
 const FrontPageCalendar = () => {
   type FormType = 'create' | 'edit';
-
   // State management
   const [leavePurpose, setLeavePurpose] = useState<string | null>(null);
   const [formType, setFormType] = useState<FormType | undefined>(undefined);
   const [currentCalendarDate, setCurrentCalendarDate] = useState<Date | null>(null);
   const [customTitle, setCustomTitle] = useState('');
   const [hasCalendar, setHasCalendar] = useState(true);
-
   // Refs
   const calendarRef = useRef<FullCalendar | null>(null);
-
   // Store hooks
   const { drawerOpened, setDrawerOpen, setDrawerClose, isEventUpdated, setIsEventUpdated } = useUIStore();
   const {
@@ -52,7 +48,6 @@ const FrontPageCalendar = () => {
     setIsUnauthorized,
     setIsExiting,
   } = useStore();
-
   const {
     LeaveRequestPeriod,
     isMonthPickerChangeEvent,
@@ -61,18 +56,16 @@ const FrontPageCalendar = () => {
     basepath,
     isExiting,
   } = useStore(
-    useShallow((state) => ({
+   /* useShallow((state) => ({
       LeaveRequestPeriod: state.LeaveRequestPeriod,
       isMonthPickerChangeEvent: state.isMonthPickerChangeEvent,
       activeUser: state.activeUser,
       activeContract: state.activeContract,
       basepath: state.basepath,
       isExiting: state.isExiting,
-    }))
+    }))*/
   );
-
   const router = useRouter();
-
   const handleSignout = async () => {
     console.log('FrontPageCalendar: Initiating sign-out');
     destroyCookie(null, 'token');
@@ -83,7 +76,6 @@ const FrontPageCalendar = () => {
     setIsExiting(true);
     // Rely on ClientLayout.tsx for navigation
   };
-
   const fetchEvents = useCallback(async () => {
     if (isExiting) {
       console.log('fetchEvents: Skipping due to isExiting=true');
@@ -93,19 +85,15 @@ const FrontPageCalendar = () => {
       const apiurl = `${basepath}/api/timesheet/calendar`;
       const cookies = parseCookies();
       const token = cookies.token;
-
       if (!token) {
         console.warn('fetchEvents: No token found, initiating sign-out');
         await handleSignout();
         return;
       }
-
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-
       const response = await axios.get(apiurl, { headers });
-
       if ([200, 201].includes(response.status)) {
         const events = response.data;
         if (!calendarEvents || isEventUpdated || events.length !== calendarEvents.length) {
@@ -133,20 +121,17 @@ const FrontPageCalendar = () => {
       }
     }
   }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting]);
-
   useEffect(() => {
     if (isEventUpdated) {
       fetchEvents();
       setIsEventUpdated(false);
     }
   }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
-
   useEffect(() => {
-    if (basepath && !isExiting) {
+    if (basepath !== null && basepath !== undefined && !isExiting) {
       fetchEvents();
     }
   }, [basepath, activeStaff, fetchEvents, isExiting]);
-
   useEffect(() => {
     if (calendarEvents && calendarEvents.length > 0) {
       if (activeUser) {
@@ -159,7 +144,6 @@ const FrontPageCalendar = () => {
       }
     }
   }, [calendarEvents, timesheetDefaultDate, activeUser, setIsFrontCalendarChangeEvent]);
-
   const handleJumpToMonth = useCallback((targetDate: Date) => {
     try {
       if (calendarRef.current) {
@@ -169,16 +153,13 @@ const FrontPageCalendar = () => {
       console.error('Error jumping to month:', error);
     }
   }, []);
-
   function handleMonthYearChange(info: any) {
     if (calendarEvents.length === 0) {
       fetchEvents();
     }
     const currentViewStartDate = info.view.currentStart;
-
     setSelectedMonth(currentViewStartDate);
     setTitle(currentViewStartDate);
-
     if (calendarRef.current) {
       const view = calendarRef.current.getApi().view;
       if (view.type === 'dayGridMonth') {
@@ -186,7 +167,6 @@ const FrontPageCalendar = () => {
       }
     }
   }
-
   const handleOpenAdminPage = () => {
     /*
     router.push({
@@ -195,7 +175,6 @@ const FrontPageCalendar = () => {
     });*/
     router.push('/admin?tab=calendarManagement');
   };
-
   const handleDeleteEvent = async () => {
     try {
       setIsEventUpdated(true);
@@ -204,117 +183,92 @@ const FrontPageCalendar = () => {
       throw error;
     }
   };
-
   const fnEventclick = (e: any) => {
     const leaveRequestIdFromEvent = e.event.extendedProps.result.LeaveRequestId;
     setLeaveRequestId(leaveRequestIdFromEvent);
-
     if (leaveRequestIdFromEvent) {
       setFormType('edit');
       setDrawerOpen();
     }
   };
-
   function setVacationSummary(_user: any, _events: any[]) {
     if (!_user || !activeContract) {
       return;
     }
-
     const ContractStartDate = new Date(activeContract.ContractStartDate);
     const ContractEndDate = new Date(activeContract.ContractEndDate);
-
     const vacationEvents = _events.filter((event) => {
       const evt = event.extendedProps.result;
       const leavePeriodStart = new Date(evt.leavePeriodStart);
       const leavePeriodEnd = evt.LeavePeriodEnd ? new Date(evt.LeavePeriodEnd) : null;
-
       return (
         evt.LeaveRequestId !== null &&
         leavePeriodStart <= ContractEndDate &&
         (leavePeriodEnd === null || leavePeriodStart > ContractStartDate || leavePeriodEnd >= ContractStartDate)
       );
     });
-
     const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
       const evt = event.extendedProps.result;
       const eventEndDate = new Date(event.end);
       const leavePeriodStart = new Date(evt.leavePeriodStart);
       const leavePeriodEnd = evt.LeavePeriodEnd ? new Date(evt.LeavePeriodEnd) : null;
-
       if (eventEndDate < ContractStartDate) {
         return sum;
       }
-
       if (!leavePeriodEnd) {
         return sum + evt.leaveDays;
       }
-
       if (ContractEndDate < leavePeriodEnd) {
         return sum + getBusinessDays(leavePeriodStart, ContractEndDate);
       }
-
       if (leavePeriodEnd > ContractStartDate && leavePeriodStart < ContractStartDate) {
         return sum + getBusinessDays(ContractStartDate, leavePeriodEnd);
       }
-
       if (leavePeriodEnd < ContractStartDate) {
         return sum;
       }
-
       return sum + evt.leaveDays;
     }, 0);
-
     setStaffVacation({
       total: activeContract.AnnualLeave,
       used: vacationLeaveDays,
       balance: activeContract.AnnualLeave - vacationLeaveDays,
     });
   }
-
   function setTitle(newDate: Date = new Date()) {
     const currentYear = newDate.getFullYear();
     const currentMonth = newDate.getMonth();
-
     const formattedFirstDay = format(new Date(currentYear, currentMonth, 1), 'd-MMM-yyyy');
     const formattedLastDay = format(new Date(currentYear, currentMonth + 1, 0), 'd-MMM-yyyy');
-
     const dateRange = `${formattedFirstDay} to ${formattedLastDay}`;
-
     if (!activeUser) {
       setCustomTitle(dateRange);
       return;
     }
-
     const filteredEvents = calendarEvents.filter(
       (event) =>
         event.extendedProps.result.Year === currentYear &&
         event.extendedProps.result.Month === currentMonth + 1
     );
-
     const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const leaveDays = filteredEvents.reduce(
       (total, event) => total + (event.extendedProps.result.leaveDays || 0),
       0
     );
-
     const chargeableDays = totalDaysInMonth - leaveDays;
     const customTitleText = `${dateRange} (Chargable days: ${chargeableDays})`;
-
     setCustomTitle(customTitleText);
     setChargeableDays(chargeableDays);
   }
-
   const handleDateSelect = (selectInfo: any) => {
     const startDate = selectInfo.start;
     const endDate = selectInfo.end;
     const count = differenceInBusinessDays(endDate, startDate);
     const leaveRequestPeriodEnd = count === 1 ? null : subDays(endDate, 1);
-
     setLeaveRequestPeriod({
       start: selectInfo.start,
       end: leaveRequestPeriodEnd,
     });
-
     const promptedLeavePurpose = prompt(
       `Selected ${count} days, (${selectInfo.startStr} to ${selectInfo.endStr}) Enter a title for your event`
     );
@@ -325,7 +279,6 @@ const FrontPageCalendar = () => {
       setDrawerOpen();
     }
   };
-
   if (!hasCalendar || !calendarEvents) {
     return (
       <>
@@ -338,7 +291,6 @@ const FrontPageCalendar = () => {
   } else if (calendarEvents.length < 1) {
     return <Text>Loading Calendar...</Text>;
   }
-
   return (
     <>
       {formType && (
@@ -401,5 +353,4 @@ const FrontPageCalendar = () => {
     </>
   );
 };
-
 export default React.memo(FrontPageCalendar);

@@ -1,6 +1,6 @@
 /** @format */
 
-import { env } from "./env";
+import { env } from "./env.js";
 
 const proxypath = env.PROXY_PATH;
 const frontendport = env.FRONTEND_PORT;
@@ -16,9 +16,9 @@ export const config = {
   frontendport,
   backendport,
   mainport,
-  prefix: (isProduction || !basePathEnabled) ? "" : `${proxypath}/${mainport}`,
-  basepath: (isProduction || !basePathEnabled) ? "" : `${proxypath}/${mainport}`,
-  feprefix: (isProduction || !basePathEnabled) ? "" : `${proxypath}/${frontendport}`
+  prefix: isProduction || !basePathEnabled ? "" : `${proxypath}/${mainport}`,
+  basepath: isProduction || !basePathEnabled ? "" : `${proxypath}/${mainport}`,
+  feprefix: isProduction || !basePathEnabled ? "" : `${proxypath}/${frontendport}`,
 };
 
-export * from "./env";
+export * from "./env.js";

@@ -19,9 +19,10 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@tcon360/config": [
-        "/config/workspace/vm/js/TCon360/packages/config/dist/index.js"
-      ]
+      "@tcon360/config": ["../packages/config/dist/index.js"],
+      "@tcon360/config/*": ["../packages/config/dist/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

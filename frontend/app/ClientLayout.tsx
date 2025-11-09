@@ -46,7 +46,7 @@ export default function ClientLayout({
         }
 
         // Note: We don't need a cleanup function here as we are just setting state.
-    }, [basepath, memoizedConfig, setBasepath, setUseReverseProxy, setConfig]);
+    }, [basepath, memoizedConfig]);
 
 
     // 2. EFFECT FOR DATA LOADING (Public Holidays)
@@ -55,7 +55,7 @@ export default function ClientLayout({
         console.log('ClientLayout Data Loading Effect triggered', { basepath, publicHolidays, isExiting });
         let isMounted = true;
 
-        if (basepath && (!publicHolidays || publicHolidays.length === 0) && !isExiting && isMounted) {
+        if ((basepath !== null && basepath !== undefined) && (!publicHolidays || publicHolidays.length === 0) && !isExiting && isMounted) {
             console.log('ClientLayout triggering loadPublicHolidays');
             loadPublicHolidays();
         }
@@ -64,19 +64,11 @@ export default function ClientLayout({
             console.log('ClientLayout Data Loading Effect cleanup');
             isMounted = false;
         };
-    }, [basepath, publicHolidays, isExiting, loadPublicHolidays]); // Dependencies ensure this runs when basepath updates
+    }, [basepath, publicHolidays, isExiting]); // Dependencies ensure this runs when basepath updates
 
-    // Original authentication redirect effect (no change needed)
-    /*
-    useEffect(() => {
-        if ((status === 'unauthenticated' || !isAuthenticated) && !isExiting && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
-            console.log('ClientLayout: Redirecting to login', { status, isAuthenticated, pathname });
-            router.push('/auth/login');
-        }
-    }, [status, isAuthenticated, isExiting, pathname, router]);
-*/
 
-    // Skip loading overlay for /auth/login and /auth/signup
+
+
     if (status === 'loading' && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
         console.log('ClientLayout: Rendering loading state', { pathname });
         return (

@@ -1,11 +1,10 @@
+import useStore from '@/components/stores/zstore';
 import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
-import styles from '../MainShell.module.css';
-//import { IconSquareRoundedX, IconUser } from '@tabler/icons';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
+import styles from '../MainShell.module.css';
 
-import useStore from '@/components/stores/zstore';
 interface UserField {
   label: string;
   value: string | number;
@@ -13,67 +12,72 @@ interface UserField {
   subValue2?: string;
 }
 
-export default function HeaderPopover({ }) {
+function HeaderPopover() {
   const [openedPop, setOpenedPop] = useState(false);
-  //const [userFields, setuserFields] = useState(null);
-  const [userFields, setuserFields] = useState<UserField[] | null>(null);
-  const { activeStaff, activeContract, activeUser, staffVacation } = useStore();
+  const [userFields, setUserFields] = useState<UserField[] | null>(null);
+
+  // Optimize Zustand selectors to subscribe only to specific state slices
+  const activeStaff = useStore((state) => state.activeStaff);
+  const activeContract = useStore((state) => state.activeContract);
+  const activeUserName = useStore((state) => state.activeUser?.name);
+  const staffVacation = useStore((state) => state.staffVacation);
 
   useEffect(() => {
-    if (staffVacation) setUfields();
-  }, [activeStaff, staffVacation]);
-  useEffect(() => {
-    setUfields();
-  }, []);
+    if (activeStaff && activeContract && staffVacation) {
+      setUfields();
+    }
+  }, [activeStaff, activeContract, staffVacation]);
+
+  // Remove empty useEffect; initialization is handled above
   const handleOpen = () => {
     setOpenedPop(true);
   };
-  //const activeContract = useStore((state) => state.activeContract);
+
   const handleClose = () => {
     setOpenedPop(false);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | undefined) => {
     if (dateString) {
       const date = parseISO(dateString);
-      const formattedDate = format(date, 'yyyy-MMM-dd');
-      return formattedDate;
+      return format(date, 'yyyy-MMM-dd');
     }
+    return '';
   };
+
   function setUfields() {
-    setuserFields([
-      { label: 'Staff Name:', value: activeStaff.StaffName },
-      { label: 'Agent Name:', value: activeStaff.AgentName },
-      { label: 'Staff Category:', value: activeStaff.StaffCategory },
-      { label: 'Department:', value: activeStaff.Department },
-      { label: 'Post Unit:', value: activeStaff.PostUnit },
-      { label: 'Manager Name:', value: activeStaff.ManagerName },
-      { label: 'Manager Title:', value: activeStaff.ManagerTitle },
-      { label: 'Manager Email:', value: activeStaff.ManagerEmail },
+    setUserFields([
+      { label: 'Staff Name:', value: activeStaff?.StaffName || '' },
+      { label: 'Agent Name:', value: activeStaff?.AgentName || '' },
+      { label: 'Staff Category:', value: activeStaff?.StaffCategory || '' },
+      { label: 'Department:', value: activeStaff?.Department || '' },
+      { label: 'Post Unit:', value: activeStaff?.PostUnit || '' },
+      { label: 'Manager Name:', value: activeStaff?.ManagerName || '' },
+      { label: 'Manager Title:', value: activeStaff?.ManagerTitle || '' },
+      { label: 'Manager Email:', value: activeStaff?.ManagerEmail || '' },
       {
         label: 'Contract Start Date:',
-        value: formatDate(activeContract.ContractStartDate),
+        value: formatDate(activeContract?.ContractStartDate),
       },
       {
         label: 'Contract End Date:',
-        value: formatDate(activeContract.ContractEndDate),
+        value: formatDate(activeContract?.ContractEndDate),
       },
       {
         label: 'Annual Leave:',
-        value: `Total: ${activeContract.AnnualLeave}`,
-        subValue2: `Available: ${staffVacation ? activeContract.AnnualLeave - staffVacation.used : 0
-          }`,
+        value: `Total: ${activeContract?.AnnualLeave || 0}`,
         subValue: `Used: ${staffVacation ? staffVacation.used : 0}`,
+        subValue2: `Available: ${staffVacation && activeContract ? activeContract.AnnualLeave - staffVacation.used : 0}`,
       },
     ]);
   }
+
   return (
     <Popover
       width={390}
       trapFocus
       position="bottom"
       withArrow
-
       opened={openedPop}
       onClose={handleClose}
     >
@@ -90,13 +94,12 @@ export default function HeaderPopover({ }) {
               marginRight: '0.5rem',
             }}
           />
-          {activeUser?.name}
+          {activeUserName || 'User'}
         </Button>
       </Popover.Target>
       <Popover.Dropdown className={styles.PopoverDropdown} style={{ borderRadius: '8px !important' }}>
         <ActionIcon
           variant="filled"
-
           style={{
             position: 'absolute',
             top: '5px',
@@ -135,3 +138,5 @@ export default function HeaderPopover({ }) {
     </Popover>
   );
 }
+
+export default memo(HeaderPopover);

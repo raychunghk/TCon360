@@ -4,7 +4,7 @@ import ClientLayout from './ClientLayout'; // Your client component wrapper
 
 // Import global styles here. These will be loaded once for the entire application.
 import '@/styles/styles.css';
-import { ColorSchemeScript } from '@mantine/core';
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 
@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const faviconUrl = `${config.prefix}/favicon.svg`;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en"  {...mantineHtmlProps}>
       <head >
 
         <ColorSchemeScript defaultColorScheme="auto" />

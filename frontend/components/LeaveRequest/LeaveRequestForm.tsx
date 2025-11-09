@@ -187,7 +187,7 @@ export default function LeaveRequestForm({
     }, [activeStaff]);
 
     useEffect(() => {
-        if (basepath && formType === 'edit' && leaveRequestId) {
+        if ((basepath !== null && basepath !== undefined)  && formType === 'edit' && leaveRequestId) {
             const getLeaveRequestData = async () => {
                 setIsFetchingData(true);
                 try {

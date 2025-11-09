@@ -37,9 +37,8 @@
       "@base/*": [
         "../*"
       ],
-      "@tcon360/config": [
-        "../packages/config/src/index.ts"
-      ]
+     "@tcon360/config": ["../packages/config/dist/index.js"],
+      "@tcon360/config/*": ["../packages/config/dist/*"]
     },
     "plugins": [
       {

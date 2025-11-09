@@ -6,7 +6,6 @@ import { parseCookies } from 'nookies';
 import { useEffect, useState } from 'react';
 import { useForm as useHookForm } from 'react-hook-form';
 import * as Yup from 'yup';
-
 import { MainShell } from '@/components/MainShell/MainShell';
 import MyCard from '@/components/MyCard';
 import MyModal from '@/components/MyModal';
@@ -17,7 +16,6 @@ import { setDatepickerPlDay } from '@/components/util/leaverequest.util';
 import { useForm, yupResolver } from '@mantine/form';
 import ContractTable from './ContractTable';
 import { inputFields, staffModel } from './edit.util';
-
 export default function EditStaff() {
   const { activeUser, status } = useStaffData();
   const [submitting, setSubmitting] = useState(false);
@@ -32,7 +30,6 @@ export default function EditStaff() {
   const router = useRouter();
   const cookies = parseCookies();
   const tokenCookie = cookies.token;
-
   const validationSchema = Yup.object().shape({
     StaffName: Yup.string().required('Name of Staff is required'),
     AgentName: Yup.string().required('Name of T-contractor is required'),
@@ -43,18 +40,17 @@ export default function EditStaff() {
     Department: Yup.string().required('Department is required'),
     PostUnit: Yup.string().required('Post unit is required'),
   });
-
   const form = useForm({
     initialValues: staffModel,
     validateInputOnBlur: true,
     validate: yupResolver(validationSchema),
   });
-
   useEffect(() => {
-    fetchStaffData(); // Use store's fetchStaffData
+    if (basepath !== null) {
+      fetchStaffData(); // Use store's fetchStaffData
+    }
     setDatepickerPlDay(publicHolidays);
-  }, [publicHolidays, fetchStaffData, loadPublicHolidays]); // loadPublicHolidays added if needed for refresh
-
+  }, [publicHolidays, fetchStaffData, loadPublicHolidays, basepath]);
   useEffect(() => {
     if (activeUser && activeUser.staff && activeUser.staff.length > 0) {
       const _staff = activeUser.staff[0];
@@ -66,18 +62,15 @@ export default function EditStaff() {
       setActiveContract(activeContract ? activeContract[0] : null);
     }
   }, [activeUser]);
-
   const handleModalClose = () => {
     setModalOpen(false);
   };
-
   const onSubmit = (values) => {
     console.log('values para', values);
     console.log('form errors', form.errors);
     console.log('form is valid', form.isValid());
     console.log('submit values', form.values);
   };
-
   const submitform = async () => {
     setSubmitting(true);
     console.log('form errors', form.errors);
@@ -85,15 +78,12 @@ export default function EditStaff() {
     console.log('submit values', form.values);
     try {
       await validationSchema.validate(form.values, { abortEarly: false });
-
       const headers = {
         Authorization: `Bearer ${tokenCookie}`,
       };
-
       const response = await axios.put(`${basepath}/api/staff/${form.values.id}`, form.values, {
         headers,
       });
-
       if (response.status === 200) {
         setModalContent('Staff record updated successfully');
         setModalOpen(true);
@@ -112,23 +102,20 @@ export default function EditStaff() {
       setErrors(newErrors);
       setSubmitting(false);
     }
-
     setSubmitting(false);
   };
-
-  if (!basepath || status === 'loading') {
+  if ( status === 'loading') {
     return (
       <MainShell>
         <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
       </MainShell>
     );
   }
-
   return (
     <MainShell home>
       <Head>
         <title>Edit Staff Information</title>
-      </Head>xxx
+      </Head>
       {activeUser ? (
         <>
           <form name="frmHeader" onSubmit={handleSubmit(submitform)}>

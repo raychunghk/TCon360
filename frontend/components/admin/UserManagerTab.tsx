@@ -52,7 +52,7 @@ export default function UserManagementTab() {
         console.error('Failed to fetch user data:', error);
       }
     };
-    if (basepath) fetchUserData();
+    if ((basepath !== null && basepath !== undefined) ) fetchUserData();
   }, []);
 
 

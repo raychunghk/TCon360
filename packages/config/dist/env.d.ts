@@ -8,4 +8,5 @@ export declare const env: Readonly<{
     USE_REVERSE_PROXY: boolean;
     TOKEN_MAX_AGE: number;
     NEXTAUTH_SECRET: string;
+    BASE_PATH_ENABLED: boolean;
 }>;
