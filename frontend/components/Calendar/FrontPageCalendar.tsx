@@ -15,9 +15,10 @@ import { differenceInBusinessDays, format, subDays } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
+
 const FrontPageCalendar = () => {
   type FormType = 'create' | 'edit';
   // State management
@@ -46,7 +47,7 @@ const FrontPageCalendar = () => {
     setStatus,
     setIsAuthenticated,
     setIsUnauthorized,
-    setIsExiting,
+    setIsExiting
   } = useStore();
   const {
     LeaveRequestPeriod,
@@ -54,18 +55,21 @@ const FrontPageCalendar = () => {
     activeUser,
     activeContract,
     basepath,
-    isExiting,
+    isExiting
   } = useStore(
-   /* useShallow((state) => ({
+    useShallow((state) => ({
       LeaveRequestPeriod: state.LeaveRequestPeriod,
       isMonthPickerChangeEvent: state.isMonthPickerChangeEvent,
       activeUser: state.activeUser,
       activeContract: state.activeContract,
       basepath: state.basepath,
-      isExiting: state.isExiting,
-    }))*/
+      isExiting: state.isExiting
+    }))
   );
+  const cookies = parseCookies();
+  const token = cookies.token;
   const router = useRouter();
+
   const handleSignout = async () => {
     console.log('FrontPageCalendar: Initiating sign-out');
     destroyCookie(null, 'token');
@@ -74,17 +78,15 @@ const FrontPageCalendar = () => {
     setIsAuthenticated(false);
     setIsUnauthorized(true);
     setIsExiting(true);
-    // Rely on ClientLayout.tsx for navigation
   };
+
   const fetchEvents = useCallback(async () => {
     if (isExiting) {
       console.log('fetchEvents: Skipping due to isExiting=true');
       return;
     }
     try {
-      const apiurl = `${basepath}/api/timesheet/calendar`;
-      const cookies = parseCookies();
-      const token = cookies.token;
+      const apiurl = `${basepath}/api/timesheet/calendar/`;
       if (!token) {
         console.warn('fetchEvents: No token found, initiating sign-out');
         await handleSignout();
@@ -121,17 +123,20 @@ const FrontPageCalendar = () => {
       }
     }
   }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting]);
+
   useEffect(() => {
     if (isEventUpdated) {
       fetchEvents();
       setIsEventUpdated(false);
     }
   }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
+
   useEffect(() => {
-    if (basepath !== null && basepath !== undefined && !isExiting) {
+    if (!isExiting) {
       fetchEvents();
     }
-  }, [basepath, activeStaff, fetchEvents, isExiting]);
+  }, [activeStaff, fetchEvents, isExiting]);
+
   useEffect(() => {
     if (calendarEvents && calendarEvents.length > 0) {
       if (activeUser) {
@@ -144,6 +149,7 @@ const FrontPageCalendar = () => {
       }
     }
   }, [calendarEvents, timesheetDefaultDate, activeUser, setIsFrontCalendarChangeEvent]);
+
   const handleJumpToMonth = useCallback((targetDate: Date) => {
     try {
       if (calendarRef.current) {
@@ -153,6 +159,7 @@ const FrontPageCalendar = () => {
       console.error('Error jumping to month:', error);
     }
   }, []);
+
   function handleMonthYearChange(info: any) {
     if (calendarEvents.length === 0) {
       fetchEvents();
@@ -167,14 +174,11 @@ const FrontPageCalendar = () => {
       }
     }
   }
+
   const handleOpenAdminPage = () => {
-    /*
-    router.push({
-      pathname: '/admin',
-      query: { tab: 'calendarManagement' },
-    });*/
     router.push('/admin?tab=calendarManagement');
   };
+
   const handleDeleteEvent = async () => {
     try {
       setIsEventUpdated(true);
@@ -183,6 +187,7 @@ const FrontPageCalendar = () => {
       throw error;
     }
   };
+
   const fnEventclick = (e: any) => {
     const leaveRequestIdFromEvent = e.event.extendedProps.result.LeaveRequestId;
     setLeaveRequestId(leaveRequestIdFromEvent);
@@ -191,6 +196,7 @@ const FrontPageCalendar = () => {
       setDrawerOpen();
     }
   };
+
   function setVacationSummary(_user: any, _events: any[]) {
     if (!_user || !activeContract) {
       return;
@@ -235,6 +241,7 @@ const FrontPageCalendar = () => {
       balance: activeContract.AnnualLeave - vacationLeaveDays,
     });
   }
+
   function setTitle(newDate: Date = new Date()) {
     const currentYear = newDate.getFullYear();
     const currentMonth = newDate.getMonth();
@@ -260,6 +267,7 @@ const FrontPageCalendar = () => {
     setCustomTitle(customTitleText);
     setChargeableDays(chargeableDays);
   }
+
   const handleDateSelect = (selectInfo: any) => {
     const startDate = selectInfo.start;
     const endDate = selectInfo.end;
@@ -279,6 +287,7 @@ const FrontPageCalendar = () => {
       setDrawerOpen();
     }
   };
+
   if (!hasCalendar || !calendarEvents) {
     return (
       <>
@@ -291,6 +300,7 @@ const FrontPageCalendar = () => {
   } else if (calendarEvents.length < 1) {
     return <Text>Loading Calendar...</Text>;
   }
+
   return (
     <>
       {formType && (
@@ -353,4 +363,5 @@ const FrontPageCalendar = () => {
     </>
   );
 };
+
 export default React.memo(FrontPageCalendar);

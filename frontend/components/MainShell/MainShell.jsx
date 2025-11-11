@@ -13,17 +13,31 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useCallback, useEffect, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
 import styles from './MainShell.module.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
+
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
-  const { navbarwidth, basepath, setBasepath, MainshellOverlayVisible, setMainshellOverlayVisible, config, fetchStaffData, status, isAuthenticated, activeUser } = useStore();
+  const { navbarwidth, basepath, MainshellOverlayVisible, setMainshellOverlayVisible, fetchStaffData, status, isAuthenticated, activeUser } = useStore(
+    useShallow((state) => ({
+      navbarwidth: state.navbarwidth,
+      basepath: state.basepath,
+      MainshellOverlayVisible: state.MainshellOverlayVisible,
+      setMainshellOverlayVisible: state.setMainshellOverlayVisible,
+      fetchStaffData: state.fetchStaffData,
+      status: state.status,
+      isAuthenticated: state.isAuthenticated,
+      activeUser: state.activeUser
+    }))
+  );
   const { activeUser: staffActiveUser } = useStaffData();
   const [opened, setOpened] = useState(false);
   const pathname = usePathname();
+
   const clearAllCookies = useCallback(() => {
     const cookies = parseCookies();
     Object.keys(cookies).forEach((cookieName) => {
@@ -31,31 +45,33 @@ export function MainShell({ children, contentpadding = '10px' }) {
     });
     console.log('MainShell: All cookies cleared');
   }, []);
+
   const handleSignout = useCallback(async () => {
     console.log('MainShell: Initiating sign-out');
     clearAllCookies();
     await clientSignOut();
   }, [clearAllCookies]);
+
   useEffect(() => {
-    console.log('MainShell: Setting basepath and fetching staff data', { basepath, status, isAuthenticated, activeUser });
+    console.log('MainShell: Fetching staff data', { status, isAuthenticated, activeUser });
     setMainshellOverlayVisible(false);
-    if (typeof basepath !== 'string' || basepath === '') {
-      const _bp = config?.basepath || ''
-      setBasepath(_bp);
-    }
-    if ((basepath !== null && basepath !== undefined)  && !activeUser && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
+    if (!activeUser && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
       fetchStaffData();
     }
-  }, [basepath, setBasepath, setMainshellOverlayVisible, fetchStaffData, status, activeUser, pathname, config]);
+  }, [status, activeUser, pathname, setMainshellOverlayVisible, fetchStaffData]);
+
   if (status === 'loading') {
     console.log('MainShell: Rendering loading state', { pathname });
     return <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />;
   }
+
   if ((status === 'unauthenticated' || !isAuthenticated) && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
     console.log('MainShell: Unauthenticated state detected, preventing main render', { pathname, status, isAuthenticated });
     return null;
   }
+
   console.log('MainShell: Rendering main content', { activeUser, siteTitle, pathname });
+
   return (
     <AppShell
       header={{ height: 60 }}

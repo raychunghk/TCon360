@@ -87,7 +87,7 @@ type State = {
   clearAllState: (options?: { preserve?: string[] }) => void;
 };
 
-type PersistState = Pick<State, 'activeUser' | 'authtoken' | 'isAuthenticated' | 'status'>;
+type PersistState = Pick<State, 'activeUser' | 'authtoken' | 'isAuthenticated' | 'status' | 'basepath'>;
 
 const useStore = create<State, [['zustand/persist', PersistState]]>(
   persist(
@@ -132,14 +132,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       isAuthenticated: false,
       status: 'loading' as 'loading' | 'authenticated' | 'unauthenticated',
       setActiveContract: (contract: any) => set(() => ({ activeContract: contract })),
-      setActiveStaff: (staff: any) => {
-        set((state) => {
-          // Find the active contract where IsActive is true
-          const activeContract = state.activeContract || (staff?.contracts?.find((contract: any) => contract.IsActive === true) || null);
-          console.log('zstore: setActiveStaff', { staff, activeContract });
-          return { activeStaff: staff, activeContract };
-        });
-      },
+      setActiveStaff: (staff: any) => set(() => ({ activeStaff: staff })),
       setActiveUser: (user: any) => {
         console.log('zstore: setActiveUser', { user, isAuthenticated: !!user, status: user ? 'authenticated' : 'unauthenticated' });
         set(() => ({ activeUser: user, isAuthenticated: !!user, status: user ? 'authenticated' : 'unauthenticated' }));
@@ -154,9 +147,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       setContractEndDate: (date: Date | null) =>
         set((state) => ({
           contractEndDate: date,
-          contractStartMaxDate: !state.contractStartDate && date
-            ? new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000)
-            : null,
+          contractStartMaxDate: !state.contractStartDate && date ? new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000) : null,
         })),
       setContractEndMinDate: (date: Date | null) =>
         set(() => ({
@@ -176,8 +167,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       setPublicHolidays: (holidays: any[] | null) => set(() => ({ publicHolidays: holidays })),
       setSelectedDatesCount: (count: number) => set(() => ({ selectedDatesCount: count })),
       setStaff: (staff: any) => set(() => ({ staff: staff })),
-      setStaffVacation: (vacation: { total: number; used: number; balance: number }) =>
-        set(() => ({ staffVacation: vacation })),
+      setStaffVacation: (vacation: { total: number; used: number; balance: number }) => set(() => ({ staffVacation: vacation })),
       setCustomTitle: (title: string) => set(() => ({ customTitle: title })),
       setCurrentStart: (start: Date) => set(() => ({ currentStart: start })),
       setTimesheetDefaultDate: (date: Date) => set(() => ({ timesheetDefaultDate: date })),
@@ -204,7 +194,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
           activeStaff: null,
           activeUser: null,
           authtoken: '',
-          basepath: '',
+          basepath: null,
           calendarEvents: [],
           chargeableDays: 0,
           contractEndDate: null,
@@ -254,6 +244,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
         authtoken: state.authtoken,
         isAuthenticated: state.isAuthenticated,
         status: state.status,
+        basepath: state.basepath,
       } as PersistState),
       storage: {
         getItem: (name: string) => {
@@ -288,56 +279,50 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
         },
       },
       onRehydrateStorage: () => (state, error) => {
-        const localStorageData = typeof window !== 'undefined' ? localStorage.getItem('auth-storage') : null;
-        console.log('zstore: onRehydrateStorage', { state: { activeUser: state?.activeUser, authtoken: state?.authtoken, isAuthenticated: state?.isAuthenticated, status: state?.status }, error, localStorageData });
+        console.log('zstore: onRehydrateStorage', {
+          state: {
+            activeUser: state?.activeUser,
+            authtoken: state?.authtoken,
+            isAuthenticated: state?.isAuthenticated,
+            status: state?.status,
+            basepath: state?.basepath,
+          },
+          error,
+        });
         if (error) {
           console.error('zstore: Rehydration error', { error });
           state?.setIsAuthenticated(false);
           state?.setStatus('unauthenticated');
+          state?.setBasepath(null);
           return;
         }
+        // Check localStorage for valid session data
         let parsedLocalStorageData: PersistState | null = null;
         if (typeof window !== 'undefined') {
           try {
+            const localStorageData = localStorage.getItem('auth-storage');
             parsedLocalStorageData = localStorageData ? JSON.parse(localStorageData) : null;
             console.log('zstore: Parsed localStorage data', { parsedLocalStorageData });
           } catch (parseError) {
             console.error('zstore: Failed to parse localStorage data', { parseError });
           }
         }
-        if (parsedLocalStorageData && parsedLocalStorageData.activeUser && parsedLocalStorageData.authtoken) {
-          console.log('zstore: Restoring from localStorage due to invalid rehydrated state');
+        if (parsedLocalStorageData?.activeUser && parsedLocalStorageData?.authtoken) {
+          console.log('zstore: Restoring authenticated state from localStorage');
           state?.setActiveUser(parsedLocalStorageData.activeUser);
-          state?.setActiveStaff(parsedLocalStorageData.activeUser.staff[0]);
           state?.setAuthtoken(parsedLocalStorageData.authtoken);
-          state?.setIsAuthenticated(parsedLocalStorageData.isAuthenticated ?? true);
-          state?.setStatus(parsedLocalStorageData.status ?? 'authenticated');
-        } else if (state && state.activeUser && state.authtoken) {
-          console.log('zstore: Rehydrating with valid session, setting authenticated');
-          state.setIsAuthenticated(true);
-          state.setStatus('authenticated');
-          state.setStatus('loading'); // Temporary loading state
-          state.fetchStaffData().then(() => {
-            console.log('zstore: fetchStaffData completed', { activeUser: state.activeUser, isAuthenticated: state.isAuthenticated });
-            if (state.activeUser) {
-              state.setStatus('authenticated');
-            } else {
-              state.setIsAuthenticated(false);
-              state.setStatus('unauthenticated');
-            }
-          }).catch((err) => {
-            console.error('zstore: fetchStaffData error', { err });
-            state.setIsAuthenticated(false);
-            state.setStatus('unauthenticated');
-          });
-        } else if (state && (!state.activeUser || !state.authtoken)) {
-          console.log('zstore: No valid session after rehydration, setting unauthenticated');
+          state?.setIsAuthenticated(true);
+          state?.setStatus('authenticated');
+          state?.setBasepath(parsedLocalStorageData.basepath);
+        } else {
+          console.log('zstore: No valid session in localStorage, setting unauthenticated');
           state?.setIsAuthenticated(false);
           state?.setStatus('unauthenticated');
+          state?.setBasepath(parsedLocalStorageData?.basepath || null);
         }
       },
-    } as PersistOptions<State, PersistState>
-  )
+    } as PersistOptions<State, PersistState>,
+  ),
 );
 
 export default useStore;
