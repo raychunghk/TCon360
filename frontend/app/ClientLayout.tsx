@@ -1,7 +1,9 @@
+/* eslint-disable react/react-in-jsx-scope */
 'use client';
 import Providers from '@/components/providers';
 import useStore from '@/components/stores/zstore';
 import { LoadingOverlay } from '@mantine/core';
+import { SessionProvider, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -32,7 +34,6 @@ export default function ClientLayout({
         setStatus,
         setIsAuthenticated,
         setActiveUser,
-        setAuthtoken,
     } = useStore(
         useShallow((state) => ({
             basepath: state.basepath,
@@ -47,16 +48,37 @@ export default function ClientLayout({
             setStatus: state.setStatus,
             setIsAuthenticated: state.setIsAuthenticated,
             setActiveUser: state.setActiveUser,
-            setAuthtoken: state.setAuthtoken,
         })),
     );
 
     const router = useRouter();
     const pathname = usePathname();
+    const { data: session, status: sessionStatus } = useSession();
+
+    // Sync Zustand store with NextAuth session
+    useEffect(() => {
+        console.log('ClientLayout: Syncing with NextAuth session', { sessionStatus, session });
+        if (sessionStatus === 'loading') {
+            setStatus('loading');
+            return;
+        }
+        if (session?.user) {
+            setIsAuthenticated(true);
+            setStatus('authenticated');
+            setActiveUser(session.user);
+        } else {
+            setIsAuthenticated(false);
+            setStatus('unauthenticated');
+            setActiveUser(null);
+            if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
+                router.push('/auth/login');
+            }
+        }
+    }, [sessionStatus, session, pathname, setIsAuthenticated, setStatus, setActiveUser, router]);
 
     // Set initial configuration
     useEffect(() => {
-        console.log('ClientLayout: Setting initial configuration based on props.');
+        console.log('ClientLayout: Setting initial configuration', { basepath });
         if (basepath === null || basepath === undefined) {
             setBasepath(config.basepath || '');
         }
@@ -64,34 +86,18 @@ export default function ClientLayout({
         setConfig(config);
     }, [basepath, config, setBasepath, setUseReverseProxy, setConfig]);
 
-    // Validate authentication state after rehydration
-    useEffect(() => {
-        console.log('ClientLayout: Validating authentication state', { status, isAuthenticated });
-        if (status === 'loading') {
-            // Keep loading state until validation completes
-            return;
-        }
-        if (isAuthenticated && status === 'authenticated') {
-            console.log('ClientLayout: Authenticated state confirmed');
-            // Optionally validate with a lightweight API call or cookie check here
-        } else {
-            console.log('ClientLayout: No valid authentication, redirecting to login');
-            setIsAuthenticated(false);
-            setStatus('unauthenticated');
-            setActiveUser(null);
-            setAuthtoken('');
-            if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
-                router.push('/auth/login');
-            }
-        }
-    }, [status, isAuthenticated, pathname, router, setIsAuthenticated, setStatus, setActiveUser, setAuthtoken]);
-
     // Load public holidays
     useEffect(() => {
         console.log('ClientLayout: Data Loading Effect triggered', { basepath, publicHolidays, isExiting });
         let isMounted = true;
 
-        if (basepath !== null && basepath !== undefined && (!publicHolidays || publicHolidays.length === 0) && !isExiting && isMounted) {
+        if (
+            basepath &&
+            !publicHolidays &&
+            !isExiting &&
+            isMounted &&
+            sessionStatus === 'authenticated'
+        ) {
             console.log('ClientLayout: Triggering loadPublicHolidays');
             loadPublicHolidays();
         }
@@ -100,9 +106,9 @@ export default function ClientLayout({
             console.log('ClientLayout: Data Loading Effect cleanup');
             isMounted = false;
         };
-    }, [basepath, publicHolidays, isExiting, loadPublicHolidays]);
+    }, [basepath, publicHolidays, isExiting, sessionStatus, loadPublicHolidays]);
 
-    if (status === 'loading' && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
+    if (sessionStatus === 'loading' && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
         console.log('ClientLayout: Rendering loading state', { pathname });
         return (
             <Providers>
@@ -111,7 +117,11 @@ export default function ClientLayout({
         );
     }
 
-    console.log('ClientLayout: Rendering children', { pathname, status, isAuthenticated });
+    console.log('ClientLayout: Rendering children', { pathname, sessionStatus, isAuthenticated });
 
-    return <Providers>{children}</Providers>;
+    return (
+     
+            <Providers>{children}</Providers>
+     
+    );
 }

@@ -1,189 +1,171 @@
+/* eslint-disable no-undef */
+// auth.js
+import { config } from '@tcon360/config';
 import jwt from 'jsonwebtoken';
 import NextAuth from 'next-auth';
-
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { parseCookies } from 'nookies';
-//import CredentialsProvider from 'next-auth/providers/credentials';
-import { format, parseISO } from 'date-fns';
 
-//import { default as baseconfig } from '@/frontendconfig';
-import { config } from '@tcon360/config';
+// Logging utility with timestamp
+const logAuth = (description, details = {}) => {
+  const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
+  console.log(`[Auth][${timestamp}] ${description}`, JSON.stringify(details, null, 2));
+};
+
+logAuth('Initializing authOptions', {
+  config: { basepath: config.basepath, frontendport: config.frontendport },
+  env: {
+    nextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+    jwtSecret: !!process.env.JWT_SECRET,
+    tokenMaxAge: process.env.TOKEN_MAX_AGE,
+  },
+});
+
 const { prefix: _prefix, frontendport, backendport, mainport } = config;
 const _frontendurl = `http://127.0.0.1:${frontendport}`;
 const _backendurl = `http://127.0.0.1:${backendport}`;
-// import Providers from "next-auth/providers"
-//basePath: '/visa/api/auth',
-// basePath: `https://code2.raygor.cc/absproxy/${frontendport}/api/auth`,
-//baseUrl: `https://code2.raygor.cc/absproxy/${frontendport}`,
+
 export const authOptions = {
   providers: [
-    {
+    CredentialsProvider({
       id: 'custom-provider',
       name: 'Custom Provider',
-
-      type: 'credentials',
-      authorize: async (credentials) => {
-        console.log('credentials?');
-        console.log(credentials);
-        // get the token cookie using nookies
-        // const cookies = parseCookies();
-        const token = credentials.token;
-        console.log('provider token');
-        console.log(token);
-        // decode the JWT token and extract the user's information
+      credentials: {
+        token: { label: 'Token', type: 'text' },
+      },
+      async authorize(credentials) {
+        logAuth('Authorize called', { hasToken: !!credentials?.token });
         try {
-          console.log('jwt secret:' + process.env.JWT_SECRET);
-          const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-          console.log('Decoded token:', decodedToken); // log the decoded token
-          const { id, name, email, username, staff } = decodedToken;
-          console.log('decodedToken');
-          console.log(decodedToken);
-          // check if the token matches the credentials
-          if (credentials.token === token) {
-            // return the user object with their information
-            let rtn = {
-              id: decodedToken.sub,
-              name: username,
-              email: email,
-              picture: '',
-              username: username,
-              staff,
-              tkn: token,
-            };
-            console.log('rtn?');
-            return rtn;
+          if (!credentials?.token) {
+            logAuth('Authorize: No token provided');
+            return null;
           }
+          logAuth('Authorize: Verifying JWT', { secret: !!process.env.JWT_SECRET });
+          const decodedToken = jwt.verify(credentials.token, process.env.JWT_SECRET);
+          logAuth('Authorize: Decoded token', { decodedToken });
+          const { sub, name, email, username, staff } = decodedToken;
+          logAuth('Authorize: Validating token payload', { sub, username });
+          if (!sub || !username) {
+            logAuth('Authorize: Invalid token payload', { sub, username });
+            return null;
+          }
+          const user = {
+            id: sub,
+            name: username,
+            email: email || '',
+            picture: '',
+            username,
+            staff: staff || [],
+            tkn: credentials.token,
+          };
+          logAuth('Authorize: Returning user', { user });
+          return user;
         } catch (error) {
-          console.log('rror');
-          console.log(error);
-          // if the token is invalid, return null to indicate that the credentials are invalid
+          logAuth('Authorize: Error', { error: error.message, stack: error.stack });
           return null;
         }
-
-        // if the token does not match the credentials, return null to indicate that the credentials are invalid
-        return null;
       },
-    },
+    }),
   ],
-  basePath: '/absproxy/3000/api/auth',
+  basePath: config.basepath ? `${config.basepath}/api/auth` : '/api/auth',
   callbacks: {
-    // async jwt(token, user, account, profile, isNewUser) {
-
-    async jwt(jwtobj) {
-      const { token, user, account, profile, isNewUser } = jwtobj;
-
-      const logJwtCallback = (description, variable) => logCallback('jwt', description, variable);
-
-      logJwtCallback('jwtobj', JSON.stringify(jwtobj));
-
-      const cookies = parseCookies();
-      logJwtCallback('cookies', cookies);
-
-      logJwtCallback('users?', user);
-
-      logJwtCallback('Account:', account);
-
-      if (user && user.hasOwnProperty('staff')) {
-        token.staff = user.staff[0];
-      }
-      if (user?.hasOwnProperty('tkn')) {
-        token.tkn = user.tkn;
-      }
-      logJwtCallback('token in jwt', token);
-
-      if (token.hasOwnProperty('exp')) {
-        const expdate = new Date(token.exp * 1000 + 5000);
-        //logJwtCallback('now compared with expdate');
-        logJwtCallback('token expiry date', expdate);
-
-        const now = new Date().getTime() / 1000;
-        const _now = format(now, 'dd/MMM/yyyy HH:mm:ss');
-        logJwtCallback(`token expiry:${expdate} datevs now:${_now} `, '');
-
-        if (token.hasOwnProperty('exp') && now < token.exp) {
-          logJwtCallback('New date is earlier than token expiration', '');
-          return token;
+    async jwt({ token, user, account }) {
+      logAuth('JWT callback called', { token, user, account });
+      try {
+        const cookies = parseCookies();
+        logAuth('JWT: Cookies', { cookies });
+        if (user) {
+          token.id = user.id;
+          token.name = user.name;
+          token.email = user.email;
+          token.staff = user.staff || [];
+          token.tkn = user.tkn;
+          logAuth('JWT: Updated token', { token });
         }
-      }
-      if (account) {
+        if (token.exp) {
+          const expDate = new Date(token.exp * 1000);
+          const now = new Date().getTime() / 1000;
+          logAuth('JWT: Token expiry check', { expDate, now });
+          if (now >= token.exp) {
+            logAuth('JWT: Token expired');
+            return null;
+          }
+        }
         return token;
+      } catch (error) {
+        logAuth('JWT: Error', { error: error.message, stack: error.stack });
+        return null;
       }
     },
-
-    async session({ session, token, user }) {
-      const formatDate = (dateString) => {
-        if (dateString) {
-          const date = parseISO(dateString + '');
-          console.log('parsing date date string:', dateString);
-          console.log('parsing date date:', date);
-          const formattedDate = format(date, 'yyyy-MMM-dd');
-          return formattedDate;
+    async session({ session, token }) {
+      logAuth('Session callback called', { session, token });
+      try {
+        const cookies = parseCookies();
+        logAuth('Session: Cookies', { cookies });
+        if (token && token.id) {
+          session.user = {
+            id: token.id,
+            name: token.name || '',
+            email: token.email || '',
+            staff: token.staff || [],
+          };
+          session.token = token.tkn;
+          logAuth('Session: Updated session', { session });
+          if (token.exp) {
+            const expDate = new Date(token.exp * 1000);
+            const now = new Date().getTime() / 1000;
+            logAuth('Session: Token expiry check', { expDate, now });
+            if (now >= token.exp) {
+              logAuth('Session: Token expired');
+              return null;
+            }
+          }
+          return session;
         }
-      };
-      const logSessionCallback = (description, ...args) =>
-        logCallback('session callback:', description, ...args);
-
-      const cookies = parseCookies();
-      logSessionCallback('session?', session);
-      logSessionCallback('token?', token);
-      //logSessionCallback('user in session?', { user });
-      //const _now = new Date().getTime() / 1000;
-      const _now = new Date();
-      const formattedDate = _now.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-      logSessionCallback('formatted now:', formattedDate);
-
-      if (token.hasOwnProperty('exp')) {
-        const expdate = new Date(token.exp * 1000);
-        logSessionCallback('token expiry date', expdate);
-      }
-
-      const now = new Date().getTime() / 1000;
-      if (token.hasOwnProperty('exp') && now < token.exp) {
-        logSessionCallback('New date is earlier than token expiration');
-        session.user = {
-          name: token.name,
-          email: token.email,
-          staff: token.staff,
-        };
-        // session.basePath = '/absproxy/3333';
-        session.token = token;
-        logSessionCallback('session.token?', session.token);
-        logSessionCallback('session.user?', session.user);
-        return session;
-      } else {
-        logSessionCallback('token is expired');
+        logAuth('Session: No valid token');
+        return null;
+      } catch (error) {
+        logAuth('Session: Error', { error: error.message, stack: error.stack });
+        return null;
       }
     },
-    async signOut({ redirect }) {
-      // Destroy session cookies upon signout
-      console.log('signout next auth called');
-      await fetch('/api/auth/callback/logout');
-      await redirect('/');
-    },
-    async signIn(userDetail) {
-      console.log('hello, user detail in Sig in', userDetail);
-      if (Object.keys(userDetail).length === 0) {
+    async signIn({ user, account, profile, email, credentials }) {
+      logAuth('SignIn callback called', { user, account, profile, credentials: !!credentials });
+      try {
+        if (!user || Object.keys(user).length === 0) {
+          logAuth('SignIn: Invalid or empty user object');
+          return false;
+        }
+        logAuth('SignIn: User validated', { user });
+        return true;
+      } catch (error) {
+        logAuth('SignIn: Error', { error: error.message, stack: error.stack });
         return false;
       }
-      return true;
+    },
+    async signOut() {
+      logAuth('SignOut callback called');
+      try {
+        logAuth('SignOut: Completed');
+        return true;
+      } catch (error) {
+        logAuth('SignOut: Error', { error: error.message, stack: error.stack });
+        return false;
+      }
     },
   },
-  /* jwt: {
-     secret: process.env.JWT_SECRET,
-     maxAge: parseInt(process.env.TOKEN_MAX_AGE),
-   },*/
   session: {
-    jwt: true,
-    maxAge: parseInt(process.env.TOKEN_MAX_AGE),
+    strategy: 'jwt',
+    maxAge: parseInt(process.env.TOKEN_MAX_AGE) || 30 * 24 * 60 * 60,
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: true,
 };
-function logCallback(context, description, ...args) {
-  const prefixedDescription = `${context} callback: ${description}`;
-  console.log(prefixedDescription, ...args);
-}
+
+logAuth('authOptions configured', {
+  providers: authOptions.providers.map(p => p.id),
+  basePath: authOptions.basePath,
+  session: authOptions.session,
+});
 
 export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);

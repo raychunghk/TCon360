@@ -1,16 +1,19 @@
+/* eslint-disable react/react-in-jsx-scope */
 // app/layout.tsx (or wherever your root layout is located)
+
 import { config } from '@tcon360/config';
 import ClientLayout from './ClientLayout'; // Your client component wrapper
-
 // Import global styles here. These will be loaded once for the entire application.
 import '@/styles/styles.css';
 import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import { SessionProvider } from 'next-auth/react';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Derive faviconUrl here, as it's part of the static head content
   const faviconUrl = `${config.prefix}/favicon.svg`;
+
 
   return (
     <html lang="en"  {...mantineHtmlProps}>
@@ -33,15 +36,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ClientLayout is now a wrapper for client-side logic and providers.
           It receives the 'config' prop from the server component.
         */}
+   <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
         <ClientLayout
           config={{
             basepath: config.basepath,
             prefix: config.prefix,
             useReverseProxy: config.useReverseProxy,
           }}
+
         >
           {children}
-        </ClientLayout>
+        </ClientLayout></SessionProvider>
       </body>
     </html>
   );

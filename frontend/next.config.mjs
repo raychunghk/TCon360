@@ -46,7 +46,7 @@ const nextConfig = {
     },
   },
   compiler: { styledComponents: true },
-  trailingSlash: true,
+  trailingSlash: false,
   async rewrites() {
     const rewrites = [
       {
@@ -59,7 +59,7 @@ const nextConfig = {
       },
       {
         source: '/api/auth/:path*',
-        destination: `http://127.0.0.1:${FRONTEND_PORT}/api/auth/:path*`,
+        destination: `${_basepath}/api/auth/:path*`,
       },
       {
         source: '/absproxy/:port([0-9]+)/api/:path*',

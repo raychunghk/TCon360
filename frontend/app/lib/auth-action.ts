@@ -4,7 +4,7 @@ import { Session, User } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 export async function SignIn(tokenCookie: string) {
-  console.log('Next server side called: SignIn initiated');
+  console.log('Next server side called: SignIn initiated, token:', tokenCookie);
   const result = await signIn('custom-provider', {
     token: tokenCookie,
     redirect: false,
