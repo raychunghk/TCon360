@@ -1,5 +1,5 @@
 import { Card, Grid, Text } from '@mantine/core';
-import commonstyle from '../styles/common.module.css';
+import commonstyle from '@/styles/common.module.css';
 const SignupCard = ({ title, cols }) => {
   return (
     <Card

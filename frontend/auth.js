@@ -101,7 +101,7 @@ export const authOptions = {
       logAuth('Session callback called', { session, token });
       try {
         const cookies = parseCookies();
-        logAuth('Session: Cookies', { cookies });
+        logAuth('Session AuthJS callback: Cookies', { cookies });
         if (token && token.id) {
           session.user = {
             id: token.id,
@@ -110,22 +110,22 @@ export const authOptions = {
             staff: token.staff || [],
           };
           session.token = token.tkn;
-          logAuth('Session: Updated session', { session });
+          logAuth('Session AuthJS callback: Updated session', { session });
           if (token.exp) {
             const expDate = new Date(token.exp * 1000);
             const now = new Date().getTime() / 1000;
-            logAuth('Session: Token expiry check', { expDate, now });
+            logAuth('Session AuthJS callback: Token expiry check', { expDate, now });
             if (now >= token.exp) {
-              logAuth('Session: Token expired');
+              logAuth('Session AuthJS callback: Token expired');
               return null;
             }
           }
           return session;
         }
-        logAuth('Session: No valid token');
+        logAuth('Session AuthJS callback: No valid token');
         return null;
       } catch (error) {
-        logAuth('Session: Error', { error: error.message, stack: error.stack });
+        logAuth('Session AuthJS callback: Error', { error: error.message, stack: error.stack });
         return null;
       }
     },

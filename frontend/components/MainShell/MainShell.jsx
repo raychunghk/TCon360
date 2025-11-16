@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
-import styles from './MainShell.module.css';
+import styles from '@/styles/MainShell.module.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
 
 export function MainShell({ children, contentpadding = '10px' }) {

@@ -2,7 +2,7 @@
 import { auth } from '@/auth';
 import { config } from '@tcon360/config';
 import { NextRequest, NextResponse } from 'next/server';
-
+import { getMySession } from './app/lib/auth-action';
 // Utility function to format logs with timestamp and context
 const logMiddleware = (description: string, details: any = {}) => {
   const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
@@ -33,18 +33,20 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   if (pathname.match(/^\/_next\//)) {
-    logMiddleware('Skipping: Next.js internal path', { pathname });
+   // logMiddleware('Skipping: Next.js internal path', { pathname });
     return NextResponse.next();
   }
   if (pathname.match(/\.(js|css|webp|png|jpg|jpeg|svg)$/)) {
-    logMiddleware('Skipping: Static file', { pathname });
+    //logMiddleware('Skipping: Static file', { pathname });
     return NextResponse.next();
   }
 
-  // Check if the path is not the login page
-  if (!/\/auth\/login\/?$/.test(pathname)) {
+// Check if the path is not an auth page (login or signup)
+  if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/signup')) {
     logMiddleware('Checking session for non-login path', { pathname });
-    const session = await auth();
+    //const x = await auth();
+    const session = await getMySession();
+    console.log('Middleware session check', session);
     if (!session?.user) {
       logMiddleware('No valid session, redirecting to login', {
         pathname,

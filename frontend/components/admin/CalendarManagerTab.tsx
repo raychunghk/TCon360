@@ -6,7 +6,7 @@ import { IconCalendarEvent } from '@tabler/icons-react';
 import axios from 'axios';
 import { useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import commonstyle from '/styles/common.module.css';
+import commonstyle from '@/styles/common.module.css';
 
 import { SignOut } from '@/app/lib/auth-action';
 import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';

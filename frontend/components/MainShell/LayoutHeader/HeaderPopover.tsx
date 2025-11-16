@@ -3,7 +3,7 @@ import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React, { memo, useEffect, useState } from 'react';
-import styles from '../MainShell.module.css';
+import styles from '@/styles/MainShell.module.css';
 
 interface UserField {
   label: string;

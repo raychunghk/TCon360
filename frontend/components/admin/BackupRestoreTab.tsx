@@ -5,7 +5,7 @@ import { IconCloudDownload, IconJson, IconUpload } from '@tabler/icons-react';
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 import { useState } from 'react';
-import commonstyle from '/styles/common.module.css';
+import commonstyle from '@/styles/common.module.css';
 
 const BackupRestoreTab = () => {
     const [loading, setLoading] = useState(false);

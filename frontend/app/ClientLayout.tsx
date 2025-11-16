@@ -3,7 +3,7 @@
 import Providers from '@/components/providers';
 import useStore from '@/components/stores/zstore';
 import { LoadingOverlay } from '@mantine/core';
-import { SessionProvider, useSession } from 'next-auth/react';
+import { SessionProvider, useSession } from 'next-auth/react'; // Import SessionProvider
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -70,11 +70,9 @@ export default function ClientLayout({
             setIsAuthenticated(false);
             setStatus('unauthenticated');
             setActiveUser(null);
-            if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
-                router.push('/auth/login');
-            }
+            // No client-side redirect; middleware handles it
         }
-    }, [sessionStatus, session, pathname, setIsAuthenticated, setStatus, setActiveUser, router]);
+    }, [sessionStatus, session, pathname, setIsAuthenticated, setStatus, setActiveUser]);
 
     // Set initial configuration
     useEffect(() => {
@@ -88,22 +86,16 @@ export default function ClientLayout({
 
     // Load public holidays
     useEffect(() => {
-        console.log('ClientLayout: Data Loading Effect triggered', { basepath, publicHolidays, isExiting });
+        console.log('ClientLayout Data Loading Effect triggered', { basepath, publicHolidays, isExiting });
         let isMounted = true;
 
-        if (
-            basepath &&
-            !publicHolidays &&
-            !isExiting &&
-            isMounted &&
-            sessionStatus === 'authenticated'
-        ) {
+        if (basepath && !publicHolidays && !isExiting && isMounted && sessionStatus === 'authenticated') {
             console.log('ClientLayout: Triggering loadPublicHolidays');
             loadPublicHolidays();
         }
 
         return () => {
-            console.log('ClientLayout: Data Loading Effect cleanup');
+            console.log('ClientLayout Data Loading Effect cleanup');
             isMounted = false;
         };
     }, [basepath, publicHolidays, isExiting, sessionStatus, loadPublicHolidays]);
@@ -120,8 +112,8 @@ export default function ClientLayout({
     console.log('ClientLayout: Rendering children', { pathname, sessionStatus, isAuthenticated });
 
     return (
-     
+        <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
             <Providers>{children}</Providers>
-     
+        </SessionProvider>
     );
 }

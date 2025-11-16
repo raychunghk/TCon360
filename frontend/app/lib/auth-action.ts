@@ -10,6 +10,10 @@ export async function SignIn(tokenCookie: string) {
     redirect: false,
   });
   console.log('Next server side called: SignIn completed', { result });
+  if (!result.error) {
+    redirect('/'); // Server-side redirect after successful sign-in
+  }
+  
   return result;
 }
 
