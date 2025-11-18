@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth } from '@/auth';
 import { config } from '@tcon360/config';
 import { NextRequest, NextResponse } from 'next/server';
 import { getMySession } from './app/lib/auth-action';
@@ -17,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
     url: href,
     pathname,
-    headers: Object.fromEntries(request.headers.entries()),
+    // headers: Object.fromEntries(request.headers.entries()),
   });
 
   // Exclude static files, Next.js internal paths, NextAuth routes, and backend API routes
@@ -33,7 +32,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   if (pathname.match(/^\/_next\//)) {
-   // logMiddleware('Skipping: Next.js internal path', { pathname });
+    // logMiddleware('Skipping: Next.js internal path', { pathname });
     return NextResponse.next();
   }
   if (pathname.match(/\.(js|css|webp|png|jpg|jpeg|svg)$/)) {
@@ -41,7 +40,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-// Check if the path is not an auth page (login or signup)
+  // Check if the path is not an auth page (login or signup)
   if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/signup')) {
     logMiddleware('Checking session for non-login path', { pathname });
     //const x = await auth();

@@ -4,7 +4,7 @@ import Providers from '@/components/providers';
 import useStore from '@/components/stores/zstore';
 import { LoadingOverlay } from '@mantine/core';
 import { SessionProvider, useSession } from 'next-auth/react'; // Import SessionProvider
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -51,7 +51,7 @@ export default function ClientLayout({
         })),
     );
 
-    const router = useRouter();
+
     const pathname = usePathname();
     const { data: session, status: sessionStatus } = useSession();
 

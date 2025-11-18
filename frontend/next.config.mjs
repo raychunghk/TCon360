@@ -57,10 +57,17 @@ const nextConfig = {
         source: '/:path*',
         destination: `${_basepath}/:path*`,
       },
+      // Exclude NextAuth routes from backend proxying (keep on frontend)
       {
         source: '/api/auth/:path*',
-        destination: `${_basepath}/api/auth/:path*`,
+        destination: '/api/auth/:path*', // No change, handled by frontend
       },
+      // For prefixed NextAuth routes, rewrite to frontend's /api/auth/*
+      {
+        source: '/absproxy/:port([0-9]+)/api/auth/:path*',
+        destination: '/api/auth/:path*',
+      },
+      // Backend API routes (non-Auth): proxy to backend
       {
         source: '/absproxy/:port([0-9]+)/api/:path*',
         destination: `http://127.0.0.1:${BACKEND_PORT}/api/:path*`,
