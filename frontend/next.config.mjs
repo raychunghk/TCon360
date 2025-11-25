@@ -67,6 +67,17 @@ const nextConfig = {
         source: '/absproxy/:port([0-9]+)/api/auth/:path*',
         destination: '/api/auth/:path*',
       },
+
+      //better auth
+      {
+        source: '/api/buth/:path*',
+        destination: '/api/buth/:path*', // No change, handled by frontend
+      },
+      // For prefixed NextAuth routes, rewrite to frontend's /api/auth/*
+      {
+        source: '/absproxy/:port([0-9]+)/api/buth/:path*',
+        destination: '/api/buth/:path*',
+      },
       // Backend API routes (non-Auth): proxy to backend
       {
         source: '/absproxy/:port([0-9]+)/api/:path*',

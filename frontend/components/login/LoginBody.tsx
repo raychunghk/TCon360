@@ -1,5 +1,9 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { SignIn } from '@/app/lib/auth-action';
+import { bauthClient } from '@/app/lib/bauthclient';
+
 import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
 import { siteTitle } from '@/components/util/label';
@@ -18,10 +22,10 @@ import {
 } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
+//import { signIn } from 'better-auth/react';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { parseCookies, setCookie } from 'nookies';
 import { useRef, useState } from 'react';
-
 function decodeJwt(token: string) {
   try {
     const base64Url = token.split('.')[1];
@@ -54,7 +58,6 @@ export default function LoginBody(props: any) {
       }
     }
   };
-
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [loginStatus, setLoginStatus] = useState('');
@@ -142,6 +145,21 @@ export default function LoginBody(props: any) {
     }
   }
 
+
+  const handleLoginxxx = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      // Correct way to call signIn for the emailAndPassword provider
+      //bauthClient.signIn.email
+
+      //bauthClient.signIn.external({ username: 'a', password: 'b' });
+      bauthClient.signInCredentials({ username: 'a', password: 'b' });
+
+    } catch (error) {
+      console.error('An unexpected error occurred during login:', error);
+    }
+  };
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     open();

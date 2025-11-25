@@ -24,6 +24,10 @@ export async function middleware(request: NextRequest) {
     logMiddleware('Skipping: NextAuth route', { pathname });
     return NextResponse.next();
   }
+  if (pathname.startsWith('/api/buth')) {
+    logMiddleware('Skipping: BETTERAUTH route', { pathname });
+    return NextResponse.next();
+  }
   if (pathname.startsWith('/api/')) {
     logMiddleware('Skipping: Backend API route, expecting rewrite to Nest.js', {
       pathname,

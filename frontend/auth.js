@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // auth.js
 import { config } from '@tcon360/config';
 import jwt from 'jsonwebtoken';
@@ -18,12 +17,21 @@ logAuth('Initializing authOptions', {
     nextAuthSecret: !!process.env.NEXTAUTH_SECRET,
     jwtSecret: !!process.env.JWT_SECRET,
     tokenMaxAge: process.env.TOKEN_MAX_AGE,
+    authUrl: process.env.AUTH_URL, // Added for debugging
   },
 });
 
 const { prefix: _prefix, frontendport, backendport, mainport } = config;
 const _frontendurl = `http://127.0.0.1:${frontendport}`;
 const _backendurl = `http://127.0.0.1:${backendport}`;
+
+// --- Debugging logs for basePath ---
+logAuth('Value of config.basepath:', { basepath: config.basepath });
+
+// Based on the error "Cannot parse action at /api/auth/session",
+// it's highly likely that the proxy is stripping "/absproxy/3000".
+// Therefore, Auth.js should expect its routes at "/api/auth" relative to the app's root.
+const authJsBasePath = '/api/auth';
 
 export const authOptions = {
   providers: [
@@ -67,7 +75,8 @@ export const authOptions = {
       },
     }),
   ],
-  basePath: config.basepath ? `${config.basepath}/api/auth` : '/api/auth',
+  // Use the determined basePath
+  basePath: authJsBasePath, // Changed from dynamic config.basepath
   callbacks: {
     async jwt({ token, user, account }) {
       logAuth('JWT callback called', { token, user, account });
@@ -162,9 +171,9 @@ export const authOptions = {
   debug: true,
 };
 
-logAuth('authOptions configured', {
+logAuth('Final authOptions configured', {
+  basePath: authOptions.basePath, // Log the final basePath
   providers: authOptions.providers.map(p => p.id),
-  basePath: authOptions.basePath,
   session: authOptions.session,
 });
 

@@ -187,7 +187,7 @@ export default function LeaveRequestForm({
     }, [activeStaff]);
 
     useEffect(() => {
-        if ((basepath !== null && basepath !== undefined)  && formType === 'edit' && leaveRequestId) {
+        if ((basepath !== null && basepath !== undefined) && formType === 'edit' && leaveRequestId) {
             const getLeaveRequestData = async () => {
                 setIsFetchingData(true);
                 try {
@@ -633,7 +633,7 @@ export default function LeaveRequestForm({
                                         component="a"
                                         target="_blank"
                                         leftSection={<IconFileSpreadsheet />}
-                                        href={`${basepath} /api/staff / download / ${leaveRequest.fileId} `}
+                                        href={`${basepath}/api/staff/download/${leaveRequest.fileId}`}
                                     >
                                         Download Leave Form
                                     </Button>

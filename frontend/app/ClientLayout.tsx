@@ -87,18 +87,18 @@ export default function ClientLayout({
     // Load public holidays
     useEffect(() => {
         console.log('ClientLayout Data Loading Effect triggered', { basepath, publicHolidays, isExiting });
-        let isMounted = true;
 
-        if (basepath && !publicHolidays && !isExiting && isMounted && sessionStatus === 'authenticated') {
+
+        if (basepath && !publicHolidays && !isExiting) {
             console.log('ClientLayout: Triggering loadPublicHolidays');
             loadPublicHolidays();
         }
 
         return () => {
             console.log('ClientLayout Data Loading Effect cleanup');
-            isMounted = false;
+
         };
-    }, [basepath, publicHolidays, isExiting, sessionStatus, loadPublicHolidays]);
+    }, [basepath, publicHolidays, isExiting, sessionStatus]);
 
     if (sessionStatus === 'loading' && !pathname.startsWith('/auth/login') && !pathname.startsWith('/auth/signup')) {
         console.log('ClientLayout: Rendering loading state', { pathname });
