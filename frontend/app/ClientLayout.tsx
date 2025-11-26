@@ -90,8 +90,10 @@ export default function ClientLayout({
 
 
         if (basepath && !publicHolidays && !isExiting) {
-            console.log('ClientLayout: Triggering loadPublicHolidays');
-            loadPublicHolidays();
+            if (!publicHolidays) {
+                console.log('ClientLayout: Triggering loadPublicHolidays');
+                loadPublicHolidays();
+            }
         }
 
         return () => {

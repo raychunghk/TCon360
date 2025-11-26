@@ -1,3 +1,6 @@
+/* eslint-disable react/react-in-jsx-scope */
+// CreateTimesheetPage.tsx
+
 'use client';
 import useStore from '@/components/stores/zstore.ts';
 import { Button, Card, Center, Grid, Group, MantineSize, Modal, Text } from '@mantine/core';
@@ -13,9 +16,6 @@ import styles from './mp.module.css';
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize;
 }
-
-// Utility function to format Date to "YYYY-MM-DD" string
-// Utility function to format Date to "YYYY-MM-DD" string, adding one day
 const formatDateToString = (date: Date): string => {
   const nextDay = new Date(date);
   nextDay.setDate(date.getDate() + 1); // Add one day as requested
@@ -29,129 +29,103 @@ const formatDateToString = (date: Date): string => {
 
 export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
-  const { handleSubmit, reset } = useReactHookForm();
+  const { handleSubmit } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setfileid] = useState<boolean | null>(null);
-  const [monthValue, setMonthValue] = useState<Date | null>(new Date());
-
+  // defaultdate state is not strictly needed if selectedMonth is the source of truth
+  // const [defaultdate, setDefaultDate] = useState<Date | string | undefined>(undefined); 
   const {
-    timesheetDefaultDate,
     setTimesheetDefaultDate,
     selectedMonth,
     setSelectedMonth,
     isMonthPickerChangeEvent,
     setIsMonthPickerChangeEvent,
-    isFrontCalendarChangeEvent,
     basepath,
+    calendarRef,
+    setMonthPickerRef,
   } = useStore();
 
-  const [defaultdate, setDefaultDate] = useState(new Date());
-  const monthPickerRef = useRef(null);
-
+  const monthPickerRef = useRef<any>(null);
   useEffect(() => {
-    if (isFrontCalendarChangeEvent) {
-      console.log('selected month change triggered by frontpagecalendar', selectedMonth);
-      if (timesheetDefaultDate !== selectedMonth) {
-        // setTimesheetDefaultDate(selectedMonth);
-      }
+    if (monthPickerRef.current) {
+      setMonthPickerRef({ monthPickerRef });
     }
-    return () => { };
+  }, [monthPickerRef.current, setMonthPickerRef]); // Added setMonthPickerRef to deps
+
+  // Debugging: Log selectedMonth changes
+  useEffect(() => {
+    console.log('CreateTimesheetPage: selectedMonth updated to', selectedMonth);
+    console.log('CreateTimesheetPage: selectedMonth year is', selectedMonth.getFullYear());
   }, [selectedMonth]);
 
+  // Sync: Calendar to Picker (already works via selectedMonth)
   useEffect(() => {
-    console.log('timesheetDefaultDate?', timesheetDefaultDate);
-    const _defaultDate = new Date(timesheetDefaultDate.getFullYear(), 1);
-    const _selectedMonth = new Date(
-      timesheetDefaultDate.getFullYear(),
-      timesheetDefaultDate.getMonth(),
-      1,
-    );
-
-    if (!isMonthPickerChangeEvent) {
+    if (isMonthPickerChangeEvent) {
+      setIsMonthPickerChangeEvent(false);
     }
+  }, [isMonthPickerChangeEvent, setIsMonthPickerChangeEvent]);
 
-    if (isMonthPickerChangeEvent) setIsMonthPickerChangeEvent(false);
-  }, [timesheetDefaultDate, isMonthPickerChangeEvent]);
+  // Sync: Picker to Calendar
+  const handleMonthChange = (value: Date | null) => { // Changed value type to Date | null
+    if (fileid) setfileid(null);
+    if (!value) return; // Handle null case if user can clear selection
 
-  const handleMonthChange = (value: string | null) => {
-    if (fileid) {
-      setfileid(null);
-    }
-    console.log('handle month change', value);
+    console.log(`CreateTimesheetPage: MonthPicker onChange: value:`, value);
 
-    // Handle null or invalid input
-    if (!value) {
-      console.warn('No date selected (null value received)');
-      return;
-    }
+    const firstOfMonth = new Date(value.getFullYear(), value.getMonth(), 1);
 
-    // Parse the incoming "YYYY-MM-DD" string
-    const [year, month] = value.split('-').map(Number);
-    if (!year || !month || isNaN(year) || isNaN(month)) {
-      console.error('Invalid date string format:', value);
-      return;
-    }
-
-    // Create a Date object for the first day of the selected month in local timezone
-    const dateValue = new Date(year, month - 1, 1); // month is 1-based in string, 0-based in Date
-
-    // Validate the date
-    if (!isNaN(dateValue.getTime())) {
-      setIsMonthPickerChangeEvent(true);
-      setTimesheetDefaultDate(dateValue);
-      setSelectedMonth(dateValue); // Update selectedMonth for consistency
-    } else {
-      console.error('Invalid date created from:', value);
+    setIsMonthPickerChangeEvent(true);
+    setTimesheetDefaultDate(firstOfMonth);
+    setSelectedMonth(firstOfMonth);
+    // setDefaultDate(new Date(value.getFullYear(), value.getMonth())); // This line is likely not needed
+    const api = calendarRef?.current?.getApi();
+    if (api) {
+      api.gotoDate(firstOfMonth);
     }
   };
 
-  const onSubmit = async (event) => {
+  const onSubmit = async () => {
     setSubmitting(true);
     const year = selectedMonth.getFullYear();
     const month = selectedMonth.getMonth() + 1;
 
-    const response = await axios.post(`${basepath}/api/timesheet/create`, {
-      year,
-      month,
-    });
+    const response = await axios.post(`${basepath}/api/timesheet/create`, { year, month });
     setSubmitting(false);
+
     if ([200, 201].includes(response.status)) {
       setfileid(response.data.fileid);
       setModalOpen(true);
-    } else {
-      console.error('Failed to create timesheet record:', response);
     }
   };
 
   const handleDownloadFile = async () => {
     const url = `${basepath}/api/staff/download/${fileid}`;
     const response = await axios.get(url, { responseType: 'blob' });
-    const disposition = response.headers['content-disposition'];
-    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-    const matches = filenameRegex.exec(disposition);
-    const filename = matches ? matches[1] : `${fileid}.xml`;
+    const filename = response.headers['content-disposition']
+      ?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)?.[1]
+      ?? `${fileid}.xml`;
     download(response.data, filename);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    if (fileid) {
-      handleDownloadFile();
-    }
+    if (fileid) handleDownloadFile();
   };
 
   return (
     <>
-      <form method="post" onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title={'Create TimeSheet'} cardwidth={225}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <MyCard title="Create TimeSheet" cardwidth={225}>
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
                 <MonthPicker
                   size={pickersize}
                   onChange={handleMonthChange}
+                  // REMOVED: defaultDate prop, as 'value' makes it a controlled component
+                  // defaultDate={new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1)}
                   ref={monthPickerRef}
-                  value={selectedMonth ? formatDateToString(selectedMonth) : null}
+                  value={selectedMonth} // Date object
                   className={styles.monthPickerButtons}
                 />
               </Group>
@@ -163,7 +137,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
                     component="a"
                     target="_blank"
                     leftSection={<IconTableExport size="1rem" />}
-                    href={`${basepath}/api/staff/download/${fileid} `}
+                    href={`${basepath}/api/staff/download/${fileid}`}
                   >
                     Download TimeSheet
                   </Button>
@@ -171,39 +145,25 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
               </Group>
             </Grid.Col>
           </Grid>
-          <Card.Section
-            bg="indigo.2"
-            py="md"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-            }}
-          >
-            <Button type="submit" fullWidth loading={submitting} maw={'70%'} radius="md">
+          <Card.Section bg="indigo.2" py="md" style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button type="submit" loading={submitting} maw="70%" radius="md">
               Submit
             </Button>
           </Card.Section>
         </MyCard>
       </form>
+
       <Modal.Root opened={modalOpen} onClose={handleModalClose}>
         <Modal.Overlay />
         <Modal.Content>
           <Modal.Header bg="indigo.4" c="white">
-            <Modal.Title>
-              <Text fw={700} fz="md">
-                Success
-              </Text>
-            </Modal.Title>
+            <Modal.Title><Text fw={700} fz="md">Success</Text></Modal.Title>
             <Modal.CloseButton bg="indigo.2" />
           </Modal.Header>
           <Modal.Body>
             <Text mt="md">Timesheet record created successfully!</Text>
             <Center>
-              <Button mt="md" onClick={handleModalClose}>
-                Ok
-              </Button>
+              <Button mt="md" onClick={handleModalClose}>Ok</Button>
             </Center>
           </Modal.Body>
         </Modal.Content>

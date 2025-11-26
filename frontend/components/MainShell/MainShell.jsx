@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 'use client';
 import { SignOut as clientSignOut } from '@/app/lib/auth-action';
 import { useStaffData } from '@/components/hooks/useStaffData.ts';
@@ -7,7 +8,7 @@ import { AppShell, Burger, Button, Center, Group, LoadingOverlay, Text, Title, u
 import '@mantine/core/styles/Button.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.layer.css';
-import { IconLogin, IconLogout } from '@tabler/icons-react';
+import { IconLogin } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -16,8 +17,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
-import styles from '@/styles/MainShell.module.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
+import SignOutButton from './SignOutButton';
 
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
@@ -109,58 +110,48 @@ export function MainShell({ children, contentpadding = '10px' }) {
               </Text>
             </Title>
           </Group>
-          <Group justify="right" mr={15}>
-            {(activeUser && isAuthenticated) ? (
-              <>
-                <HeaderPopover />
-                <Button
-                  className={styles.clsSignupBtn}
-                  onClick={handleSignout}
-                  leftSection={
-                    <IconLogout
-                      size="1.625rem"
-                      style={{
-                        color: 'var(--mantine-color-orange-1)',
-                        marginRight: '0.5rem',
-                      }}
-                    />
-                  }
-                >
-                  <Text size="sm" fw={500}>
-                    Sign out
-                  </Text>
-                </Button>
-              </>
-            ) : (
-              <Group>
-                <Link href={`${basepath}/auth/login`} passHref>
-                  <Button
-                    className={styles.clsSignupBtn}
-                    leftSection={
-                      <IconLogin
-                        size="1.625rem"
-                        style={{
-                          color: 'var(--mantine-color-orange-1)',
-                          marginRight: '0.5rem',
-                        }}
-                      />
-                    }
-                  >
-                    <Text>Login</Text>
-                  </Button>
-                </Link>
-                <Link href={`${basepath}/auth/signup`} className={styles.links}>
-                  <Button
-                    variant="subtle"
-                    className={styles.headerButtonsStyle}
-                    leftSection={<IconLogin size="1rem" />}
-                  >
-                    <Text size="sm">Signup</Text>
-                  </Button>
-                </Link>
-              </Group>
-            )}
-          </Group>
+          <Group gap="xs">
+  {activeUser && isAuthenticated ? (
+    <>
+      <HeaderPopover />
+      <SignOutButton handleSignout={handleSignout}></SignOutButton>
+      {/* <Button
+        variant="light"
+        color="orange"
+        size="sm"
+        radius="md"
+        onClick={handleSignout}
+        leftSection={<IconLogout size={18} />}
+      >
+        Sign Out
+      </Button> */}
+    </>
+  ) : (
+    <>
+      <Button
+        component={Link}
+        href={`${basepath}/auth/login`}
+        variant="filled"
+        color="violet"
+        size="sm"
+        radius="md"
+        leftSection={<IconLogin size={18} />}
+      >
+        Login
+      </Button>
+      <Button
+        component={Link}
+        href={`${basepath}/auth/signup`}
+        variant="subtle"
+        color="gray"
+        size="sm"
+        radius="md"
+      >
+        Sign Up
+      </Button>
+    </>
+  )}
+</Group>
         </Group>
       </AppShell.Header>
       {activeUser && <AppShellNavBar opened={opened} />}
@@ -172,11 +163,12 @@ export function MainShell({ children, contentpadding = '10px' }) {
         />
         {children}
       </AppShell.Main>
-      <AppShell.Footer h={30}>
-        <Center h={30}>
-          <Text size="sm">Developed by Ray &#x2B1C;&#x1F538;&#x2502;</Text>
+      <AppShell.Footer h={30} bg="var(--mantine-color-gray-0)" style={{ borderTop: `1px solid var(--mantine-color-gray-3)` }}>
+        <Center h={30} >
+          <Text size="sm" c="dimmed" fw={500}>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</Text>
         </Center>
       </AppShell.Footer>
+      
     </AppShell>
   );
 }

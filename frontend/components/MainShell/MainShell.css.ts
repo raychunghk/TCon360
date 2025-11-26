@@ -1,7 +1,9 @@
 // import { createStyles } from '@mantine/core';
 
 import { style } from '@vanilla-extract/css';
-
+const headerBgLight = 'var(--mantine-color-gray-0) !important';
+const headerBgDark = 'var(--mantine-color-dark-7) !Important';
+const headerBorder = 'var(--mantine-color-gray-3)';
 // export default createStyles((theme) => ({
 //   title: {
 //     color: theme.colorScheme === 'dark' ? theme.white : theme.black,
@@ -40,11 +42,28 @@ export const title = style({
 });
 export const body = style({
   display: 'flex',
- 
+
 });
 export const header = style({
   display: 'flex',
   alignItems: 'center',
+  backgroundColor: 'headerBgLight',
+  borderBottom: `1px solid ${headerBorder} !important`,
+  padding: '0 var(--mantine-spacing-md)',
+
+  // Dark mode support
+  '@media (prefers-color-scheme: dark)': {
+    backgroundColor: headerBgLight,
+    borderBottomColor: 'var(--mantine-color-dark-4) !important',
+  },
+
+  // Or use Mantine's `data-mantine-color-scheme` attribute (if you toggle manually)
+  selectors: {
+    '[data-mantine-color-scheme="dark"] &': {
+      backgroundColor: headerBgDark,
+      borderBottomColor: 'var(--mantine-color-dark-4)',
+    },
+  },
 });
 export const footerStyles = style({
   display: 'flex',

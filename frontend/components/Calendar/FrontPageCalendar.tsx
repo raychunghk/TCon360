@@ -47,7 +47,9 @@ const FrontPageCalendar = () => {
     setStatus,
     setIsAuthenticated,
     setIsUnauthorized,
-    setIsExiting
+    setIsExiting,
+    setCalendarRef,
+    // Removed setMonthpickermonth as it's not used by MonthPicker's value
   } = useStore();
   const {
     LeaveRequestPeriod,
@@ -56,6 +58,7 @@ const FrontPageCalendar = () => {
     activeContract,
     basepath,
     isExiting
+
   } = useStore(
     useShallow((state) => ({
       LeaveRequestPeriod: state.LeaveRequestPeriod,
@@ -64,6 +67,7 @@ const FrontPageCalendar = () => {
       activeContract: state.activeContract,
       basepath: state.basepath,
       isExiting: state.isExiting
+
     }))
   );
   const cookies = parseCookies();
@@ -79,7 +83,11 @@ const FrontPageCalendar = () => {
     setIsUnauthorized(true);
     setIsExiting(true);
   };
-
+  useEffect(() => {
+    if (calendarRef.current) {
+      setCalendarRef({ calendarRef });
+    }
+  }, [calendarRef.current]);
   const fetchEvents = useCallback(async () => {
     if (isExiting) {
       console.log('fetchEvents: Skipping due to isExiting=true');
@@ -122,7 +130,7 @@ const FrontPageCalendar = () => {
         console.error('Unexpected error:', error);
       }
     }
-  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting]);
+  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting, token]); // Added token to deps
 
   useEffect(() => {
     if (isEventUpdated) {
@@ -148,7 +156,7 @@ const FrontPageCalendar = () => {
         handleJumpToMonth(timesheetDefaultDate);
       }
     }
-  }, [calendarEvents, timesheetDefaultDate, activeUser, setIsFrontCalendarChangeEvent]);
+  }, [calendarEvents, timesheetDefaultDate, activeUser]); // Added activeUser to deps
 
   const handleJumpToMonth = useCallback((targetDate: Date) => {
     try {
@@ -165,7 +173,10 @@ const FrontPageCalendar = () => {
       fetchEvents();
     }
     const currentViewStartDate = info.view.currentStart;
+    console.log('FrontPageCalendar: FullCalendar datesSet - currentViewStartDate:', currentViewStartDate);
     setSelectedMonth(currentViewStartDate);
+    console.log('FrontPageCalendar: setSelectedMonth called with:', currentViewStartDate);
+    // Removed the problematic line: setMonthpickermonth(new Date(currentViewStartDate.getFullYear(), currentViewStartDate.getMonth() - 1))
     setTitle(currentViewStartDate);
     if (calendarRef.current) {
       const view = calendarRef.current.getApi().view;

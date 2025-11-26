@@ -1,8 +1,18 @@
-import useStore from '@/components/stores/zstore';
-import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
+'use client';
+
+import {
+  ActionIcon,
+  Button,
+  Grid,
+  Popover,
+  Text,
+} from '@mantine/core';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+
+import useStore from '@/components/stores/zstore';
 import styles from '@/styles/MainShell.module.css';
 
 interface UserField {
@@ -12,127 +22,123 @@ interface UserField {
   subValue2?: string;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                               Component                                    */
+/* -------------------------------------------------------------------------- */
 function HeaderPopover() {
-  const [openedPop, setOpenedPop] = useState(false);
-  const [userFields, setUserFields] = useState<UserField[] | null>(null);
+  const [opened, setOpened] = useState(false);
 
-  // Optimize Zustand selectors to subscribe only to specific state slices
-  const activeStaff = useStore((state) => state.activeStaff);
-  const activeContract = useStore((state) => state.activeContract);
-  const activeUserName = useStore((state) => state.activeUser?.name);
-  const staffVacation = useStore((state) => state.staffVacation);
+  /* ----------------------- Combined Zustand selector ---------------------- */
+  const { activeUser, activeContract, activeUserName, staffVacation } =
+    useStore(
+      useShallow((state) => ({
+        activeUser: state.activeUser,
 
-  useEffect(() => {
-    if (activeStaff && activeContract && staffVacation) {
-      setUfields();
-    }
-  }, [activeStaff, activeContract, staffVacation]);
+        activeContract: state.activeContract,
+        activeUserName: state.activeUser?.name,
+        staffVacation: state.staffVacation,
+      }))
+    );
 
-  // Remove empty useEffect; initialization is handled above
-  const handleOpen = () => {
-    setOpenedPop(true);
+  /* ---------------------------- Helper functions -------------------------- */
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return '';
+    return format(parseISO(dateString), 'yyyy-MMM-dd');
   };
+  const activeStaff = activeUser?.staff[0];
 
-  const handleClose = () => {
-    setOpenedPop(false);
-  };
+  /* -------------------------- Build user fields -------------------------- */
+  const userFields = useMemo<UserField[]>(() => {
+    if (!activeStaff || !activeContract || !staffVacation) return [];
 
-  const formatDate = (dateString: string | undefined) => {
-    if (dateString) {
-      const date = parseISO(dateString);
-      return format(date, 'yyyy-MMM-dd');
-    }
-    return '';
-  };
+    const used = staffVacation.used ?? 0;
+    const total = activeContract.AnnualLeave ?? 0;
 
-  function setUfields() {
-    setUserFields([
-      { label: 'Staff Name:', value: activeStaff?.StaffName || '' },
-      { label: 'Agent Name:', value: activeStaff?.AgentName || '' },
-      { label: 'Staff Category:', value: activeStaff?.StaffCategory || '' },
-      { label: 'Department:', value: activeStaff?.Department || '' },
-      { label: 'Post Unit:', value: activeStaff?.PostUnit || '' },
-      { label: 'Manager Name:', value: activeStaff?.ManagerName || '' },
-      { label: 'Manager Title:', value: activeStaff?.ManagerTitle || '' },
-      { label: 'Manager Email:', value: activeStaff?.ManagerEmail || '' },
+    return [
+      { label: 'Staff Name:', value: activeStaff.StaffName ?? '' },
+      { label: 'Agent Name:', value: activeStaff.AgentName ?? '' },
+      { label: 'Staff Category:', value: activeStaff.StaffCategory ?? '' },
+      { label: 'Department:', value: activeStaff.Department ?? '' },
+      { label: 'Post Unit:', value: activeStaff.PostUnit ?? '' },
+      { label: 'Manager Name:', value: activeStaff.ManagerName ?? '' },
+      { label: 'Manager Title:', value: activeStaff.ManagerTitle ?? '' },
+      { label: 'Manager Email:', value: activeStaff.ManagerEmail ?? '' },
       {
         label: 'Contract Start Date:',
-        value: formatDate(activeContract?.ContractStartDate),
+        value: formatDate(activeContract.ContractStartDate),
       },
       {
         label: 'Contract End Date:',
-        value: formatDate(activeContract?.ContractEndDate),
+        value: formatDate(activeContract.ContractEndDate),
       },
       {
         label: 'Annual Leave:',
-        value: `Total: ${activeContract?.AnnualLeave || 0}`,
-        subValue: `Used: ${staffVacation ? staffVacation.used : 0}`,
-        subValue2: `Available: ${staffVacation && activeContract ? activeContract.AnnualLeave - staffVacation.used : 0}`,
+        value: `Total: ${total}`,
+        subValue: `Used: ${used}`,
+        subValue2: `Available: ${total - used}`,
       },
-    ]);
-  }
+    ];
+  }, [activeStaff, activeContract, staffVacation]);
 
+  /* ---------------------------------------------------------------------- */
   return (
     <Popover
       width={390}
-      trapFocus
       position="bottom"
       withArrow
-      opened={openedPop}
-      onClose={handleClose}
+      trapFocus
+      opened={opened}
+      onChange={setOpened}
+      onClose={() => setOpened(false)}
     >
+      {/* --------------------------- Trigger button -------------------------- */}
       <Popover.Target>
         <Button
           variant="filled"
           color="indigo"
-          onMouseEnter={handleOpen}
+          onMouseEnter={() => setOpened(true)}
           className={styles.PopoverButton}
         >
-          <IconUser
-            size={18}
-            style={{
-              marginRight: '0.5rem',
-            }}
-          />
-          {activeUserName || 'User'}
+          <IconUser size={18} style={{ marginRight: '0.5rem' }} />
+          {activeUserName ?? 'User'}
         </Button>
       </Popover.Target>
-      <Popover.Dropdown className={styles.PopoverDropdown} style={{ borderRadius: '8px !important' }}>
+
+      {/* ----------------------------- Dropdown ----------------------------- */}
+      <Popover.Dropdown
+        className={styles.PopoverDropdown}
+        style={{ borderRadius: 8 }}
+      >
         <ActionIcon
           variant="filled"
-          style={{
-            position: 'absolute',
-            top: '5px',
-            right: '5px',
-            zIndex: '1',
-          }}
-          onClick={handleClose}
+          onClick={() => setOpened(false)}
+          style={{ position: 'absolute', top: 5, right: 5, zIndex: 1 }}
         >
           <IconSquareRoundedX color="white" />
         </ActionIcon>
+
         <Grid gutter="sm">
-          {userFields
-            ? userFields.map((field, index) => (
-              <React.Fragment key={index}>
-                <Grid.Col span={5}>
-                  <Text ta="right" size="sm" fw={500}>
-                    {field.label}
-                  </Text>
-                </Grid.Col>
-                <Grid.Col span={7}>
-                  {field.subValue ? (
-                    <>
-                      <Text size="sm">{field.value}</Text>
-                      <Text size="sm">{field.subValue}</Text>
-                      <Text size="sm">{field.subValue2}</Text>
-                    </>
-                  ) : (
+          {userFields.map((field, idx) => (
+            <React.Fragment key={idx}>
+              <Grid.Col span={5}>
+                <Text ta="right" size="sm" fw={500}>
+                  {field.label}
+                </Text>
+              </Grid.Col>
+
+              <Grid.Col span={7}>
+                {field.subValue ? (
+                  <>
                     <Text size="sm">{field.value}</Text>
-                  )}
-                </Grid.Col>
-              </React.Fragment>
-            ))
-            : ''}
+                    <Text size="sm">{field.subValue}</Text>
+                    <Text size="sm">{field.subValue2}</Text>
+                  </>
+                ) : (
+                  <Text size="sm">{field.value}</Text>
+                )}
+              </Grid.Col>
+            </React.Fragment>
+          ))}
         </Grid>
       </Popover.Dropdown>
     </Popover>

@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import FullCalendar from '@fullcalendar/react';
 import { create } from 'zustand';
 import { persist, PersistOptions, StorageValue } from 'zustand/middleware';
 import { loadPublicHolidays } from './publicHolidaysUtil';
 import { fetchStaffData } from './staffDataUtil';
 
 const _navbarwidth = 260;
-
+type CalendarRef = React.MutableRefObject<FullCalendar | null>;
+type MonthPickerRef = React.MutableRefObject<FullCalendar | null>;
 type State = {
+  calendarRef: CalendarRef;
+  monthPickerRef: MonthPickerRef;
   activeContract: any;
   activeStaff: any;
   activeUser: any;
@@ -34,6 +39,7 @@ type State = {
   isMonthPickerChangeEvent: boolean;
   nextContractStartDate: Date | null;
   selectedMonth: Date;
+  monthpickerMonth: Date;
   timesheetDefaultDate: Date;
   user: any;
   userStatus: any;
@@ -46,6 +52,9 @@ type State = {
   isAuthenticated: boolean;
   status: 'loading' | 'authenticated' | 'unauthenticated';
   setActiveContract: (contract: any) => void;
+  setCalendarRef: (ref: any) => void;
+  setMonthPickerRef: (ref: any) => void;
+
   setActiveStaff: (staff: any) => void;
   setActiveUser: (user: any) => void;
   setAuthtoken: (token: string) => void;
@@ -73,6 +82,7 @@ type State = {
   setUserStatus: (status: any) => void;
   setConfig: (conf: any) => void;
   setSelectedMonth: (date: Date) => void;
+  setMonthpickermonth: (date: Date) => void;
   setIsFrontCalendarChangeEvent: (event: boolean) => void;
   setIsMonthPickerChangeEvent: (event: boolean) => void;
   setMainshellOverlayVisible: (visible: boolean) => void;
@@ -87,11 +97,15 @@ type State = {
   clearAllState: (options?: { preserve?: string[] }) => void;
 };
 
-type PersistState = Pick<State, 'activeUser' | 'authtoken' | 'isAuthenticated' | 'status' | 'basepath'>;
-
+type PersistState = Pick<
+  State,
+  'activeUser' | 'authtoken' | 'isAuthenticated' | 'status' | 'basepath' | 'activeContract'
+>;
 const useStore = create<State, [['zustand/persist', PersistState]]>(
   persist(
     (set, get) => ({
+      calendarRef: { current: null } as CalendarRef,
+      monthPickerRef: { current: null } as MonthPickerRef,
       activeContract: null,
       activeStaff: null,
       activeUser: null,
@@ -120,6 +134,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       isMonthPickerChangeEvent: false,
       nextContractStartDate: null,
       selectedMonth: new Date(),
+      monthpickerMonth: new Date(),
       timesheetDefaultDate: new Date(),
       user: null,
       userStatus: null,
@@ -131,6 +146,8 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       isExiting: false,
       isAuthenticated: false,
       status: 'loading' as 'loading' | 'authenticated' | 'unauthenticated',
+      setCalendarRef: (calen: any) => set(() => ({ calendarRef: calen })),
+      setMonthPickerRef: (calen: any) => set(() => ({ monthPickerRef: calen })),
       setActiveContract: (contract: any) => set(() => ({ activeContract: contract })),
       setActiveStaff: (staff: any) => set(() => ({ activeStaff: staff })),
       setActiveUser: (user: any) => {
@@ -175,6 +192,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       setUserStatus: (status: any) => set(() => ({ userStatus: status })),
       setConfig: (conf: any) => set(() => ({ config: conf })),
       setSelectedMonth: (date: Date) => set(() => ({ selectedMonth: date })),
+      setMonthpickermonth: (date: Date) => set(() => ({ monthpickerMonth: date })),
       setIsFrontCalendarChangeEvent: (event: boolean) => set(() => ({ isFrontCalendarChangeEvent: event })),
       setIsMonthPickerChangeEvent: (event: boolean) => set(() => ({ isMonthPickerChangeEvent: event })),
       setMainshellOverlayVisible: (visible: boolean) => set(() => ({ MainshellOverlayVisible: visible })),
@@ -245,6 +263,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
         isAuthenticated: state.isAuthenticated,
         status: state.status,
         basepath: state.basepath,
+        activeContract: state.activeContract, // ← PERSISTED
       } as PersistState),
       storage: {
         getItem: (name: string) => {
@@ -286,17 +305,20 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
             isAuthenticated: state?.isAuthenticated,
             status: state?.status,
             basepath: state?.basepath,
+            activeContract: state?.activeContract,
           },
           error,
         });
+
         if (error) {
           console.error('zstore: Rehydration error', { error });
           state?.setIsAuthenticated(false);
           state?.setStatus('unauthenticated');
           state?.setBasepath(null);
+          state?.setActiveContract(null);
           return;
         }
-        // Check localStorage for valid session data
+
         let parsedLocalStorageData: PersistState | null = null;
         if (typeof window !== 'undefined') {
           try {
@@ -307,18 +329,33 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
             console.error('zstore: Failed to parse localStorage data', { parseError });
           }
         }
+
         if (parsedLocalStorageData?.activeUser && parsedLocalStorageData?.authtoken) {
           console.log('zstore: Restoring authenticated state from localStorage');
+
           state?.setActiveUser(parsedLocalStorageData.activeUser);
           state?.setAuthtoken(parsedLocalStorageData.authtoken);
           state?.setIsAuthenticated(true);
           state?.setStatus('authenticated');
-          state?.setBasepath(parsedLocalStorageData.basepath);
+          state?.setBasepath(parsedLocalStorageData.basepath ?? null);
+
+          // Restore activeContract
+          if (parsedLocalStorageData.activeContract) {
+            state?.setActiveContract(parsedLocalStorageData.activeContract);
+          }
+
+          // Auto-set activeStaff from first staff in user.staff
+          const firstStaff = parsedLocalStorageData.activeUser?.staff?.[0];
+          if (firstStaff) {
+            console.log('zstore: Auto-setting activeStaff from activeUser.staff[0]', firstStaff);
+            state?.setActiveStaff(firstStaff);
+          }
         } else {
           console.log('zstore: No valid session in localStorage, setting unauthenticated');
           state?.setIsAuthenticated(false);
           state?.setStatus('unauthenticated');
           state?.setBasepath(parsedLocalStorageData?.basepath || null);
+          state?.setActiveContract(null);
         }
       },
     } as PersistOptions<State, PersistState>,
