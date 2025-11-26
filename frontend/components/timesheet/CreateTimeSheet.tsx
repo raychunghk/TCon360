@@ -45,6 +45,8 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
     setMonthPickerRef,
   } = useStore();
 
+  const [displayDate, setDisplayDate] = useState<Date>(selectedMonth);
+
   const monthPickerRef = useRef<any>(null);
   useEffect(() => {
     if (monthPickerRef.current) {
@@ -56,6 +58,7 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
   useEffect(() => {
     console.log('CreateTimesheetPage: selectedMonth updated to', selectedMonth);
     console.log('CreateTimesheetPage: selectedMonth year is', selectedMonth.getFullYear());
+    setDisplayDate(selectedMonth);
   }, [selectedMonth]);
 
   // Sync: Calendar to Picker (already works via selectedMonth)
@@ -71,8 +74,8 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
     if (!value) return; // Handle null case if user can clear selection
 
     console.log(`CreateTimesheetPage: MonthPicker onChange: value:`, value);
-
-    const firstOfMonth = new Date(value.getFullYear(), value.getMonth(), 1);
+    const _date = new Date(value)
+    const firstOfMonth = new Date(_date.getFullYear(), _date.getMonth(), 1);
 
     setIsMonthPickerChangeEvent(true);
     setTimesheetDefaultDate(firstOfMonth);
@@ -122,10 +125,13 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
                 <MonthPicker
                   size={pickersize}
                   onChange={handleMonthChange}
+
                   // REMOVED: defaultDate prop, as 'value' makes it a controlled component
                   // defaultDate={new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1)}
                   ref={monthPickerRef}
                   value={selectedMonth} // Date object
+                  date={displayDate}
+                  onDateChange={setDisplayDate}
                   className={styles.monthPickerButtons}
                 />
               </Group>
