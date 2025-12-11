@@ -11,9 +11,10 @@ import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React, { memo, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+import * as classes from './HeaderPopover.css';
 
 import useStore from '@/components/stores/zstore';
-import styles from '@/styles/MainShell.module.css';
+
 
 interface UserField {
   label: string;
@@ -97,7 +98,7 @@ function HeaderPopover() {
           variant="filled"
           color="indigo"
           onMouseEnter={() => setOpened(true)}
-          className={styles.PopoverButton}
+          className={classes.PopoverButton}
         >
           <IconUser size={18} style={{ marginRight: '0.5rem' }} />
           {activeUserName ?? 'User'}
@@ -106,7 +107,7 @@ function HeaderPopover() {
 
       {/* ----------------------------- Dropdown ----------------------------- */}
       <Popover.Dropdown
-        className={styles.PopoverDropdown}
+        className={classes.PopoverDropdown}
         style={{ borderRadius: 8 }}
       >
         <ActionIcon

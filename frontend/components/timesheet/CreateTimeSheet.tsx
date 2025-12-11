@@ -8,7 +8,7 @@ import { MonthPicker } from '@mantine/dates';
 import { IconTableExport } from '@tabler/icons-react';
 import axios from 'axios';
 import download from 'downloadjs';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm as useReactHookForm } from 'react-hook-form';
 import MyCard from '../MyCard';
 import styles from './mp.module.css';
@@ -42,17 +42,11 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
     setIsMonthPickerChangeEvent,
     basepath,
     calendarRef,
-    setMonthPickerRef,
+
   } = useStore();
 
   const [displayDate, setDisplayDate] = useState<Date>(selectedMonth);
 
-  const monthPickerRef = useRef<any>(null);
-  useEffect(() => {
-    if (monthPickerRef.current) {
-      setMonthPickerRef({ monthPickerRef });
-    }
-  }, [monthPickerRef.current, setMonthPickerRef]); // Added setMonthPickerRef to deps
 
   // Debugging: Log selectedMonth changes
   useEffect(() => {
@@ -128,10 +122,9 @@ export default function CreateTimesheetPage({ pickersize = 'md' }: CreateTimeshe
 
                   // REMOVED: defaultDate prop, as 'value' makes it a controlled component
                   // defaultDate={new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1)}
-                  ref={monthPickerRef}
                   value={selectedMonth} // Date object
                   date={displayDate}
-                  onDateChange={setDisplayDate}
+                  onRateChange={setDisplayDate}
                   className={styles.monthPickerButtons}
                 />
               </Group>

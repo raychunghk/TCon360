@@ -146,7 +146,7 @@ export default function LoginBody(props: any) {
   }
 
 
-  const handleLoginxxx = async (event: React.FormEvent) => {
+  const handleLoginx = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {

@@ -95,10 +95,10 @@ export function MainShell({ children, contentpadding = '10px' }) {
               color={theme.colors.gray[6]}
               mr="sm"
             />
-            <Link href="/">
-              <Image src={`${basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
+            <Link href="/" ta="center" >
+              <Image  src={`${basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
             </Link>
-            <Title className={classes.title} ta="center" mt={5}>
+            <Title className={classes.title} ta="center"  mt={5} >
               Welcome to{' '}
               <Text
                 inherit

@@ -7,10 +7,10 @@ import { fetchStaffData } from './staffDataUtil';
 
 const _navbarwidth = 260;
 type CalendarRef = React.MutableRefObject<FullCalendar | null>;
-type MonthPickerRef = React.MutableRefObject<FullCalendar | null>;
+
 type State = {
   calendarRef: CalendarRef;
-  monthPickerRef: MonthPickerRef;
+
   activeContract: any;
   activeStaff: any;
   activeUser: any;
@@ -53,7 +53,6 @@ type State = {
   status: 'loading' | 'authenticated' | 'unauthenticated';
   setActiveContract: (contract: any) => void;
   setCalendarRef: (ref: any) => void;
-  setMonthPickerRef: (ref: any) => void;
 
   setActiveStaff: (staff: any) => void;
   setActiveUser: (user: any) => void;
@@ -82,7 +81,7 @@ type State = {
   setUserStatus: (status: any) => void;
   setConfig: (conf: any) => void;
   setSelectedMonth: (date: Date) => void;
-  setMonthpickermonth: (date: Date) => void;
+
   setIsFrontCalendarChangeEvent: (event: boolean) => void;
   setIsMonthPickerChangeEvent: (event: boolean) => void;
   setMainshellOverlayVisible: (visible: boolean) => void;
@@ -105,7 +104,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
   persist(
     (set, get) => ({
       calendarRef: { current: null } as CalendarRef,
-      monthPickerRef: { current: null } as MonthPickerRef,
+
       activeContract: null,
       activeStaff: null,
       activeUser: null,
@@ -147,7 +146,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       isAuthenticated: false,
       status: 'loading' as 'loading' | 'authenticated' | 'unauthenticated',
       setCalendarRef: (calen: any) => set(() => ({ calendarRef: calen })),
-      setMonthPickerRef: (calen: any) => set(() => ({ monthPickerRef: calen })),
+
       setActiveContract: (contract: any) => set(() => ({ activeContract: contract })),
       setActiveStaff: (staff: any) => set(() => ({ activeStaff: staff })),
       setActiveUser: (user: any) => {
