@@ -10,7 +10,11 @@ import { UpdateUserDto } from '../models/customDTOs.js';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly prisma: PrismaService['client'];
+
+  constructor(prismaService: PrismaService) {
+    this.prisma = prismaService.client;  // or prismaService.acceleratedClient
+  }
   async getAllUsers() {
     return this.prisma.viewUserRole.findMany();
   }
@@ -21,8 +25,8 @@ export class AdminService {
     const timezoneOffset = -480; // UTC+8 in minutes
     let adjustedDate = new Date(
       parsedval.getTime() +
-        parsedval.getTimezoneOffset() * 60000 +
-        timezoneOffset * 60000,
+      parsedval.getTimezoneOffset() * 60000 +
+      timezoneOffset * 60000,
     );
 
     return parsedval;
@@ -239,15 +243,15 @@ export class AdminService {
               startOfDay(
                 new Date(restoredContract.ContractStartDate),
               ).getTime() ===
-                startOfDay(
-                  new Date(existingContract.ContractStartDate),
-                ).getTime() &&
+              startOfDay(
+                new Date(existingContract.ContractStartDate),
+              ).getTime() &&
               startOfDay(
                 new Date(restoredContract.ContractEndDate),
               ).getTime() ===
-                startOfDay(
-                  new Date(existingContract.ContractEndDate),
-                ).getTime() &&
+              startOfDay(
+                new Date(existingContract.ContractEndDate),
+              ).getTime() &&
               restoredContract.AnnualLeave === existingContract.AnnualLeave,
           );
 

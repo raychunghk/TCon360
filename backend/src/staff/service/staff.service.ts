@@ -1,169 +1,142 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Prisma, PrismaClient, Staff, StaffContract } from '@prisma/client';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Prisma, Staff, StaffContract } from '@prisma/client';
 import { UpdateStaffDto } from '../../models/customDTOs.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 
-// Get ICS text however you like, example below
-// Make sure you have the right CORS settings if needed
-
 @Injectable()
 export class StaffService {
-  constructor(@Inject(PrismaService) private prisma: PrismaService) {}
   private readonly logger = new Logger(StaffService.name);
 
-  async createContract(contract: Prisma.StaffContractUncheckedCreateInput) {
+  //constructor(private readonly prisma: PrismaService['client']) { }
+  constructor(private prisma: PrismaService) { }
+  psm = this.prisma.client;
+  async createContract(contract: Prisma.StaffContractUncheckedCreateInput): Promise<StaffContract> {
     try {
-      const staffId = contract.staffId; // Retrieve the staffId from the contract object
-      if (contract.IsActive) {
-        await this.prisma.staffContract.updateMany({
-          where: {
-            staffId: staffId,
-            IsActive: true, // Only update active contracts
-          },
-          data: {
-            IsActive: false,
-          },
+      const { staffId, IsActive } = contract;
+
+      if (IsActive) {
+        await this.psm.staffContract.updateMany({
+          where: { staffId, IsActive: true },
+          data: { IsActive: false },
         });
       }
-      const createdContract = await this.prisma.staffContract.create({
-        data: {
-          ...contract,
-        },
+
+      const createdContract = await this.psm.staffContract.create({
+        data: contract,
       });
-      this.logger.log('New staff contract created:', createdContract);
+
+      this.logger.log(`New staff contract created: ID ${createdContract.id}`);
       return createdContract;
     } catch (error) {
-      this.logger.error('Error creating staff contract:', error);
+      this.logger.error('Error creating staff contract', error);
       throw error;
     }
   }
+
   async updateStaffContract(
     id: number,
-    updateStaffContractDto: Prisma.StaffContractUpdateInput,
+    updateDto: Prisma.StaffContractUpdateInput,
   ): Promise<StaffContract> {
     try {
-      const existingContract = await this.prisma.staffContract.findUnique({
+      const existingContract = await this.psm.staffContract.findUnique({
         where: { id },
       });
 
       if (!existingContract) {
         throw new NotFoundException('Staff contract not found');
       }
-      if (updateStaffContractDto.IsActive) {
-        await this.prisma.staffContract.updateMany({
-          where: {
-            staffId: existingContract.staffId,
-            IsActive: true, // Only update active contracts
-          },
-          data: {
-            IsActive: false,
-          },
+
+      if (updateDto.IsActive === true) {
+        await this.psm.staffContract.updateMany({
+          where: { staffId: existingContract.staffId, IsActive: true },
+          data: { IsActive: false },
         });
       }
-      const updatedContract = await this.prisma.staffContract.update({
+
+      const updatedContract = await this.psm.staffContract.update({
         where: { id },
-        data: updateStaffContractDto,
+        data: updateDto,
       });
-      Logger.log('update result', updatedContract);
+
+      this.logger.log(`Staff contract updated: ID ${updatedContract.id}`);
       return updatedContract;
     } catch (error) {
-      // Handle any potential errors
-      Logger.error('error', error);
-      throw new Error('Failed to update staff contract');
+      this.logger.error('Error updating staff contract', error);
+      throw error instanceof NotFoundException ? error : new Error('Failed to update staff contract');
     }
   }
-  async createStaff(
-    stfInfo: Prisma.StaffCreateInput,
-    _userId: string,
-  ): Promise<Staff> {
-    console.log(stfInfo);
-    const stfWithUserId = { ...stfInfo, userId: _userId };
-    const rtn = await this.prisma.staff.create({
-      data: {
-        ...stfInfo,
-        user: { connect: { id: _userId } },
-      },
-    });
-    console.log(rtn);
-    return rtn;
-  }
-  getPrisma() {
-    if (!this.prisma) {
-      return new PrismaClient();
-    } else {
-      return this.prisma;
+
+  async createStaff(stfInfo: Prisma.StaffCreateInput, userId: string): Promise<Staff> {
+    try {
+      const staff = await this.psm.staff.create({
+        data: {
+          ...stfInfo,
+          user: { connect: { id: userId } },
+        },
+      });
+
+      this.logger.log(`Staff created: ID ${staff.id}`);
+      return staff;
+    } catch (error) {
+      this.logger.error('Error creating staff', error);
+      throw error;
     }
   }
 
   async deleteContract(id: number): Promise<void> {
     try {
-      await this.prisma.leaveRequest.deleteMany({
-        where: {
-          contractId: id,
-        },
-      });
-      await this.prisma.staffContract.delete({ where: { id } });
+      await this.psm.$transaction([
+        this.psm.leaveRequest.deleteMany({ where: { contractId: id } }),
+        this.psm.staffContract.delete({ where: { id } }),
+      ]);
     } catch (error) {
-      Logger.log('error', error);
-      throw new NotFoundException('Contract not found');
+      this.logger.error(`Error deleting contract ID ${id}`, error);
+      throw new NotFoundException('Contract not found or already deleted');
     }
   }
-  async getStaffById(_id: number): Promise<Staff> {
-    console.log('prisma ?' + this.prisma);
-    const staff = await this.getPrisma().staff.findUnique({
-      where: {
-        id: _id,
-      },
+
+  async getStaffById(id: number): Promise<Staff> {
+    const staff = await this.psm.staff.findUnique({
+      where: { id },
     });
+
     if (!staff) {
-      throw new Error(`Staff member with ID ${_id} not found`);
+      throw new NotFoundException(`Staff member with ID ${id} not found`);
     }
+
     return staff;
   }
-  async updateStaff(id: number, data: UpdateStaffDto) {
-    try {
-      const { contracts, contractId, ...staffData } = data;
 
-      const staff = await this.prisma.staff.update({
+  async updateStaff(id: number, data: UpdateStaffDto): Promise<Staff & { contracts: StaffContract[] }> {
+    try {
+      const { contracts, ...staffData } = data;
+
+      const updatedStaff = await this.psm.staff.update({
         where: { id },
         data: {
           ...staffData,
-          contracts: {
-            updateMany: contracts.map((contract) => ({
-              where: { id: contract.id },
-              data: {
-                ContractStartDate: contract.ContractStartDate,
-                ContractEndDate: contract.ContractEndDate,
-                AnnualLeave: contract.AnnualLeave,
-                IsActive: contract.IsActive,
-              },
-            })),
-          },
+          contracts: contracts
+            ? {
+              updateMany: contracts.map((contract) => ({
+                where: { id: contract.id },
+                data: {
+                  ContractStartDate: contract.ContractStartDate,
+                  ContractEndDate: contract.ContractEndDate,
+                  AnnualLeave: contract.AnnualLeave,
+                  IsActive: contract.IsActive,
+                },
+              })),
+            }
+            : undefined,
         },
-        include: {
-          contracts: true,
-        },
+        include: { contracts: true },
       });
 
-      Logger.log('update result', staff);
-
-      return staff;
+      this.logger.log(`Staff updated: ID ${updatedStaff.id}`);
+      return updatedStaff;
     } catch (error) {
-      console.log('update staff error', error);
+      this.logger.error(`Error updating staff ID ${id}`, error);
+      throw error;
     }
   }
-  // async updateStaff(id: number, data: Prisma.StaffUpdateInput) {
-  //   try {
-  //     const rtn = await this.prisma.staff.update({
-  //       where: { id },
-  //       data,
-  //     });
-  //     Logger.log('rtn', rtn);
-  //     console.log('update result');
-  //     return rtn;
-  //   } catch (error) {
-  //     console.log('update staff error');
-  //     console.log(error);
-  //   }
-  // }
 }

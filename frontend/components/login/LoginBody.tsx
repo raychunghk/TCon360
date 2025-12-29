@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { SignIn } from '@/app/lib/auth-action';
-import { bauthClient } from '@/app/lib/bauthclient';
+import { signIn } from '@/app/lib/bauthclient';
 
 import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
@@ -146,21 +146,22 @@ export default function LoginBody(props: any) {
   }
 
 
-  const handleLoginx = async (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
       // Correct way to call signIn for the emailAndPassword provider
       //bauthClient.signIn.email
 
-      //bauthClient.signIn.external({ username: 'a', password: 'b' });
-      bauthClient.signInCredentials({ username: 'a', password: 'b' });
+
+      await signIn.credentials({ email: 'b@b.com', username: 'a@a.com', password: 'b' });
+      //await signIn.email({ email: 'a@a.com', password: 'b' });
 
     } catch (error) {
       console.error('An unexpected error occurred during login:', error);
     }
   };
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleLoginx = async (event: React.FormEvent) => {
     event.preventDefault();
     open();
 

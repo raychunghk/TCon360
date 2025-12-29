@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { LeaveRequest, Prisma, PublicHoliday } from '@prisma/client';
 import { format } from 'date-fns';
@@ -15,11 +15,14 @@ import { StaffService } from '../../staff/service/staff.service.js';
 
 @Injectable()
 export class LeaveRequestService {
+  private readonly prisma: PrismaService['client'];
   constructor(
-    @Inject(PrismaService) private prisma: PrismaService,
+    prismaService: PrismaService,
     private staffservice: StaffService,
     private staffFileservice: StaffFilesService,
-  ) {}
+  ) {
+    this.prisma = prismaService.client;  // or prismaService.acceleratedClient
+  }
   async useStaffService(id: Number) {
     try {
       const staff = await this.staffservice.getStaffById(1);
@@ -157,13 +160,11 @@ export class LeaveRequestService {
 
       const leaveperiodend = this.formatdate(data.leavePeriodEnd);
 
-      let _leaveperiod = `${leaveperiodstart} ${
-        data.AMPMStart == 'AMPM' ? '' : data.AMPMStart
-      } `;
+      let _leaveperiod = `${leaveperiodstart} ${data.AMPMStart == 'AMPM' ? '' : data.AMPMStart
+        } `;
       _leaveperiod = leaveperiodend
-        ? `${_leaveperiod} to  ${leaveperiodend} ${
-            data.AMPMEnd == 'AMPM' ? '' : data.AMPMEnd
-          }`
+        ? `${_leaveperiod} to  ${leaveperiodend} ${data.AMPMEnd == 'AMPM' ? '' : data.AMPMEnd
+        }`
         : `${_leaveperiod}`;
 
       doc.render({

@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
     logMiddleware('Skipping: NextAuth route', { pathname });
     return NextResponse.next();
   }
-  if (pathname.startsWith('/api/buth')) {
+  if (pathname.startsWith('/api/bauth')) {
     logMiddleware('Skipping: BETTERAUTH route', { pathname });
     return NextResponse.next();
   }
@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if the path is not an auth page (login or signup)
-  if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/signup')) {
+  if (!pathname.startsWith('/auth/login') && !pathname.startsWith('/signup') && !pathname.startsWith('/test-auth')) {
     logMiddleware('Checking session for non-login path', { pathname });
     //const x = await auth();
     const session = await getMySession();

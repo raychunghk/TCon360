@@ -5,7 +5,11 @@ import { PrismaService } from '../prisma/prisma.service.js';
 //import { User } from '.prisma/client.js';
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  private readonly prisma: PrismaService['client'];
+
+  constructor(prismaService: PrismaService) {
+    this.prisma = prismaService.client;  // or prismaService.acceleratedClient
+  }
 
   async createUser(data: any): Promise<User> {
     let user;
@@ -27,24 +31,7 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     return user;
   }
-  // async getUserWithStaffAndContract(userId: string) {
-  //   try {
-  //     const nestedObject = await this.prisma.user.findUnique({
-  //       where: { id: userId },
-  //       include: {
-  //         staff: {
-  //           include: {
-  //             contracts: true,
-  //           },
-  //         },
-  //       },
-  //     });
 
-  //     return nestedObject;
-  //   } catch (error) {
-  //     console.log('Error retrieving nested object:', error);
-  //   }
-  // }
 
   async getUserWithStaffAndContract(userId: string) {
     try {

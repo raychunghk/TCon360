@@ -1,0 +1,38 @@
+import { credentialsPlugin } from "better-auth-credentials-plugin";
+// or from your existing './betterauth' if you move it there
+
+export const alwaysTrueCredentials = credentialsPlugin({
+    // Custom endpoint path (e.g., /api/bauth/signincred)
+    path: "/signincred",
+
+    // Optional: Define body schema (using Zod) – here we accept any input but ignore it
+    schema: z.object({
+        dummy: z.string().optional(), // You can make fields optional or remove entirely
+    }),
+
+    // The core callback: Always succeed
+    async credentials({ body, ctx }) {
+        // Ignore body entirely – always authenticate successfully
+
+        // Option A: Hardcode a test user (creates if not exists)
+        return {
+            id: "test-user-id",         // Unique user ID
+            email: "test@example.com",
+            name: "Test User",
+            // Add any custom fields
+        };
+
+        // Option B: Use dynamic data from body if needed (e.g., for dev flexibility)
+        // return {
+        //   id: body.dummy || "default-id",
+        //   email: `${body.dummy || "test"}@example.com`,
+        //   name: body.dummy || "Anonymous",
+        // };
+    },
+
+    // Optional: Auto sign-up new users (default: true)
+    allowSignUp: true,
+
+    // Optional: Custom callbacks (e.g., on success)
+    // onSignIn: async ({ user }) => { console.log("Signed in:", user); },
+});

@@ -29,7 +29,7 @@ export default function ClientLayout({
         publicHolidays,
         loadPublicHolidays,
         isExiting,
-        status,
+        //status,
         isAuthenticated,
         setStatus,
         setIsAuthenticated,
@@ -110,7 +110,14 @@ export default function ClientLayout({
             </Providers>
         );
     }
-
+    if (pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup')) {
+        console.log('ClientLayout: Rendering loading state', { pathname });
+        return (
+            <Providers>
+                <Providers>{children}</Providers>
+            </Providers>
+        );
+    }
     console.log('ClientLayout: Rendering children', { pathname, sessionStatus, isAuthenticated });
 
     return (

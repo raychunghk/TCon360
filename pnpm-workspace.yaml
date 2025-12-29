@@ -1,6 +1,19 @@
-# @format
-
 packages:
-  - "frontend"
-  - "backend"
-  - "packages/*"
+  - frontend
+  - backend
+  - packages/*
+
+ignoredBuiltDependencies:
+  - '@nestjs/core'
+  - '@scarf/scarf'
+  - argon2
+  - core-js-pure
+  - esbuild
+  - prisma
+  - sharp
+  - sqlite3
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - better-sqlite3

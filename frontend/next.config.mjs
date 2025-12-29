@@ -2,37 +2,58 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import { config } from '@tcon360/config';
 import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
 import path from 'path';
+
 const withVanillaExtract = createVanillaExtractPlugin();
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
+
 console.log('=====================================');
 console.log('NEXT CONFIG FILE LOADED: next.config.mjs');
 console.log('=====================================');
 console.log('[next.config.mjs] NODE_ENV:', process.env.NODE_ENV);
 console.log('[next.config.mjs] FRONTEND_PORT (raw):', process.env.FRONTEND_PORT);
 console.log('[next.config.mjs] config.feprefix:', config.feprefix);
+
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || config.frontendport;
 const BACKEND_PORT = config.backendport;
 const isDocker = FRONTEND_PORT === 8255;
+
 console.log('[next.config.mjs] FRONTEND_PORT (parsed):', FRONTEND_PORT);
 console.log('[next.config.mjs] BACKEND_PORT:', BACKEND_PORT);
 console.log('[next.config.mjs] isDocker (FRONTEND_PORT === 8255):', isDocker);
+
 const _basepath = isDocker ? '' : config.feprefix;
 const _assetPrefix = isDocker ? '' : config.feprefix;
+
 console.log('[next.config.mjs] basePath:', _basepath || '(empty string)');
 console.log('[next.config.mjs] assetPrefix:', _assetPrefix || '(empty string)');
 console.log('-------------------------------------');
+
 const nextConfig = {
   basePath: _basepath,
   assetPrefix: _assetPrefix,
   reactStrictMode: false,
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@tcon360/config': path.resolve(process.cwd(), '../packages/config/dist/index.js'),
-    };
+  webpack: (config, { isServer }) => {
+    const originalAlias = config.resolve.alias || {};
+
+    if (!isServer) {
+      config.resolve.alias = {
+        ...originalAlias,
+        '@tcon360/config': path.resolve(process.cwd(), '../packages/config/dist/index.js'),
+        'node:module': false,
+        // 'node:fs': false,
+        // 'node:path': false,
+      };
+    } else {
+      config.resolve.alias = {
+        ...originalAlias,
+        '@tcon360/config': path.resolve(process.cwd(), '../packages/config/dist/index.js'),
+      };
+    }
+
     config.resolve.fallback = { fs: false };
+
     return config;
   },
   eslint: { ignoreDuringBuilds: true },
@@ -57,28 +78,27 @@ const nextConfig = {
         source: '/:path*',
         destination: `${_basepath}/:path*`,
       },
-      // Exclude NextAuth routes from backend proxying (keep on frontend)
+      // Exclude NextAuth routes from backend proxying
       {
         source: '/api/auth/:path*',
-        destination: '/api/auth/:path*', // No change, handled by frontend
+        destination: '/api/auth/:path*',
       },
-      // For prefixed NextAuth routes, rewrite to frontend's /api/auth/*
       {
         source: '/absproxy/:port([0-9]+)/api/auth/:path*',
         destination: '/api/auth/:path*',
       },
 
-      //better auth
+      // Better Auth
       {
-        source: '/api/buth/:path*',
-        destination: '/api/buth/:path*', // No change, handled by frontend
+        source: '/api/bauth/:path*',
+        destination: '/api/bauth/:path*',
       },
-      // For prefixed NextAuth routes, rewrite to frontend's /api/auth/*
       {
-        source: '/absproxy/:port([0-9]+)/api/buth/:path*',
-        destination: '/api/buth/:path*',
+        source: '/absproxy/:port([0-9]+)/api/bauth/:path*',
+        destination: '/api/bauth/:path*',
       },
-      // Backend API routes (non-Auth): proxy to backend
+
+      // Backend API proxy
       {
         source: '/absproxy/:port([0-9]+)/api/:path*',
         destination: `http://127.0.0.1:${BACKEND_PORT}/api/:path*`,
@@ -95,5 +115,7 @@ const nextConfig = {
     path: `${_basepath}/_next/image`,
   },
 };
+
+
 
 export default withVanillaExtract(withBundleAnalyzer(nextConfig));

@@ -17,6 +17,7 @@ export default function LoginPage(props: any) {
   }, [clearAllState]); // Depend on clearAllState to ensure it's always the latest function
 
   return (
+    // eslint-disable-next-line react/react-in-jsx-scope
     <LoginBody />
   );
 }

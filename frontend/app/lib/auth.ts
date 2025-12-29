@@ -2,9 +2,17 @@
 // src/app/lib/auth.ts
 import { config } from '@tcon360/config';
 import { betterAuth } from 'better-auth';
+import { credentials } from 'better-auth-credentials-plugin';
 //import { credentials } from "better-auth-credentials-plugin";
 import { customSession, username } from 'better-auth/plugins';
-import { credentialsPlugin } from './betterauth';
+import z from 'zod/v3';
+
+export const myCustomSchema = z.object({
+    username: z.string().min(1),
+    password: z.string().min(1),
+    email: z.string().min(1),
+});
+
 // ──────────────────────────────────────────────────────────────
 // Comprehensive logging – will show you everything at startup
 // ──────────────────────────────────────────────────────────────
@@ -36,7 +44,7 @@ const computedBasePath = config.basepath
     ? `${config.basepath}/api/buth`
     : '/api/buth';
 */
-const computedBasePath = '/absproxy/3000/api/buth'
+const computedBasePath = '/api/bauth'
 logAuth('🎯 FINAL basePath that BetterAuth will register', {
     raw_basepath: config.basepath || '(empty → root)',
     computedBasePath,
@@ -56,7 +64,15 @@ logAuth('🎯 FINAL basePath that BetterAuth will register', {
 export const auth = betterAuth({
     // No database – pure JWT mode
     database: null,
-
+    advanced: {
+        disableCSRFCheck: true
+    },
+    trustedOrigins: [
+        "*.raygor.cc",             // Trust all subdomains of example.com (any protocol)
+        "localhost",             // Trust all subdomains of example.com (any protocol)
+        "https://*.example.com",     // Trust only HTTPS subdomains of example.com
+        "http://*.dev.example.com"   // Trust all HTTP subdomains of dev.example.com
+    ],
     // This is the ONLY place you set the JWT secret
     secret: process.env.JWT_SECRET!,
 
@@ -89,7 +105,34 @@ export const auth = betterAuth({
     // Optional plugins
     plugins: [
         username({ minUsernameLength: 5 }),
-        //credentialsPlugin2(),
+        credentials({
+            autoSignUp: true,
+            path: "/sign-in/credentials",
+            inputSchema: myCustomSchema,
+            async callback(ctx, parsed) {
+                // Just for demonstration purposes, half of the time we will fail the authentication
+                console.log(`PARSED:?`, parsed);
+
+                return {
+                    // Called if this is a existing user sign-in
+                    onSignIn(userData, user, account) {
+                        console.log("Existing User signed in:", user);
+
+                        return userData;
+                    },
+
+                    // Called if this is a new user sign-up (only used if autoSignUp is true)
+                    onSignUp(userData) {
+                        console.log("New User signed up:", userData.email);
+
+                        return {
+                            ...userData,
+                            name: parsed.email.split("@")[0]
+                        };
+                    }
+                };
+            },
+        }),
         customSession(async (session) => {
             logAuth('customSession callback', { session });
             return {
@@ -100,12 +143,12 @@ export const auth = betterAuth({
                 },
             };
         }),
-        credentialsPlugin()
+
     ],
 
     // Explicitly set basePath here. This is crucial for the client-side library
     // to correctly build URLs, especially in proxied environments.
-    basePath: computedBasePath,
+    basePath: '/api/bauth',
 
     debug: true,
     callbacks: {

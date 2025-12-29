@@ -4,8 +4,9 @@ import { PrismaService } from '../prisma/prisma.service.js';
 
 @Injectable()
 export class StaffFilesService {
-  constructor(private readonly prisma: PrismaService) {}
-
+  //constructor(private readonly prisma: PrismaService['client']) { }
+  constructor(private readonly psm: PrismaService) { }
+prisma = this.psm.client
   async create(data: {
     filePath: string;
     fileType: string;

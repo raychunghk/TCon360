@@ -11,13 +11,17 @@ import { UsersService } from './users.service.js';
 
 @Injectable()
 export class AuthService {
+  private readonly prisma: PrismaService['client'];
+
   constructor(
+    prismaService: PrismaService,
     private usersService: UsersService,
     private jwtService: JwtService,
-    private readonly prisma: PrismaService,
-    private staffService: StaffService,
-  ) { }
 
+    private staffService: StaffService,
+  ) {
+    this.prisma = prismaService.client;  // or prismaService.acceleratedClient}
+  }
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
     if (user && (await argon2.verify(user.password, password))) {

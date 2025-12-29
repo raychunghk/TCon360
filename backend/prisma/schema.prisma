@@ -9,7 +9,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   //url      = env("DATABASE_URL")
-  url      = "file:./TCon360.db"
+  //url      = "file:./TCon360.db"
 }
 
 model Account {
@@ -103,7 +103,7 @@ model CalendarMaster {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view viewCalendarTimeSheet {
-  CalendarDate           DateTime @id
+  CalendarDate           DateTime
   CalendarDateStr        String?
   WeekDayName            String?
   Year                   Int?
@@ -176,7 +176,7 @@ model staffFiles {
 }
 
 view viewEvents {
-  ID               Int       @id
+  ID               Int
   leavePeriodStart DateTime
   leavePeriodEnd   DateTime?
   StartDateStr     String
@@ -198,7 +198,7 @@ view viewEvents {
 }
 
 view ViewUserRole {
-  userId     String  @id
+  userId     String
   username   String?
   name       String?
   email      String?
@@ -208,7 +208,7 @@ view ViewUserRole {
 }
 
 view ViewUserDetail {
-  userId            String   @id
+  userId            String
   username          String?
   name              String?
   email             String?
@@ -231,7 +231,7 @@ view ViewUserDetail {
 }
 
 view viewStaff {
-  StaffId           Int      @id
+  StaffId           Int
   StaffName         String
   AgentName         String
   StaffCategory     String
