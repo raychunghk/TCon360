@@ -1,5 +1,4 @@
 /* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { SignIn } from '@/app/lib/auth-action';
 import { signIn } from '@/app/lib/bauthclient';
@@ -23,7 +22,6 @@ import {
 import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
 //import { signIn } from 'better-auth/react';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { parseCookies, setCookie } from 'nookies';
 import { useRef, useState } from 'react';
 function decodeJwt(token: string) {
@@ -48,7 +46,17 @@ function decodeJwt(token: string) {
 export default function LoginBody(props: any) {
   const router = useRouter();
   const passwordInputRef = useRef<HTMLInputElement>(null);
-  const { setAuthtoken, basepath, setIsUnauthorized, setStatus, setIsAuthenticated, fetchStaffData } = useStore();
+  const {
+    setAuthtoken,
+    basepath,
+    setIsUnauthorized,
+    setStatus,
+    setIsAuthenticated,
+    setActiveUser,
+    setActiveStaff,
+    setActiveContract,
+    fetchStaffData,
+  } = useStore();
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Tab') {
@@ -146,7 +154,7 @@ export default function LoginBody(props: any) {
   }
 
 
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleLoginx = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
@@ -154,14 +162,14 @@ export default function LoginBody(props: any) {
       //bauthClient.signIn.email
 
 
-      await signIn.credentials({ email: 'b@b.com', username: 'a@a.com', password: 'b' });
+      const response = await signIn.credentials({ email: 'tcon360', username: 'a@a.com', password: 'admin' });
       //await signIn.email({ email: 'a@a.com', password: 'b' });
 
     } catch (error) {
       console.error('An unexpected error occurred during login:', error);
     }
   };
-  const handleLoginx = async (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     open();
 

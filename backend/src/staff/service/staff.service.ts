@@ -2,26 +2,27 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma, Staff, StaffContract } from '@prisma/client';
 import { UpdateStaffDto } from '../../models/customDTOs.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { BaseService } from '../../shared/base.service.js';
 
 @Injectable()
-export class StaffService {
+export class StaffService extends BaseService {
   private readonly logger = new Logger(StaffService.name);
 
-  //constructor(private readonly prisma: PrismaService['client']) { }
-  constructor(private prisma: PrismaService) { }
-  psm = this.prisma.client;
+  constructor(prismaService: PrismaService) {
+    super(prismaService);
+  }
   async createContract(contract: Prisma.StaffContractUncheckedCreateInput): Promise<StaffContract> {
     try {
       const { staffId, IsActive } = contract;
 
       if (IsActive) {
-        await this.psm.staffContract.updateMany({
+        await this.prisma.staffContract.updateMany({
           where: { staffId, IsActive: true },
           data: { IsActive: false },
         });
       }
 
-      const createdContract = await this.psm.staffContract.create({
+      const createdContract = await this.prisma.staffContract.create({
         data: contract,
       });
 
@@ -38,7 +39,7 @@ export class StaffService {
     updateDto: Prisma.StaffContractUpdateInput,
   ): Promise<StaffContract> {
     try {
-      const existingContract = await this.psm.staffContract.findUnique({
+      const existingContract = await this.prisma.staffContract.findUnique({
         where: { id },
       });
 
@@ -47,13 +48,13 @@ export class StaffService {
       }
 
       if (updateDto.IsActive === true) {
-        await this.psm.staffContract.updateMany({
+        await this.prisma.staffContract.updateMany({
           where: { staffId: existingContract.staffId, IsActive: true },
           data: { IsActive: false },
         });
       }
 
-      const updatedContract = await this.psm.staffContract.update({
+      const updatedContract = await this.prisma.staffContract.update({
         where: { id },
         data: updateDto,
       });
@@ -68,7 +69,7 @@ export class StaffService {
 
   async createStaff(stfInfo: Prisma.StaffCreateInput, userId: string): Promise<Staff> {
     try {
-      const staff = await this.psm.staff.create({
+      const staff = await this.prisma.staff.create({
         data: {
           ...stfInfo,
           user: { connect: { id: userId } },
@@ -85,9 +86,9 @@ export class StaffService {
 
   async deleteContract(id: number): Promise<void> {
     try {
-      await this.psm.$transaction([
-        this.psm.leaveRequest.deleteMany({ where: { contractId: id } }),
-        this.psm.staffContract.delete({ where: { id } }),
+      await this.prisma.$transaction([
+        this.prisma.leaveRequest.deleteMany({ where: { contractId: id } }),
+        this.prisma.staffContract.delete({ where: { id } }),
       ]);
     } catch (error) {
       this.logger.error(`Error deleting contract ID ${id}`, error);
@@ -96,7 +97,7 @@ export class StaffService {
   }
 
   async getStaffById(id: number): Promise<Staff> {
-    const staff = await this.psm.staff.findUnique({
+    const staff = await this.prisma.staff.findUnique({
       where: { id },
     });
 
@@ -111,7 +112,7 @@ export class StaffService {
     try {
       const { contracts, ...staffData } = data;
 
-      const updatedStaff = await this.psm.staff.update({
+      const updatedStaff = await this.prisma.staff.update({
         where: { id },
         data: {
           ...staffData,

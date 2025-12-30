@@ -8,20 +8,20 @@ import * as path from 'path';
 import PizZip from 'pizzip';
 //import { staffFiles } from 'src/models/staffFiles';
 
+import { BaseService } from '../../shared/base.service.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { StaffFilesService } from '../../shared/staffFiles.service.js';
 import { StaffService } from '../../staff/service/staff.service.js';
 //js/NxTime/src/server/leaverequest/service/leaverequest.service.ts
 
 @Injectable()
-export class LeaveRequestService {
-  private readonly prisma: PrismaService['client'];
+export class LeaveRequestService extends BaseService {
   constructor(
     prismaService: PrismaService,
     private staffservice: StaffService,
     private staffFileservice: StaffFilesService,
   ) {
-    this.prisma = prismaService.client;  // or prismaService.acceleratedClient
+    super(prismaService);
   }
   async useStaffService(id: Number) {
     try {

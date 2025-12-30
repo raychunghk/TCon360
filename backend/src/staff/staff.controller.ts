@@ -111,26 +111,7 @@ export class StaffController {
       throw error;
     }
   }
-  @UseGuards(JwtAuthGuard)
-  @Post('/xx')
-  async create2(@Body() stf: Prisma.StaffCreateInput): Promise<Staff> {
-    //console.log(req)
-    const token = '111';
-    try {
-      const decodedtoken = this.authService.decodejwt(token);
-      const userId = decodedtoken.sub;
-      // Find the user with the given userId
-      const user = await this.userService.findById(userId);
-      const stfWithUserId = { ...stf, userId: user.id };
-
-      const result = this.staffService.createStaff(stf, user.id).then();
-      console.log(result);
-      return result;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+ 
 
   @Post('createcontract')
   async createContract(

@@ -30,13 +30,13 @@ export class UsersController {
   @Post('user/login')
   async login(
     @Body() loginDto: LoginDto,
-  ): Promise<{ accessToken: string; tokenMaxAge: Number }> {
+  ): Promise<{ accessToken: string; user; tokenMaxAge: Number }> {
     try {
-      const { identifier, password } = loginDto;
-      const accessToken = await this.authService.login(identifier, password);
-      const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+      const { identifier, password } = loginDto; const { token, user } = await this.authService.login(identifier, password);
+      // const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
+      const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 1000; // Conver
       console.log(`In login , token max age`, tokenMaxAge);
-      return { accessToken, tokenMaxAge };
+      return { accessToken: token, user, tokenMaxAge };
     } catch (error) {
       Logger.error('Login error', error);
       throw new HttpException(

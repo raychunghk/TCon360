@@ -6,14 +6,14 @@ import fs, { promises as fsPromises } from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { BaseService } from '../shared/base.service.js';
 
 import ExcelJS from 'exceljs';
 @Injectable()
-export class TimesheetService {
+export class TimesheetService extends BaseService {
   private projectRoot = process.cwd();
   private readonly xlsfilename = 'T26TimeSheet.xlsx';
-  constructor(private prisma: PrismaService) { }
-  psm = this.prisma.client;
+  constructor(prismaService: PrismaService) { super(prismaService); }
   getContent() {
     const filePath = this.getFilePath(this.xlsfilename);
     const fileContent = fs.readFileSync(filePath);
@@ -27,7 +27,7 @@ export class TimesheetService {
   }
 
   async getCalendarEvents(staffid): Promise<any[]> {
-    const results = await this.psm.viewEvents.findMany({
+    const results = await this.prisma.viewEvents.findMany({
       where: {
         OR: [
           { eventType: { in: ['weekend', 'publicholiday'] } },
@@ -139,7 +139,7 @@ export class TimesheetService {
   }
 
   async getCalendar(staffId: number, year: number, month: number) {
-    const viewCalendarTimeSheet = (await this.psm.$queryRawUnsafe(`
+    const viewCalendarTimeSheet = (await this.prisma.$queryRawUnsafe(`
 SELECT c.CalendarDate,
        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(c.CalendarDate / 1000, 'unixepoch')) AS CalendarDateStr,
        c.WeekDayName,
@@ -175,7 +175,7 @@ ORDER BY c.CalendarDate;
   }
 
   async getCalendarx(staffId: number, year: number, month: number) {
-    const arrCalendar = await this.psm.viewCalendarTimeSheet.findMany({
+    const arrCalendar = await this.prisma.viewCalendarTimeSheet.findMany({
       distinct: ['CalendarDate'],
       where: {
         Year: year,
@@ -214,7 +214,7 @@ ORDER BY c.CalendarDate;
       .replace(/-/g, '');
     const timesheetFileDate = this.formatMonth(month, year);
     const sourcePath = this.getFilePath(this.xlsfilename);
-    const stf = await this.psm.staff.findUnique({ where: { id: staffId } });
+    const stf = await this.prisma.staff.findUnique({ where: { id: staffId } });
     if (!stf) {
       throw new Error(`Staff with ID ${staffId} not found`);
     }
@@ -328,7 +328,7 @@ ORDER BY c.CalendarDate;
       worksheet.name = `Timesheet_${timesheetFileDate}`;
       await workbook.xlsx.writeFile(destPath);
       console.log('calendar written to cell successfully!', destPath);
-      const _file = await this.psm.staffFiles.create({
+      const _file = await this.prisma.staffFiles.create({
         data: {
           filePath: destPath,
           fileType: 'timesheet',
@@ -362,7 +362,7 @@ ORDER BY c.CalendarDate;
   }
 
   async getCalendaryMonthByYearMonth(month, year) {
-    const currentcalendar = await this.psm.calendarMaster.findMany({
+    const currentcalendar = await this.prisma.calendarMaster.findMany({
       where: {
         Year: year,
         Month: month,
@@ -374,7 +374,7 @@ ORDER BY c.CalendarDate;
   async getCurrentMonthCalendar(tsmonth) {
     const dt = new Date();
     const currentYear = dt.getFullYear();
-    const objCalendar = await this.psm.calendarMaster.findMany({
+    const objCalendar = await this.prisma.calendarMaster.findMany({
       where: {
         Year: currentYear,
         Month: tsmonth,

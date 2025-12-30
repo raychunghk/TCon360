@@ -6,21 +6,19 @@ import * as argon2 from 'argon2';
 import { differenceInSeconds, format } from 'date-fns';
 import { signupUserDTO } from '../models/customDTOs.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { BaseService } from '../shared/base.service.js';
 import { StaffService } from '../staff/service/staff.service.js';
 import { UsersService } from './users.service.js';
 
 @Injectable()
-export class AuthService {
-  private readonly prisma: PrismaService['client'];
-
+export class AuthService extends BaseService {
   constructor(
     prismaService: PrismaService,
     private usersService: UsersService,
     private jwtService: JwtService,
-
     private staffService: StaffService,
   ) {
-    this.prisma = prismaService.client;  // or prismaService.acceleratedClient}
+    super(prismaService);
   }
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
@@ -135,7 +133,7 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new Error('Invalid credentials');
       }
-
+      const userWithDetails = await this.usersService.getUserWithStaffAndContract(user.id);
       const payload = {
         sub: user.id,
         username: user.username,
@@ -170,7 +168,7 @@ export class AuthService {
       const timeToExpInSeconds = differenceInSeconds(expDate, Date.now());
       console.log('time to expire from now (seconds):', timeToExpInSeconds);
 
-      return token;
+      return { token, user: userWithDetails };
     } catch (error) {
       console.log('error', error);
       throw error;

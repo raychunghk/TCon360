@@ -2,9 +2,10 @@
 //import { credentialsClient } from "better-auth-credentials-plugin";
 import { User } from "better-auth";
 import { credentialsClient } from "better-auth-credentials-plugin";
+import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { username } from "better-auth/plugins";
 import { createAuthClient } from "better-auth/react";
-import { myCustomSchema } from "./auth";
+import { auth, myCustomSchema } from "./auth";
 
 
 export const bauthClient = createAuthClient({
@@ -16,6 +17,7 @@ export const bauthClient = createAuthClient({
         //credentialsLoggerPlugin(),
         // Client plugin (required for full type inference)
         credentialsClient<User, "/sign-in/credentials", typeof myCustomSchema>(),
+        inferAdditionalFields<typeof auth>(),
         //    credentialsClient<User, "/sign-in/external", typeof myCustomSchema>(),
     ],
 });

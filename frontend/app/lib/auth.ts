@@ -4,9 +4,39 @@ import { config } from '@tcon360/config';
 import { betterAuth } from 'better-auth';
 import { credentials } from 'better-auth-credentials-plugin';
 //import { credentials } from "better-auth-credentials-plugin";
-import { customSession, username } from 'better-auth/plugins';
+import type { BetterAuthPlugin } from "better-auth";
+import { createAuthMiddleware, customSession, username } from 'better-auth/plugins';
 import z from 'zod/v3';
 
+const customSignInResponsePlugin = (): BetterAuthPlugin => ({
+    id: "custom-signin-response",
+    hooks: {
+        after: [
+            {
+                matcher: (ctx) => ctx.path === "/sign-in/credentials",
+                handler: createAuthMiddleware(async (ctx) => {
+                    // ctx.context.returned contains the session token and the user object
+                    if (ctx.context.returned && !ctx.context.error) {
+                        const original = ctx.context.returned;
+
+                        console.log('[Plugin] ctx.context new session:', JSON.stringify(ctx.context.newSession, null, 2));
+                        const extUser = ctx.context.newSession?.user
+                        console.log('[Plugin] Intercepted Response User:', JSON.stringify(original.user, null, 2));
+                        console.log('[Plugin] Intercepted Response :', JSON.stringify(original, null, 2));
+                        // We return a custom JSON structure to the client
+                        return ctx.json({
+                            // original.user.nestJwt is available because it's in additionalFields
+                            token: original.token,
+                            user: original.user,
+                            extUser
+                        });
+                    }
+                    return ctx.next();
+                }),
+            },
+        ],
+    },
+});
 export const myCustomSchema = z.object({
     username: z.string().min(1),
     password: z.string().min(1),
@@ -75,7 +105,15 @@ export const auth = betterAuth({
     ],
     // This is the ONLY place you set the JWT secret
     secret: process.env.JWT_SECRET!,
-
+    user: {
+        additionalFields: {
+            role: { type: "string" },
+            staff: { type: "any" }, // Using any for arrays/objects
+            tkn: { type: "any" },
+            nestJwt: { type: "any" },
+            username: { type: "string" }
+        }
+    },
     // Your NestJS login endpoint
     emailAndPassword: {
         // Disable email and password authentication
@@ -105,34 +143,162 @@ export const auth = betterAuth({
     // Optional plugins
     plugins: [
         username({ minUsernameLength: 5 }),
+        customSignInResponsePlugin(),
         credentials({
-            autoSignUp: true,
+            autoSignUp: true, // Changed to true for flexibility – Better Auth will create session even for new users
             path: "/sign-in/credentials",
             inputSchema: myCustomSchema,
+
             async callback(ctx, parsed) {
-                // Just for demonstration purposes, half of the time we will fail the authentication
-                console.log(`PARSED:?`, parsed);
+                const { email, username, password } = parsed;
+                const identifier = email || username;
 
-                return {
-                    // Called if this is a existing user sign-in
-                    onSignIn(userData, user, account) {
-                        console.log("Existing User signed in:", user);
+                // Early validation
+                if (!identifier || !password) {
+                    console.error("[Credentials Callback] Missing identifier or password", { parsed });
+                    return null;
+                }
 
-                        return userData;
-                    },
+                console.log("[Credentials Callback] Starting authentication", {
+                    identifier,
+                    hasPassword: !!password,
+                    timestamp: new Date().toISOString(),
+                });
 
-                    // Called if this is a new user sign-up (only used if autoSignUp is true)
-                    onSignUp(userData) {
-                        console.log("New User signed up:", userData.email);
-
-                        return {
-                            ...userData,
-                            name: parsed.email.split("@")[0]
-                        };
+                // Decode JWT helper (moved outside for reusability)
+                const decodeJwt = (token: string) => {
+                    try {
+                        const base64Url = token.split('.')[1];
+                        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                        const jsonPayload = decodeURIComponent(
+                            atob(base64)
+                                .split('')
+                                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                                .join('')
+                        );
+                        return JSON.parse(jsonPayload);
+                    } catch (e) {
+                        console.error("[Credentials Callback] JWT decode failed:", e);
+                        return null;
                     }
                 };
+
+                try {
+                    const backendLoginUrl = `http://localhost:${config.backendport}/api/user/login`;
+                    console.log("[Credentials Callback] Sending request to Nest.js", {
+                        url: backendLoginUrl,
+                        body: { identifier, password: "****" }, // Mask password in logs
+                    });
+
+                    const nestResponse = await fetch(backendLoginUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ identifier, password }),
+                    });
+
+                    console.log("[Credentials Callback] Nest.js response status:", nestResponse.status);
+
+                    if (!nestResponse.ok) {
+                        const errorData = await nestResponse.json().catch(() => ({}));
+                        console.error("[Credentials Callback] Nest.js authentication failed", {
+                            status: nestResponse.status,
+                            errorData,
+                        });
+                        return null;
+                    }
+
+                    const nestData = await nestResponse.json();
+                    console.log("[Credentials Callback] Full Nest.js response:", {
+                        rawResponse: JSON.stringify(nestData, null, 2), // Pretty-printed full JSON
+                    });
+
+                    const nestJwt = nestData.accessToken;
+                    if (!nestJwt) {
+                        console.error("[Credentials Callback] No accessToken in Nest.js response");
+                        return null;
+                    }
+
+                    console.log("[Credentials Callback] Nest.js JWT received:", nestJwt.substring(0, 50) + "...");
+
+                    // Try to extract user data – prefer nestData.user if present
+                    const userFromNest = nestData.user || decodeJwt(nestJwt) || {};
+
+                    console.log("[Credentials Callback] Extracted user data from Nest.js:", {
+                        fromUserField: !!nestData.user,
+                        fromJwt: !!userFromNest.sub || !!userFromNest.id,
+                        userData: userFromNest,
+                    });
+
+                    // Build Better Auth user object (required fields + custom)
+                    // This is where you shape the data that gets stored in the session JWT.
+                    /*return {
+                        id: userFromNest.id || userFromNest.sub || identifier,
+                        email: userFromNest.email || identifier,
+                        name: userFromNest.name || identifier,
+                        // Custom fields defined in user.additionalFields
+                        role: userFromNest.role || "user",
+                        staff: userFromNest.staff || [],
+                        tkn: nestJwt,
+                        username: identifier,
+                    };*/
+                    const betterAuthUser = {
+                        // --- Standard fields ---
+                        id: userFromNest.id,
+                        email: userFromNest.email,
+                        name: userFromNest.name,
+                        image: userFromNest.image || null, // Ensure image is present or null
+                        staff: userFromNest.staff || [],
+                        // --- Custom fields for your session ---
+                        // Here we embed the entire user object from your NestJS backend,
+                        // which includes the nested staff and contract data.
+
+                        // nestJwt: nestJwt, // Include the original token from the backend
+                    };
+                    console.log("[Credentials Callback] Returning user to Better Auth:", betterAuthUser);
+
+                    return betterAuthUser;
+
+                } catch (error) {
+                    if (error instanceof Error) {
+                        console.error("[Credentials Callback] Unexpected error during authentication:", {
+                            message: error.message,
+                            stack: error.stack,
+                        });
+                    } else {
+                        console.error("[Credentials Callback] Unexpected and unknown error during authentication:", error);
+                    }
+                    return null;
+                }
             },
         }),
+        // credentials({
+        //     autoSignUp: true,
+        //     path: "/sign-in/credentials",
+        //     inputSchema: myCustomSchema,
+        //     async callback(ctx, parsed) {
+        //         // Just for demonstration purposes, half of the time we will fail the authentication
+        //         console.log(`PARSED:?`, parsed);
+
+        //         return {
+        //             // Called if this is a existing user sign-in
+        //             onSignIn(userData, user, account) {
+        //                 console.log("Existing User signed in:", user);
+
+        //                 return userData;
+        //             },
+
+        //             // Called if this is a new user sign-up (only used if autoSignUp is true)
+        //             onSignUp(userData) {
+        //                 console.log("New User signed up:", userData.email);
+
+        //                 return {
+        //                     ...userData,
+        //                     name: parsed.email.split("@")[0]
+        //                 };
+        //             }
+        //         };
+        //     },
+        // }),
         customSession(async (session) => {
             logAuth('customSession callback', { session });
             return {
