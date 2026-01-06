@@ -26,6 +26,13 @@ export const env = createEnv({
       .enum(["true", "false"])
       .default("true")
       .transform((val) => val === "true"),
+
+    // NEW: Switch to enable Better Auth instead of Auth.js (NextAuth)
+    // Set to "true" when you are ready to use Better Auth
+    USE_BETTER_AUTH: z
+      .enum(["true", "false"])
+      .default("false")
+      .transform((val) => val === "true"),
   },
   client: {},
   runtimeEnv: {
@@ -38,6 +45,7 @@ export const env = createEnv({
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     BASE_PATH_ENABLED: process.env.BASE_PATH_ENABLED,
+    USE_BETTER_AUTH: process.env.USE_BETTER_AUTH,
   },
   skipValidation: !!process.env.CI,
 });

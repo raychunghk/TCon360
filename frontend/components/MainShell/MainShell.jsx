@@ -1,7 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 'use client';
-import { SignOut as clientSignOut } from '@/app/lib/auth-action';
-import { useStaffData } from '@/components/hooks/useStaffData.ts';
+import { bauthClient } from '@/app/lib/bauthclient';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
 import { AppShell, Burger, Button, Center, Group, LoadingOverlay, Text, Title, useMantineTheme } from '@mantine/core';
@@ -11,7 +10,7 @@ import '@mantine/notifications/styles.layer.css';
 import { IconLogin } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow'; // Import useShallow
@@ -23,7 +22,7 @@ import SignOutButton from './SignOutButton';
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
-  const { navbarwidth, basepath, MainshellOverlayVisible, setMainshellOverlayVisible, fetchStaffData, status, isAuthenticated, activeUser } = useStore(
+  const { navbarwidth, basepath, MainshellOverlayVisible, setMainshellOverlayVisible, fetchStaffData, status, isAuthenticated, activeUser, activeStaff, activeContract } = useStore(
     useShallow((state) => ({
       navbarwidth: state.navbarwidth,
       basepath: state.basepath,
@@ -32,10 +31,13 @@ export function MainShell({ children, contentpadding = '10px' }) {
       fetchStaffData: state.fetchStaffData,
       status: state.status,
       isAuthenticated: state.isAuthenticated,
-      activeUser: state.activeUser
+      activeUser: state.activeUser,
+      activeStaff: state.activeStaff,
+      activeContract: state.activeContract,
     }))
   );
-  const { activeUser: staffActiveUser } = useStaffData();
+  const router = useRouter();
+
   const [opened, setOpened] = useState(false);
   const pathname = usePathname();
 
@@ -50,7 +52,14 @@ export function MainShell({ children, contentpadding = '10px' }) {
   const handleSignout = useCallback(async () => {
     console.log('MainShell: Initiating sign-out');
     clearAllCookies();
-    await clientSignOut();
+    //await clientSignOut();
+    bauthClient.signOut({ 
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login"); // redirect to login page
+        },
+      },
+    });
   }, [clearAllCookies]);
 
   useEffect(() => {
@@ -96,9 +105,9 @@ export function MainShell({ children, contentpadding = '10px' }) {
               mr="sm"
             />
             <Link href="/" ta="center" >
-              <Image  src={`${basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
+              <Image src={`${basepath}/favicon.svg`} alt="Icon" width={30} height={30} />
             </Link>
-            <Title className={classes.title} ta="center"  mt={5} >
+            <Title   ta="center" mt={5} >
               Welcome to{' '}
               <Text
                 inherit
@@ -111,47 +120,38 @@ export function MainShell({ children, contentpadding = '10px' }) {
             </Title>
           </Group>
           <Group gap="xs">
-  {activeUser && isAuthenticated ? (
-    <>
-      <HeaderPopover />
-      <SignOutButton handleSignout={handleSignout}></SignOutButton>
-      {/* <Button
-        variant="light"
-        color="orange"
-        size="sm"
-        radius="md"
-        onClick={handleSignout}
-        leftSection={<IconLogout size={18} />}
-      >
-        Sign Out
-      </Button> */}
-    </>
-  ) : (
-    <>
-      <Button
-        component={Link}
-        href={`${basepath}/auth/login`}
-        variant="filled"
-        color="violet"
-        size="sm"
-        radius="md"
-        leftSection={<IconLogin size={18} />}
-      >
-        Login
-      </Button>
-      <Button
-        component={Link}
-        href={`${basepath}/auth/signup`}
-        variant="subtle"
-        color="gray"
-        size="sm"
-        radius="md"
-      >
-        Sign Up
-      </Button>
-    </>
-  )}
-</Group>
+            {activeUser && isAuthenticated ? (
+              <>
+                <HeaderPopover />
+                <SignOutButton handleSignout={handleSignout}></SignOutButton>
+
+              </>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  href={`${basepath}/auth/login`}
+                  variant="filled"
+                  color="violet"
+                  size="sm"
+                  radius="md"
+                  leftSection={<IconLogin size={18} />}
+                >
+                  Login
+                </Button>
+                <Button
+                  component={Link}
+                  href={`${basepath}/auth/signup`}
+                  variant="subtle"
+                  color="gray"
+                  size="sm"
+                  radius="md"
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
+          </Group>
         </Group>
       </AppShell.Header>
       {activeUser && <AppShellNavBar opened={opened} />}
@@ -168,7 +168,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
           <Text size="sm" c="dimmed" fw={500}>Developed by Ray &#x2B1C;&#x1F538;&#x2502;</Text>
         </Center>
       </AppShell.Footer>
-      
+
     </AppShell>
   );
 }

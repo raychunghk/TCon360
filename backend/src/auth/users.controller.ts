@@ -14,9 +14,18 @@ import { signupUserDTO } from '../models/customDTOs.js';
 import { AuthService } from './auth.service.js';
 import { UsersService } from './users.service.js';
 
-interface LoginDto {
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
+
+export class LoginDto {
+  @IsString()
   identifier: string;
+
+  @IsString()
   password: string;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeViewStaff?: boolean; // defaults to false/undefined if not sent
 }
 @Controller('api')
 export class UsersController {
@@ -30,19 +39,29 @@ export class UsersController {
   @Post('user/login')
   async login(
     @Body() loginDto: LoginDto,
-  ): Promise<{ accessToken: string; user; tokenMaxAge: Number }> {
+  ): Promise<{ accessToken: string; user: any; tokenMaxAge: number }> {
     try {
-      const { identifier, password } = loginDto; const { token, user } = await this.authService.login(identifier, password);
-      // const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 60;
-      const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE) / 1000; // Conver
-      console.log(`In login , token max age`, tokenMaxAge);
-      return { accessToken: token, user, tokenMaxAge };
+      const { identifier, password, excludeViewStaff } = loginDto;
+
+      // Pass the optional flag to the service
+      const { token, user } = await this.authService.login(
+        identifier,
+        password,
+        { excludeViewStaff: excludeViewStaff ?? false },
+      );
+
+      const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000; // seconds
+
+      console.log('In login controller, token max age (seconds):', tokenMaxAge);
+
+      return {
+        accessToken: token,
+        user,
+        tokenMaxAge,
+      };
     } catch (error) {
       Logger.error('Login error', error);
-      throw new HttpException(
-        'Login failed',
-        HttpStatus.UNAUTHORIZED, // More specific error code
-      );
+      throw new HttpException('Login failed', HttpStatus.UNAUTHORIZED);
     }
   }
 

@@ -28,6 +28,7 @@ const _assetPrefix = isDocker ? '' : config.feprefix;
 
 console.log('[next.config.mjs] basePath:', _basepath || '(empty string)');
 console.log('[next.config.mjs] assetPrefix:', _assetPrefix || '(empty string)');
+console.log('[next.config.mjs] useBetterAuth:', config.useBetterAuth || '(empty string)');
 console.log('-------------------------------------');
 
 const nextConfig = {

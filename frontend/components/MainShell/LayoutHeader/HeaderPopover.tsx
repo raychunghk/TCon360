@@ -29,24 +29,43 @@ interface UserField {
 function HeaderPopover() {
   const [opened, setOpened] = useState(false);
 
+
   /* ----------------------- Combined Zustand selector ---------------------- */
-  const { activeUser, activeContract, activeUserName, staffVacation } =
+  const { activeUser, activeContract, staffVacation } =
     useStore(
       useShallow((state) => ({
-        activeUser: state.activeUser,
 
+        activeUser: state.activeUser,
         activeContract: state.activeContract,
-        activeUserName: state.activeUser?.name,
+        //activeUserName: state.activeUser?.name,
         staffVacation: state.staffVacation,
       }))
     );
-
+  const _activeUser = activeUser.activeUser ? activeUser.activeUser : activeUser;
+  const activeStaff = _activeUser.staff[0];
+  //const activeContract = activeStaff.contracts.filter((contract) => contract.IsActive === true);
+  const activeUserName = _activeUser.name;
   /* ---------------------------- Helper functions -------------------------- */
-  const formatDate = (dateString?: string): string => {
-    if (!dateString) return '';
-    return format(parseISO(dateString), 'yyyy-MMM-dd');
+  const formatDate = (dateInput?: string | Date | null): string => {
+    if (!dateInput) return '';
+
+    let date: Date;
+
+    if (typeof dateInput === 'string') {
+      // Parse ISO string (e.g., "2025-01-01T00:00:00Z")
+      date = parseISO(dateInput);
+    } else if (dateInput instanceof Date) {
+      // Already a Date object
+      date = dateInput;
+    } else {
+      return ''; // Unexpected type
+    }
+
+    // Safety check: ensure it's a valid date
+    if (isNaN(date.getTime())) return '';
+
+    return format(date, 'yyyy-MMM-dd');
   };
-  const activeStaff = activeUser?.staff[0];
 
   /* -------------------------- Build user fields -------------------------- */
   const userFields = useMemo<UserField[]>(() => {

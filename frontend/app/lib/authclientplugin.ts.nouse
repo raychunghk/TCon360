@@ -1,0 +1,12 @@
+// src/app/lib/auth-client-plugin.ts
+import type { BetterAuthClientPlugin } from "better-auth/client";
+import type { customAuth } from "./auth"; // Import the server plugin function as type
+
+type CustomAuthServerPlugin = typeof customAuth;
+
+export const authClientPlugin = () => {
+    return {
+        id: "customAuth", // Must match the server plugin ID exactly
+        $InferServerPlugin: {} as ReturnType<CustomAuthServerPlugin>,
+    } satisfies BetterAuthClientPlugin;
+};

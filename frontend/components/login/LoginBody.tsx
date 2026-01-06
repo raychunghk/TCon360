@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 'use client';
+import { CustomSignInResponseData } from '@/app/lib/CustomSignInResponseData';
 import { SignIn } from '@/app/lib/auth-action';
 import { signIn } from '@/app/lib/bauthclient';
 
@@ -21,6 +22,7 @@ import {
 } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 //import { signIn } from 'better-auth/react';
 import { parseCookies, setCookie } from 'nookies';
 import { useRef, useState } from 'react';
@@ -47,6 +49,7 @@ export default function LoginBody(props: any) {
   const router = useRouter();
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const {
+    setBetterAuthToken,
     setAuthtoken,
     basepath,
     setIsUnauthorized,
@@ -154,7 +157,7 @@ export default function LoginBody(props: any) {
   }
 
 
-  const handleLoginx = async (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
@@ -162,14 +165,53 @@ export default function LoginBody(props: any) {
       //bauthClient.signIn.email
 
 
-      const response = await signIn.credentials({ email: 'tcon360', username: 'a@a.com', password: 'admin' });
+      const response = await signIn.credentials({ email: identifier, username: identifier, password });
+      console.log(`better auth login resonse:`, JSON.stringify(response));
       //await signIn.email({ email: 'a@a.com', password: 'b' });
+      //start
 
+      if (response && !response.error && response.data) {
+        //console.log('Login successful, processing response:', response);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { token, extUser } = response.data as CustomSignInResponseData;
+
+        // 1. Set token and auth status in store
+        setStatus('authenticated');
+        setIsAuthenticated(true);
+        setIsUnauthorized(false);
+
+        // 2. Process user data from response and set it in the store
+        if (extUser) {
+          const staffMember = extUser.staff && extUser.staff.length > 0 ? extUser.staff[0] : null;
+          const _activeContract = staffMember?.contracts?.find((c: any) => c.IsActive) || null;
+
+          setActiveUser(extUser);
+          setActiveStaff(staffMember);
+          setActiveContract(_activeContract);
+          const nestJwt = extUser.nestJwt;
+          setAuthtoken(nestJwt);
+          // 3. Set cookie for session persistence
+          setBetterAuthToken(token);
+          const maxAge = extUser.tokenMaxAge || 3600; // Default to 1 hour
+          await setCookie(null, 'token', nestJwt, { maxAge: maxAge, path: '/' });
+        }
+
+
+
+        // 4. Redirect to home page
+        router.push('/');
+      } else {
+
+        const errorMsg = response.error.message;
+        setLoginStatus(errorMsg || 'Login failed.');
+
+      }
+      //end
     } catch (error) {
       console.error('An unexpected error occurred during login:', error);
     }
   };
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleLoginx = async (event: React.FormEvent) => {
     event.preventDefault();
     open();
 

@@ -9,4 +9,5 @@ export declare const env: Readonly<{
     TOKEN_MAX_AGE: number;
     NEXTAUTH_SECRET: string;
     BASE_PATH_ENABLED: boolean;
+    USE_BETTER_AUTH: boolean;
 }>;

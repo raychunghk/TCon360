@@ -1,3 +1,4 @@
+// src/components/stores/zstore.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FullCalendar from '@fullcalendar/react';
 import { create } from 'zustand';
@@ -6,6 +7,7 @@ import { loadPublicHolidays } from './publicHolidaysUtil';
 import { fetchStaffData } from './staffDataUtil';
 
 const _navbarwidth = 260;
+
 type CalendarRef = React.MutableRefObject<FullCalendar | null>;
 
 type State = {
@@ -15,6 +17,7 @@ type State = {
   activeStaff: any;
   activeUser: any;
   authtoken: string;
+  betterAuthToken: string; // ← NEW: Better Auth JWT
   basepath: string | null;
   calendarEvents: any[];
   chargeableDays: number;
@@ -51,9 +54,11 @@ type State = {
   isExiting: boolean;
   isAuthenticated: boolean;
   status: 'loading' | 'authenticated' | 'unauthenticated';
-  setActiveContract: (contract: any) => void;
-  setCalendarRef: (ref: any) => void;
 
+  // Setters
+  setCalendarRef: (ref: any) => void;
+  setBetterAuthToken: (token: string) => void; // ← NEW setter
+  setActiveContract: (contract: any) => void;
   setActiveStaff: (staff: any) => void;
   setActiveUser: (user: any) => void;
   setAuthtoken: (token: string) => void;
@@ -81,7 +86,7 @@ type State = {
   setUserStatus: (status: any) => void;
   setConfig: (conf: any) => void;
   setSelectedMonth: (date: Date) => void;
-
+  setMonthpickermonth: (date: Date) => void;
   setIsFrontCalendarChangeEvent: (event: boolean) => void;
   setIsMonthPickerChangeEvent: (event: boolean) => void;
   setMainshellOverlayVisible: (visible: boolean) => void;
@@ -98,8 +103,9 @@ type State = {
 
 type PersistState = Pick<
   State,
-  'activeUser' | 'authtoken' | 'isAuthenticated' | 'status' | 'basepath' | 'activeContract'
+  'activeUser' | 'authtoken' | 'betterAuthToken' | 'isAuthenticated' | 'status' | 'basepath' | 'activeContract'
 >;
+
 const useStore = create<State, [['zustand/persist', PersistState]]>(
   persist(
     (set, get) => ({
@@ -109,6 +115,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       activeStaff: null,
       activeUser: null,
       authtoken: '',
+      betterAuthToken: '', // ← NEW initial value
       basepath: null,
       calendarEvents: [],
       chargeableDays: 0,
@@ -145,7 +152,9 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       isExiting: false,
       isAuthenticated: false,
       status: 'loading' as 'loading' | 'authenticated' | 'unauthenticated',
+
       setCalendarRef: (calen: any) => set(() => ({ calendarRef: calen })),
+      setBetterAuthToken: (token: string) => set(() => ({ betterAuthToken: token })), // ← NEW setter
 
       setActiveContract: (contract: any) => set(() => ({ activeContract: contract })),
       setActiveStaff: (staff: any) => set(() => ({ activeStaff: staff })),
@@ -211,6 +220,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
           activeStaff: null,
           activeUser: null,
           authtoken: '',
+          betterAuthToken: '', // ← cleared
           basepath: null,
           calendarEvents: [],
           chargeableDays: 0,
@@ -259,10 +269,11 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
       partialize: (state: State) => ({
         activeUser: state.activeUser,
         authtoken: state.authtoken,
+        betterAuthToken: state.betterAuthToken, // ← persisted
         isAuthenticated: state.isAuthenticated,
         status: state.status,
         basepath: state.basepath,
-        activeContract: state.activeContract, // ← PERSISTED
+        activeContract: state.activeContract,
       } as PersistState),
       storage: {
         getItem: (name: string) => {
@@ -284,7 +295,6 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
             console.log('zstore: storage.setItem skipped on server', { name, value: value.state });
             return;
           }
-          console.log('zstore: storage.setItem', { name, value: value.state });
           localStorage.setItem(name, JSON.stringify(value.state));
         },
         removeItem: (name: string) => {
@@ -301,6 +311,7 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
           state: {
             activeUser: state?.activeUser,
             authtoken: state?.authtoken,
+            betterAuthToken: state?.betterAuthToken, // ← restored
             isAuthenticated: state?.isAuthenticated,
             status: state?.status,
             basepath: state?.basepath,
@@ -334,16 +345,15 @@ const useStore = create<State, [['zustand/persist', PersistState]]>(
 
           state?.setActiveUser(parsedLocalStorageData.activeUser);
           state?.setAuthtoken(parsedLocalStorageData.authtoken);
+          state?.setBetterAuthToken(parsedLocalStorageData.betterAuthToken ?? ''); // ← restore
           state?.setIsAuthenticated(true);
           state?.setStatus('authenticated');
           state?.setBasepath(parsedLocalStorageData.basepath ?? null);
 
-          // Restore activeContract
           if (parsedLocalStorageData.activeContract) {
             state?.setActiveContract(parsedLocalStorageData.activeContract);
           }
 
-          // Auto-set activeStaff from first staff in user.staff
           const firstStaff = parsedLocalStorageData.activeUser?.staff?.[0];
           if (firstStaff) {
             console.log('zstore: Auto-setting activeStaff from activeUser.staff[0]', firstStaff);

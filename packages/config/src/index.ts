@@ -10,6 +10,9 @@ const mainport = useReverseProxy ? 3333 : frontendport;
 const isProduction = env.NODE_ENV === "production";
 const basePathEnabled = env.BASE_PATH_ENABLED;
 
+// NEW: Export the auth switch for use in middleware and other places
+const useBetterAuth = env.USE_BETTER_AUTH;
+
 export const config = {
   proxypath,
   useReverseProxy,
@@ -19,6 +22,7 @@ export const config = {
   prefix: isProduction || !basePathEnabled ? "" : `${proxypath}/${mainport}`,
   basepath: isProduction || !basePathEnabled ? "" : `${proxypath}/${mainport}`,
   feprefix: isProduction || !basePathEnabled ? "" : `${proxypath}/${frontendport}`,
+  useBetterAuth, // ← added
 };
 
 export * from "./env.js";

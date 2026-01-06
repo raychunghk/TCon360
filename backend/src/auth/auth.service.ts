@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { env } from '@tcon360/config';
 import * as argon2 from 'argon2';
-import { differenceInSeconds, format } from 'date-fns';
 import { signupUserDTO } from '../models/customDTOs.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { BaseService } from '../shared/base.service.js';
@@ -112,7 +110,11 @@ export class AuthService extends BaseService {
     return !!user;
   }
 
-  async login(identifier: string, password: string) {
+  async login(
+    identifier: string,
+    password: string,
+    options?: { excludeViewStaff?: boolean },
+  ) {
     let token = '';
     try {
       const user = await this.prisma.user.findFirst({
@@ -133,40 +135,24 @@ export class AuthService extends BaseService {
       if (!isPasswordValid) {
         throw new Error('Invalid credentials');
       }
+
+      // Fetch full user details (including contracts) regardless
       const userWithDetails = await this.usersService.getUserWithStaffAndContract(user.id);
+
+      // Build JWT payload – conditionally exclude viewStaff
       const payload = {
         sub: user.id,
         username: user.username,
         name: user.name,
         email: user.email,
-        staff: user.viewStaff,
+        // Only include viewStaff if explicitly allowed (default: include)
+        ...(options?.excludeViewStaff !== true && { staff: user.viewStaff }),
       };
 
-      // Use JwtModule's configured expiresIn, fallback to TOKEN_MAX_AGE
-      const tokenage = (env.TOKEN_MAX_AGE || 113000) / 1000 / 60; // Convert ms to minutes
-      console.log(`env.TOKEN_MAX_AGE`, env.TOKEN_MAX_AGE);
-      console.log(
-        'creating token on server, token max age in minutes',
-        tokenage,
-      );
-      token = this.jwtService.sign(payload); // No options needed, JwtModule handles expiresIn
-
-      // Verify the token
+      token = this.jwtService.sign(payload);
+      console.log(`token generated:`, token);
       const decoded = this.jwtService.verify(token);
-
-      console.log('just signed in decoded token in nest.js');
-      console.log(decoded);
-      console.log('now?', new Date());
-
-      const iat = new Date(decoded.iat * 1000);
-      console.log('Token iat on:', iat);
-
-      const expDate = decoded.exp * 1000;
-      const formattedExpDate = format(expDate, 'yyyy-MM-dd hh:mm:ss');
-      console.log('formattedExpDate:', formattedExpDate);
-
-      const timeToExpInSeconds = differenceInSeconds(expDate, Date.now());
-      console.log('time to expire from now (seconds):', timeToExpInSeconds);
+      console.log('just signed in decoded token in nest.js', decoded);
 
       return { token, user: userWithDetails };
     } catch (error) {

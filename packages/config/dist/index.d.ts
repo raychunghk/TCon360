@@ -8,5 +8,6 @@ export declare const config: {
     prefix: string;
     basepath: string;
     feprefix: string;
+    useBetterAuth: boolean;
 };
 export * from "./env.js";
