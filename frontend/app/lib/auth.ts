@@ -20,13 +20,14 @@ const logAuth = (description: string, details: any = {}) => {
     const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
     console.log(`\n[BetterAuth][${timestamp}] ${description}`, JSON.stringify(details, null, 2));
 };
-
+const _tokenExpiration = Number(process.env.TOKEN_MAX_AGE) || 30 * 24 * 60 * 60
 logAuth('🚀 BetterAuth is initializing...', {
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || '(not set)',
     NEXTAUTH_SECRET_set: !!process.env.NEXTAUTH_SECRET,
     JWT_SECRET_set: !!process.env.JWT_SECRET,
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
+    _tokenExpiration: _tokenExpiration,
     config_snapshot: {
         basepath: config.basepath,
         prefix: config.prefix,
@@ -50,6 +51,7 @@ logAuth('🎯 FINAL basePath that BetterAuth will register', {
 // ──────────────────────────────────────────────────────────────
 export const auth = betterAuth({
     database: null,
+
     advanced: {
         disableCSRFCheck: true,
     },
@@ -75,7 +77,11 @@ export const auth = betterAuth({
     },
     session: {
         strategy: 'jwt',
-        expiresIn: Number(process.env.TOKEN_MAX_AGE) || 30 * 24 * 60 * 60,
+        expiresIn: _tokenExpiration,
+        cookieCache: {
+            enabled: true,
+            maxAge: 60 * 60 // Cache duration in seconds (5 minutes)
+        }
     },
     cookies: {
         sessionToken: {
@@ -211,15 +217,17 @@ export const auth = betterAuth({
             },
         }),
         customSession(async (session) => {
+            const now = new Date();
+            const expiresAt = session.session?.expiresAt ? new Date(session.session.expiresAt) : null;
             logAuth('customSession callback', { session });
-            const nestJwt = session.user?.nestJwt;
+            //const nestJwt = session.user?.nestJwt;
             return {
                 ...session,
                 user: {
                     ...session.user,
-                    dd: 'test',
+
                 },
-                nestJwt,
+                //  nestJwt,
             };
         }),
     ],
@@ -227,14 +235,19 @@ export const auth = betterAuth({
     debug: true,
     callbacks: {
         async session({ session }) {
-            console.log('\n--- BetterAuth Session Callback Triggered ---');
-            if (session && Object.keys(session).length > 0) {
-                console.log('Valid session found:');
-                console.log(JSON.stringify(session, null, 2));
-            } else {
-                console.log('No session data available in callback.');
-            }
-            console.log('--- End BetterAuth Session Callback ---\n');
+            const now = new Date();
+            const expiresAt = session.session?.expiresAt ? new Date(session.session.expiresAt) : null;
+
+            logAuth('Session callback triggered (server-side)', {
+                userId: session.user?.id,
+                expiresAt: session.session?.expiresAt,
+                expiresAtTimestamp: expiresAt?.toISOString(),
+                timeUntilExpiryMs: expiresAt ? expiresAt.getTime() - now.getTime() : null,
+                isExpired: expiresAt ? expiresAt < now : true,
+                sessionHasUser: !!session.user,
+                fullSessionKeys: Object.keys(session),
+            });
+
             return session;
         },
     },

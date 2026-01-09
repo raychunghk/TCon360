@@ -122,6 +122,7 @@ export default function ClientLayout({
 
     return (
         <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
+            {/* <SessionPoller interval={10000} /> */}
             <Providers>{children}</Providers>
         </SessionProvider>
     );

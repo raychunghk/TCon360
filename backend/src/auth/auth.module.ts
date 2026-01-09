@@ -9,15 +9,33 @@ import { JwtStrategy } from './jwt.strategy.js';
 import { LocalStrategy } from './local.strategy.js';
 import { UsersController } from './users.controller.js';
 import { UsersService } from './users.service.js';
+
+// Calculate expiresIn value from environment variables
+const tokenMaxAgeMs = env.TOKEN_MAX_AGE || 1200000; // Default to 20 minutes
+const expiresInMinutes = tokenMaxAgeMs / 1000 / 60;
+const expiresIn = `${expiresInMinutes}m`;
+const expiresInSeconds = Math.floor(tokenMaxAgeMs / 1000);
+
+// Prepare JWT options
+const jwtModuleOptions = {
+  secret: env.JWT_SECRET,
+  signOptions: {
+    // Use seconds (number) for type safety, which satisfies 'number | StringValue'
+    expiresIn: expiresInSeconds,
+  },
+};
+
+// Log the configuration during Nest.js startup
+console.log('🔐 [AuthModule] Initializing JwtModule with options:\r\n', {
+  secretIsSet: !!jwtModuleOptions.secret,
+  expiresIn: `${jwtModuleOptions.signOptions.expiresIn}s`, // Log as seconds for clarity
+  expiresInMinutes: `${expiresIn}`,
+});
+
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: env.JWT_SECRET,
-      signOptions: {
-        expiresIn: `${(env.TOKEN_MAX_AGE || 1200000) / 1000 / 60}m`,
-      },
-    }),
+    JwtModule.register(jwtModuleOptions),
   ],
   controllers: [UsersController],
   providers: [
@@ -30,4 +48,4 @@ import { UsersService } from './users.service.js';
   ],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

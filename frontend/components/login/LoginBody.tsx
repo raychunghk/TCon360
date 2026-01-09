@@ -159,11 +159,9 @@ export default function LoginBody(props: any) {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    open();
     try {
       // Correct way to call signIn for the emailAndPassword provider
-      //bauthClient.signIn.email
-
 
       const response = await signIn.credentials({ email: identifier, username: identifier, password });
       console.log(`better auth login resonse:`, JSON.stringify(response));
@@ -191,13 +189,70 @@ export default function LoginBody(props: any) {
           const nestJwt = extUser.nestJwt;
           setAuthtoken(nestJwt);
           // 3. Set cookie for session persistence
+          const loginSuccessTime = new Date().toISOString();
+          console.log(`[Login Success] Storing login time in cookie: ${loginSuccessTime}`);
+          await setCookie(null, 'login_success_time', loginSuccessTime, {
+            path: '/',
+          });
+
+
           setBetterAuthToken(token);
           const maxAge = extUser.tokenMaxAge || 3600; // Default to 1 hour
+          // Clear the previous session null time to reset debugging for this new session
+          await setCookie(null, 'first_session_null_time', '', {
+            maxAge: -1, // Expire the cookie
+            path: '/',
+          });
           await setCookie(null, 'token', nestJwt, { maxAge: maxAge, path: '/' });
         }
+        // ──────────────────────────────────────────────────────────────
+        // 3. Session Expiration Logging (same as old handleLoginSuccess)
+        // ──────────────────────────────────────────────────────────────
+        if (extUser?.nestJwt) {
+          const decoded = decodeJwt(extUser.nestJwt);
 
+          if (decoded) {
+            if (typeof decoded.exp === 'number') {
+              const expiryTimestampSeconds = decoded.exp;
+              const expiryDate = new Date(expiryTimestampSeconds * 1000);
+              const now = new Date();
+              const timeRemainingMs = expiryDate.getTime() - now.getTime();
 
+              if (timeRemainingMs > 0) {
+                const minutes = Math.floor(timeRemainingMs / (1000 * 60));
+                const seconds = Math.floor((timeRemainingMs % (1000 * 60)) / 1000);
+                console.log(
+                  `[Token Expiry] NestJS token expires in: ${minutes} minutes and ${seconds} seconds. ` +
+                  `Expiry Date/Time (Client Local): ${expiryDate.toLocaleString()}`
+                );
+              } else {
+                console.log('[Token Expiry] NestJS token has already expired.');
+              }
+            }
 
+            if (typeof decoded.iat === 'number') {
+              const iatTimestampSeconds = decoded.iat;
+              const clientLoginInitiatedTime: number | null = null;
+              const iatDate = new Date(iatTimestampSeconds * 1000);
+              const clientInitiatedDate = new Date(clientLoginInitiatedTime);
+              const timeDifferenceMs = iatDate.getTime() - clientLoginInitiatedTime;
+
+              console.log(
+                `[Time Sync Check] Client Login Initiated: ${clientInitiatedDate.toLocaleString()} (ms: ${clientLoginInitiatedTime})\n` +
+                `[Time Sync Check] Token Issued At (iat): ${iatDate.toLocaleString()} (ms: ${iatTimestampSeconds * 1000})\n` +
+                `[Time Sync Check] Difference (iat - client_initiated): ${timeDifferenceMs} ms`
+              );
+
+              if (Math.abs(timeDifferenceMs) > 5000) {
+                console.warn('[Time Sync Check] Significant time difference detected between client initiation and token iat!');
+              } else {
+                console.log('[Time Sync Check] Time difference is within acceptable limits.');
+              }
+            }
+          } else {
+            console.error('Failed to decode NestJS JWT for expiration checks.');
+          }
+        }
         // 4. Redirect to home page
         router.push('/');
       } else {
@@ -209,39 +264,11 @@ export default function LoginBody(props: any) {
       //end
     } catch (error) {
       console.error('An unexpected error occurred during login:', error);
-    }
-  };
-  const handleLoginx = async (event: React.FormEvent) => {
-    event.preventDefault();
-    open();
-
-    clientLoginInitiatedTime = Date.now();
-    console.log(`[Client] Login process initiated at: ${new Date(clientLoginInitiatedTime).toLocaleString()} (Unix ms: ${clientLoginInitiatedTime})`);
-
-    const loginURL = `${basepath}/api/user/login`;
-
-    try {
-      const response = await fetch(loginURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ identifier, password }),
-      });
-
-      if (response.ok) {
-        await handleLoginSuccess(response, router);
-      } else {
-        const errorData = await response.json();
-        setLoginStatus(errorData.message || 'Login failed.');
-      }
-    } catch (error) {
-      console.error('Network or unexpected error during login:', error);
-      setLoginStatus('An unexpected error occurred. Please try again.');
     } finally {
       close();
     }
   };
+
 
   const handleSignupClick = () => {
     router.push('/signup');

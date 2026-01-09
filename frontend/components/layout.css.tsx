@@ -1,6 +1,5 @@
 // import { createStyles } from '@mantine/core';
 
-import { style } from '@vanilla-extract/css';
 
 // export default createStyles((theme) => ({
 //   title: {
@@ -26,7 +25,7 @@ import { style } from '@vanilla-extract/css';
 //     },
 //   },
 // }));
-
+/*
 export const title = style({
   color: 'black',
   fontSize: 18,
@@ -57,3 +56,4 @@ export const buttonStyles = style({
     color: '--mantine-color-grey-0',
   },
 });
+*/

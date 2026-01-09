@@ -98,7 +98,15 @@ const nextConfig = {
         source: '/absproxy/:port([0-9]+)/api/bauth/:path*',
         destination: '/api/bauth/:path*',
       },
-
+      // testing api
+      {
+        source: '/api/betterhealth/:path*',
+        destination: '/api/betterhealth/:path*',
+      },
+      {
+        source: '/absproxy/:port([0-9]+)/api/betterhealth/:path*',
+        destination: '/api/betterhealth/:path*',
+      },
       // Backend API proxy
       {
         source: '/absproxy/:port([0-9]+)/api/:path*',
