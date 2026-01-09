@@ -1,7 +1,17 @@
- 
+export interface CalendarEvent {
+  start: string;
+  end?: string;
+  extendedProps: {
+    result: {
+      eventType?: string;
+      leavePeriodStart: string;
+      [key: string]: any;
+    };
+  };
+  [key: string]: any;
+}
 
-export const  isPublicHoliday=(date, evts) =>{
- 
+export const isPublicHoliday = (date: Date, evts: CalendarEvent[]): boolean => {
   const publicHolidays = evts.filter((event) => {
     const evt = event.extendedProps.result;
     return evt.eventType === 'publicholiday';
@@ -15,16 +25,18 @@ export const  isPublicHoliday=(date, evts) =>{
   }
 
   return false;
-}
-export const convertDateStringToDate = (dateString) => {
+};
+
+export const convertDateStringToDate = (dateString: string): Date => {
   const parts = dateString.split('-');
-  const year = parseInt(parts[0]);
-  const month = parseInt(parts[1]) - 1;
-  const day = parseInt(parts[2]);
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+  const day = parseInt(parts[2], 10);
 
   return new Date(year, month, day);
 };
-export const isSameDate = (date1, date2) => {
+
+export const isSameDate = (date1: Date, date2: Date): boolean => {
   return (
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
@@ -33,7 +45,13 @@ export const isSameDate = (date1, date2) => {
 };
 
 
-export const handleSelectAllow = (selectInfo, calendarEvents) => {
+export interface SelectInfo {
+  start: Date;
+  end: Date;
+  [key: string]: any;
+}
+
+export const handleSelectAllow = (selectInfo: SelectInfo, calendarEvents: CalendarEvent[]): boolean => {
   const selectedDate = selectInfo.start;
 
   // Disable selection on weekends (Saturday and Sunday)
@@ -62,6 +80,4 @@ export const handleSelectAllow = (selectInfo, calendarEvents) => {
     return false;
   });
   return !hasEventsOnSelectedDate;
-
-  //return true;
 };

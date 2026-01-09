@@ -17,7 +17,7 @@ import { destroyCookie, parseCookies } from 'nookies';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import { handleSelectAllow } from './calendar.util';
-import CustomView from './customeView';
+import CustomView from './customView';
 
 const FrontPageCalendar = () => {
   type FormType = 'create' | 'edit';
@@ -74,7 +74,7 @@ const FrontPageCalendar = () => {
   const token = cookies.token;
   const router = useRouter();
 
-  const handleSignout = async () => {
+  const handleSignout = useCallback(async () => {
     console.log('FrontPageCalendar: Initiating sign-out');
     destroyCookie(null, 'token');
     await clientSignOut();
@@ -82,12 +82,12 @@ const FrontPageCalendar = () => {
     setIsAuthenticated(false);
     setIsUnauthorized(true);
     setIsExiting(true);
-  };
+  }, [setStatus, setIsAuthenticated, setIsUnauthorized, setIsExiting]);
   useEffect(() => {
     if (calendarRef.current) {
       setCalendarRef({ calendarRef });
     }
-  }, [calendarRef.current]);
+  }, [setCalendarRef]);
   const fetchEvents = useCallback(async () => {
     if (isExiting) {
       console.log('fetchEvents: Skipping due to isExiting=true');
@@ -130,7 +130,7 @@ const FrontPageCalendar = () => {
         console.error('Unexpected error:', error);
       }
     }
-  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting, token]); // Added token to deps
+  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting, token]);
 
   useEffect(() => {
     if (isEventUpdated) {
@@ -145,19 +145,6 @@ const FrontPageCalendar = () => {
     }
   }, [activeStaff, fetchEvents, isExiting]);
 
-  useEffect(() => {
-    if (calendarEvents && calendarEvents.length > 0) {
-      if (activeUser) {
-        setVacationSummary(activeUser, calendarEvents);
-      }
-      if (timesheetDefaultDate) {
-        setTitle(timesheetDefaultDate);
-        setIsFrontCalendarChangeEvent(true);
-        handleJumpToMonth(timesheetDefaultDate);
-      }
-    }
-  }, [calendarEvents, timesheetDefaultDate, activeUser]); // Added activeUser to deps
-
   const handleJumpToMonth = useCallback((targetDate: Date) => {
     try {
       if (calendarRef.current) {
@@ -168,47 +155,7 @@ const FrontPageCalendar = () => {
     }
   }, []);
 
-  function handleMonthYearChange(info: any) {
-    if (calendarEvents.length === 0) {
-      fetchEvents();
-    }
-    const currentViewStartDate = info.view.currentStart;
-    console.log('FrontPageCalendar: FullCalendar datesSet - currentViewStartDate:', currentViewStartDate);
-    setSelectedMonth(currentViewStartDate);
-    console.log('FrontPageCalendar: setSelectedMonth called with:', currentViewStartDate);
-    // Removed the problematic line: setMonthpickermonth(new Date(currentViewStartDate.getFullYear(), currentViewStartDate.getMonth() - 1))
-    setTitle(currentViewStartDate);
-    if (calendarRef.current) {
-      const view = calendarRef.current.getApi().view;
-      if (view.type === 'dayGridMonth') {
-        setCurrentCalendarDate(currentViewStartDate);
-      }
-    }
-  }
-
-  const handleOpenAdminPage = () => {
-    router.push('/admin?tab=calendarManagement');
-  };
-
-  const handleDeleteEvent = async () => {
-    try {
-      setIsEventUpdated(true);
-    } catch (error) {
-      console.error('Error deleting event:', error);
-      throw error;
-    }
-  };
-
-  const fnEventclick = (e: any) => {
-    const leaveRequestIdFromEvent = e.event.extendedProps.result.LeaveRequestId;
-    setLeaveRequestId(leaveRequestIdFromEvent);
-    if (leaveRequestIdFromEvent) {
-      setFormType('edit');
-      setDrawerOpen();
-    }
-  };
-
-  function setVacationSummary(_user: any, _events: any[]) {
+  const setVacationSummary = useCallback((_user: any, _events: any[]) => {
     if (!_user || !activeContract) {
       return;
     }
@@ -251,9 +198,9 @@ const FrontPageCalendar = () => {
       used: vacationLeaveDays,
       balance: activeContract.AnnualLeave - vacationLeaveDays,
     });
-  }
+  }, [activeContract, setStaffVacation]);
 
-  function setTitle(newDate: Date = new Date()) {
+  const setTitle = useCallback((newDate: Date = new Date()) => {
     const currentYear = newDate.getFullYear();
     const currentMonth = newDate.getMonth();
     const formattedFirstDay = format(new Date(currentYear, currentMonth, 1), 'd-MMM-yyyy');
@@ -274,10 +221,63 @@ const FrontPageCalendar = () => {
       0
     );
     const chargeableDays = totalDaysInMonth - leaveDays;
-    const customTitleText = `${dateRange} (Chargable days: ${chargeableDays})`;
+    const customTitleText = `${dateRange} (Chargeable days: ${chargeableDays})`;
     setCustomTitle(customTitleText);
     setChargeableDays(chargeableDays);
+  }, [activeUser, calendarEvents, setChargeableDays]);
+
+  useEffect(() => {
+    if (calendarEvents && calendarEvents.length > 0) {
+      if (activeUser) {
+        setVacationSummary(activeUser, calendarEvents);
+      }
+      if (timesheetDefaultDate) {
+        setTitle(timesheetDefaultDate);
+        setIsFrontCalendarChangeEvent(true);
+        handleJumpToMonth(timesheetDefaultDate);
+      }
+    }
+  }, [calendarEvents, timesheetDefaultDate, activeUser, setIsFrontCalendarChangeEvent, handleJumpToMonth, setVacationSummary, setTitle]);
+
+  function handleMonthYearChange(info: any) {
+    if (calendarEvents.length === 0) {
+      fetchEvents();
+    }
+    const currentViewStartDate = info.view.currentStart;
+    console.log('FrontPageCalendar: FullCalendar datesSet - currentViewStartDate:', currentViewStartDate);
+    setSelectedMonth(currentViewStartDate);
+    console.log('FrontPageCalendar: setSelectedMonth called with:', currentViewStartDate);
+    // Removed the problematic line: setMonthpickermonth(new Date(currentViewStartDate.getFullYear(), currentViewStartDate.getMonth() - 1))
+    setTitle(currentViewStartDate);
+    if (calendarRef.current) {
+      const view = calendarRef.current.getApi().view;
+      if (view.type === 'dayGridMonth') {
+        setCurrentCalendarDate(currentViewStartDate);
+      }
+    }
   }
+
+  const handleOpenAdminPage = () => {
+    router.push('/admin?tab=calendarManagement');
+  };
+
+  const handleDeleteEvent = async () => {
+    try {
+      setIsEventUpdated(true);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      throw error;
+    }
+  };
+
+  const fnEventclick = (e: any) => {
+    const leaveRequestIdFromEvent = e.event.extendedProps.result.LeaveRequestId;
+    setLeaveRequestId(leaveRequestIdFromEvent);
+    if (leaveRequestIdFromEvent) {
+      setFormType('edit');
+      setDrawerOpen();
+    }
+  };
 
   const handleDateSelect = (selectInfo: any) => {
     const startDate = selectInfo.start;

@@ -1,6 +1,6 @@
 import { Card, Container, Text } from '@mantine/core';
 import { format } from 'date-fns';
-// Define interfaces for your event structures
+
 interface EventResult {
   eventType: string;
   ID: string;
@@ -8,7 +8,7 @@ interface EventResult {
   leavePeriodStart: string;
   leavePeriodEnd: string;
   leaveDays: number;
-  [key: string]: any; // For any other properties
+  [key: string]: any;
 }
 
 interface EventDef {
@@ -16,9 +16,20 @@ interface EventDef {
   extendedProps: {
     result: EventResult;
   };
-  [key: string]: any; // For any other properties
+  [key: string]: any;
 }
-export default function CustomView({ userStaff, ...props }) {
+
+interface EventStore {
+  defs: Record<string, EventDef>;
+}
+
+interface CustomViewProps {
+  userStaff: any;
+  eventStore: EventStore;
+  [key: string]: any;
+}
+
+export default function CustomView({ userStaff, ...props }: CustomViewProps) {
   console.log('user staff:', userStaff);
   console.log('props', props);
 
