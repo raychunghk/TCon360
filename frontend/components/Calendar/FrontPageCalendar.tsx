@@ -29,6 +29,10 @@ const FrontPageCalendar = () => {
   const [hasCalendar, setHasCalendar] = useState(true);
   // Refs
   const calendarRef = useRef<FullCalendar | null>(null);
+
+  // Performance monitoring for API calls
+  const fetchCountRef = useRef<number>(0);
+  const fetchDatesRef = useRef<string[]>([]);
   // Store hooks
   const { drawerOpened, setDrawerOpen, setDrawerClose, isEventUpdated, setIsEventUpdated } = useUIStore();
   const {
@@ -53,7 +57,6 @@ const FrontPageCalendar = () => {
   } = useStore();
   const {
     LeaveRequestPeriod,
-    isMonthPickerChangeEvent,
     activeUser,
     activeContract,
     basepath,
@@ -62,7 +65,6 @@ const FrontPageCalendar = () => {
   } = useStore(
     useShallow((state) => ({
       LeaveRequestPeriod: state.LeaveRequestPeriod,
-      isMonthPickerChangeEvent: state.isMonthPickerChangeEvent,
       activeUser: state.activeUser,
       activeContract: state.activeContract,
       basepath: state.basepath,
@@ -74,7 +76,7 @@ const FrontPageCalendar = () => {
   const token = cookies.token;
   const router = useRouter();
 
-  const handleSignout = async () => {
+  const handleSignout = useCallback(async () => {
     console.log('FrontPageCalendar: Initiating sign-out');
     destroyCookie(null, 'token');
     await clientSignOut();
@@ -82,13 +84,26 @@ const FrontPageCalendar = () => {
     setIsAuthenticated(false);
     setIsUnauthorized(true);
     setIsExiting(true);
-  };
+  }, [setStatus, setIsAuthenticated, setIsUnauthorized, setIsExiting]);
   useEffect(() => {
     if (calendarRef.current) {
       setCalendarRef({ calendarRef });
     }
   }, [calendarRef.current]);
   const fetchEvents = useCallback(async () => {
+    fetchCountRef.current += 1;
+    const now = Date.now();
+    const timestamp = new Date(now).toLocaleTimeString('en-US', { timeZone: 'Asia/Hong_Kong' });
+    fetchDatesRef.current.push(timestamp);
+    
+    // Log fetch attempt with counter
+    console.log(`[FrontPageCalendar] 📡 API Call #${fetchCountRef.current} at ${timestamp}`, {
+      isExiting,
+      token: token ? 'present' : 'missing',
+      basepath,
+      callStack: new Error().stack?.split('\n').slice(0, 5).join('\n'), // Show call origin
+    });
+    
     if (isExiting) {
       console.log('fetchEvents: Skipping due to isExiting=true');
       return;
@@ -100,16 +115,29 @@ const FrontPageCalendar = () => {
         await handleSignout();
         return;
       }
+      
+      console.log(`[FrontPageCalendar] 🚀 Sending request to ${apiurl}`);
       const headers = {
         Authorization: `Bearer ${token}`,
       };
       const response = await axios.get(apiurl, { headers });
+      
+      console.log(`[FrontPageCalendar] ✅ Response received (status: ${response.status})`, {
+        eventCount: response.data?.length || 0,
+      });
+      
       if ([200, 201].includes(response.status)) {
         const events = response.data;
-        if (!calendarEvents || isEventUpdated || events.length !== calendarEvents.length) {
+        if (!calendarEvents || events.length !== calendarEvents.length) {
+          console.log(`[FrontPageCalendar] 📝 Updating calendar events`, { 
+            newCount: events.length, 
+            oldCount: calendarEvents?.length || 0 
+          });
           await setCalendarEvents(events);
+        } else {
+          console.log('[FrontPageCalendar] ℹ️ Events unchanged, skipping update');
         }
-        if (events.length === 0 && calendarEvents.length === 0) {
+        if (events.length === 0 && calendarEvents?.length === 0) {
           setHasCalendar(false);
           await handleSignout();
         }
@@ -120,30 +148,34 @@ const FrontPageCalendar = () => {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
         if (axiosError.response?.status === 401) {
-          console.warn('Authentication error (401) during fetchEvents. Signing out.');
+          console.warn('[FrontPageCalendar] ⚠️ Auth error (401), signing out');
           await handleSignout();
           return;
         } else {
-          console.error('Error! Failed to fetch events:', axiosError);
+          console.error('[FrontPageCalendar] ❌ Error fetching events:', axiosError.message);
         }
       } else {
-        console.error('Unexpected error:', error);
+        console.error('[FrontPageCalendar] ❌ Unexpected error:', error);
       }
     }
-  }, [basepath, calendarEvents, isEventUpdated, setCalendarEvents, handleSignout, isExiting, token]); // Added token to deps
+  }, [basepath, isExiting, token, setCalendarEvents, handleSignout]); // Optimized deps
 
+  // Effect A: Refetch when explicitly triggered by isEventUpdated
   useEffect(() => {
-    if (isEventUpdated) {
+    if (isEventUpdated && !isExiting) {
+      console.log('FrontPageCalendar: Refetching events due to update');
       fetchEvents();
       setIsEventUpdated(false);
     }
-  }, [isEventUpdated, fetchEvents, setIsEventUpdated]);
+  }, [isEventUpdated, isExiting, fetchEvents, setIsEventUpdated]);
 
+  // Effect B: Initial fetch when activeStaff loads
   useEffect(() => {
-    if (!isExiting) {
+    if (activeStaff && !isExiting) {
+      console.log('FrontPageCalendar: Fetching events on staff load');
       fetchEvents();
     }
-  }, [activeStaff, fetchEvents, isExiting]);
+  }, [activeStaff, isExiting]); // activeStaff is stable now
 
   useEffect(() => {
     if (calendarEvents && calendarEvents.length > 0) {
@@ -168,7 +200,7 @@ const FrontPageCalendar = () => {
     }
   }, []);
 
-  function handleMonthYearChange(info: any) {
+  function handleMonthYearChange(info: { view: { currentStart: Date } }) {
     if (calendarEvents.length === 0) {
       fetchEvents();
     }
@@ -199,7 +231,7 @@ const FrontPageCalendar = () => {
     }
   };
 
-  const fnEventclick = (e: any) => {
+  const fnEventclick = (e: { event: { extendedProps: { result: { LeaveRequestId: number | null } } } }) => {
     const leaveRequestIdFromEvent = e.event.extendedProps.result.LeaveRequestId;
     setLeaveRequestId(leaveRequestIdFromEvent);
     if (leaveRequestIdFromEvent) {
@@ -208,7 +240,14 @@ const FrontPageCalendar = () => {
     }
   };
 
-  function setVacationSummary(_user: any, _events: any[]) {
+  function setVacationSummary(_user: { id: number; name: string }, _events: Array<{ extendedProps: { result: {
+    LeaveRequestId: number | null;
+    leavePeriodStart: string;
+    LeavePeriodEnd?: string | null;
+    leaveDays: number;
+    Year: number;
+    Month: number;
+  } } }>) {
     if (!_user || !activeContract) {
       return;
     }
@@ -279,7 +318,7 @@ const FrontPageCalendar = () => {
     setChargeableDays(chargeableDays);
   }
 
-  const handleDateSelect = (selectInfo: any) => {
+  const handleDateSelect = (selectInfo: { start: Date; end: Date; startStr: string; endStr: string }) => {
     const startDate = selectInfo.start;
     const endDate = selectInfo.end;
     const count = differenceInBusinessDays(endDate, startDate);
@@ -298,6 +337,26 @@ const FrontPageCalendar = () => {
       setDrawerOpen();
     }
   };
+
+  // Add a dev-only console summary at end of component
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const printSummary = () => {
+        console.log('[FrontPageCalendar] 📊 FETCH SUMMARY', {
+          totalCalls: fetchCountRef.current,
+          timestamps: fetchDatesRef.current,
+          message: fetchCountRef.current <= 1 
+            ? '✅ OPTIMIZED: Only 1 API call!' 
+            : `⚠️ MULTIPLE CALLS: ${fetchCountRef.current} calls detected`,
+        });
+      };
+      
+      return () => {
+        // On unmount, print summary
+        printSummary();
+      };
+    }
+  }, []);
 
   if (!hasCalendar || !calendarEvents) {
     return (
