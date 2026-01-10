@@ -231,7 +231,7 @@ const FrontPageCalendar = () => {
     }
   };
 
-  const fnEventclick = (e: { event: { extendedProps: { result: { LeaveRequestId: number | null } } } }) => {
+  const fnEventclick = (e: any) => {
     const leaveRequestIdFromEvent = e.event.extendedProps.result.LeaveRequestId;
     setLeaveRequestId(leaveRequestIdFromEvent);
     if (leaveRequestIdFromEvent) {
