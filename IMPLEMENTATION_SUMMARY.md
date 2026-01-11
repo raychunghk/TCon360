@@ -119,18 +119,18 @@ END) AS CalendarDateStr
 ### Step 1: Backup Database
 ```bash
 cd backend
-cp prisma/dev.db prisma/dev.db.backup
+cp prisma/TCon360.db prisma/TCon360.db.backup
 ```
 
 ### Step 2: Run Migration
 ```bash
 cd backend
-sqlite3 prisma/dev.db < prisma/migrate-dates.sql
+sqlite3 prisma/TCon360.db < prisma/migrate-dates.sql
 ```
 
 ### Step 3: Verify Migration
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 SELECT 'CalendarMaster' as table_name, typeof(CalendarDate) as type, COUNT(*) as count
 FROM CalendarMaster GROUP BY typeof(CalendarDate);
 

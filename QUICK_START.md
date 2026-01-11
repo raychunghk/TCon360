@@ -9,12 +9,12 @@ All code changes are complete. You just need to run the database migration.
 ### 1. Backup Database
 ```bash
 cd backend
-cp prisma/dev.db prisma/dev.db.backup
+cp prisma/TCon360.db prisma/TCon360.db.backup
 ```
 
 ### 2. Run Migration
 ```bash
-sqlite3 prisma/dev.db < prisma/migrate-dates.sql
+sqlite3 prisma/TCon360.db < prisma/migrate-dates.sql
 ```
 
 ### 3. Recreate Views
@@ -25,7 +25,7 @@ npm run seed
 ## Verify It Worked
 
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 SELECT 'CalendarMaster' as table_name, typeof(CalendarDate) as type, COUNT(*) as count
 FROM CalendarMaster GROUP BY typeof(CalendarDate);
 EOF
@@ -51,7 +51,7 @@ EOF
 
 ```bash
 cd backend
-cp prisma/dev.db.backup prisma/dev.db
+cp prisma/TCon360.db.backup prisma/TCon360.db
 npm run seed
 ```
 

@@ -9,13 +9,13 @@ This migration converts all numeric timestamps (seconds since epoch) in the data
 ```bash
 # 1. Backup database
 cd backend
-cp prisma/dev.db prisma/dev.db.backup
+cp prisma/TCon360.db prisma/TCon360.db.backup
 
 # 2. Run migration
-sqlite3 prisma/dev.db < prisma/migrate-dates.sql
+sqlite3 prisma/TCon360.db < prisma/migrate-dates.sql
 
 # 3. Verify migration
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 SELECT 'CalendarMaster' as table_name, typeof(CalendarDate) as type, COUNT(*) as count
 FROM CalendarMaster GROUP BY typeof(CalendarDate);
 EOF
@@ -32,13 +32,13 @@ Always backup before running migration:
 
 ```bash
 cd backend
-cp prisma/dev.db prisma/dev.db.backup
+cp prisma/TCon360.db prisma/TCon360.db.backup
 ```
 
 Verify backup was created:
 
 ```bash
-ls -lh prisma/dev.db.backup
+ls -lh prisma/TCon360.db.backup
 ```
 
 ### Step 2: Run Migration Script
@@ -47,7 +47,7 @@ The migration script (`migrate-dates.sql`) converts all date columns from numeri
 
 ```bash
 cd backend
-sqlite3 prisma/dev.db < prisma/migrate-dates.sql
+sqlite3 prisma/TCon360.db < prisma/migrate-dates.sql
 ```
 
 This will:
@@ -66,7 +66,7 @@ This will:
 Run these queries to verify all dates are in ISO format:
 
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 -- Check CalendarMaster
 SELECT 'CalendarMaster' as table_name, typeof(CalendarDate) as type, COUNT(*) as count
 FROM CalendarMaster GROUP BY typeof(CalendarDate);
@@ -120,7 +120,7 @@ If you need to rollback:
 
 ```bash
 cd backend
-cp prisma/dev.db.backup prisma/dev.db
+cp prisma/TCon360.db.backup prisma/TCon360.db
 npm run seed
 ```
 
@@ -138,13 +138,13 @@ This restores the backup and recreates views.
 **Solutions**:
 ```bash
 # Check if database exists
-ls -lh prisma/dev.db
+ls -lh prisma/TCon360.db
 
 # Check permissions
-chmod 644 prisma/dev.db
+chmod 644 prisma/TCon360.db
 
 # If corrupt, restore from backup
-cp prisma/dev.db.backup prisma/dev.db
+cp prisma/TCon360.db.backup prisma/TCon360.db
 ```
 
 ### Issue: Verification shows 'integer' type
@@ -154,7 +154,7 @@ cp prisma/dev.db.backup prisma/dev.db
 **Solution**:
 ```bash
 # Check migration script output
-sqlite3 prisma/dev.db < prisma/migrate-dates.sql 2>&1 | tee migration.log
+sqlite3 prisma/TCon360.db < prisma/migrate-dates.sql 2>&1 | tee migration.log
 
 # Review migration.log for errors
 ```
@@ -179,17 +179,17 @@ npm run seed
 **Debugging steps**:
 ```bash
 # 1. Check views exist
-sqlite3 prisma/dev.db ".schema viewCalendarTimeSheet"
-sqlite3 prisma/dev.db ".schema viewEvents"
+sqlite3 prisma/TCon360.db ".schema viewCalendarTimeSheet"
+sqlite3 prisma/TCon360.db ".schema viewEvents"
 
 # 2. Check view data
-sqlite3 prisma/dev.db "SELECT COUNT(*) FROM viewCalendarTimeSheet;"
-sqlite3 prisma/dev.db "SELECT COUNT(*) FROM viewEvents;"
+sqlite3 prisma/TCon360.db "SELECT COUNT(*) FROM viewCalendarTimeSheet;"
+sqlite3 prisma/TCon360.db "SELECT COUNT(*) FROM viewEvents;"
 
 # 3. Check calendar data
-sqlite3 prisma/dev.db "SELECT COUNT(*) FROM CalendarMaster;"
-sqlite3 prisma/dev.db "SELECT COUNT(*) FROM LeaveRequest;"
-sqlite3 prisma/dev.db "SELECT COUNT(*) FROM CalendarVacation;"
+sqlite3 prisma/TCon360.db "SELECT COUNT(*) FROM CalendarMaster;"
+sqlite3 prisma/TCon360.db "SELECT COUNT(*) FROM LeaveRequest;"
+sqlite3 prisma/TCon360.db "SELECT COUNT(*) FROM CalendarVacation;"
 ```
 
 ## Verification Queries
@@ -197,7 +197,7 @@ sqlite3 prisma/dev.db "SELECT COUNT(*) FROM CalendarVacation;"
 ### Check Date Formats Before Migration
 
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 -- Sample dates from each table
 SELECT 'CalendarMaster' as table_name, CalendarDate, typeof(CalendarDate)
 FROM CalendarMaster LIMIT 3;
@@ -213,7 +213,7 @@ EOF
 ### Check Date Formats After Migration
 
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 -- Sample dates from each table (should all be ISO strings)
 SELECT 'CalendarMaster' as table_name, CalendarDate, typeof(CalendarDate)
 FROM CalendarMaster LIMIT 3;
@@ -229,7 +229,7 @@ EOF
 ### Check View Performance
 
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 EXPLAIN QUERY PLAN
 SELECT * FROM viewCalendarTimeSheet WHERE Year = 2024 AND Month = 1;
 EOF

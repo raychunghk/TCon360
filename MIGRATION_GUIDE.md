@@ -27,20 +27,20 @@ The fix consists of three parts:
 ### Step 1: Backup Your Database
 
 ```bash
-cp backend/prisma/dev.db backend/prisma/dev.db.backup
+cp backend/prisma/TCon360.db backend/prisma/TCon360.db.backup
 ```
 
 ### Step 2: Run Migration Script
 
 ```bash
 cd backend
-sqlite3 prisma/dev.db < prisma/migrate-dates.sql
+sqlite3 prisma/TCon360.db < prisma/migrate-dates.sql
 ```
 
 ### Step 3: Verify Migration
 
 ```bash
-sqlite3 prisma/dev.db <<EOF
+sqlite3 prisma/TCon360.db <<EOF
 SELECT 'CalendarMaster' as table_name, typeof(CalendarDate) as type, COUNT(*) as count
 FROM CalendarMaster GROUP BY typeof(CalendarDate);
 
