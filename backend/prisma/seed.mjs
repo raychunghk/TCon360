@@ -1,11 +1,14 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import argon2 from 'argon2';
 import path from 'path';
-import getEvents from './ics.mjs.js';
+import getEvents from './ics.mjs';
 // Get ICS text however you like, example below
 // Make sure you have the right CORS settings if needed
-import privatedata from './privatedata.mjs.js';
-const prisma = new PrismaClient();
+import privatedata from './privatedata.mjs';
+
+const adapter = new PrismaBetterSqlite3({ url: 'file:./prisma/TCon360.db' });
+const prisma = new PrismaClient({ adapter });
 async function main() {
   await gencalendar();
   await genholiday();
@@ -260,7 +263,7 @@ async function createViewEventsIfNotExists() {
 async function genholiday() {
   const __dirname = path.resolve();
   console.log(__dirname);
-  let _path = path.join(__dirname, './tc.ics');
+  let _path = path.join(__dirname, './prisma/tc.ics');
   //let _path = path.join('/config/workspace/vm/js/NxTime/prisma/tc.ics')
   console.log(_path);
   const evt = getEvents(_path);

@@ -8,4 +8,5 @@ export default defineConfig({
     datasource: {
         url: 'file:./TCon360.db',      // Your direct SQLite file URL for migrations
     },
+    seed: 'node prisma/seed.mjs',
 });
