@@ -44,7 +44,10 @@ async function createViewCalendarIfNotExists() {
      SELECT
         ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS ID,
         CalendarDate,
-        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate / 1000, 'unixepoch')) AS CalendarDateStr,
+        STRFTIME('%Y-%m-%d %H:%M:%S', CASE 
+          WHEN typeof(C.CalendarDate) = 'text' THEN datetime(C.CalendarDate)
+          ELSE datetime(C.CalendarDate / 1000, 'unixepoch')
+        END) AS CalendarDateStr,
         WeekDayName,
         Year,
         Month,
@@ -65,15 +68,21 @@ async function createViewCalendarIfNotExists() {
         END AS HolidaySummary,
         V.LeaveRequestId,
         LR.staffId,
-       CASE WHEN LR.contractId is null THEN 0 
-       ELSE LR.contractId 
+       CASE WHEN LR.contractId is null THEN 0
+       ELSE LR.contractId
        END as contractId
       FROM
         CalendarMaster C
       LEFT JOIN
         CalendarVacation V ON V.VacationDate = C.CalendarDate
       LEFT JOIN
-        PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+        PublicHoliday PH ON CASE 
+          WHEN typeof(C.CalendarDate) = 'text' THEN datetime(C.CalendarDate)
+          ELSE datetime(C.CalendarDate / 1000, 'unixepoch')
+        END = CASE
+          WHEN typeof(PH.STARTDATE) = 'text' THEN datetime(PH.STARTDATE)
+          ELSE datetime(PH.STARTDATE / 1000, 'unixepoch')
+        END
       LEFT JOIN
         LeaveRequest LR ON LR.id = V.LeaveRequestId
       where     (LR.IsArchived = 0 OR LR.IsArchived IS NULL);;
@@ -165,7 +174,10 @@ async function createViewEventsIfNotExists() {
         ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS ID,
         CalendarDate AS leavePeriodStart,
         LR.leavePeriodEnd,
-        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(CalendarDate / 1000, 'unixepoch')) AS StartDateStr,
+        STRFTIME('%Y-%m-%d %H:%M:%S', CASE
+          WHEN typeof(C.CalendarDate) = 'text' THEN datetime(C.CalendarDate)
+          ELSE datetime(C.CalendarDate / 1000, 'unixepoch')
+        END) AS StartDateStr,
         WeekDayName,
         Year,
         Month,
@@ -181,9 +193,15 @@ async function createViewEventsIfNotExists() {
           WHEN LR.id IS NOT NULL THEN COALESCE(LR.leaveType, 'vacation')
           ELSE NULL
         END AS eventType,
-        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.leavePeriodEnd / 1000, 'unixepoch')) AS EndDateStr,
+        STRFTIME('%Y-%m-%d %H:%M:%S', CASE
+          WHEN typeof(LR.leavePeriodEnd) = 'text' THEN datetime(LR.leavePeriodEnd)
+          WHEN LR.leavePeriodEnd IS NOT NULL THEN datetime(LR.leavePeriodEnd / 1000, 'unixepoch')
+        END) AS EndDateStr,
         LR.dateOfReturn,
-        STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.dateOfReturn / 1000, 'unixepoch')) AS ReturnDateStr,
+        STRFTIME('%Y-%m-%d %H:%M:%S', CASE
+          WHEN typeof(LR.dateOfReturn) = 'text' THEN datetime(LR.dateOfReturn)
+          WHEN LR.dateOfReturn IS NOT NULL THEN datetime(LR.dateOfReturn / 1000, 'unixepoch')
+        END) AS ReturnDateStr,
         LR.AMPMStart,
         LR.AMPMEnd,
         LR.staffId,
@@ -200,21 +218,33 @@ async function createViewEventsIfNotExists() {
       FROM
         CalendarMaster C
       LEFT JOIN
-        PublicHoliday PH ON PH.STARTDATE = C.CalendarDate
+        PublicHoliday PH ON CASE
+          WHEN typeof(C.CalendarDate) = 'text' THEN datetime(C.CalendarDate)
+          ELSE datetime(C.CalendarDate / 1000, 'unixepoch')
+        END = CASE
+          WHEN typeof(PH.STARTDATE) = 'text' THEN datetime(PH.STARTDATE)
+          ELSE datetime(PH.STARTDATE / 1000, 'unixepoch')
+        END
       LEFT JOIN
-        LeaveRequest LR ON 
+        LeaveRequest LR ON
         datetime(
-    leavePeriodStart / 1000,
-    'unixepoch',
-    'localtime',
-    'start of day'
-) = datetime(
-    CalendarDate / 1000,
-    'unixepoch',
-    'localtime',
-    'start of day'
-)
-       
+          CASE
+            WHEN typeof(LR.leavePeriodStart) = 'text' THEN LR.leavePeriodStart
+            ELSE (LR.leavePeriodStart / 1000)
+          END,
+          'unixepoch',
+          'localtime',
+          'start of day'
+        ) = datetime(
+          CASE
+            WHEN typeof(C.CalendarDate) = 'text' THEN C.CalendarDate
+            ELSE (C.CalendarDate / 1000)
+          END,
+          'unixepoch',
+          'localtime',
+          'start of day'
+        )
+
       WHERE
         HolidaySummary IS NOT NULL and   (LR.IsArchived = 0 OR LR.IsArchived IS NULL);
   `;

@@ -1,6 +1,47 @@
+# Dependencies
 node_modules
-node_modules
+
+# Database files
+backend/prisma/*.db
+backend/prisma/*.db.backup
+backend/prisma/*.db-shm
+backend/prisma/*.db-wal
+
+# Generated files
 backend/timesheet/LeaveAppForm_20230623.docx
 backend/timesheet/LeaveAppForm_20230626.docx
 backend/timesheet/LeaveAppForm_*.docx
 backend/timesheet/T26TimeSheet_ChungWaiMan_*.xlsx
+backend/timesheet/LeaveAppForm_*.pdf
+backend/timesheet/T26TimeSheet_*.xlsx
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+.next/
+out/
