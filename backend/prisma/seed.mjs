@@ -1,5 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { Prisma, PrismaClient } from '@prisma/client';
 import argon2 from 'argon2';
 import path from 'path';
 import getEvents from './ics.mjs';
@@ -7,7 +7,7 @@ import getEvents from './ics.mjs';
 // Make sure you have the right CORS settings if needed
 import privatedata from './privatedata.mjs';
 
-const adapter = new PrismaBetterSqlite3({ url: 'file:./prisma/TCon360.db' });
+const adapter = new PrismaBetterSqlite3({ url: 'file:./TCon360.db' });
 const prisma = new PrismaClient({ adapter });
 async function main() {
   await gencalendar();
