@@ -10,6 +10,7 @@ import * as dotenv from 'dotenv';
 import session from 'express-session';
 import { resolve } from 'path';
 import { AppModule } from './app.module.js';
+import { DateSerializerInterceptor } from './common/date-serializer.interceptor.js';
 
 // Load .env file from project root
 //dotenv.config({ path: resolve(__dirname, '../../.env') });
@@ -37,6 +38,7 @@ async function bootstrap() {
         cookie: { maxAge: 1800000 },
       }),
     );
+    app.useGlobalInterceptors(new DateSerializerInterceptor());
   }
   console.log('backend port', env.BACKEND_PORT);
   await app.listen(env.BACKEND_PORT);

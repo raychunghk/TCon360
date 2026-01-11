@@ -141,7 +141,10 @@ export class TimesheetService extends BaseService {
   async getCalendar(staffId: number, year: number, month: number) {
     const viewCalendarTimeSheet = (await this.prisma.$queryRawUnsafe(`
 SELECT c.CalendarDate,
-       STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(c.CalendarDate / 1000, 'unixepoch')) AS CalendarDateStr,
+       STRFTIME('%Y-%m-%d %H:%M:%S', CASE
+         WHEN typeof(c.CalendarDate) = 'text' THEN datetime(c.CalendarDate)
+         ELSE datetime(c.CalendarDate / 1000, 'unixepoch')
+       END) AS CalendarDateStr,
        c.WeekDayName,
        c.Year,
        c.Month,

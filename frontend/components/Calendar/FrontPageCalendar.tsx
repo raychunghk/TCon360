@@ -4,6 +4,7 @@ import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
 import { getBusinessDays } from '@/components/util/leaverequest.util';
+import { toDate, isValidDate } from '@/components/util/dateHelper';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
@@ -251,23 +252,34 @@ const FrontPageCalendar = () => {
     if (!_user || !activeContract) {
       return;
     }
-    const ContractStartDate = new Date(activeContract.ContractStartDate);
-    const ContractEndDate = new Date(activeContract.ContractEndDate);
+
+    // USE HELPER: Convert dates safely
+    const ContractStartDate = toDate(activeContract.ContractStartDate);
+    const ContractEndDate = toDate(activeContract.ContractEndDate);
+
+    if (!ContractStartDate || !ContractEndDate) return;
+
     const vacationEvents = _events.filter((event) => {
       const evt = event.extendedProps.result;
-      const leavePeriodStart = new Date(evt.leavePeriodStart);
-      const leavePeriodEnd = evt.LeavePeriodEnd ? new Date(evt.LeavePeriodEnd) : null;
+      const leavePeriodStart = toDate(evt.leavePeriodStart);
+      const leavePeriodEnd = evt.LeavePeriodEnd ? toDate(evt.LeavePeriodEnd) : null;
+
       return (
         evt.LeaveRequestId !== null &&
+        leavePeriodStart !== null &&
         leavePeriodStart <= ContractEndDate &&
         (leavePeriodEnd === null || leavePeriodStart > ContractStartDate || leavePeriodEnd >= ContractStartDate)
       );
     });
+
     const vacationLeaveDays = vacationEvents.reduce((sum, event) => {
       const evt = event.extendedProps.result;
       const eventEndDate = new Date(event.end);
-      const leavePeriodStart = new Date(evt.leavePeriodStart);
-      const leavePeriodEnd = evt.LeavePeriodEnd ? new Date(evt.LeavePeriodEnd) : null;
+      const leavePeriodStart = toDate(evt.leavePeriodStart);
+      const leavePeriodEnd = evt.LeavePeriodEnd ? toDate(evt.LeavePeriodEnd) : null;
+
+      if (!leavePeriodStart) return sum;
+
       if (eventEndDate < ContractStartDate) {
         return sum;
       }
@@ -285,6 +297,7 @@ const FrontPageCalendar = () => {
       }
       return sum + evt.leaveDays;
     }, 0);
+
     setStaffVacation({
       total: activeContract.AnnualLeave,
       used: vacationLeaveDays,
