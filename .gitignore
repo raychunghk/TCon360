@@ -4,3 +4,10 @@ backend/timesheet/LeaveAppForm_20230623.docx
 backend/timesheet/LeaveAppForm_20230626.docx
 backend/timesheet/LeaveAppForm_*.docx
 backend/timesheet/T26TimeSheet_ChungWaiMan_*.xlsx
+
+# SQLite transient files
+*.db-wal
+*.db-shm
+
+# Local safety backups (do not commit)
+backend/prisma/*.db.backup-iso-migration-*
