@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 'use client';
-import useStore from '@/components/stores/zstore.ts';
+
 import {
   Button,
   Card,
@@ -16,7 +16,9 @@ import { IconTableExport } from '@tabler/icons-react';
 import axios from 'axios';
 import download from 'downloadjs';
 import { useEffect, useRef, useState } from 'react';
-import { useForm as useReactHookForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+
+import useStore from '@/components/stores/zstore';
 import MyCard from '../MyCard';
 import styles from './mp.module.css';
 
@@ -28,50 +30,61 @@ export default function CreateTimesheetPage({
   pickersize = 'md',
 }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
-  const { handleSubmit } = useReactHookForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileid, setFileid] = useState<string | null>(null);
 
-  // ---- Store values -------------------------------------------------------
+  const { handleSubmit } = useForm();
+
+  // Store values
   const {
     timesheetDefaultDate,
     setTimesheetDefaultDate,
     selectedMonth,
     setSelectedMonth,
-    isMonthPickerChangeEvent,
     setIsMonthPickerChangeEvent,
     basepath,
+    calendarRef,
   } = useStore();
 
-  // ---- Local picker state (Date | null) -----------------------------------
-  const [displayDate, setDisplayDate] = useState<Date | null>(null);
+  // Local controlled view date for MonthPicker
+  const [displayDate, setDisplayDate] = useState<Date>(() => {
+    const init = selectedMonth ?? timesheetDefaultDate ?? new Date();
+    return new Date(init.getFullYear(), init.getMonth(), 1);
+  });
+
   const monthPickerRef = useRef<HTMLDivElement>(null);
 
-  // ---- Sync store → local picker -----------------------------------------
+  // Sync store → local display date when external changes happen
   useEffect(() => {
-    // Initialise from store (first render or when store changes externally)
-    const initDate = selectedMonth ?? timesheetDefaultDate ?? new Date();
-    const firstOfMonth = new Date(initDate.getFullYear(), initDate.getMonth(), 1);
-    setDisplayDate(firstOfMonth);
+    const init = selectedMonth ?? timesheetDefaultDate;
+    if (!init) return;
+
+    const firstOfMonth = new Date(init.getFullYear(), init.getMonth(), 1);
+
+    // Prevent unnecessary updates / loops
+    if (
+      firstOfMonth.getFullYear() !== displayDate.getFullYear() ||
+      firstOfMonth.getMonth() !== displayDate.getMonth()
+    ) {
+      setDisplayDate(firstOfMonth);
+    }
   }, [selectedMonth, timesheetDefaultDate]);
 
-  // ---- Picker change → store ---------------------------------------------
-  const handlePickerChange = (_date: string) => {
-    if (!_date) return;
-    const date = new Date(_date);
-    const firstOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    console.log('first of month', firstOfMonth);
+  // When user changes month/year in picker → update store
+  const handleDateChange = (newDate: Date) => {
+    const firstOfMonth = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+
     setDisplayDate(firstOfMonth);
     setIsMonthPickerChangeEvent(true);
     setTimesheetDefaultDate(firstOfMonth);
     setSelectedMonth(firstOfMonth);
   };
 
-  // ---- Submit ------------------------------------------------------------
   const onSubmit = async () => {
     if (!selectedMonth) return;
 
     setSubmitting(true);
+
     const year = selectedMonth.getFullYear();
     const month = selectedMonth.getMonth() + 1;
 
@@ -81,49 +94,78 @@ export default function CreateTimesheetPage({
         month,
       });
 
-      if ([200, 201].includes(response.status)) {
+      if (response.status === 200 || response.status === 201) {
         setFileid(response.data.fileid);
         setModalOpen(true);
       }
     } catch (err) {
-      console.error('Failed to create timesheet record:', err);
+      console.error('Failed to create timesheet:', err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // ---- Download -----------------------------------------------------------
   const handleDownloadFile = async () => {
     if (!fileid) return;
 
-    const url = `${basepath}/api/staff/download/${fileid}`;
-    const response = await axios.get(url, { responseType: 'blob' });
-    const disposition = response.headers['content-disposition'] ?? '';
-    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-    const matches = filenameRegex.exec(disposition);
-    const filename = matches ? matches[1].replace(/['"]/g, '') : `${fileid}.xml`;
-    download(response.data, filename);
+    try {
+      const url = `${basepath}/api/staff/download/${fileid}`;
+      const response = await axios.get(url, { responseType: 'blob' });
+
+      const disposition = response.headers['content-disposition'] ?? '';
+      const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+      const matches = filenameRegex.exec(disposition);
+      const filename = matches
+        ? matches[1].replace(/['"]/g, '')
+        : `timesheet_${fileid}.xml`;
+
+      download(response.data, filename, 'application/xml');
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    if (fileid) handleDownloadFile();
+    if (fileid) {
+      handleDownloadFile();
+    }
   };
 
-  // -------------------------------------------------------------------------
+  //Do not remove this func, this is made to interact on FrontPageCalendar
+  const handleMonthChange = (value: Date | null) => { // Changed value type to Date | null
+    if (fileid) setFileid(null);
+    if (!value) return; // Handle null case if user can clear selection
+
+    console.log(`CreateTimesheetPage: MonthPicker onChange: value:`, value);
+    const _date = new Date(value)
+    const firstOfMonth = new Date(_date.getFullYear(), _date.getMonth(), 1);
+
+    setIsMonthPickerChangeEvent(true);
+    setTimesheetDefaultDate(firstOfMonth);
+    setSelectedMonth(firstOfMonth);
+    // setDefaultDate(new Date(value.getFullYear(), value.getMonth())); // This line is likely not needed
+    const api = calendarRef?.current?.getApi();
+    if (api) {
+      api.gotoDate(firstOfMonth);
+    }
+  };
+
   return (
     <>
-      <form method="post" onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <MyCard title="Create TimeSheet" cardwidth={225}>
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
                 <MonthPicker
                   size={pickersize}
-                  date={displayDate ?? undefined}
-                  onDateChange={(date) => handlePickerChange(date)}
-                  ref={monthPickerRef}
+                  date={displayDate}
+                  onChange={handleMonthChange}
+                  value={selectedMonth ?? null}
+                  onRateChange={setDisplayDate}
                   className={styles.monthPickerButtons}
+                  ref={monthPickerRef}
                 />
               </Group>
             </Grid.Col>

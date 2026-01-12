@@ -57,19 +57,19 @@ const FrontPageCalendar = () => {
   } = useStore();
   const {
     LeaveRequestPeriod,
+    isMonthPickerChangeEvent,  // ← ADD THIS LINE
     activeUser,
     activeContract,
     basepath,
     isExiting
-
   } = useStore(
     useShallow((state) => ({
       LeaveRequestPeriod: state.LeaveRequestPeriod,
+      isMonthPickerChangeEvent: state.isMonthPickerChangeEvent,  // ← ADD THIS LINE
       activeUser: state.activeUser,
       activeContract: state.activeContract,
       basepath: state.basepath,
       isExiting: state.isExiting
-
     }))
   );
   const cookies = parseCookies();
@@ -95,7 +95,7 @@ const FrontPageCalendar = () => {
     const now = Date.now();
     const timestamp = new Date(now).toLocaleTimeString('en-US', { timeZone: 'Asia/Hong_Kong' });
     fetchDatesRef.current.push(timestamp);
-    
+
     // Log fetch attempt with counter
     console.log(`[FrontPageCalendar] 📡 API Call #${fetchCountRef.current} at ${timestamp}`, {
       isExiting,
@@ -103,7 +103,7 @@ const FrontPageCalendar = () => {
       basepath,
       callStack: new Error().stack?.split('\n').slice(0, 5).join('\n'), // Show call origin
     });
-    
+
     if (isExiting) {
       console.log('fetchEvents: Skipping due to isExiting=true');
       return;
@@ -115,23 +115,23 @@ const FrontPageCalendar = () => {
         await handleSignout();
         return;
       }
-      
+
       console.log(`[FrontPageCalendar] 🚀 Sending request to ${apiurl}`);
       const headers = {
         Authorization: `Bearer ${token}`,
       };
       const response = await axios.get(apiurl, { headers });
-      
+
       console.log(`[FrontPageCalendar] ✅ Response received (status: ${response.status})`, {
         eventCount: response.data?.length || 0,
       });
-      
+
       if ([200, 201].includes(response.status)) {
         const events = response.data;
         if (!calendarEvents || events.length !== calendarEvents.length) {
-          console.log(`[FrontPageCalendar] 📝 Updating calendar events`, { 
-            newCount: events.length, 
-            oldCount: calendarEvents?.length || 0 
+          console.log(`[FrontPageCalendar] 📝 Updating calendar events`, {
+            newCount: events.length,
+            oldCount: calendarEvents?.length || 0
           });
           await setCalendarEvents(events);
         } else {
@@ -188,7 +188,7 @@ const FrontPageCalendar = () => {
         handleJumpToMonth(timesheetDefaultDate);
       }
     }
-  }, [calendarEvents, timesheetDefaultDate, activeUser]); // Added activeUser to deps
+  }, [calendarEvents, timesheetDefaultDate, activeUser, isMonthPickerChangeEvent]); // ← ADD isMonthPickerChangeEvent TO DEPS
 
   const handleJumpToMonth = useCallback((targetDate: Date) => {
     try {
@@ -240,14 +240,18 @@ const FrontPageCalendar = () => {
     }
   };
 
-  function setVacationSummary(_user: { id: number; name: string }, _events: Array<{ extendedProps: { result: {
-    LeaveRequestId: number | null;
-    leavePeriodStart: string;
-    LeavePeriodEnd?: string | null;
-    leaveDays: number;
-    Year: number;
-    Month: number;
-  } } }>) {
+  function setVacationSummary(_user: { id: number; name: string }, _events: Array<{
+    extendedProps: {
+      result: {
+        LeaveRequestId: number | null;
+        leavePeriodStart: string;
+        LeavePeriodEnd?: string | null;
+        leaveDays: number;
+        Year: number;
+        Month: number;
+      }
+    }
+  }>) {
     if (!_user || !activeContract) {
       return;
     }
@@ -345,12 +349,12 @@ const FrontPageCalendar = () => {
         console.log('[FrontPageCalendar] 📊 FETCH SUMMARY', {
           totalCalls: fetchCountRef.current,
           timestamps: fetchDatesRef.current,
-          message: fetchCountRef.current <= 1 
-            ? '✅ OPTIMIZED: Only 1 API call!' 
+          message: fetchCountRef.current <= 1
+            ? '✅ OPTIMIZED: Only 1 API call!'
             : `⚠️ MULTIPLE CALLS: ${fetchCountRef.current} calls detected`,
         });
       };
-      
+
       return () => {
         // On unmount, print summary
         printSummary();
