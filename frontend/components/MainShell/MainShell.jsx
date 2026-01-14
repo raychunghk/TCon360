@@ -3,6 +3,7 @@
 import { bauthClient } from '@/app/lib/bauthclient';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
+import { palette } from '@/styles/palette';
 import {
   AppShell,
   Burger,
@@ -147,10 +148,10 @@ export function MainShell({ children, contentpadding = '10px' }) {
               opened={opened}
               onClick={() => setOpened((o) => !o)}
               size="sm"
-              color={theme.colors.gray[6]}
+              color={theme.white}
               mr="sm"
             />
-            <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+            <Link href="/" className={classes.logoLink}>
               <Image
                 src={`${basepath}/favicon.svg`}
                 alt="Icon"
@@ -163,7 +164,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
               <Text
                 inherit
                 variant="gradient"
-                gradient={{ from: 'violet', to: 'red', deg: 90 }}
+                gradient={{ from: palette.goldenYellow, to: palette.primaryRed, deg: 90 }}
                 span
               >
                 {siteTitle} - Timesheet and Vacations manager
@@ -182,7 +183,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
                   component={Link}
                   href={`${basepath}/auth/login`}
                   variant="filled"
-                  color="violet"
+                  color={palette.primaryRed}
                   size="sm"
                   radius="md"
                   leftSection={<IconLogin size={18} />}
@@ -193,7 +194,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
                   component={Link}
                   href={`${basepath}/auth/signup`}
                   variant="subtle"
-                  color="gray"
+                  color={palette.goldenYellow}
                   size="sm"
                   radius="md"
                 >
