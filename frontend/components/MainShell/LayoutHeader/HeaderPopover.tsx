@@ -1,20 +1,15 @@
 'use client';
 
-import {
-  ActionIcon,
-  Button,
-  Grid,
-  Popover,
-  Text,
-} from '@mantine/core';
+import { ActionIcon, Button, Grid, Popover, Text } from '@mantine/core';
 import { IconSquareRoundedX, IconUser } from '@tabler/icons-react';
 import { format, parseISO } from 'date-fns';
 import React, { memo, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import * as classes from './HeaderPopover.css';
 
 import useStore from '@/components/stores/zstore';
+import { palette } from '@/styles/palette';
 
+import * as classes from './HeaderPopover.css';
 
 interface UserField {
   label: string;
@@ -29,22 +24,21 @@ interface UserField {
 function HeaderPopover() {
   const [opened, setOpened] = useState(false);
 
-
   /* ----------------------- Combined Zustand selector ---------------------- */
-  const { activeUser, activeContract, staffVacation } =
-    useStore(
-      useShallow((state) => ({
+  const { activeUser, activeContract, staffVacation } = useStore(
+    useShallow((state) => ({
+      activeUser: state.activeUser,
+      activeContract: state.activeContract,
+      //activeUserName: state.activeUser?.name,
+      staffVacation: state.staffVacation,
+    })),
+  );
 
-        activeUser: state.activeUser,
-        activeContract: state.activeContract,
-        //activeUserName: state.activeUser?.name,
-        staffVacation: state.staffVacation,
-      }))
-    );
   const _activeUser = activeUser.activeUser ? activeUser.activeUser : activeUser;
   const activeStaff = _activeUser.staff[0];
   //const activeContract = activeStaff.contracts.filter((contract) => contract.IsActive === true);
   const activeUserName = _activeUser.name;
+
   /* ---------------------------- Helper functions -------------------------- */
   const formatDate = (dateInput?: string | Date | null): string => {
     if (!dateInput) return '';
@@ -115,24 +109,21 @@ function HeaderPopover() {
       <Popover.Target>
         <Button
           variant="filled"
-          color="indigo"
+          color={palette.darkTeal}
           onMouseEnter={() => setOpened(true)}
-          className={classes.PopoverButton}
+          className={classes.popoverButton}
         >
-          <IconUser size={18} style={{ marginRight: '0.5rem' }} />
+          <IconUser size={18} className={classes.userIcon} />
           {activeUserName ?? 'User'}
         </Button>
       </Popover.Target>
 
       {/* ----------------------------- Dropdown ----------------------------- */}
-      <Popover.Dropdown
-        className={classes.PopoverDropdown}
-        style={{ borderRadius: 8 }}
-      >
+      <Popover.Dropdown className={classes.popoverDropdown}>
         <ActionIcon
           variant="filled"
           onClick={() => setOpened(false)}
-          style={{ position: 'absolute', top: 5, right: 5, zIndex: 1 }}
+          className={classes.closeButton}
         >
           <IconSquareRoundedX color="white" />
         </ActionIcon>

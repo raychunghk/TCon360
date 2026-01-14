@@ -1,33 +1,46 @@
-// components/MainShell/MainShell.css.ts
 import { style } from '@vanilla-extract/css';
 
-export const PopoverDropdown = style({
-    background: 'linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e)',
-    borderRadius: 12,
-    color: 'white',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-    padding: 16,
+import { palette, paletteAlpha } from '@/styles/palette';
+
+export const popoverDropdown = style({
+  background:
+    'linear-gradient(180deg, rgba(7, 18, 24, 1) 0%, rgba(5, 14, 18, 1) 100%)',
+  borderRadius: 10,
+  color: 'white',
+  boxShadow: `0 12px 40px ${paletteAlpha.black45}`,
+  padding: 16,
+  border: `1px solid ${paletteAlpha.darkTeal35}`,
 });
-export const PopoverButton = style({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    color: 'white',
-    backgroundColor: '#15487e',
-    fontWeight: 500,
-    borderRadius: 6,
-    padding: '8px 16px',
-    border: '1px solid transparent',
-    transition: 'all 0.25s ease',
-    ':hover': {
-        backgroundColor: '#ffffff',
-        color: '#15487e',
-        border: '1px solid #15487e',
-        boxShadow: '0 0 0 3px rgba(21, 72, 126, 0.2)',
-    },
-    ':active': {
-        backgroundColor: '#f5f5f5',
-        transform: 'translateY(1px)',
-    },
+
+export const popoverButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 8,
+  color: 'white',
+  backgroundColor: palette.darkTeal,
+  fontWeight: 600,
+  borderRadius: 8,
+  padding: '8px 14px',
+  border: `1px solid ${paletteAlpha.darkTeal55}`,
+  transition: 'all 160ms ease',
+  ':hover': {
+    backgroundColor: palette.primaryRed,
+    borderColor: palette.primaryRed,
+    boxShadow: `0 0 0 3px ${paletteAlpha.primaryRed25}`,
+  },
+  ':active': {
+    transform: 'translateY(1px)',
+  },
+});
+
+export const userIcon = style({
+  marginRight: '0.5rem',
+});
+
+export const closeButton = style({
+  position: 'absolute',
+  top: 5,
+  right: 5,
+  zIndex: 1,
 });

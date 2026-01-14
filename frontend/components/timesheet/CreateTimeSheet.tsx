@@ -20,14 +20,18 @@ import { useForm } from 'react-hook-form';
 
 import useStore from '@/components/stores/zstore';
 import MyCard from '../MyCard';
-import styles from './mp.module.css';
+
+import * as classes from './CreateTimeSheet.css';
+import * as mpClasses from './mp.css';
 
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize;
+  cardWidth?: number;
 }
 
 export default function CreateTimesheetPage({
   pickersize = 'md',
+  cardWidth = 225,
 }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -70,15 +74,7 @@ export default function CreateTimesheetPage({
     }
   }, [selectedMonth, timesheetDefaultDate]);
 
-  // When user changes month/year in picker → update store
-  const handleDateChange = (newDate: Date) => {
-    const firstOfMonth = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
 
-    setDisplayDate(firstOfMonth);
-    setIsMonthPickerChangeEvent(true);
-    setTimesheetDefaultDate(firstOfMonth);
-    setSelectedMonth(firstOfMonth);
-  };
 
   const onSubmit = async () => {
     if (!selectedMonth) return;
@@ -133,12 +129,13 @@ export default function CreateTimesheetPage({
   };
 
   //Do not remove this func, this is made to interact on FrontPageCalendar
-  const handleMonthChange = (value: Date | null) => { // Changed value type to Date | null
+  const handleMonthChange = (value: Date | null) => {
+    // Changed value type to Date | null
     if (fileid) setFileid(null);
     if (!value) return; // Handle null case if user can clear selection
 
     console.log(`CreateTimesheetPage: MonthPicker onChange: value:`, value);
-    const _date = new Date(value)
+    const _date = new Date(value);
     const firstOfMonth = new Date(_date.getFullYear(), _date.getMonth(), 1);
 
     setIsMonthPickerChangeEvent(true);
@@ -154,7 +151,7 @@ export default function CreateTimesheetPage({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title="Create TimeSheet" cardwidth={225}>
+        <MyCard title="Create TimeSheet" cardwidth={cardWidth}>
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
@@ -164,7 +161,7 @@ export default function CreateTimesheetPage({
                   onChange={handleMonthChange}
                   value={selectedMonth ?? null}
                   onRateChange={setDisplayDate}
-                  className={styles.monthPickerButtons}
+                  className={mpClasses.monthPickerButtons}
                   ref={monthPickerRef}
                 />
               </Group>
@@ -186,16 +183,7 @@ export default function CreateTimesheetPage({
             </Grid.Col>
           </Grid>
 
-          <Card.Section
-            bg="indigo.2"
-            py="md"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-            }}
-          >
+          <Card.Section bg="indigo.2" py="md" className={classes.submitSection}>
             <Button
               type="submit"
               fullWidth

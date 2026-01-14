@@ -1,6 +1,8 @@
 // components/MainShell/MainShell.css.ts
 import { createTheme, globalStyle, style } from '@vanilla-extract/css';
 
+import { palette, paletteAlpha } from '@/styles/palette';
+
 /* ── Theme – unchanged ─────────────────────────────────────── */
 
 export const mantineTheme = createTheme({
@@ -20,12 +22,6 @@ globalStyle('.fc-header-toolbar', {
   padding: '0 15px',
 });
 
-/* ── Header tokens ─────────────────────────────────────────── */
-
-const headerBgLight = 'var(--mantine-color-gray-0)';
-const headerBgDark = 'var(--mantine-color-dark-7)';
-const headerBorder = 'var(--mantine-color-gray-3)';
-
 /* ── Header layout & title ─────────────────────────────────── */
 
 export const header = style({
@@ -34,10 +30,10 @@ export const header = style({
   justifyContent: 'space-between',
   padding: '12px 20px',
   height: 60,
-  background: '#f5f6f8 !Important', // warm light gray – bridges white sidebar & yellow panel
-  color: '#1f2937',
-  boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-  borderBottom: '1px solid #e2e8f0',
+  background: `linear-gradient(90deg, rgba(5, 14, 18, 1) 0%, ${palette.darkTeal} 55%, rgba(5, 14, 18, 1) 100%)`,
+  color: 'rgba(255, 255, 255, 0.92)',
+  boxShadow: `0 2px 12px ${paletteAlpha.black35}`,
+  borderBottom: `1px solid ${paletteAlpha.darkTeal55}`,
   position: 'sticky',
   top: 0,
   zIndex: 1000,
@@ -50,19 +46,16 @@ export const headerLeft = style({
 });
 
 export const headerIcon = style({
-  color: '#f97316', // orange accent
+  color: palette.goldenYellow,
 });
 
 export const headerTitle = style({
-  fontSize: '22 !Important',
+  fontSize: 22,
   fontWeight: 800,
   letterSpacing: -0.5,
   display: 'inline',
-
-  // Pure white text for maximum contrast against the dark gradient
   color: '#ffffff',
-  // Subtle amber glow to integrate with the theme without sacrificing readability
-  //textShadow: '0 2px 4px rgba(104, 103, 92, 0.5), 0 0 10px rgba(251, 190, 36, 0.12)',
+  textShadow: `0 1px 2px ${paletteAlpha.black45}`,
   '@media': {
     'screen and (max-width: 768px)': {
       fontSize: 16,
@@ -72,12 +65,9 @@ export const headerTitle = style({
 
 // In MainShell.css.ts
 export const welcomeText = style({
-  WebkitTextStroke: '3px var(--mantine-color-gray-9)',
-  //textStroke: '1.5px var(--mantine-color-gray-9)',
-  paintOrder: 'stroke fill',
-  WebkitTextFillColor: 'var(--mantine-color-body)',
-  fontWeight: 700,
-  letterSpacing: '2px',
+  color: 'rgba(255, 255, 255, 0.82)',
+  fontWeight: 500,
+  letterSpacing: '0.5px',
 
   '@media': {
     'screen and (max-width: 768px)': {
@@ -158,20 +148,18 @@ export const signOutButton = style({
   justifyContent: 'center',
   gap: 8,
   color: 'white',
-  backgroundColor: '#f88c40ff !important',
-  fontWeight: 500,
-  borderRadius: 6,
+  backgroundColor: palette.primaryRed,
+  fontWeight: 600,
+  borderRadius: 8,
   padding: '8px 16px',
-  border: '1px solid transparent',
-  transition: 'all 0.25s ease',
+  border: `1px solid ${paletteAlpha.primaryRed25}`,
+  transition: 'all 160ms ease',
   ':hover': {
-    backgroundColor: '#ff7410ff !important',
-    color: '#fff9f3ff !important',
-    border: '1px solid #d97706',
-    boxShadow: '0 0 0 3px rgba(249,115,22,0.3)',
+    backgroundColor: palette.darkOrange,
+    borderColor: palette.darkOrange,
+    boxShadow: `0 0 0 3px ${paletteAlpha.primaryRed25}`,
   },
   ':active': {
-    backgroundColor: '#fff4e6',
     transform: 'translateY(1px)',
   },
   ':disabled': {
@@ -183,6 +171,11 @@ export const signOutButton = style({
 export const headerInner = style({
   width: '100%',
   paddingLeft: 15,
+});
+
+export const logoLink = style({
+  display: 'flex',
+  alignItems: 'center',
 });
 
 // Footer container

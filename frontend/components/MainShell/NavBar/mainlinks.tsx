@@ -5,14 +5,17 @@ import {
   IconHome2,
   IconSettings,
   IconSunset2,
-  IconUserEdit
+  IconUserEdit,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 
 import useStore from '@/components/stores/zstore.ts';
-import { usePathname } from 'next/navigation';
-import styles from './mainlinks.module.css';
+import { palette } from '@/styles/palette';
+
+import * as classes from './mainlinks.css';
+
 type LinkItemProps = {
   icon: React.ReactNode;
   color: string;
@@ -22,13 +25,11 @@ type LinkItemProps = {
   isChild?: boolean;
   LinkComponent?: React.ComponentType<{ href: string }>;
 };
-const iconSizeStyle = {
-  fontSize: '1.125rem',
-};
+
 const defaultIconSize = '2rem';
 
 function CustomLink({ href, children }: { href: string; children: React.ReactNode }) {
-  const { MainshellOverlayVisible, setMainshellOverlayVisible } = useStore();
+  const { setMainshellOverlayVisible } = useStore();
   //const router = useRouter();
   const pathname = usePathname();
   const handleClick = () => {
@@ -42,24 +43,25 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
     }
   };
   return (
-    <Link href={href} className={styles.links} onClick={handleClick}>
-      <UnstyledButton className={styles.unstylebtn}>{children}</UnstyledButton>
+    <Link href={href} className={classes.link} onClick={handleClick}>
+      <UnstyledButton className={classes.button}>{children}</UnstyledButton>
     </Link>
   );
 }
+
 function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
-  const marginLeft = isChild ? 20 : 0;
   const { basepath, useReverseProxy } = useStore();
   const _link = useReverseProxy ? `${basepath ?? ''}${link}` : link;
+
   return (
-    <div style={{ marginLeft }}>
+    <div className={isChild ? classes.childItem : undefined}>
       <CustomLink href={_link}>
         <Group>
           <ThemeIcon color={color} variant="light">
             {icon}
           </ThemeIcon>
 
-          <Text size="sm">
+          <Text size="sm" inherit>
             {label}
             {isChild}
           </Text>
@@ -68,7 +70,9 @@ function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
 
       {/* Render child links */}
       {child &&
-        child.map((childLink) => <LinkItem key={childLink.label} {...childLink} isChild={true} />)}
+        child.map((childLink) => (
+          <LinkItem key={childLink.label} {...childLink} isChild={true} />
+        ))}
     </div>
   );
 }
@@ -79,35 +83,29 @@ export default function MainLinks() {
 
   const data = [
     {
-      icon: <IconHome2 size={defaultIconSize} />,
-      color: 'blue',
+      icon: <IconHome2 size={defaultIconSize} />, // home
+      color: palette.darkTeal,
       label: 'Home',
       link: '/',
     },
     {
-      icon: <IconSunset2 size={defaultIconSize} />,
-      color: 'grape',
+      icon: <IconSunset2 size={defaultIconSize} />, // vacations
+      color: palette.goldenYellow,
       label: 'Vacations',
       link: '/leaverequest',
     },
     {
-      icon: <IconClock size={defaultIconSize} />,
-      color: 'teal',
+      icon: <IconClock size={defaultIconSize} />, // timesheet
+      color: palette.primaryRed,
       label: 'Time Sheet',
       link: '/timesheet/create',
     },
     {
-      icon: <IconUserEdit size={'1.5rem'} color="blue" />,
-      color: 'teal',
+      icon: <IconUserEdit size={'1.5rem'} />,
+      color: palette.darkTeal,
       label: 'User Profile',
       link: '/staff/edit',
       // child: [
-      //   // {
-      //   //   icon: <IconUserPlus size={defaultIconSize} />,
-      //   //   color: 'cyan.5',
-      //   //   label: 'Create Profile',
-      //   //   link: '/staff',
-      //   // },
       //   {
       //     icon: <IconUserEdit size={defaultIconSize} />,
       //     color: 'cyan.5',
@@ -119,13 +117,13 @@ export default function MainLinks() {
 
     ...(activeUser?.role?.name === 'admin'
       ? [
-        {
-          icon: <IconSettings size={'1.5rem'} color="orange" />,
-          color: 'orange',
-          label: 'Settings',
-          link: '/admin',
-        },
-      ]
+          {
+            icon: <IconSettings size={'1.5rem'} />,
+            color: palette.darkOrange,
+            label: 'Settings',
+            link: '/admin',
+          },
+        ]
       : []),
     // {
     //   icon: <IconCalendarStats size={defaultIconSize} />,
@@ -134,6 +132,7 @@ export default function MainLinks() {
     //   link: '/calendar',
     // },
   ];
+
   return (
     <div>
       {data.map((item) => (
