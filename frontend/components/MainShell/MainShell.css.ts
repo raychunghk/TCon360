@@ -24,13 +24,17 @@ globalStyle('.fc-header-toolbar', {
 
 /* ── Header layout & title ─────────────────────────────────── */
 
+export const MainShell = style({
+  background: `${palette.ice} !important`
+})
 export const header = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '12px 20px',
-  height: 70,
-  backgroundColor: palette.burgundyDark,
+  height: 60,
+  background: `linear-gradient(90deg, ${palette.burgundyDarker} 0%, ${palette.burgundyDark} 55%, ${palette.navyDarker} 100%)`,
+  borderBottomStyle: `none !important`,
   color: 'rgba(255, 255, 255, 0.92)',
   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   borderBottom: '1px solid rgba(255,255,255,0.1)',
@@ -46,38 +50,30 @@ export const headerLeft = style({
 });
 
 export const headerIcon = style({
-  color: palette.amberLight,
+  color: palette.goldenYellow,
 });
 export const headerTitle = style({
   fontSize: 'clamp(18px, 2.5vw, 26px)',
   fontWeight: 800,
   letterSpacing: '-0.02em',
   lineHeight: 1,
-  display: 'inline-block',
 
-  background: `linear-gradient(90deg, #ffffff 0%, ${palette.creamLight} 60%, ${palette.amberLight} 100%)`,
+  // High-contrast gradient: Cream to very light Amber
+  background: `linear-gradient(180deg, #FFFFFF 0%, ${palette.creamLight} 60%, ${palette.amberLight} 100%)`,
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-  color: '#ffffff',
-  textShadow: '0 2px 0px rgba(0,0,0,0.4)',
-  paintOrder: 'stroke fill',
 
-  paddingBottom: '2px',
+  // Clean shadow for "lift" instead of stroke
+  filter: 'drop-shadow(0 2px 0px rgba(0,0,0,0.4))',
 
-  '@media': {
-    '(max-width: 768px)': {
-      fontSize: 'clamp(16px, 4vw, 22px)',
-      letterSpacing: '-0.3px',
-    },
-  },
-
+  display: 'inline-block',
+  transition: 'all 0.3s ease',
   selectors: {
     '&:hover': {
-      textShadow: '0 3px 6px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.4)',
       transform: 'translateY(-1px)',
-      background: `linear-gradient(90deg, #ffffff 0%, ${palette.creamLight} 60%, ${palette.amberLight} 100%)`,
-      transition: 'all 180ms ease',
+      filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))',
+      background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)',
+      WebkitBackgroundClip: 'text',
     },
   },
 });
@@ -93,7 +89,6 @@ export const welcomeText = style({
     },
   },
 });
-
 export const headerSubtitle = style({
   color: palette.creamLight,
   opacity: 0.85,
@@ -103,16 +98,15 @@ export const headerSubtitle = style({
   fontWeight: 500,
   marginLeft: '12px',
 });
-
 /* ── Sidebar & nav links ───────────────────────────────────── */
 
 export const sidebar = style({
   width: 260,
-  background: palette.navyDark,
-  borderRight: `1px solid ${palette.navyLight}`,
+  background: 'white',
+  borderRight: '1px solid #e2e8f0',
   padding: '16px 8px',
   overflowY: 'auto',
-  boxShadow: '2px 0 18px rgba(0,0,0,0.18)',
+  boxShadow: '2px 0 12px rgba(0,0,0,0.05)',
 });
 
 export const navLink = style({
@@ -128,32 +122,32 @@ export const navLink = style({
     top: 0,
     bottom: 0,
     width: 4,
-    background: palette.burgundy,
+    background: '#f97316',
     transform: 'scaleY(0)',
     transition: 'transform 0.3s ease',
   },
   selectors: {
     '&[data-active="true"]': {
-      background: paletteAlpha.burgundy15,
-      color: palette.creamLight,
+      background: 'rgba(249,115,22,0.1)',
+      color: '#d97706',
       fontWeight: 600,
     },
     '&[data-active="true"]::before': {
       transform: 'scaleY(1)',
     },
     '&:hover': {
-      background: paletteAlpha.burgundy10,
+      background: 'rgba(249,115,22,0.06)',
       transform: 'translateX(4px)',
-      boxShadow: '0 0 10px rgba(122, 38, 49, 0.18)',
+      boxShadow: '0 0 8px rgba(249,115,22,0.15)',
     },
   },
 });
 
 export const navLinkIcon = style({
-  color: palette.iceDark,
+  color: '#6b7280',
   selectors: {
     '&[data-active="true"] &': {
-      color: palette.burgundyLight,
+      color: '#f97316',
     },
   },
 });
@@ -161,12 +155,13 @@ export const navLinkIcon = style({
 /* ── Popover & sign-out button ─────────────────────────────── */
 
 export const popoverDropdown = style({
-  background: `linear-gradient(180deg, ${palette.navyDark} 0%, ${palette.navy} 55%, ${palette.burgundyDark} 100%)`,
+  background:
+    'linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e)',
   borderRadius: 12,
   color: 'white',
   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
   padding: 16,
-  border: '1px solid rgba(184, 201, 205, 0.35)',
+  border: '1px solid rgba(249,115,22,0.2)',
 });
 
 export const signOutButton = style({
@@ -179,12 +174,12 @@ export const signOutButton = style({
   fontWeight: 600,
   borderRadius: 8,
   padding: '8px 16px',
-  border: `1px solid ${paletteAlpha.burgundy25}`,
+  border: `1px solid ${paletteAlpha.primaryRed25}`,
   transition: 'all 160ms ease',
   ':hover': {
     backgroundColor: `${palette.burgundyLight} !important`,
-    borderColor: palette.burgundyLight,
-    boxShadow: `0 0 0 3px ${paletteAlpha.burgundy25}`,
+    borderColor: palette.darkOrange,
+    boxShadow: `0 0 0 3px ${paletteAlpha.primaryRed25}`,
   },
   ':active': {
     transform: 'translateY(1px)',
@@ -208,8 +203,8 @@ export const logoLink = style({
 // Footer container
 export const footer = style({
   height: 30,
-  backgroundColor: palette.ice,
-  borderTop: `1px solid ${palette.iceDark}`,
+  backgroundColor: 'var(--mantine-color-gray-0)',
+  borderTop: '1px solid var(--mantine-color-gray-3)',
 });
 
 // Footer content centering

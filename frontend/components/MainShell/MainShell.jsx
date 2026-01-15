@@ -138,11 +138,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
         collapsed: { mobile: !opened },
       }}
       padding="md"
-      styles={{
-        main: {
-          backgroundColor: palette.iceLight,
-        },
-      }}
+      className={classes.MainShell}
     >
       <AppShell.Header className={classes.header}>
        

@@ -1,11 +1,12 @@
 // components/Calendar/FrontPageCalendar.css.ts
-import { style } from '@vanilla-extract/css';
 import { palette } from '@/styles/palette';
+import { globalStyle, style } from '@vanilla-extract/css';
 
 export const calendarContainer = style({
-  background: 'white',
+  background: `${palette.iceLight} !important`,
   padding: '8px',
-  borderRadius: '5px',
+  borderRadius: '15px',
+  boxShadow: `initial`
 });
 
 export const calendarTheme = style({
@@ -23,62 +24,67 @@ export const calendarTheme = style({
     '--fc-button-active-bg-color': palette.burgundy,
     '--fc-button-active-border-color': palette.burgundyDark,
   },
-  selectors: {
-    // Scrollgrid styling
-    '& .fc .fc-scrollgrid, & .fc .fc-scrollgrid-section > *': {
-      background: palette.iceDark,
-    },
+});
 
-    // Column header styling
-    '& .fc .fc-col-header-cell': {
-      background: palette.cream,
-    },
+/**
+ * We use globalStyle to target FullCalendar's internal classes.
+ * We prefix them with `${calendarTheme}` to ensure these styles 
+ * only apply when they are inside our specific calendar component.
+ */
 
-    '& .fc .fc-col-header-cell-cushion': {
-      color: palette.navyDark,
-      fontWeight: 700,
-    },
+// Scrollgrid styling
+globalStyle(`${calendarTheme} .fc .fc-scrollgrid, ${calendarTheme} .fc .fc-scrollgrid-section > *`, {
+  background: palette.iceDark,
+});
 
-    // Day grid styling
-    '& .fc .fc-daygrid-day-frame': {
-      background: '#ffffff',
-      transition: 'background-color 120ms ease',
-    },
+// Column header styling
+globalStyle(`${calendarTheme} .fc .fc-col-header-cell`, {
+  background: palette.cream,
+});
 
-    '& .fc .fc-daygrid-day-frame:hover': {
-      background: palette.creamLight,
-    },
+globalStyle(`${calendarTheme} .fc .fc-col-header-cell-cushion`, {
+  color: palette.navyDark,
+  fontWeight: 700,
+});
 
-    '& .fc .fc-daygrid-day-number': {
-      color: palette.navyDark,
-      fontWeight: 600,
-    },
+// Day grid styling
+globalStyle(`${calendarTheme} .fc .fc-daygrid-day-frame`, {
+  background: '#ffffff',
+  transition: 'background-color 120ms ease',
+});
 
-    // Today styling
-    '& .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame': {
-      background: 'rgba(122, 38, 49, 0.08)',
-      boxShadow: `inset 0 0 0 2px ${palette.burgundy}`,
-    },
+globalStyle(`${calendarTheme} .fc .fc-daygrid-day-frame:hover`, {
+  background: palette.creamLight,
+});
 
-    // Event styling
-    '& .fc .fc-daygrid-event': {
-      background: palette.spruce,
-      borderColor: palette.spruceDark,
-      color: '#ffffff',
-    },
+globalStyle(`${calendarTheme} .fc .fc-daygrid-day-number`, {
+  color: palette.navyDark,
+  fontWeight: 600,
+});
 
-    '& .fc .fc-timegrid-event': {
-      background: palette.navy,
-      borderColor: palette.navyDark,
-      color: '#ffffff',
-    },
+// Today styling
+globalStyle(`${calendarTheme} .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame`, {
+  background: 'rgba(122, 38, 49, 0.08)',
+  boxShadow: `inset 0 0 0 2px ${palette.burgundy}`,
+});
 
-    '& .fc .fc-list-event-dot': {
-      borderColor: palette.burgundy,
-    },
+// Event styling
+globalStyle(`${calendarTheme} .fc .fc-daygrid-event`, {
+  background: palette.spruce,
+  borderColor: palette.spruceDark,
+  color: '#ffffff',
+});
 
-    '& .fc .fc-event-title': {
-      fontWeight: 600,
-    },
-  },
+globalStyle(`${calendarTheme} .fc .fc-timegrid-event`, {
+  background: palette.navy,
+  borderColor: palette.navyDark,
+  color: '#ffffff',
+});
+
+globalStyle(`${calendarTheme} .fc .fc-list-event-dot`, {
+  borderColor: palette.burgundy,
+});
+
+globalStyle(`${calendarTheme} .fc .fc-event-title`, {
+  fontWeight: 600,
 });
