@@ -3,15 +3,14 @@ import { style } from '@vanilla-extract/css';
 import { palette, paletteAlpha } from '@/styles/palette';
 
 export const navbar = style({
-  background:
-    'linear-gradient(180deg, rgba(7, 18, 24, 1) 0%, rgba(5, 14, 18, 1) 100%)',
+  background: `linear-gradient(180deg, ${palette.navyDark} 0%, ${palette.navy} 100%)`,
   color: 'rgba(255, 255, 255, 0.92)',
-  borderRight: `1px solid ${paletteAlpha.darkTeal55}`,
+  borderRight: `1px solid ${paletteAlpha.navyLight55}`,
   boxShadow: '2px 0 18px rgba(0, 0, 0, 0.25)',
 });
 
 export const divider = style({
-  borderColor: paletteAlpha.white10,
+  borderColor: 'rgba(184, 201, 205, 0.55)',
 });
 
 export const createTimesheetWrapper = style({
@@ -20,9 +19,9 @@ export const createTimesheetWrapper = style({
 });
 
 export const linksWrapper = style({
-  backgroundColor: paletteAlpha.white06,
-  border: `1px solid ${paletteAlpha.darkTeal35}`,
-  borderLeft: `3px solid ${palette.primaryRed}`,
+  backgroundColor: 'rgba(240, 244, 245, 0.08)',
+  border: '1px solid rgba(184, 201, 205, 0.35)',
+  borderLeft: `3px solid ${palette.burgundy}`,
   borderRadius: 12,
   padding: 10,
   boxShadow: `0 10px 28px ${paletteAlpha.black35}`,
