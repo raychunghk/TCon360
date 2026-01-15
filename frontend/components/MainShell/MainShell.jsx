@@ -130,7 +130,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
   return (
     <> 
     <AppShell
-      header={{ height: 60 }}
+      header={{ height: 70 }}
       footer={{ height: 30 }}
       navbar={{
         width: navbarwidth,
@@ -138,6 +138,11 @@ export function MainShell({ children, contentpadding = '10px' }) {
         collapsed: { mobile: !opened },
       }}
       padding="md"
+      styles={{
+        main: {
+          backgroundColor: palette.iceLight,
+        },
+      }}
     >
       <AppShell.Header className={classes.header}>
        

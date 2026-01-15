@@ -29,11 +29,11 @@ export const header = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '12px 20px',
-  height: 60,
-  background: `linear-gradient(90deg, ${palette.navyDark} 0%, ${palette.navy} 55%, ${palette.navyDark} 100%)`,
+  height: 70,
+  backgroundColor: palette.burgundyDark,
   color: 'rgba(255, 255, 255, 0.92)',
-  boxShadow: `0 2px 12px ${paletteAlpha.black35}`,
-  borderBottom: `1px solid ${paletteAlpha.navyLight55}`,
+  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+  borderBottom: '1px solid rgba(255,255,255,0.1)',
   position: 'sticky',
   top: 0,
   zIndex: 1000,
@@ -49,24 +49,19 @@ export const headerIcon = style({
   color: palette.amberLight,
 });
 export const headerTitle = style({
-  fontSize: 'clamp(18px, 2.5vw, 28px)',
-  fontWeight: 700,
-  letterSpacing: '-0.4px',
-  lineHeight: 1.2,
+  fontSize: 'clamp(18px, 2.5vw, 26px)',
+  fontWeight: 800,
+  letterSpacing: '-0.02em',
+  lineHeight: 1,
   display: 'inline-block',
 
-  background: `linear-gradient(90deg, ${palette.creamLight} 0%, ${palette.amberLight} 50%, ${palette.burgundyLight} 100%)`,
+  background: `linear-gradient(90deg, #ffffff 0%, ${palette.creamLight} 60%, ${palette.amberLight} 100%)`,
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
   color: '#ffffff',
-  WebkitTextStroke: `0.4px ${palette.amberDark}`,
-  textStroke: `0.4px ${palette.amberDark}`,
+  textShadow: '0 2px 0px rgba(0,0,0,0.4)',
   paintOrder: 'stroke fill',
-
-  // Optional subtle lift (no fog)
-
-  // === Updated text shadow – subtle, clean lift without heavy glow ===
 
   paddingBottom: '2px',
 
@@ -74,15 +69,14 @@ export const headerTitle = style({
     '(max-width: 768px)': {
       fontSize: 'clamp(16px, 4vw, 22px)',
       letterSpacing: '-0.3px',
-      textShadow: '0 2px 5px rgba(0, 0, 0, 0.7)',
     },
   },
 
   selectors: {
     '&:hover': {
-      textShadow:
-        '0 4px 12px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(122, 38, 49, 0.35)',
+      textShadow: '0 3px 6px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.4)',
       transform: 'translateY(-1px)',
+      background: `linear-gradient(90deg, #ffffff 0%, ${palette.creamLight} 60%, ${palette.amberLight} 100%)`,
       transition: 'all 180ms ease',
     },
   },
@@ -98,6 +92,16 @@ export const welcomeText = style({
       fontSize: '16px',
     },
   },
+});
+
+export const headerSubtitle = style({
+  color: palette.creamLight,
+  opacity: 0.85,
+  borderLeft: '1px solid rgba(255,255,255,0.2)',
+  paddingLeft: '12px',
+  fontSize: '14px',
+  fontWeight: 500,
+  marginLeft: '12px',
 });
 
 /* ── Sidebar & nav links ───────────────────────────────────── */
