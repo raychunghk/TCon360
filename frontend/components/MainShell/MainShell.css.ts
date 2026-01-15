@@ -30,10 +30,10 @@ export const header = style({
   justifyContent: 'space-between',
   padding: '12px 20px',
   height: 60,
-  background: `linear-gradient(90deg, rgba(5, 14, 18, 1) 0%, ${palette.darkTeal} 55%, rgba(5, 14, 18, 1) 100%)`,
+  background: `linear-gradient(90deg, ${palette.navyDark} 0%, ${palette.navy} 55%, ${palette.navyDark} 100%)`,
   color: 'rgba(255, 255, 255, 0.92)',
   boxShadow: `0 2px 12px ${paletteAlpha.black35}`,
-  borderBottom: `1px solid ${paletteAlpha.darkTeal55}`,
+  borderBottom: `1px solid ${paletteAlpha.navyLight55}`,
   position: 'sticky',
   top: 0,
   zIndex: 1000,
@@ -46,7 +46,7 @@ export const headerLeft = style({
 });
 
 export const headerIcon = style({
-  color: palette.goldenYellow,
+  color: palette.amberLight,
 });
 export const headerTitle = style({
   fontSize: 'clamp(18px, 2.5vw, 28px)',
@@ -55,15 +55,14 @@ export const headerTitle = style({
   lineHeight: 1.2,
   display: 'inline-block',
 
-  // === Updated gradient – softer, more elegant, better contrast on dark bg ===
-  background: `linear-gradient(90deg, #faeda4ff 0%, #ff8c00 50%, #ffd700 100%)`,
+  background: `linear-gradient(90deg, ${palette.creamLight} 0%, ${palette.amberLight} 50%, ${palette.burgundyLight} 100%)`,
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
-  color: '#ffffff',                        // ← solid white
-  WebkitTextStroke: '0.4px #ff8c00',       // thin orange stroke
-  textStroke: '0.4px #ff8c00',             // fallback
-  paintOrder: 'stroke fill',               // important: stroke behind fill
+  color: '#ffffff',
+  WebkitTextStroke: `0.4px ${palette.amberDark}`,
+  textStroke: `0.4px ${palette.amberDark}`,
+  paintOrder: 'stroke fill',
 
   // Optional subtle lift (no fog)
 
@@ -81,7 +80,8 @@ export const headerTitle = style({
 
   selectors: {
     '&:hover': {
-      textShadow: '0 4px 12px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(255, 215, 0, 0.35)',
+      textShadow:
+        '0 4px 12px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(122, 38, 49, 0.35)',
       transform: 'translateY(-1px)',
       transition: 'all 180ms ease',
     },
@@ -104,11 +104,11 @@ export const welcomeText = style({
 
 export const sidebar = style({
   width: 260,
-  background: 'white',
-  borderRight: '1px solid #e2e8f0',
+  background: palette.navyDark,
+  borderRight: `1px solid ${palette.navyLight}`,
   padding: '16px 8px',
   overflowY: 'auto',
-  boxShadow: '2px 0 12px rgba(0,0,0,0.05)',
+  boxShadow: '2px 0 18px rgba(0,0,0,0.18)',
 });
 
 export const navLink = style({
@@ -124,32 +124,32 @@ export const navLink = style({
     top: 0,
     bottom: 0,
     width: 4,
-    background: '#f97316',
+    background: palette.burgundy,
     transform: 'scaleY(0)',
     transition: 'transform 0.3s ease',
   },
   selectors: {
     '&[data-active="true"]': {
-      background: 'rgba(249,115,22,0.1)',
-      color: '#d97706',
+      background: paletteAlpha.burgundy15,
+      color: palette.creamLight,
       fontWeight: 600,
     },
     '&[data-active="true"]::before': {
       transform: 'scaleY(1)',
     },
     '&:hover': {
-      background: 'rgba(249,115,22,0.06)',
+      background: paletteAlpha.burgundy10,
       transform: 'translateX(4px)',
-      boxShadow: '0 0 8px rgba(249,115,22,0.15)',
+      boxShadow: '0 0 10px rgba(122, 38, 49, 0.18)',
     },
   },
 });
 
 export const navLinkIcon = style({
-  color: '#6b7280',
+  color: palette.iceDark,
   selectors: {
     '&[data-active="true"] &': {
-      color: '#f97316',
+      color: palette.burgundyLight,
     },
   },
 });
@@ -157,13 +157,12 @@ export const navLinkIcon = style({
 /* ── Popover & sign-out button ─────────────────────────────── */
 
 export const popoverDropdown = style({
-  background:
-    'linear-gradient(to top, #051937, #0a2448, #0e2f59, #123b6b, #15487e)',
+  background: `linear-gradient(180deg, ${palette.navyDark} 0%, ${palette.navy} 55%, ${palette.burgundyDark} 100%)`,
   borderRadius: 12,
   color: 'white',
   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
   padding: 16,
-  border: '1px solid rgba(249,115,22,0.2)',
+  border: '1px solid rgba(184, 201, 205, 0.35)',
 });
 
 export const signOutButton = style({
@@ -172,16 +171,16 @@ export const signOutButton = style({
   justifyContent: 'center',
   gap: 8,
   color: 'white',
-  backgroundColor: palette.primaryRed,
+  backgroundColor: `${palette.burgundy} !important`,
   fontWeight: 600,
   borderRadius: 8,
   padding: '8px 16px',
-  border: `1px solid ${paletteAlpha.primaryRed25}`,
+  border: `1px solid ${paletteAlpha.burgundy25}`,
   transition: 'all 160ms ease',
   ':hover': {
-    backgroundColor: palette.darkOrange,
-    borderColor: palette.darkOrange,
-    boxShadow: `0 0 0 3px ${paletteAlpha.primaryRed25}`,
+    backgroundColor: `${palette.burgundyLight} !important`,
+    borderColor: palette.burgundyLight,
+    boxShadow: `0 0 0 3px ${paletteAlpha.burgundy25}`,
   },
   ':active': {
     transform: 'translateY(1px)',
@@ -205,8 +204,8 @@ export const logoLink = style({
 // Footer container
 export const footer = style({
   height: 30,
-  backgroundColor: 'var(--mantine-color-gray-0)',
-  borderTop: '1px solid var(--mantine-color-gray-3)',
+  backgroundColor: palette.ice,
+  borderTop: `1px solid ${palette.iceDark}`,
 });
 
 // Footer content centering

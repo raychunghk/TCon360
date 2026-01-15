@@ -3,13 +3,12 @@ import { style } from '@vanilla-extract/css';
 import { palette, paletteAlpha } from '@/styles/palette';
 
 export const popoverDropdown = style({
-  background:
-    'linear-gradient(180deg, rgba(7, 18, 24, 1) 0%, rgba(5, 14, 18, 1) 100%)',
+  background: `linear-gradient(180deg, ${palette.navyDark} 0%, ${palette.navy} 55%, ${palette.burgundyDark} 100%)`,
   borderRadius: 10,
   color: 'white',
   boxShadow: `0 12px 40px ${paletteAlpha.black45}`,
   padding: 16,
-  border: `1px solid ${paletteAlpha.darkTeal35}`,
+  border: '1px solid rgba(184, 201, 205, 0.35)',
 });
 
 export const popoverButton = style({
@@ -18,16 +17,16 @@ export const popoverButton = style({
   justifyContent: 'center',
   gap: 8,
   color: 'white',
-  backgroundColor: palette.darkTeal,
+  backgroundColor: `${palette.burgundy} !important`,
   fontWeight: 600,
   borderRadius: 8,
   padding: '8px 14px',
-  border: `1px solid ${paletteAlpha.darkTeal55}`,
+  border: `1px solid ${palette.burgundyDark}`,
   transition: 'all 160ms ease',
   ':hover': {
-    backgroundColor: palette.primaryRed,
-    borderColor: palette.primaryRed,
-    boxShadow: `0 0 0 3px ${paletteAlpha.primaryRed25}`,
+    backgroundColor: `${palette.burgundyLight} !important`,
+    borderColor: palette.burgundyLight,
+    boxShadow: `0 0 0 3px ${paletteAlpha.burgundy25}`,
   },
   ':active': {
     transform: 'translateY(1px)',

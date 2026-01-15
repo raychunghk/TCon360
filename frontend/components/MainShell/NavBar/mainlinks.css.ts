@@ -12,12 +12,12 @@ export const button = style({
 
   selectors: {
     '&:hover': {
-      backgroundColor: paletteAlpha.primaryRed15,
+      backgroundColor: paletteAlpha.burgundy15,
       boxShadow: `0 6px 16px ${paletteAlpha.black35}`,
       transform: 'translateX(2px)',
     },
     '&:focus-visible': {
-      outline: `2px solid ${palette.orange}`,
+      outline: `2px solid ${palette.amberLight}`,
       outlineOffset: 2,
     },
   },
@@ -30,8 +30,8 @@ export const themeIcon = style({
 
   selectors: {
     [`${button}:hover &`]: {
-      backgroundColor: paletteAlpha.primaryRed25,
-      borderColor: palette.primaryRed,
+      backgroundColor: paletteAlpha.burgundy25,
+      borderColor: palette.burgundy,
     },
   },
 });

@@ -84,25 +84,25 @@ export default function MainLinks() {
   const data = [
     {
       icon: <IconHome2 size={defaultIconSize} />, // home
-      color: palette.darkTeal,
+      color: palette.navyLight,
       label: 'Home',
       link: '/',
     },
     {
       icon: <IconSunset2 size={defaultIconSize} />, // vacations
-      color: palette.goldenYellow,
+      color: palette.amberLight,
       label: 'Vacations',
       link: '/leaverequest',
     },
     {
       icon: <IconClock size={defaultIconSize} />, // timesheet
-      color: palette.primaryRed,
+      color: palette.burgundy,
       label: 'Time Sheet',
       link: '/timesheet/create',
     },
     {
       icon: <IconUserEdit size={'1.5rem'} />,
-      color: palette.darkTeal,
+      color: palette.spruce,
       label: 'User Profile',
       link: '/staff/edit',
       // child: [
@@ -119,7 +119,7 @@ export default function MainLinks() {
       ? [
           {
             icon: <IconSettings size={'1.5rem'} />,
-            color: palette.darkOrange,
+            color: palette.burgundyLight,
             label: 'Settings',
             link: '/admin',
           },
