@@ -48,21 +48,45 @@ export const headerLeft = style({
 export const headerIcon = style({
   color: palette.goldenYellow,
 });
-
 export const headerTitle = style({
-  fontSize: 22,
-  fontWeight: 800,
-  letterSpacing: -0.5,
-  display: 'inline',
-  color: '#ffffff',
-  textShadow: `0 1px 2px ${paletteAlpha.black45}`,
+  fontSize: 'clamp(18px, 2.5vw, 28px)',
+  fontWeight: 700,
+  letterSpacing: '-0.4px',
+  lineHeight: 1.2,
+  display: 'inline-block',
+
+  // === Updated gradient – softer, more elegant, better contrast on dark bg ===
+  background: `linear-gradient(90deg, #faeda4ff 0%, #ff8c00 50%, #ffd700 100%)`,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  color: '#ffffff',                        // ← solid white
+  WebkitTextStroke: '0.4px #ff8c00',       // thin orange stroke
+  textStroke: '0.4px #ff8c00',             // fallback
+  paintOrder: 'stroke fill',               // important: stroke behind fill
+
+  // Optional subtle lift (no fog)
+
+  // === Updated text shadow – subtle, clean lift without heavy glow ===
+
+  paddingBottom: '2px',
+
   '@media': {
-    'screen and (max-width: 768px)': {
-      fontSize: 16,
+    '(max-width: 768px)': {
+      fontSize: 'clamp(16px, 4vw, 22px)',
+      letterSpacing: '-0.3px',
+      textShadow: '0 2px 5px rgba(0, 0, 0, 0.7)',
+    },
+  },
+
+  selectors: {
+    '&:hover': {
+      textShadow: '0 4px 12px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(255, 215, 0, 0.35)',
+      transform: 'translateY(-1px)',
+      transition: 'all 180ms ease',
     },
   },
 });
-
 // In MainShell.css.ts
 export const welcomeText = style({
   color: 'rgba(255, 255, 255, 0.82)',

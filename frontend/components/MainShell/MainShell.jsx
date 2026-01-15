@@ -160,15 +160,10 @@ export function MainShell({ children, contentpadding = '10px' }) {
               />
             </Link>
             <Title ta="center" mt={5} component="div" fz={{ base: 18, sm: 20, md: 28 }} className={classes.headerTitle}>
-              <Text fw={"150"} inherit span className={classes.welcomeText}>Welcome to {' '}</Text>
-              <Text
-                inherit
-                variant="gradient"
-                gradient={{ from: palette.goldenYellow, to: palette.primaryRed, deg: 90 }}
-                span
-              >
+              {/* <Text fw={"300"} inherit span className={classes.welcomeText}>Welcome to {' '}</Text> */}
+              
                 {siteTitle} - Timesheet and Vacations manager
-              </Text>
+    
             </Title>
           </Group>
           <Group gap="xs">

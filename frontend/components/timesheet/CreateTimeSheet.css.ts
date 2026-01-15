@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
 export const submitSection = style({
-  display: 'flex',
+  display: 'flex !important',
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
