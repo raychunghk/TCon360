@@ -22,7 +22,7 @@ import CustomView from './customeView';
 
 const fullCalendarThemeCss = `
 .calendar-container {
-  background: ${palette.iceDark};
+  background: white;
 }
 
 .calendar-container .fc {
