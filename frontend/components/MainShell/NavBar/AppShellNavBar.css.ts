@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css';
 import { palette, paletteAlpha } from '@/styles/palette';
 
 export const navbar = style({
-  background: `linear-gradient(180deg, ${palette.navyDark} 0%, ${palette.navy} 100%)`,
+  background: `linear-gradient(180deg, ${palette.navyDarker} 0%, ${palette.navyDark} 100%)`,
   color: 'rgba(255, 255, 255, 0.92)',
   borderRight: `1px solid ${paletteAlpha.navyLight55}`,
   boxShadow: '2px 0 18px rgba(0, 0, 0, 0.25)',

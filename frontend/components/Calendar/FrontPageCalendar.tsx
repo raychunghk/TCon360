@@ -5,6 +5,7 @@ import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
 import { getBusinessDays } from '@/components/util/leaverequest.util';
 import { palette } from '@/styles/palette';
+import * as calendarStyles from './FrontPageCalendar.css';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
@@ -19,81 +20,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
-
-const fullCalendarThemeCss = `
-.calendar-container {
-  background: white;
-}
-
-.calendar-container .fc {
-  --fc-border-color: ${palette.iceDark};
-  --fc-page-bg-color: ${palette.iceDark};
-  --fc-neutral-bg-color: ${palette.ice};
-  --fc-neutral-text-color: ${palette.navyDark};
-  --fc-today-bg-color: rgba(122, 38, 49, 0.14);
-
-  --fc-button-bg-color: ${palette.navyDark};
-  --fc-button-border-color: ${palette.navyDark};
-  --fc-button-text-color: #ffffff;
-  --fc-button-hover-bg-color: ${palette.navy};
-  --fc-button-hover-border-color: ${palette.navy};
-  --fc-button-active-bg-color: ${palette.burgundy};
-  --fc-button-active-border-color: ${palette.burgundyDark};
-}
-
-.calendar-container .fc .fc-scrollgrid,
-.calendar-container .fc .fc-scrollgrid-section > * {
-  background: ${palette.iceDark};
-}
-
-.calendar-container .fc .fc-col-header-cell {
-  background: ${palette.cream};
-}
-
-.calendar-container .fc .fc-col-header-cell-cushion {
-  color: ${palette.navyDark};
-  font-weight: 700;
-}
-
-.calendar-container .fc .fc-daygrid-day-frame {
-  background: #ffffff;
-  transition: background-color 120ms ease;
-}
-
-.calendar-container .fc .fc-daygrid-day-frame:hover {
-  background: ${palette.creamLight};
-}
-
-.calendar-container .fc .fc-daygrid-day-number {
-  color: ${palette.navyDark};
-  font-weight: 600;
-}
-
-.calendar-container .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
-  background: rgba(122, 38, 49, 0.08);
-  box-shadow: inset 0 0 0 2px ${palette.burgundy};
-}
-
-.calendar-container .fc .fc-daygrid-event {
-  background: ${palette.spruce};
-  border-color: ${palette.spruceDark};
-  color: #ffffff;
-}
-
-.calendar-container .fc .fc-timegrid-event {
-  background: ${palette.navy};
-  border-color: ${palette.navyDark};
-  color: #ffffff;
-}
-
-.calendar-container .fc .fc-list-event-dot {
-  border-color: ${palette.burgundy};
-}
-
-.calendar-container .fc .fc-event-title {
-  font-weight: 600;
-}
-`;
 
 const FrontPageCalendar = () => {
   type FormType = 'create' | 'edit';
@@ -469,46 +395,47 @@ const FrontPageCalendar = () => {
           )}
         </Drawer>
       )}
-      <style data-fullcalendar id="fcstyle">{fullCalendarThemeCss}</style>
-      <div className="calendar-container">
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
-          aspectRatio={2.3}
-          initialView="dayGridMonth"
-          ref={calendarRef}
-          headerToolbar={{
-            center: 'title',
-            start: 'dayGridMonth,cv',
-            end: 'prev,next today',
-          }}
-          titleFormat={() => customTitle}
-          eventClick={fnEventclick}
-          events={calendarEvents}
-          selectable={true}
-          selectAllow={(selectinfo) => handleSelectAllow(selectinfo, calendarEvents)}
-          datesSet={(info) => {
-            handleMonthYearChange(info);
-          }}
-          select={handleDateSelect}
-          views={{
-            dayGridMonth: {
-              buttonText: 'Month',
-            },
-            listWeek: {
-              type: 'list',
-              buttonText: 'List',
-            },
-            timeGridFourDay: {
-              type: 'timeGrid',
-              duration: { days: 365 },
-            },
-            cv: {
-              component: (props) => <CustomView {...props} userStaff={activeStaff} />,
-              buttonText: 'Vacations',
-              events: calendarEvents,
-            },
-          }}
-        />
+      <div className={calendarStyles.calendarContainer}>
+        <div className={calendarStyles.calendarTheme}>
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
+            aspectRatio={2.3}
+            initialView="dayGridMonth"
+            ref={calendarRef}
+            headerToolbar={{
+              center: 'title',
+              start: 'dayGridMonth,cv',
+              end: 'prev,next today',
+            }}
+            titleFormat={() => customTitle}
+            eventClick={fnEventclick}
+            events={calendarEvents}
+            selectable={true}
+            selectAllow={(selectinfo) => handleSelectAllow(selectinfo, calendarEvents)}
+            datesSet={(info) => {
+              handleMonthYearChange(info);
+            }}
+            select={handleDateSelect}
+            views={{
+              dayGridMonth: {
+                buttonText: 'Month',
+              },
+              listWeek: {
+                type: 'list',
+                buttonText: 'List',
+              },
+              timeGridFourDay: {
+                type: 'timeGrid',
+                duration: { days: 365 },
+              },
+              cv: {
+                component: (props) => <CustomView {...props} userStaff={activeStaff} />,
+                buttonText: 'Vacations',
+                events: calendarEvents,
+              },
+            }}
+          />
+        </div>
       </div>
     </>
   );
