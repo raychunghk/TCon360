@@ -301,11 +301,9 @@ const FrontPageCalendar = () => {
   function setTitle(newDate: Date = new Date()) {
     const currentYear = newDate.getFullYear();
     const currentMonth = newDate.getMonth();
-    const formattedFirstDay = format(new Date(currentYear, currentMonth, 1), 'd-MMM-yyyy');
-    const formattedLastDay = format(new Date(currentYear, currentMonth + 1, 0), 'd-MMM-yyyy');
-    const dateRange = `${formattedFirstDay} to ${formattedLastDay}`;
+    const formattedMonthYear = format(newDate, 'MMM yyyy');
     if (!activeUser) {
-      setCustomTitle(dateRange);
+      setCustomTitle(formattedMonthYear);
       return;
     }
     const filteredEvents = calendarEvents.filter(
@@ -319,7 +317,7 @@ const FrontPageCalendar = () => {
       0
     );
     const chargeableDays = totalDaysInMonth - leaveDays;
-    const customTitleText = `${dateRange} (Chargable days: ${chargeableDays})`;
+    const customTitleText = `${formattedMonthYear} Chargable days: **${chargeableDays}**`;
     setCustomTitle(customTitleText);
     setChargeableDays(chargeableDays);
   }
@@ -400,6 +398,9 @@ const FrontPageCalendar = () => {
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
             aspectRatio={2.3}
+            contentHeight={"auto"}
+            height={"auto"}
+            expandRows={true}
             initialView="dayGridMonth"
             ref={calendarRef}
             headerToolbar={{
