@@ -2,11 +2,15 @@
 import { palette } from '@/styles/palette';
 import { globalStyle, style } from '@vanilla-extract/css';
 
+const calendarBorderRadius = '16px';
+const calendarBorderRadiusmore = '17px';
+
 export const calendarContainer = style({
   background: `${palette.iceLight} !important`,
   padding: '8px',
-  borderRadius: '15px',
-  boxShadow: `initial`
+  borderRadius: calendarBorderRadius,
+  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+  height: 'calc(100vh - 210px)', // Adjust 210px based on your header/footer height
 });
 
 export const calendarTheme = style({
@@ -32,9 +36,38 @@ export const calendarTheme = style({
  * only apply when they are inside our specific calendar component.
  */
 
+// Main view container for rounded corners
+globalStyle(`${calendarTheme} .fc-view-harness`, {
+  borderRadius: calendarBorderRadius,
+  overflow: 'hidden',
+  border: `1px solid ${palette.iceDark}`,
+});
+
+globalStyle(`${calendarTheme} .fc-scrollgrid`, {
+  borderRadius: calendarBorderRadius,
+});
+
+globalStyle(`${calendarTheme} .fc-col-header`, {
+  borderRadius: calendarBorderRadius,
+});
+
+globalStyle(`${calendarTheme} .fc-scrollgrid-section > th`, {
+  borderRadius: `0px ${calendarBorderRadius} 0px 0px`,
+});
+
+globalStyle(`${calendarTheme} .fc-scrollgrid-section > td`, {
+  borderRadius: `0px 0px ${calendarBorderRadius} ${calendarBorderRadius}`,
+});
+
+globalStyle(`${calendarTheme} thead .fc-scroller-harness`, {
+  borderRadius: `${calendarBorderRadiusmore} ${calendarBorderRadiusmore} 0 0`,
+  overflow: 'hidden',
+  //border: `1px solid ${palette.iceDark}`,
+});
+
 // Scrollgrid styling
 globalStyle(`${calendarTheme} .fc .fc-scrollgrid, ${calendarTheme} .fc .fc-scrollgrid-section > *`, {
-  background: palette.iceDark,
+  background: palette.ice,
 });
 
 // Column header styling
@@ -64,8 +97,9 @@ globalStyle(`${calendarTheme} .fc .fc-daygrid-day-number`, {
 
 // Today styling
 globalStyle(`${calendarTheme} .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame`, {
-  background: 'rgba(122, 38, 49, 0.08)',
+  background: 'rgba(244, 106, 124, 0.08)',
   boxShadow: `inset 0 0 0 2px ${palette.burgundy}`,
+  color: 'white !important',
 });
 
 // Event styling
@@ -88,3 +122,13 @@ globalStyle(`${calendarTheme} .fc .fc-list-event-dot`, {
 globalStyle(`${calendarTheme} .fc .fc-event-title`, {
   fontWeight: 600,
 });
+
+// Apply border-radius to the bottom corners of the calendar grid
+globalStyle(`${calendarTheme} table.fc-scrollgrid-sync-table > tbody > tr:last-child > td:first-child div`, {
+  borderBottomLeftRadius: calendarBorderRadius,
+});
+
+globalStyle(`${calendarTheme} table.fc-scrollgrid-sync-table > tbody > tr:last-child > td:last-child div`,
+  {
+    borderBottomRightRadius: calendarBorderRadius,
+  });

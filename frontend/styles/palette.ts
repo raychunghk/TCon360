@@ -6,11 +6,11 @@ export const palette = {
   darkOrange: 'rgba(216, 106, 10, 1)', // #D8690A
 
   // Navy Family (5 levels)
-  navy: '#3F5175',
+  navy: '#314c84ff',
   navyLight: '#5C72A1',
   navyLightest: '#6B92C9',
-  navyDark: '#2A3855',
-  navyDarker: '#1A2536',
+  navyDark: '#1a315dff',
+  navyDarker: '#162741ff',
 
   // Burgundy Family (5 levels)
   burgundy: '#7A2631',
