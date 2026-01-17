@@ -131,7 +131,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
     <> 
     <AppShell
       header={{ height: 70 }}
-      footer={{ height: 30 }}
+      footer={{ height: 60 }}
       navbar={{
         width: navbarwidth,
         breakpoint: 'sm',

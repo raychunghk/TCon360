@@ -151,7 +151,7 @@ export default function CreateTimesheetPage({
   };
 
   return (
-    <>
+    <div className={classes.container}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <MyCard title="Create TimeSheet" cardwidth={200}>
           <Grid pb={5} ta="center">
@@ -192,6 +192,7 @@ export default function CreateTimesheetPage({
               loading={submitting}
               maw="70%"
               radius="md"
+              className={classes.submitButton}
             >
               Submit
             </Button>
@@ -220,6 +221,6 @@ export default function CreateTimesheetPage({
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
-    </>
+    </div>
   );
 }
