@@ -1,20 +1,31 @@
 import { style } from '@vanilla-extract/css';
-import { palette } from '@/styles/palette';
+import { palette, paletteAlpha } from '@/styles/palette';
 
-// Modern theme styling for CreateTimeSheet
+// Modern "Create Timesheet" widget styling
 export const container = style({
-  background: palette.white,
+  background: paletteAlpha.white06,
+  border: `1px solid ${paletteAlpha.white10}`,
   borderRadius: '16px',
-  padding: '24px',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+  padding: '20px',
+  boxShadow: 'none',
 });
 
+// Legacy export (kept for compatibility)
 export const header = style({
   fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
   fontWeight: 700,
   color: palette.navyDarker,
   marginBottom: '20px',
   letterSpacing: '-0.02em',
+});
+
+export const widgetTitle = style({
+  fontSize: '0.85rem',
+  textTransform: 'uppercase',
+  letterSpacing: '1px',
+  color: palette.slate,
+  marginBottom: '16px',
+  fontWeight: 700,
 });
 
 export const monthGrid = style({
@@ -51,30 +62,25 @@ export const monthChipActive = style([
 
 export const submitButton = style({
   width: '100%',
-  padding: '12px 20px',
+  padding: '12px',
   backgroundColor: palette.burgundy,
   color: palette.white,
   border: 'none',
   borderRadius: '10px',
   fontWeight: 700,
-  fontSize: '1rem',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+  boxShadow: `0 4px 12px ${paletteAlpha.black35}`,
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
   ':hover': {
     backgroundColor: palette.burgundyDark,
     transform: 'translateY(-2px)',
-    boxShadow: '0 6px 16px rgba(0,0,0,0.2)',
+    boxShadow: `0 6px 16px ${paletteAlpha.black45}`,
   },
   ':active': {
+    backgroundColor: palette.burgundyDarker,
     transform: 'translateY(0)',
   },
 });
 
-// Legacy export for backward compatibility
 export const submitSection = style({
-  display: 'flex !important',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100%',
+  marginTop: '16px',
 });
