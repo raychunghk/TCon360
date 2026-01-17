@@ -42,9 +42,15 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
       setMainshellOverlayVisible(true); // Show overlay for different route
     }
   };
+  
+  // Check if route is active
+  const isActive = (href === '/') 
+    ? (pathname === '/' || pathname === '') 
+    : pathname.startsWith(href);
+  
   return (
     <Link href={href} className={classes.link} onClick={handleClick}>
-      <UnstyledButton className={classes.button}>{children}</UnstyledButton>
+      <UnstyledButton className={`${classes.button} ${isActive ? classes.buttonActive : ''}`}>{children}</UnstyledButton>
     </Link>
   );
 }

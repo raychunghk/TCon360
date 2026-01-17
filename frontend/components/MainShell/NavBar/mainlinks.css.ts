@@ -23,6 +23,21 @@ export const button = style({
   },
 });
 
+// Active state for button
+export const buttonActive = style({
+  backgroundColor: palette.navy,
+  color: palette.white,
+  fontWeight: 600,
+  boxShadow: `inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 12px ${paletteAlpha.black35}`,
+  
+  selectors: {
+    '&:hover': {
+      backgroundColor: palette.navyLight,
+      transform: 'translateX(2px)',
+    },
+  },
+});
+
 // Style for the ThemeIcon wrapper or the icon itself
 export const themeIcon = style({
   // Your normal icon styles here...

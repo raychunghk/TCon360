@@ -7,6 +7,7 @@ export const navbar = style({
   color: 'rgba(255, 255, 255, 0.92)',
   borderRight: `1px solid ${paletteAlpha.navyLight55}`,
   boxShadow: '2px 0 18px rgba(0, 0, 0, 0.25)',
+  zIndex: 100, // Navbar below header/footer
 });
 
 export const divider = style({
@@ -25,4 +26,5 @@ export const linksWrapper = style({
   borderRadius: 12,
   padding: 10,
   boxShadow: `0 10px 28px ${paletteAlpha.black35}`,
+  zIndex: 100, // Same as navbar
 });
