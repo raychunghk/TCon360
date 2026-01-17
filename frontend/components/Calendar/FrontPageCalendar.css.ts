@@ -6,11 +6,16 @@ const calendarBorderRadius = '16px';
 const calendarBorderRadiusmore = '17px';
 
 export const calendarContainer = style({
-  //background: `${palette.iceLight} !important`,
+  minHeight: '700px',
+  height: 'calc(100vh - 70px - 60px)', // 100vh - header - footer
+  maxHeight: '100vh',
+  overflow: 'auto',
   padding: '8px',
-  //borderRadius: calendarBorderRadius,
-  //boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-  height: 'calc(100vh - 140px)', // Adjust 210px based on your header/footer height
+});
+
+export const fullCalendarWrapper = style({
+  height: '100%',
+  width: '100%',
 });
 
 export const calendarTheme = style({

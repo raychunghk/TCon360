@@ -12,15 +12,12 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { MonthPicker } from '@mantine/dates';
 import { IconTableExport } from '@tabler/icons-react';
 import axios from 'axios';
 import download from 'downloadjs';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import MyCard from '../MyCard';
 import * as classes from './CreateTimeSheet.css';
-import styles from './mp.module.css';
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize;
 }
@@ -150,53 +147,71 @@ export default function CreateTimesheetPage({
     }
   };
 
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const handleMonthSelect = (monthName: string) => {
+    const monthIndex = months.indexOf(monthName);
+    const newDate = new Date(displayDate.getFullYear(), monthIndex, 1);
+    handleMonthChange(newDate);
+  };
+
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title="Create TimeSheet" cardwidth={200}>
-          <Grid pb={5} ta="center">
-            <Grid.Col span={12}>
-              <Group justify="center">
-                <MonthPicker
-                  size={pickersize}
-                  date={displayDate}
-                  onChange={handleMonthChange}
-                  value={selectedMonth ?? null}
-                  onRateChange={setDisplayDate}
-                  className={styles.monthPickerButtons}
-                  ref={monthPickerRef}
-                />
-              </Group>
-            </Grid.Col>
-
-            <Grid.Col span={12}>
-              <Group justify="center">
-                {fileid && (
-                  <Button
-                    component="a"
-                    target="_blank"
-                    leftSection={<IconTableExport size="1rem" />}
-                    href={`${basepath}/api/staff/download/${fileid}`}
-                  >
-                    Download TimeSheet
-                  </Button>
-                )}
-              </Group>
-            </Grid.Col>
-          </Grid>
-
-          <Card.Section bg="indigo.2" py="md" className={classes.submitSection}>
-            <Button
-              type="submit"
-              fullWidth
-              loading={submitting}
-              maw="70%"
-              radius="md"
+    <div className={classes.container}>
+      <h2 className={classes.header}>Create Timesheet</h2>
+      
+      <div className={classes.monthGrid}>
+        {months.map((month) => {
+          const monthIndex = months.indexOf(month);
+          const isActive = selectedMonth && selectedMonth.getMonth() === monthIndex && 
+                           selectedMonth.getFullYear() === displayDate.getFullYear();
+          return (
+            <div
+              key={month}
+              className={`
+                ${classes.monthChip}
+                ${isActive ? classes.monthChipActive : ''}
+              `}
+              onClick={() => handleMonthSelect(month)}
             >
-              Submit
-            </Button>
-          </Card.Section>
-        </MyCard>
+              {month}
+            </div>
+          );
+        })}
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid pb={5} ta="center">
+          <Grid.Col span={12}>
+            <Group justify="center">
+              {fileid && (
+                <Button
+                  component="a"
+                  target="_blank"
+                  leftSection={<IconTableExport size="1rem" />}
+                  href={`${basepath}/api/staff/download/${fileid}`}
+                >
+                  Download TimeSheet
+                </Button>
+              )}
+            </Group>
+          </Grid.Col>
+        </Grid>
+
+        <Card.Section bg="indigo.2" py="md" className={classes.submitSection}>
+          <Button
+            type="submit"
+            fullWidth
+            loading={submitting}
+            maw="70%"
+            radius="md"
+            className={classes.submitButton}
+          >
+            Submit Period
+          </Button>
+        </Card.Section>
       </form>
 
       <Modal.Root opened={modalOpen} onClose={handleModalClose}>

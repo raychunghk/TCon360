@@ -396,13 +396,12 @@ const FrontPageCalendar = () => {
           )}
         </Drawer>
       )}
-      <div className={calendarStyles.calendarContainer}>
-        <div className={calendarStyles.calendarTheme}>
+      <div className={`${calendarStyles.gridWrapper} ${calendarStyles.calendarContainer}`}>
+        <div className={`${calendarStyles.calendarTheme} ${calendarStyles.fullCalendarWrapper}`}>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
-            aspectRatio={2.3}
             contentHeight={"auto"}
-            height={"auto"}
+            height={"100%"}
             expandRows={true}
             initialView="dayGridMonth"
             ref={calendarRef}

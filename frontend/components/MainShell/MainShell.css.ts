@@ -202,12 +202,15 @@ export const logoLink = style({
 
 // Footer container
 export const footer = style({
-  height: 30,
-  backgroundColor: 'var(--mantine-color-gray-0)',
-  borderTop: '1px solid var(--mantine-color-gray-3)',
+  height: 60,
+  backgroundColor: palette.ice.light,
+  color: palette.navyDarker,
+  borderTop: `1px solid ${palette.ice.darker}`,
+  zIndex: 9999,
+  position: 'relative',
 });
 
 // Footer content centering
 export const footerCenter = style({
-  height: 30,
+  height: 60,
 });
