@@ -55,7 +55,7 @@ const tabs: TabConfig[] = [
         value: 'themeManagement',
         label: 'Change Theme',
         icon: <IconSunMoon size={20} />,
-        component: <ColorSchemeToggle />,
+        component: <ThemeSwitch />,
     },
 ];
 
