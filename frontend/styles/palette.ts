@@ -24,9 +24,14 @@ export const palette = {
   greyLight: '#C2C2C2',
   greyDark: '#7A7A7A',
 
-  ice: '#E1E9EB',
-  iceLight: '#F0F4F5',
-  iceDark: '#B8C9CD',
+  // Ice color family - 5 levels
+  ice: {
+    lightest: '#FAFBFC', // ultra light
+    light: '#F4F7F9', // light
+    base: '#E8EEF2', // neutral (new middle)
+    darker: '#D6E0E9', // darker (was ice-dark)
+    darkest: '#C0CDD6', // darkest (new darkest)
+  },
 
   cream: '#EFE6D5',
   creamLight: '#F7F2E9',
@@ -35,6 +40,10 @@ export const palette = {
   amber: '#75633F',
   amberLight: '#99845B',
   amberDark: '#52452C',
+
+  slate: '#6C7280',
+  white: '#FFFFFF',
+  roseLight: '#FDEFF0',
 
   spruce: '#267A6F',
   spruceLight: '#44A69A',

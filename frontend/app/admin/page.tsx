@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
+import { ThemeSwitch } from '@/components/ThemeSwitch/ThemeSwitch';
 import { MainShell } from '@/components/MainShell/MainShell';
 import BackupRestoreTab from '@/components/admin/BackupRestoreTab';
 import CalendarManagementTab from '@/components/admin/CalendarManagerTab';
@@ -55,7 +55,7 @@ const tabs: TabConfig[] = [
         value: 'themeManagement',
         label: 'Change Theme',
         icon: <IconSunMoon size={20} />,
-        component: <ColorSchemeToggle />,
+        component: <ThemeSwitch />,
     },
 ];
 

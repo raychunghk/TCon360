@@ -19,6 +19,10 @@ import { useShallow } from 'zustand/react/shallow'; // Import useShallow
 import * as calendarStyles from './FrontPageCalendar.css';
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
+import { getTheme } from '@/styles/themes';
+
+// Apply modern theme by default
+const currentTheme = getTheme('modern');
 
 const FrontPageCalendar = () => {
   type FormType = 'create' | 'edit';
