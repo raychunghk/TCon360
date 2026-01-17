@@ -1,12 +1,12 @@
 'use client'
-import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
+import { ThemeSwitch } from '@/components/ThemeSwitch/ThemeSwitch';
 import { Welcome } from '@/components/Welcome/Welcome';
 
 export default function Page() {
   return (
     <>
       <Welcome />
-      <ColorSchemeToggle />
+      <ThemeSwitch />
     </>
   );
 }
