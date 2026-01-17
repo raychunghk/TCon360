@@ -152,8 +152,9 @@ export default function CreateTimesheetPage({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <MyCard title="Create TimeSheet" cardwidth={200}>
+      <div className={classes.container}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <MyCard title="Create TimeSheet" cardwidth={200}>
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
@@ -196,8 +197,9 @@ export default function CreateTimesheetPage({
               Submit
             </Button>
           </Card.Section>
-        </MyCard>
-      </form>
+          </MyCard>
+        </form>
+      </div>
 
       <Modal.Root opened={modalOpen} onClose={handleModalClose}>
         <Modal.Overlay />
