@@ -1,34 +1,38 @@
-'use client'
+'use client';
+
 import { Card, Text } from '@mantine/core';
 import commonstyle from '../styles/common.module.css';
 
-function MyCard({ title, children, cardwidth = 500, className }) {
+function MyCard({
+  title,
+  children,
+  cardwidth = 500,
+  className,
+  headerClassName,
+}) {
+  const sectionClassName = headerClassName
+    ? headerClassName
+    : commonstyle.mySection;
+
   return (
     <Card
       miw={cardwidth}
       withBorder
       className={`${commonstyle.mycard} ${className || ''}`}
-      // style={{
-      //   backgroundColor:
-      //     theme.colorScheme === 'dark'
-      //       ? theme.colors.dark[6]
-      //       : theme.colors.gray[0],
-      //   borderRadius: theme.radius.md,
-      //   '&:hover': {
-      //     backgroundColor:
-      //       theme.colorScheme === 'dark'
-      //         ? theme.colors.dark[5]
-      //         : theme.colors.gray[1],
-      //   },
-      // }}
     >
       <Card.Section
-        className={commonstyle.mySection}
-        mah={60}
-        p={8}
-        ta="center"
+        className={sectionClassName}
+        inheritPadding={!!headerClassName}
+        mah={headerClassName ? undefined : 60}
+        p={headerClassName ? undefined : 8}
+        ta={headerClassName ? 'left' : 'center'}
       >
-        <Text fw={600} fz={'1.1rem'} c="white">
+        <Text
+          inherit={!!headerClassName}
+          fw={headerClassName ? undefined : 600}
+          fz={headerClassName ? undefined : '1.1rem'}
+          c={headerClassName ? undefined : 'white'}
+        >
           {title}
         </Text>
       </Card.Section>

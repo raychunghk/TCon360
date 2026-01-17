@@ -23,10 +23,12 @@ import * as classes from './CreateTimeSheet.css';
 import styles from './mp.module.css';
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize;
+  cardWidth?: number;
 }
 
 export default function CreateTimesheetPage({
   pickersize = 'md',
+  cardWidth = 200,
 }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -152,9 +154,13 @@ export default function CreateTimesheetPage({
 
   return (
     <>
-      <div className={classes.container}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <MyCard title="Create TimeSheet" cardwidth={200}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <MyCard
+          title="Create TimeSheet"
+          cardwidth={cardWidth}
+          className={classes.container}
+          headerClassName={classes.widgetTitle}
+        >
           <Grid pb={5} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
@@ -186,20 +192,20 @@ export default function CreateTimesheetPage({
             </Grid.Col>
           </Grid>
 
-          <Card.Section bg="indigo.2" py="md" className={classes.submitSection}>
+          <Card.Section inheritPadding className={classes.submitSection}>
             <Button
               type="submit"
               fullWidth
               loading={submitting}
-              maw="70%"
+              disabled={submitting}
               radius="md"
+              className={classes.submitButton}
             >
-              Submit
+              {submitting ? 'Submitting...' : 'Submit'}
             </Button>
           </Card.Section>
-          </MyCard>
-        </form>
-      </div>
+        </MyCard>
+      </form>
 
       <Modal.Root opened={modalOpen} onClose={handleModalClose}>
         <Modal.Overlay />
