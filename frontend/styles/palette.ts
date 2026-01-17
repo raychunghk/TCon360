@@ -4,6 +4,7 @@ export const palette = {
   goldenYellow: 'rgba(242, 182, 4, 1)', // #F2B604
   orange: 'rgba(242, 159, 4, 1)', // #F29F04
   darkOrange: 'rgba(216, 106, 10, 1)', // #D8690A
+  activeGold: '#dc8f16',
 
   // Navy Family (5 levels)
   navy: '#314c84ff',

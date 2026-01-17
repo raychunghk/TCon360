@@ -6,11 +6,11 @@ const calendarBorderRadius = '16px';
 const calendarBorderRadiusmore = '17px';
 
 export const calendarContainer = style({
-  background: `${palette.iceLight} !important`,
+  //background: `${palette.iceLight} !important`,
   padding: '8px',
-  borderRadius: calendarBorderRadius,
-  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-  height: 'calc(100vh - 210px)', // Adjust 210px based on your header/footer height
+  //borderRadius: calendarBorderRadius,
+  //boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+  height: 'calc(100vh - 140px)', // Adjust 210px based on your header/footer height
 });
 
 export const calendarTheme = style({
@@ -41,6 +41,7 @@ globalStyle(`${calendarTheme} .fc-view-harness`, {
   borderRadius: calendarBorderRadius,
   overflow: 'hidden',
   border: `1px solid ${palette.iceDark}`,
+  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
 });
 
 globalStyle(`${calendarTheme} .fc-scrollgrid`, {
@@ -97,9 +98,37 @@ globalStyle(`${calendarTheme} .fc .fc-daygrid-day-number`, {
 
 // Today styling
 globalStyle(`${calendarTheme} .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame`, {
-  background: 'rgba(244, 106, 124, 0.08)',
+  background: 'rgb(239 211 218);',
   boxShadow: `inset 0 0 0 2px ${palette.burgundy}`,
   color: 'white !important',
+});
+
+// Weekend-specific styling
+globalStyle(`${calendarTheme} .fc-day-sun, ${calendarTheme} .fc-day-sat`, {
+  backgroundColor: palette.ice,
+});
+
+globalStyle(`${calendarTheme} .fc-day-sun .fc-daygrid-day-number, ${calendarTheme} .fc-day-sat .fc-daygrid-day-number`, {
+  color: `${palette.amberDark} !important`,
+  fontWeight: 700,
+});
+
+// Style for .clsweekend
+globalStyle(`${calendarTheme} .clsweekend `, {
+  color: `${palette.amberDark} !important`,
+  fontWeight: 700,
+});
+
+globalStyle(`${calendarTheme} .clsweekend  `, {
+  backgroundColor: `${palette.iceDark} !important`,
+});
+
+// Style for .clsPublicHoliday
+globalStyle(`${calendarTheme} .clsPublicHoliday .fc-daygrid-day-frame`, {
+  background: `linear-gradient(0deg, ${palette.burgundyLighter} 0%, ${palette.burgundyLight} 48%, ${palette.iceLight} 88%) !important`,
+});
+globalStyle(`${calendarTheme} .clsPublicHoliday .fc-daygrid-day-number`, {
+  color: `${palette.burgundyDark} !important`,
 });
 
 // Event styling

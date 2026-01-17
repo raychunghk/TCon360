@@ -25,7 +25,7 @@ globalStyle('.fc-header-toolbar', {
 /* ── Header layout & title ─────────────────────────────────── */
 
 export const MainShell = style({
-  background: `${palette.ice} !important`
+  background: `${palette.iceLight} !important`
 })
 export const header = style({
   display: 'flex',

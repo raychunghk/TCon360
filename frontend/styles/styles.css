@@ -2,14 +2,14 @@ html,
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
-
+/*
 .clsweekend {
   color: #ca5478;
   font-weight: bold;
   opacity: 0.8 !important;
   border-color: #f89292;
   background: #fce6b4 !important;
-}
+}*/
 
 .clsPublicHoliday {
   color: rgb(241, 68, 68);

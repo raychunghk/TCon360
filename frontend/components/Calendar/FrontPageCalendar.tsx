@@ -4,8 +4,6 @@ import LeaveRequestForm from '@/components/LeaveRequest/LeaveRequestForm';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
 import { getBusinessDays } from '@/components/util/leaverequest.util';
-import { palette } from '@/styles/palette';
-import * as calendarStyles from './FrontPageCalendar.css';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
@@ -18,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow'; // Import useShallow
+import * as calendarStyles from './FrontPageCalendar.css';
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
 
@@ -317,7 +316,7 @@ const FrontPageCalendar = () => {
       0
     );
     const chargeableDays = totalDaysInMonth - leaveDays;
-    const customTitleText = `${formattedMonthYear} Chargable days: **${chargeableDays}**`;
+    const customTitleText = `${formattedMonthYear} Chargable days: ${chargeableDays}`;
     setCustomTitle(customTitleText);
     setChargeableDays(chargeableDays);
   }
