@@ -27,4 +27,6 @@ export const linksWrapper = style({
   padding: 10,
   boxShadow: `0 10px 28px ${paletteAlpha.black35}`,
   zIndex: 100, // Same as navbar
+  width: '280px', // Align with CreateTimeSheet card width
+  alignSelf: 'center', // Center the wrapper in the navbar
 });

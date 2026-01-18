@@ -4,10 +4,11 @@ import { style } from '@vanilla-extract/css';
 // Parent button/link container
 export const button = style({
   display: 'block',
-  padding: 'var(--mantine-spacing-sm)',
+  padding: 'calc(var(--mantine-spacing-sm) - 5px) var(--mantine-spacing-sm)',
   borderRadius: 10,
   width: '100%',
-  maxWidth: 200,
+  maxWidth: 280,
+  marginTop: '5px',
   transition: 'background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease',
 
   selectors: {
@@ -26,7 +27,7 @@ export const button = style({
 // Active state for button
 export const buttonActive = style({
   backgroundColor: palette.navy,
-  color: palette.white,
+  color: palette.goldenYellow,
   fontWeight: 600,
   boxShadow: `inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 12px ${paletteAlpha.black35}`,
   
