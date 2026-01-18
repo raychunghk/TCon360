@@ -14,7 +14,7 @@ type ConfigProps = {
     useReverseProxy: boolean;
 };
 
-export default function ClientLayout({
+function ClientLayoutInner({
     children,
     config,
 }: {
@@ -111,19 +111,30 @@ export default function ClientLayout({
         );
     }
     if (pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup')) {
-        console.log('ClientLayout: Rendering loading state', { pathname });
+        console.log('ClientLayout: Rendering auth state', { pathname });
         return (
-            <Providers>
-                <Providers>{children}</Providers>
-            </Providers>
+            <Providers>{children}</Providers>
         );
     }
     console.log('ClientLayout: Rendering children', { pathname, sessionStatus, isAuthenticated });
 
     return (
+        <Providers>{children}</Providers>
+    );
+}
+
+export default function ClientLayout({
+    children,
+    config,
+}: {
+    children: React.ReactNode;
+    config: ConfigProps;
+}) {
+    return (
         <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
-            {/* <SessionPoller interval={10000} /> */}
-            <Providers>{children}</Providers>
+            <ClientLayoutInner config={config}>
+                {children}
+            </ClientLayoutInner>
         </SessionProvider>
     );
 }

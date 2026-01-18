@@ -8,7 +8,6 @@ import '@/styles/styles.css';
 import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
-import { SessionProvider } from 'next-auth/react';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Derive faviconUrl here, as it's part of the static head content
@@ -16,7 +15,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 
   return (
-    <html lang="en"  {...mantineHtmlProps}>
+    <html lang="en" {...mantineHtmlProps} suppressHydrationWarning>
       <head >
 
         <ColorSchemeScript defaultColorScheme="auto" />
@@ -33,17 +32,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
 
-        <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
-          <ClientLayout
-            config={{
-              basepath: config.basepath,
-              prefix: config.prefix,
-              useReverseProxy: config.useReverseProxy,
-            }}
+        <ClientLayout
+          config={{
+            basepath: config.basepath,
+            prefix: config.prefix,
+            useReverseProxy: config.useReverseProxy,
+          }}
 
-          >
-            {children}
-          </ClientLayout></SessionProvider>
+        >
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );
