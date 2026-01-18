@@ -105,14 +105,16 @@ export default function CreateTimesheetPage({
     if (!init) return;
 
     const firstOfMonth = new Date(init.getFullYear(), init.getMonth(), 1);
+    const safeDateForComparison = ensureDate(displayDate);
+    if (!safeDateForComparison) return;  // Skip if invalid
 
-    // Prevent unnecessary updates / loops
     if (
-      firstOfMonth.getFullYear() !== displayDate.getFullYear() ||
-      firstOfMonth.getMonth() !== displayDate.getMonth()
+      firstOfMonth.getFullYear() !== safeDateForComparison.getFullYear() ||
+      firstOfMonth.getMonth() !== safeDateForComparison.getMonth()
     ) {
       setDisplayDate(firstOfMonth);
     }
+
   }, [selectedMonth, timesheetDefaultDate]);
 
   // When user changes month/year in picker → update store

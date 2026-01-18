@@ -33,6 +33,17 @@ export const palette = {
     darkest: '#C0CDD6', // darkest (new darkest)
   },
 
+  // Pearl color family - 7 levels
+  pearl: {
+    lightest: '#FFFFFF',
+    lighter: '#FCFDFE',
+    light: '#FAFBFC',
+    base: '#F8FAFC',
+    dark: '#E9ECF0',
+    darker: '#DAE0E5',
+    darkest: '#CBD3DA',
+  },
+
   cream: '#EFE6D5',
   creamLight: '#F7F2E9',
   creamDark: '#D1C1A2',

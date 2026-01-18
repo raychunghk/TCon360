@@ -1,5 +1,5 @@
 // components/Calendar/FrontPageCalendar.css.ts
-import { palette } from '@/styles/palette';
+import { palette, paletteAlpha } from '@/styles/palette';
 import { globalStyle, style } from '@vanilla-extract/css';
 
 const calendarBorderRadius = '16px';
@@ -77,9 +77,14 @@ globalStyle(`${calendarTheme} .fc .fc-scrollgrid, ${calendarTheme} .fc .fc-scrol
 
 // Column header styling
 globalStyle(`${calendarTheme} .fc .fc-col-header-cell`, {
-  background: palette.cream,
+  background: palette.pearl.dark,
 });
-
+globalStyle(`${calendarTheme} .fc .fc-day-sun`, {
+  background: paletteAlpha.burgundy15,
+});
+globalStyle(`${calendarTheme} .fc .fc-day-sat`, {
+  background: paletteAlpha.burgundy15,
+});
 globalStyle(`${calendarTheme} .fc .fc-col-header-cell-cushion`, {
   color: palette.navyDark,
   fontWeight: 700,
@@ -121,7 +126,13 @@ globalStyle(`${calendarTheme} .fc-day-sun .fc-daygrid-day-number, ${calendarThem
 globalStyle(`${calendarTheme} .clsweekend `, {
   color: `${palette.navyDarker} !important`,
   fontWeight: 700,
-  backgroundColor: `${palette.ice.darkest} !important`,
+  backgroundColor: `${palette.cream} !important`,
+  opacity: '0.6 !important',
+
+});
+globalStyle(`${calendarTheme} .clsweekend .fc-event-title`, {
+  color: `${palette.burgundy} !important`,
+
 
 });
 
@@ -137,7 +148,7 @@ globalStyle(`${calendarTheme} .clsPublicHoliday .fc-daygrid-day-number`, {
 // Event styling
 globalStyle(`${calendarTheme} .fc .fc-daygrid-event`, {
   background: palette.spruce,
-  borderColor: palette.spruceDark,
+  borderColor: palette.ice.base,
   color: '#ffffff',
 });
 
@@ -365,4 +376,11 @@ export const eventContainer = style({
   flex: 1,
   overflow: 'hidden',
   width: '100%',
+});
+
+
+
+globalStyle('.fc-daygrid-day.fc-day-sun .fc-event-title, .fc-daygrid-day.fc-day-sat .fc-event-title', {
+  color: `${palette.burgundyDark} !important`,
+  opacity: '1 !important',
 });

@@ -32,21 +32,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Any other global meta tags or links can go here */}
       </head>
       <body>
-        {/*
-          ClientLayout is now a wrapper for client-side logic and providers.
-          It receives the 'config' prop from the server component.
-        */}
-   <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
-        <ClientLayout
-          config={{
-            basepath: config.basepath,
-            prefix: config.prefix,
-            useReverseProxy: config.useReverseProxy,
-          }}
 
-        >
-          {children}
-        </ClientLayout></SessionProvider>
+        <SessionProvider basePath={config.basepath ? `${config.basepath}/api/auth` : '/api/auth'}>
+          <ClientLayout
+            config={{
+              basepath: config.basepath,
+              prefix: config.prefix,
+              useReverseProxy: config.useReverseProxy,
+            }}
+
+          >
+            {children}
+          </ClientLayout></SessionProvider>
       </body>
     </html>
   );
