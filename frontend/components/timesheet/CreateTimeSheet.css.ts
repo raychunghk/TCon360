@@ -1,6 +1,6 @@
+import { SIDEBAR_COMPONENT_WIDTH, SIDEBAR_COMPONENT_WIDTH_NUMBER } from '@/styles/constants';
 import { palette, paletteAlpha } from '@/styles/palette';
-import { style } from '@vanilla-extract/css';
-import { SIDEBAR_COMPONENT_WIDTH } from '@/styles/constants';
+import { globalStyle, style } from '@vanilla-extract/css';
 
 // Modern "Create Timesheet" widget styling
 export const container = style({
@@ -18,21 +18,25 @@ export const header = style({
 });
 
 export const widgetTitle = style({
-  fontSize: '1.1rem',
+  fontSize: '1rem',
   textTransform: 'uppercase',
   letterSpacing: '1px',
   color: palette.goldenYellow,
   background: palette.navyDark,
   marginBottom: '16px',
   padding: '10px 0',
-  textAlign: 'center',
+  textAlign: 'center !important',
   fontWeight: 700,
 });
 
 export const myCardOverride = style({
-  border: `1px solid ${palette.ice.darker}`,
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-  borderRadius: '9px',
+  border: `1px solid ${palette.amberLight} !important`,
+  boxShadow: '0 10px 28px rgba(0, 0, 0, 0.35) !important',
+  borderRadius: '9px !important',
+  background: `${palette.ice.base} !important`,
+  color: palette.white,
+
+
 });
 
 // MonthPicker styles using Mantine class selectors
@@ -80,7 +84,7 @@ export const monthPickerMonthsListRow = style({
 });
 
 export const monthPickerMonthsListCell = style({
-  padding: '4px',
+  padding: '0px 4px !important',
 });
 
 export const monthPickerPickerControl = style({
@@ -157,7 +161,7 @@ export const monthChipActive = style([
 export const submitButton = style({
   width: '70%',
   padding: '12px',
-  backgroundColor: `${palette.burgundy} !important`,
+  backgroundColor: `${palette.burgundy}!important`,
 
   color: palette.white,
   border: 'none',
@@ -180,4 +184,14 @@ export const submitSection = style({
   marginTop: '16px',
   padding: '10px 0',
   backgroundColor: palette.navy,
+});
+// Navigation Arrow Buttons (Previous/Next)
+globalStyle('.mantine-MonthPicker-monthsList', {
+  marginTop: '0px !Important',
+  width: `${SIDEBAR_COMPONENT_WIDTH_NUMBER - 45}px !Important`
+});
+globalStyle('.mantine-MonthPicker-calendarHeaderControl', {
+  color: palette.burgundy,
+  backgroundColor: 'transparent',
+  border: 'none',
 });

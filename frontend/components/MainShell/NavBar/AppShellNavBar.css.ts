@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
-import { palette, paletteAlpha } from '@/styles/palette';
 import { SIDEBAR_COMPONENT_WIDTH } from '@/styles/constants';
+import { palette, paletteAlpha } from '@/styles/palette';
 
 export const navbar = style({
   background: `linear-gradient(180deg, ${palette.navyDarker} 0%, ${palette.navyDark} 100%)`,
@@ -12,7 +12,7 @@ export const navbar = style({
 });
 
 export const divider = style({
-  borderColor: 'rgba(184, 201, 205, 0.55)',
+  borderColor: palette.amberLight,
 });
 
 export const createTimesheetWrapper = style({

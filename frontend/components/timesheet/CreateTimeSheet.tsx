@@ -27,8 +27,8 @@ interface CreateTimesheetPageProps {
 }
 
 export default function CreateTimesheetPage({
-  pickersize = 'md',
-  cardWidth = 200,
+  pickersize = 'sm',
+  cardWidth = 210,
 }: CreateTimesheetPageProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -160,8 +160,9 @@ export default function CreateTimesheetPage({
           cardwidth={cardWidth}
           className={`${classes.container} ${classes.myCardOverride}`}
           headerClassName={classes.widgetTitle}
+
         >
-          <Grid pb={5} ta="center">
+          <Grid pb={2} ta="center">
             <Grid.Col span={12}>
               <Group justify="center">
                 <MonthPicker
@@ -171,6 +172,7 @@ export default function CreateTimesheetPage({
                   value={selectedMonth ?? null}
                   onDateChange={setDisplayDate}
                   ref={monthPickerRef}
+
                 />
               </Group>
             </Grid.Col>
