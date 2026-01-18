@@ -1,5 +1,5 @@
-import { style } from '@vanilla-extract/css';
 import { palette, paletteAlpha } from '@/styles/palette';
+import { style } from '@vanilla-extract/css';
 
 // Modern "Create Timesheet" widget styling
 export const container = style({
@@ -49,7 +49,7 @@ export const monthPickerCellActive = style({
 });
 
 export const monthPickerControl = style({
-  color: palette.burgundyLight,
+  backgroundColor: `${palette.burgundyLight} !important`,
 });
 
 export const monthGrid = style({
@@ -85,9 +85,10 @@ export const monthChipActive = style([
 ]);
 
 export const submitButton = style({
-  width: '100%',
+  width: '70%',
   padding: '12px',
-  backgroundColor: palette.burgundy,
+  backgroundColor: `${palette.burgundy} !important`,
+
   color: palette.white,
   border: 'none',
   borderRadius: '10px',
@@ -107,4 +108,6 @@ export const submitButton = style({
 
 export const submitSection = style({
   marginTop: '16px',
+  padding: '10px 0',
+  backgroundColor: palette.navy,
 });

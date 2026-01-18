@@ -169,7 +169,7 @@ export default function CreateTimesheetPage({
                   date={displayDate}
                   onChange={handleMonthChange}
                   value={selectedMonth ?? null}
-                  onRateChange={setDisplayDate}
+                  onDateChange={setDisplayDate}
                   className={styles.monthPickerButtons}
                   ref={monthPickerRef}
                 />
