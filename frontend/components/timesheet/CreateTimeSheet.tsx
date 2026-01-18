@@ -21,9 +21,51 @@ import { useForm } from 'react-hook-form';
 import MyCard from '../MyCard';
 import * as classes from './CreateTimeSheet.css';
 import './MonthPickerGlobalStyles.css';
+
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize;
   cardWidth?: number;
+}
+
+function ensureDate(value: unknown, context?: string): Date | null {
+  if (value == null) return null;
+
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime())) {
+      console.warn(
+        `CreateTimesheetPage: Invalid Date object${context ? ` (${context})` : ''}:`,
+        value,
+      );
+      return null;
+    }
+    return value;
+  }
+
+  if (typeof value === 'string' || typeof value === 'number') {
+    if (typeof value === 'string') {
+      console.warn(
+        `CreateTimesheetPage: Converting string to Date${context ? ` (${context})` : ''}:`,
+        value,
+      );
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      console.warn(
+        `CreateTimesheetPage: Could not parse date value${context ? ` (${context})` : ''}:`,
+        value,
+      );
+      return null;
+    }
+
+    return parsed;
+  }
+
+  console.warn(
+    `CreateTimesheetPage: Unexpected date value type${context ? ` (${context})` : ''}:`,
+    value,
+  );
+  return null;
 }
 
 export default function CreateTimesheetPage({
@@ -49,7 +91,8 @@ export default function CreateTimesheetPage({
 
   // Local controlled view date for MonthPicker
   const [displayDate, setDisplayDate] = useState<Date>(() => {
-    const init = selectedMonth ?? timesheetDefaultDate ?? new Date();
+    const initRaw = selectedMonth ?? timesheetDefaultDate ?? new Date();
+    const init = ensureDate(initRaw, 'displayDate init') ?? new Date();
     return new Date(init.getFullYear(), init.getMonth(), 1);
   });
 
@@ -57,7 +100,8 @@ export default function CreateTimesheetPage({
 
   // Sync store → local display date when external changes happen
   useEffect(() => {
-    const init = selectedMonth ?? timesheetDefaultDate;
+    const initRaw = selectedMonth ?? timesheetDefaultDate;
+    const init = ensureDate(initRaw, 'store sync');
     if (!init) return;
 
     const firstOfMonth = new Date(init.getFullYear(), init.getMonth(), 1);
@@ -73,7 +117,14 @@ export default function CreateTimesheetPage({
 
   // When user changes month/year in picker → update store
   const handleDateChange = (newDate: Date) => {
-    const firstOfMonth = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+    const parsed = ensureDate(newDate, 'handleDateChange');
+    if (!parsed) return;
+
+    const firstOfMonth = new Date(
+      parsed.getFullYear(),
+      parsed.getMonth(),
+      1,
+    );
 
     setDisplayDate(firstOfMonth);
     setIsMonthPickerChangeEvent(true);
@@ -82,12 +133,13 @@ export default function CreateTimesheetPage({
   };
 
   const onSubmit = async () => {
-    if (!selectedMonth) return;
+    const selectedMonthDate = ensureDate(selectedMonth, 'onSubmit selectedMonth');
+    if (!selectedMonthDate) return;
 
     setSubmitting(true);
 
-    const year = selectedMonth.getFullYear();
-    const month = selectedMonth.getMonth() + 1;
+    const year = selectedMonthDate.getFullYear();
+    const month = selectedMonthDate.getMonth() + 1;
 
     try {
       const response = await axios.post(`${basepath}/api/timesheet/create`, {
@@ -134,13 +186,16 @@ export default function CreateTimesheetPage({
   };
 
   //Do not remove this func, this is made to interact on FrontPageCalendar
-  const handleMonthChange = (value: Date | null) => { // Changed value type to Date | null
+  const handleMonthChange = (value: Date | null) => {
+    // Changed value type to Date | null
     if (fileid) setFileid(null);
-    if (!value) return; // Handle null case if user can clear selection
+
+    const parsed = ensureDate(value, 'MonthPicker onChange');
+    if (!parsed) return;
 
     console.log(`CreateTimesheetPage: MonthPicker onChange: value:`, value);
-    const _date = new Date(value)
-    const firstOfMonth = new Date(_date.getFullYear(), _date.getMonth(), 1);
+
+    const firstOfMonth = new Date(parsed.getFullYear(), parsed.getMonth(), 1);
 
     setIsMonthPickerChangeEvent(true);
     setTimesheetDefaultDate(firstOfMonth);
@@ -169,7 +224,7 @@ export default function CreateTimesheetPage({
                   size={pickersize}
                   date={displayDate}
                   onChange={handleMonthChange}
-                  value={selectedMonth ?? null}
+                  value={ensureDate(selectedMonth, 'MonthPicker value') ?? null}
                   onDateChange={setDisplayDate}
                   ref={monthPickerRef}
 
