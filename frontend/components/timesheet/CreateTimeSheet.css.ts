@@ -1,9 +1,11 @@
 import { palette, paletteAlpha } from '@/styles/palette';
 import { style } from '@vanilla-extract/css';
+import { SIDEBAR_COMPONENT_WIDTH } from '@/styles/constants';
 
 // Modern "Create Timesheet" widget styling
 export const container = style({
   borderRadius: '9px !important',
+  width: SIDEBAR_COMPONENT_WIDTH,
 });
 
 // Legacy export (kept for compatibility)
@@ -33,23 +35,90 @@ export const myCardOverride = style({
   borderRadius: '9px',
 });
 
+// MonthPicker styles using Mantine class selectors
 export const monthPickerRoot = style({
   color: palette.navy,
 });
 
-export const monthPickerCell = style({
+export const monthPickerCalendarHeader = style({
+  padding: '12px 16px',
   backgroundColor: palette.ice.light,
-  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+  borderRadius: '8px 8px 0 0',
 });
 
-export const monthPickerCellActive = style({
-  backgroundColor: palette.burgundy,
-  color: palette.white,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+export const monthPickerCalendarHeaderControl = style({
+  color: palette.burgundy,
+  backgroundColor: 'transparent',
+  border: 'none',
+  ':hover': {
+    backgroundColor: palette.ice.base,
+  },
+});
+
+export const monthPickerCalendarHeaderControlIcon = style({
+  color: palette.burgundy,
+  width: '20px',
+  height: '20px',
+});
+
+export const monthPickerCalendarHeaderLevel = style({
+  color: palette.navyDarker,
+  fontWeight: 600,
+  fontSize: '1rem',
+  ':hover': {
+    color: palette.navy,
+  },
+});
+
+export const monthPickerMonthsList = style({
+  marginTop: '12px',
+});
+
+export const monthPickerMonthsListRow = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+});
+
+export const monthPickerMonthsListCell = style({
+  padding: '4px',
+});
+
+export const monthPickerPickerControl = style({
+  width: '50px',
+  height: '50px',
+  backgroundColor: palette.ice.light,
+  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+  color: palette.navyDarker,
+  border: 'none',
+  borderRadius: '8px',
+  fontWeight: 600,
+  fontSize: '0.85rem',
+  transition: 'all 0.2s ease',
+  ':hover': {
+    backgroundColor: palette.ice.base,
+    boxShadow: '0 3px 6px rgba(0,0,0,0.1)',
+  },
+  ':focus': {
+    outline: `2px solid ${palette.burgundyLight}`,
+    outlineOffset: '2px',
+  },
+  selectors: {
+    '&[data-selected="true"]': {
+      backgroundColor: palette.burgundy,
+      color: palette.white,
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      fontWeight: 700,
+    },
+  },
 });
 
 export const monthPickerControl = style({
-  backgroundColor: `${palette.burgundyLight} !important`,
+  color: palette.burgundy,
+  backgroundColor: 'transparent',
+  border: 'none',
+  ':hover': {
+    backgroundColor: palette.ice.base,
+  },
 });
 
 export const monthGrid = style({
@@ -59,6 +128,7 @@ export const monthGrid = style({
   marginBottom: '16px',
 });
 
+// Legacy monthChip styles (kept for compatibility but not used)
 export const monthChip = style({
   padding: '10px 12px',
   border: `1px solid ${palette.ice.darker}`,

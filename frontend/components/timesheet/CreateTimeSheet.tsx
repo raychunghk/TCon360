@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import MyCard from '../MyCard';
 import * as classes from './CreateTimeSheet.css';
-import styles from './mp.module.css';
+import './MonthPickerGlobalStyles.css';
 interface CreateTimesheetPageProps {
   pickersize?: MantineSize;
   cardWidth?: number;
@@ -170,7 +170,6 @@ export default function CreateTimesheetPage({
                   onChange={handleMonthChange}
                   value={selectedMonth ?? null}
                   onDateChange={setDisplayDate}
-                  className={styles.monthPickerButtons}
                   ref={monthPickerRef}
                 />
               </Group>

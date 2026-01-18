@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
 import { palette, paletteAlpha } from '@/styles/palette';
+import { SIDEBAR_COMPONENT_WIDTH } from '@/styles/constants';
 
 export const navbar = style({
   background: `linear-gradient(180deg, ${palette.navyDarker} 0%, ${palette.navyDark} 100%)`,
@@ -27,6 +28,6 @@ export const linksWrapper = style({
   padding: 10,
   boxShadow: `0 10px 28px ${paletteAlpha.black35}`,
   zIndex: 100, // Same as navbar
-  width: '280px', // Align with CreateTimeSheet card width
+  width: SIDEBAR_COMPONENT_WIDTH, // Align with CreateTimeSheet card width
   alignSelf: 'center', // Center the wrapper in the navbar
 });
