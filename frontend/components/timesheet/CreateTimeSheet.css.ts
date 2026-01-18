@@ -3,11 +3,7 @@ import { palette, paletteAlpha } from '@/styles/palette';
 
 // Modern "Create Timesheet" widget styling
 export const container = style({
-  background: paletteAlpha.white06,
-  border: `1px solid ${paletteAlpha.white10}`,
-  borderRadius: '16px',
-  padding: '20px',
-  boxShadow: 'none',
+  borderRadius: '9px !important',
 });
 
 // Legacy export (kept for compatibility)
@@ -20,12 +16,40 @@ export const header = style({
 });
 
 export const widgetTitle = style({
-  fontSize: '0.85rem',
+  fontSize: '1.1rem',
   textTransform: 'uppercase',
   letterSpacing: '1px',
-  color: palette.slate,
+  color: palette.goldenYellow,
+  background: palette.navyDark,
   marginBottom: '16px',
+  padding: '10px 0',
+  textAlign: 'center',
   fontWeight: 700,
+});
+
+export const myCardOverride = style({
+  border: `1px solid ${palette.ice.darker}`,
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+  borderRadius: '9px',
+});
+
+export const monthPickerRoot = style({
+  color: palette.navy,
+});
+
+export const monthPickerCell = style({
+  backgroundColor: palette.ice.light,
+  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+});
+
+export const monthPickerCellActive = style({
+  backgroundColor: palette.burgundy,
+  color: palette.white,
+  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+});
+
+export const monthPickerControl = style({
+  color: palette.burgundyLight,
 });
 
 export const monthGrid = style({

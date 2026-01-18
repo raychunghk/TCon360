@@ -158,7 +158,7 @@ export default function CreateTimesheetPage({
         <MyCard
           title="Create TimeSheet"
           cardwidth={cardWidth}
-          className={classes.container}
+          className={`${classes.container} ${classes.myCardOverride}`}
           headerClassName={classes.widgetTitle}
         >
           <Grid pb={5} ta="center">
