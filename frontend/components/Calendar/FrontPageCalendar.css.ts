@@ -119,13 +119,12 @@ globalStyle(`${calendarTheme} .fc-day-sun .fc-daygrid-day-number, ${calendarThem
 
 // Style for .clsweekend
 globalStyle(`${calendarTheme} .clsweekend `, {
-  color: `${palette.amberDark} !important`,
+  color: `${palette.navyDarker} !important`,
   fontWeight: 700,
+  backgroundColor: `${palette.ice.darkest} !important`,
+
 });
 
-globalStyle(`${calendarTheme} .clsweekend  `, {
-  backgroundColor: `${palette.ice.darker} !important`,
-});
 
 // Style for .clsPublicHoliday
 globalStyle(`${calendarTheme} .clsPublicHoliday .fc-daygrid-day-frame`, {
@@ -154,6 +153,7 @@ globalStyle(`${calendarTheme} .fc .fc-list-event-dot`, {
 
 globalStyle(`${calendarTheme} .fc .fc-event-title`, {
   fontWeight: 600,
+  fontSize: 'clamp(0.75rem, 1.2vw, 0.95rem)',
 });
 
 // Apply border-radius to the bottom corners of the calendar grid

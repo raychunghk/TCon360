@@ -33,7 +33,7 @@ export const myCardOverride = style({
   border: `1px solid ${palette.amberLight} !important`,
   boxShadow: '0 10px 28px rgba(0, 0, 0, 0.35) !important',
   borderRadius: '9px !important',
-  background: `${palette.ice.base} !important`,
+  background: `${paletteAlpha.ice18} !important`,
   color: palette.white,
 
 

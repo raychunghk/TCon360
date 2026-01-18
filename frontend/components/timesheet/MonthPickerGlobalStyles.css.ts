@@ -1,4 +1,4 @@
-import { palette } from '@/styles/palette';
+import { palette, paletteAlpha } from '@/styles/palette';
 import { globalStyle } from '@vanilla-extract/css';
 
 // Global styles for Mantine MonthPicker components using correct class selectors
@@ -56,7 +56,7 @@ globalStyle('.mantine-MonthPicker-monthsListRow', {
 
 // Month List Cells (Table Cells)
 globalStyle('.mantine-MonthPicker-monthsListCell', {
-  background: `${palette.ice.base} !important`,
+  background: `none !important`,
   padding: '2px  4px',
 });
 
@@ -64,13 +64,14 @@ globalStyle('.mantine-MonthPicker-monthsListCell', {
 globalStyle('.mantine-MonthPicker-pickerControl', {
   width: '50px',
   height: '35px',
-  background: `${palette.ice.base} !important`,
+  background: `${paletteAlpha.navyLight20} !important`,
   boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-  color: palette.navyDarker,
+  color: `${palette.creamDark} !important`,
   border: 'none',
-  borderRadius: '8px',
+  borderRadius: '5px',
   fontWeight: 600,
   fontSize: '0.85rem',
+
   transition: 'all 0.2s ease',
 
 });
@@ -78,6 +79,7 @@ globalStyle('.mantine-MonthPicker-pickerControl', {
 // Month Buttons hover state
 globalStyle('.mantine-MonthPicker-pickerControl:hover', {
   backgroundColor: `${palette.ice.darkest} !important`,
+  color: ` ${palette.navy} !important`,
   boxShadow: '0 3px 6px rgba(0,0,0,0.1)',
 });
 
@@ -91,7 +93,7 @@ globalStyle('.mantine-MonthPicker-pickerControl:focus', {
 globalStyle('.mantine-MonthPicker-pickerControl[data-selected="true"]', {
   backgroundColor: `${palette.burgundy} !important`,
 
-  color: palette.white,
+  color: `${palette.white} !important`,
   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   fontWeight: 700,
 });
