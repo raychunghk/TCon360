@@ -8,7 +8,6 @@ import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
 import { siteTitle } from '@/components/util/label';
 import * as classes from '@/styles/login.css';
-import { config } from '@tcon360/config';
 import {
   Anchor,
   Button,
@@ -281,7 +280,7 @@ export default function LoginBody(props: any) {
       className={classes.wrapper}
       style={
         {
-          '--login-bg-image': `url('${config.prefix}/images/loginbg1.webp')`,
+          '--login-bg-image': `url('${basepath ?? ''}/images/loginbg1.webp')`,
         } as CSSProperties
       }
     >
