@@ -5,10 +5,11 @@ import useStore from '@/components/stores/zstore.ts';
 import CreateTimesheetPage from '@/components/timesheet/CreateTimeSheet';
 
 import { SIDEBAR_COMPONENT_WIDTH_NUMBER } from '@/styles/constants';
+import SignOutButton from '../SignOutButton';
 import * as classes from './AppShellNavBar.css';
 import MainLinks from './mainlinks';
 
-export default function AppShellNavBar({ opened }) {
+export default function AppShellNavBar({ opened, handleSignout }) {
   const { navbarwidth } = useStore();
 
   return (
@@ -23,13 +24,17 @@ export default function AppShellNavBar({ opened }) {
           <CreateTimesheetPage pickersize="xs" cardWidth={SIDEBAR_COMPONENT_WIDTH_NUMBER} />
         </Box>
 
-        <Divider my="sm" className={classes.divider} />
+        <Divider my={4} className={classes.divider} />
 
         <Box className={classes.linksWrapper}>
           <MainLinks />
         </Box>
 
         <Box flex={1} />
+
+        <Box pb="md" w={SIDEBAR_COMPONENT_WIDTH_NUMBER} style={{ alignSelf: 'center' }}>
+          <SignOutButton handleSignout={handleSignout} />
+        </Box>
       </Flex>
     </AppShell.Navbar>
   );

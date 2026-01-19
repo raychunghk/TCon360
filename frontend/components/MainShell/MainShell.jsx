@@ -171,7 +171,6 @@ export function MainShell({ children, contentpadding = '10px' }) {
             {activeUser && isAuthenticated ? (
               <>
                 <HeaderPopover />
-                <SignOutButton handleSignout={handleSignout} />
               </>
             ) : (
               <>
@@ -202,7 +201,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
         </Group>
       </AppShell.Header>
 
-      {activeUser && <AppShellNavBar opened={opened} />}
+      {activeUser && <AppShellNavBar opened={opened} handleSignout={handleSignout} />}
 
       <AppShell.Main>
         <LoadingOverlay

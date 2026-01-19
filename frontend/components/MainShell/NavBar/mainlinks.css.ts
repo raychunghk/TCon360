@@ -3,17 +3,20 @@ import { style } from '@vanilla-extract/css';
 
 // Parent button/link container
 export const button = style({
-  display: 'block',
-  padding: 'calc(var(--mantine-spacing-sm) - 5px) var(--mantine-spacing-sm)',
+  display: 'flex',
+  alignItems: 'center',
+  padding: '0 var(--mantine-spacing-sm)',
+  height: '38px',
   borderRadius: 10,
   width: '100%',
   maxWidth: 280,
   marginTop: '5px',
-  transition: 'background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease',
+  transition: 'background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease, color 160ms ease',
 
   selectors: {
     '&:hover': {
-      backgroundColor: paletteAlpha.burgundy15,
+      backgroundColor: palette.ice.darker,
+      color: `${palette.navy} !important`,
       boxShadow: `0 6px 16px ${paletteAlpha.black35}`,
       transform: 'translateX(2px)',
     },
