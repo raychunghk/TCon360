@@ -8,7 +8,6 @@ import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
 import { siteTitle } from '@/components/util/label';
 import * as classes from '@/styles/login.css';
-import { config } from '@tcon360/config';
 import {
   Anchor,
   Button,
@@ -46,7 +45,11 @@ function decodeJwt(token: string) {
   }
 }
 
-export default function LoginBody(props: any) {
+interface LoginBodyProps {
+  basePath: string;
+}
+
+export default function LoginBody({ basePath }: LoginBodyProps) {
   const router = useRouter();
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -281,7 +284,7 @@ export default function LoginBody(props: any) {
       className={classes.wrapper}
       style={
         {
-          '--login-bg-image': `url('${config.prefix}/images/loginbg1.webp')`,
+          '--login-bg-image': `url('${basePath}/images/loginbg1.webp')`,
         } as CSSProperties
       }
     >

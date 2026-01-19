@@ -2,6 +2,7 @@
 'use client';
 
 import LoginBody from '@/components/login/LoginBody';
+import LoginBodyWrapper from '@/components/login/LoginBodyWrapper';
 import useStore from '@/components/stores/zstore.ts'; // Import your Zustand store
 import { useEffect } from 'react'; // Import useEffect
 
@@ -18,6 +19,6 @@ export default function LoginPage(props: any) {
 
   return (
     // eslint-disable-next-line react/react-in-jsx-scope
-    <LoginBody />
+    <LoginBodyWrapper />
   );
 }
