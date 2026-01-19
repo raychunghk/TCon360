@@ -169,6 +169,8 @@ export const signOutButton = style({
   alignItems: 'center',
   justifyContent: 'center',
   gap: 8,
+  width: '100%',
+  maxWidth: 280,
   color: 'white',
   backgroundColor: `${palette.burgundy} !important`,
   fontWeight: 600,

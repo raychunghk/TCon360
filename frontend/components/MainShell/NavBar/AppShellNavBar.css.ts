@@ -13,6 +13,7 @@ export const navbar = style({
 
 export const divider = style({
   borderColor: palette.amberLight,
+  margin: '4px 0',
 });
 
 export const createTimesheetWrapper = style({

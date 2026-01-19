@@ -10,8 +10,6 @@ export const calendarContainer = style({
   padding: '8px',
   //borderRadius: calendarBorderRadius,
   //boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-  minHeight: '500px',
-  maxHeight: 'calc(100vh - 70px - 80px)', // 100vh - header(70px) - footer(60px)
   height: '100%',
   overflow: 'auto',
   width: '100%',

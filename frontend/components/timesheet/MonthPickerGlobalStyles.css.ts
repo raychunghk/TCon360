@@ -11,35 +11,36 @@ globalStyle('.mantine-MonthPicker-root', {
 // Calendar Header (Year and Navigation)
 globalStyle('.mantine-MonthPicker-calendarHeader', {
   padding: '0px 5px',
-  backgroundColor: `${palette.ice.darker} !important`,
+  backgroundColor: `${palette.navyDark} !important`,
+  color: `${palette.goldenYellow} !important`,
   borderRadius: '4px',
 });
 
 
 // Navigation Arrow Buttons hover state
 globalStyle('.mantine-MonthPicker-calendarHeaderControl:hover', {
-  backgroundColor: `${palette.ice.base} !important`,
+  backgroundColor: `${palette.navy} !important`,
 });
 globalStyle('.mantine-MonthPicker-calendarHeaderLevel:hover', {
-  backgroundColor: `${palette.ice.base} !important`,
+  backgroundColor: `${palette.navy} !important`,
 });
 // Arrow Icons
 globalStyle('.mantine-MonthPicker-calendarHeaderControlIcon', {
-  color: palette.burgundy,
+  color: palette.goldenYellow,
   width: '20px',
   height: '20px',
 });
 
 // Year Display Button
 globalStyle('.mantine-MonthPicker-calendarHeaderLevel', {
-  color: palette.navyDarker,
+  color: palette.goldenYellow,
   fontWeight: 600,
   fontSize: '1rem',
 });
 
 // Year Display Button hover state
 globalStyle('.mantine-MonthPicker-calendarHeaderLevel:hover', {
-  color: palette.navy,
+  color: palette.white,
   fontWeight: 700,
 });
 
