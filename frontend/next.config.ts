@@ -1,37 +1,38 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import { config } from '@tcon360/config';
-import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
-import path from 'path';
+import type { NextConfig } from 'next';
+import path from 'node:path';
 
-const withVanillaExtract = createVanillaExtractPlugin();
+import { createVanillaExtractTurbopackPlugin } from './lib/vanilla-extract-turbopack-plugin';
+
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
 console.log('=====================================');
-console.log('NEXT CONFIG FILE LOADED: next.config.mjs');
+console.log('NEXT CONFIG FILE LOADED: next.config.ts');
 console.log('=====================================');
-console.log('[next.config.mjs] NODE_ENV:', process.env.NODE_ENV);
-console.log('[next.config.mjs] FRONTEND_PORT (raw):', process.env.FRONTEND_PORT);
-console.log('[next.config.mjs] config.feprefix:', config.feprefix);
+console.log('[next.config.ts] NODE_ENV:', process.env.NODE_ENV);
+console.log('[next.config.ts] FRONTEND_PORT (raw):', process.env.FRONTEND_PORT);
+console.log('[next.config.ts] config.feprefix:', config.feprefix);
 
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || config.frontendport;
 const BACKEND_PORT = config.backendport;
 const isDocker = FRONTEND_PORT === 8255;
 
-console.log('[next.config.mjs] FRONTEND_PORT (parsed):', FRONTEND_PORT);
-console.log('[next.config.mjs] BACKEND_PORT:', BACKEND_PORT);
-console.log('[next.config.mjs] isDocker (FRONTEND_PORT === 8255):', isDocker);
+console.log('[next.config.ts] FRONTEND_PORT (parsed):', FRONTEND_PORT);
+console.log('[next.config.ts] BACKEND_PORT:', BACKEND_PORT);
+console.log('[next.config.ts] isDocker (FRONTEND_PORT === 8255):', isDocker);
 
 const _basepath = isDocker ? '' : config.feprefix;
 const _assetPrefix = isDocker ? '' : config.feprefix;
 
-console.log('[next.config.mjs] basePath:', _basepath || '(empty string)');
-console.log('[next.config.mjs] assetPrefix:', _assetPrefix || '(empty string)');
-console.log('[next.config.mjs] useBetterAuth:', config.useBetterAuth || '(empty string)');
+console.log('[next.config.ts] basePath:', _basepath || '(empty string)');
+console.log('[next.config.ts] assetPrefix:', _assetPrefix || '(empty string)');
+console.log('[next.config.ts] useBetterAuth:', config.useBetterAuth || '(empty string)');
 console.log('-------------------------------------');
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   basePath: _basepath,
   assetPrefix: _assetPrefix,
   reactStrictMode: false,
@@ -41,44 +42,57 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Turbopack configuration (Next.js 16+ default bundler)
+
+  // Turbopack + Webpack support for vanilla-extract
+  // See: docs/BUNDLER_SETUP.md
   turbopack: {
     resolveAlias: {
       '@tcon360/config': '../packages/config/dist/index.js',
     },
   },
-  // Webpack fallback for compatibility (can be removed if turbopack works fully)
-  webpack: (config, { isServer }) => {
-    const originalAlias = config.resolve.alias || {};
+
+  // Webpack fallback for compatibility
+  webpack: (webpackConfig, { isServer }) => {
+    const originalAlias = webpackConfig.resolve.alias || {};
 
     if (!isServer) {
-      config.resolve.alias = {
+      webpackConfig.resolve.alias = {
         ...originalAlias,
-        '@tcon360/config': path.resolve(process.cwd(), '../packages/config/dist/index.js'),
+        '@tcon360/config': path.resolve(
+          process.cwd(),
+          '../packages/config/dist/index.js',
+        ),
         'node:module': false,
       };
     } else {
-      config.resolve.alias = {
+      webpackConfig.resolve.alias = {
         ...originalAlias,
-        '@tcon360/config': path.resolve(process.cwd(), '../packages/config/dist/index.js'),
+        '@tcon360/config': path.resolve(
+          process.cwd(),
+          '../packages/config/dist/index.js',
+        ),
       };
     }
 
-    config.resolve.fallback = { fs: false };
+    webpackConfig.resolve.fallback = { fs: false };
 
-    return config;
+    return webpackConfig;
   },
+
   env: {
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
   },
+
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks', 'next-auth'],
     serverActions: {
       allowedOrigins: ['localhost:*', '127.0.0.1:*', '*.raygor.cc', '*.raygor.cc:*'],
     },
   },
+
   compiler: { styledComponents: true },
   trailingSlash: false,
+
   async rewrites() {
     const rewrites = [
       {
@@ -130,11 +144,11 @@ const nextConfig = {
 
     return rewrites;
   },
+
   images: {
     path: `${_basepath}/_next/image`,
   },
 };
 
-
-
-export default withVanillaExtract(withBundleAnalyzer(nextConfig));
+// Apply vanilla-extract plugin for both Webpack & Turbopack
+export default createVanillaExtractTurbopackPlugin()(withBundleAnalyzer(nextConfig));

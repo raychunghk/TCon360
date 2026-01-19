@@ -1,3 +1,8 @@
 *.cjs
 *.mjs
 *.js
+
+# Node-only Next.js config / loaders
+next.config.ts
+lib/turbopack-loader.ts
+lib/vanilla-extract-turbopack-plugin.ts
