@@ -25,7 +25,7 @@ export const widgetTitle = style({
   background: palette.navyDark,
   marginBottom: '16px',
   padding: '10px 0',
-  textAlign: 'center !important',
+  textAlign: 'center',
   fontWeight: 700,
 });
 

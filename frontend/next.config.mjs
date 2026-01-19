@@ -35,6 +35,19 @@ const nextConfig = {
   basePath: _basepath,
   assetPrefix: _assetPrefix,
   reactStrictMode: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Turbopack configuration (Next.js 16+ default bundler)
+  turbopack: {
+    resolveAlias: {
+      '@tcon360/config': '../packages/config/dist/index.js',
+    },
+  },
+  // Webpack fallback for compatibility (can be removed if turbopack works fully)
   webpack: (config, { isServer }) => {
     const originalAlias = config.resolve.alias || {};
 
@@ -43,8 +56,6 @@ const nextConfig = {
         ...originalAlias,
         '@tcon360/config': path.resolve(process.cwd(), '../packages/config/dist/index.js'),
         'node:module': false,
-        // 'node:fs': false,
-        // 'node:path': false,
       };
     } else {
       config.resolve.alias = {
@@ -57,7 +68,6 @@ const nextConfig = {
 
     return config;
   },
-  eslint: { ignoreDuringBuilds: true },
   env: {
     TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
   },

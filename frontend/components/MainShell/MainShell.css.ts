@@ -25,7 +25,7 @@ globalStyle('.fc-header-toolbar', {
 /* ── Header layout & title ─────────────────────────────────── */
 
 export const MainShell = style({
-  background: `${palette.iceLight} !important`
+  background: `${palette.ice.light} !important`
 })
 export const header = style({
   display: 'flex',
@@ -34,7 +34,7 @@ export const header = style({
   padding: '12px 20px',
   height: 60,
   background: `linear-gradient(90deg, ${palette.burgundyDarker} 0%, ${palette.burgundyDark} 55%, ${palette.navyDarker} 100%)`,
-  borderBottomStyle: `none !important`,
+  borderBottomStyle: 'none',
   color: 'rgba(255, 255, 255, 0.92)',
   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   borderBottom: '1px solid rgba(255,255,255,0.1)',

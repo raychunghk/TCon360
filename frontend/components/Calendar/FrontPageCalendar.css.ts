@@ -135,7 +135,7 @@ globalStyle(`${calendarTheme} .clsweekend .fc-event-title`, {
 
 // Style for .clsPublicHoliday
 globalStyle(`${calendarTheme} .clsPublicHoliday .fc-daygrid-day-frame`, {
-  background: `linear-gradient(0deg, ${palette.burgundyLighter} 0%, ${palette.burgundyLight} 48%, ${palette.iceLight} 88%) !important`,
+  background: `linear-gradient(0deg, ${palette.burgundyLighter} 0%, ${palette.burgundyLight} 48%, ${palette.ice.light} 88%) !important`,
 });
 globalStyle(`${calendarTheme} .clsPublicHoliday .fc-daygrid-day-number`, {
   color: `${palette.burgundyDark} !important`,
