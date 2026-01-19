@@ -8,6 +8,7 @@ import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
 import { siteTitle } from '@/components/util/label';
 import * as classes from '@/styles/login.css';
+import { config } from '@tcon360/config';
 import {
   Anchor,
   Button,
@@ -25,7 +26,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 //import { signIn } from 'better-auth/react';
 import { parseCookies, setCookie } from 'nookies';
-import { useRef, useState } from 'react';
+import { CSSProperties, useRef, useState } from 'react';
 function decodeJwt(token: string) {
   try {
     const base64Url = token.split('.')[1];
@@ -275,7 +276,15 @@ export default function LoginBody(props: any) {
   };
 
   return (
-    <Container fluid className={classes.wrapper}>
+    <Container
+      fluid
+      className={classes.wrapper}
+      style={
+        {
+          '--login-bg-image': `url('${config.prefix}/images/loginbg1.webp')`,
+        } as CSSProperties
+      }
+    >
       <Paper className={classes.form} radius={0} p={30}>
         <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
           {siteTitle}
