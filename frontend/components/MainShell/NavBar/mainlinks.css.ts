@@ -33,7 +33,7 @@ export const buttonActive = style({
   color: palette.goldenYellow,
   fontWeight: 600,
   boxShadow: `inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 12px ${paletteAlpha.black35}`,
-  
+
   selectors: {
     '&:hover': {
       backgroundColor: palette.navyLight,
@@ -64,4 +64,9 @@ export const link = style({
 
 export const childItem = style({
   marginLeft: 20,
+  padding: `0px 5px`,
+});
+export const btnGroup = style({
+
+  padding: `0px 5px`,
 });

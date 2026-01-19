@@ -12,7 +12,6 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 
 import useStore from '@/components/stores/zstore.ts';
-import { palette } from '@/styles/palette';
 
 import * as classes from './mainlinks.css';
 
@@ -42,12 +41,12 @@ function CustomLink({ href, children }: { href: string; children: React.ReactNod
       setMainshellOverlayVisible(true); // Show overlay for different route
     }
   };
-  
+
   // Check if route is active
-  const isActive = (href === '/') 
-    ? (pathname === '/' || pathname === '') 
+  const isActive = (href === '/')
+    ? (pathname === '/' || pathname === '')
     : pathname.startsWith(href);
-  
+
   return (
     <Link href={href} className={classes.link} onClick={handleClick}>
       <UnstyledButton className={`${classes.button} ${isActive ? classes.buttonActive : ''}`}>{children}</UnstyledButton>
@@ -62,7 +61,7 @@ function LinkItem({ icon, color, label, link, child, isChild }: LinkItemProps) {
   return (
     <div className={isChild ? classes.childItem : undefined}>
       <CustomLink href={_link}>
-        <Group>
+        <Group className={classes.btnGroup}>
           <ThemeIcon color={color} variant="light">
             {icon}
           </ThemeIcon>
@@ -123,13 +122,13 @@ export default function MainLinks() {
 
     ...(activeUser?.role?.name === 'admin'
       ? [
-          {
-            icon: <IconSettings size={'1.5rem'} />,
-            color: '#FFD700', // bright yellow/gold
-            label: 'Settings',
-            link: '/admin',
-          },
-        ]
+        {
+          icon: <IconSettings size={'1.5rem'} />,
+          color: '#FFD700', // bright yellow/gold
+          label: 'Settings',
+          link: '/admin',
+        },
+      ]
       : []),
     // {
     //   icon: <IconCalendarStats size={defaultIconSize} />,

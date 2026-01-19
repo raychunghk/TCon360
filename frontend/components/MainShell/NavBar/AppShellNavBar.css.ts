@@ -26,7 +26,7 @@ export const linksWrapper = style({
   border: '1px solid rgba(184, 201, 205, 0.35)',
   borderLeft: `3px solid ${palette.burgundy}`,
   borderRadius: 12,
-  padding: 10,
+  padding: `5px 10px`,
   boxShadow: `0 10px 28px ${paletteAlpha.black35}`,
   zIndex: 100, // Same as navbar
   width: SIDEBAR_COMPONENT_WIDTH, // Align with CreateTimeSheet card width

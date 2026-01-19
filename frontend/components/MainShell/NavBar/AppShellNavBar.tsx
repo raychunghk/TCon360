@@ -30,8 +30,6 @@ export default function AppShellNavBar({ opened, handleSignout }) {
           <MainLinks />
         </Box>
 
-        <Box flex={1} />
-
         <Box pb="md" w={SIDEBAR_COMPONENT_WIDTH_NUMBER} style={{ alignSelf: 'center' }}>
           <SignOutButton handleSignout={handleSignout} />
         </Box>
