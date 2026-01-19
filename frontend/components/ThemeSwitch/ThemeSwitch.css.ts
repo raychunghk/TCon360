@@ -24,7 +24,7 @@ export const active = style([
   button,
   {
     backgroundColor: palette.white,
-    color: palette.navy.darker,
+    color: palette.navyDarker,
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
   },
 ]);
