@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev --turbo",
     "dev:turbo": "next dev --turbo",
-    "dev:webpack": "next dev --no-turbo",
+    "dev:webpack": "next dev --webpack",
     "dev2": "next dev --turbo -p 8255",
-    "dev2:webpack": "next dev --no-turbo -p 8255",
+    "dev2:webpack": "next dev --webpack -p 8255",
     "dev2x": "node nxserver.js",
     "build": "node build.js",
     "build3": "next build",

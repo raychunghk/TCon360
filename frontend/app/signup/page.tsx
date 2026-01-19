@@ -3,6 +3,7 @@ import { default as useRouter } from '@/components/useCustRouter';
 import { CSSProperties, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import * as classes from '@/styles/login.css';
+import { config } from '@tcon360/config';
 import {
   Anchor,
   Button,
@@ -40,11 +41,7 @@ import axios from 'axios';
 import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
-interface SignupPageProps {
-  basePath: string;
-}
-
-export default function SignupPage({ basePath }: SignupPageProps) {
+export default function SignupPage() {
   interface iStaffModel {
     StaffName: string;
     AgentName: string;
@@ -278,7 +275,7 @@ export default function SignupPage({ basePath }: SignupPageProps) {
         className={classes.wrapper}
         style={
           {
-            '--login-bg-image': `url('${basePath}/images/loginbg1.webp')`,
+            '--login-bg-image': `url('${config.prefix}/images/loginbg1.webp')`,
           } as CSSProperties
         }
       >

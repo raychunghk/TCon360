@@ -1,14 +1,18 @@
-/**
- * NOTE: This file is intentionally JavaScript.
- * Turbopack loads loaders directly from disk and (today) expects JS.
- *
- * Source-of-truth is `turbopack-loader.ts`.
- */
+const { getPackageInfo, transform } = require("@vanilla-extract/integration");
 
-async function turbopackLoader(source, inputSourceMap) {
+/**
+ * A Turbopack-compatible loader for vanilla-extract CSS.
+ *
+ * Transforms .css.ts files into compiled CSS and TypeScript modules.
+ * Used by Turbopack in development, Webpack uses the official plugin.
+ *
+ * Note: This file is .js (not .ts) because Turbopack loads it directly
+ * without TypeScript compilation at runtime.
+ */
+module.exports = async function turbopackLoader(source, inputSourceMap) {
   // Parse source map if provided
   let map = inputSourceMap;
-  if (typeof map === 'string') {
+  if (typeof map === "string") {
     try {
       map = JSON.parse(map);
     } catch {
@@ -17,19 +21,13 @@ async function turbopackLoader(source, inputSourceMap) {
   }
 
   const callback = this.async();
-
   try {
-    const opts = this.getOptions ? this.getOptions() : {};
-
-    const integrationModule = await import('@vanilla-extract/integration');
-    const integration = integrationModule.default ?? integrationModule;
-
-    const { getPackageInfo, transform } = integration;
+    const opts = this.getOptions() || {};
 
     const { name: packageName } = getPackageInfo(this.rootContext);
 
     const identOption =
-      opts.identifiers ?? (this.mode === 'production' ? 'short' : 'debug');
+      opts.identifiers ?? (this.mode === "production" ? "short" : "debug");
 
     const result = await transform({
       source,
@@ -43,7 +41,4 @@ async function turbopackLoader(source, inputSourceMap) {
   } catch (err) {
     callback(err);
   }
-}
-
-module.exports = turbopackLoader;
-module.exports.default = turbopackLoader;
+};
