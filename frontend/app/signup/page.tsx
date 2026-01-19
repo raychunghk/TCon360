@@ -1,8 +1,9 @@
 'use client';
 import { default as useRouter } from '@/components/useCustRouter';
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { CSSProperties, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import * as classes from '@/styles/login.css';
+import { config } from '@tcon360/config';
 import {
   Anchor,
   Button,
@@ -269,7 +270,15 @@ export default function SignupPage() {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <Link rel="shortcut icon" href={`${basepath}/favicon.svg`} />
       </Head>
-      <Container fluid className={classes.wrapper}>
+      <Container
+        fluid
+        className={classes.wrapper}
+        style={
+          {
+            '--login-bg-image': `url('${config.prefix}/images/loginbg1.webp')`,
+          } as CSSProperties
+        }
+      >
         <form
           onSubmit={form.onSubmit((e) => {
             handleSubmit(e);
