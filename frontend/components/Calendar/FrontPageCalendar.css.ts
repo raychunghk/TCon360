@@ -10,8 +10,8 @@ export const calendarContainer = style({
   padding: '8px',
   //borderRadius: calendarBorderRadius,
   //boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-  minHeight: '700px',
-  maxHeight: 'calc(100vh - 70px - 60px)', // 100vh - header(70px) - footer(60px)
+  minHeight: '500px',
+  maxHeight: 'calc(100vh - 70px - 80px)', // 100vh - header(70px) - footer(60px)
   height: '100%',
   overflow: 'auto',
   width: '100%',
@@ -132,8 +132,6 @@ globalStyle(`${calendarTheme} .clsweekend `, {
 });
 globalStyle(`${calendarTheme} .clsweekend .fc-event-title`, {
   color: `${palette.burgundy} !important`,
-
-
 });
 
 
@@ -296,7 +294,7 @@ export const gridWrapper = style({
 export const calendarGrid = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(7, 1fr)',
-  height: '100%',
+  height: '90%',
   minHeight: '400px',
   backgroundColor: palette.white,
 });
@@ -383,4 +381,7 @@ export const eventContainer = style({
 globalStyle('.fc-daygrid-day.fc-day-sun .fc-event-title, .fc-daygrid-day.fc-day-sat .fc-event-title', {
   color: `${palette.burgundyDark} !important`,
   opacity: '1 !important',
+});
+globalStyle(`${calendarTheme} .fc .fc-event-title`, {
+  textWrap: `auto`,
 });

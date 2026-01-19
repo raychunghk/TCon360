@@ -131,7 +131,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
     <> 
     <AppShell
       header={{ height: 70 }}
-      footer={{ height: 60 }}
+      footer={{ height: 35 }}
       navbar={{
         width: navbarwidth,
         breakpoint: 'sm',
@@ -215,7 +215,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
 
       <AppShell.Footer className={classes.footer}>
         <Center className={classes.footerCenter}>
-          <Text size="sm" c="dimmed" fw={500}>
+          <Text size="md" c="dimmed" fw={700}>
             Developed by Ray &#x2B1C;&#x1F538;&#x2502;
           </Text>
         </Center>

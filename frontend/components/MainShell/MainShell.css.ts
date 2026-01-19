@@ -10,7 +10,7 @@ export const mantineTheme = createTheme({
 });
 
 /* ── Global styles ─────────────────────────────────────────── */
-
+const footerheight = 35
 globalStyle('html, body', {
   margin: 0,
   padding: 0,
@@ -199,18 +199,20 @@ export const logoLink = style({
   display: 'flex',
   alignItems: 'center',
 });
-
 // Footer container
 export const footer = style({
-  height: 60,
+  height: footerheight,
   backgroundColor: palette.ice.light,
   color: palette.navyDarker,
   borderTop: `1px solid ${palette.ice.darker}`,
   zIndex: 9999,
   position: 'relative',
+  alignItems: 'center', // horizontal
+  justifyContent: 'center', // vertical
+
 });
 
 // Footer content centering
 export const footerCenter = style({
-  height: 60,
+  height: '100%',
 });
