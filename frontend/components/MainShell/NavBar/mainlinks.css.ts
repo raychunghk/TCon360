@@ -38,6 +38,7 @@ export const buttonActive = style({
     '&:hover': {
       backgroundColor: palette.navyLight,
       transform: 'translateX(2px)',
+      color: `${palette.goldenYellow} !important`,
     },
   },
 });
