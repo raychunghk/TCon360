@@ -390,12 +390,16 @@ globalStyle(`${calendarTheme} .fc .fc-event-title`, {
 
 export const customHeaderContainer = style({
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  gap: '16px',
-  height: '100%',
+  justifyContent: 'center',
+  gap: '12px',
+  margin: '0 auto',
+  padding: '8px 0',
   '@media': {
     '(max-width: 768px)': {
-      gap: '12px',
+      gap: '8px',
+      padding: '4px 0',
     },
   },
 });
