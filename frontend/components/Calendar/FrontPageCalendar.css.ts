@@ -458,7 +458,7 @@ export const calendarHeaderWrapper = style({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  height: '70px',
+  height: '55px',
   padding: '0 16px',
   backgroundColor: 'transparent',
   '@media': {
@@ -593,35 +593,39 @@ export const todayButton = style({
 });
 
 export const viewSelector = style({
-  height: '36px',
+
   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  borderRadius: '6px',
+
   minWidth: '160px',
-  '@media': {
-    '(max-width: 768px)': {
-      height: '32px',
-      minWidth: '132px',
-    },
-  },
+
+  padding: `6px 7px 5px 7px`,
+  backgroundColor: palette.navy,
 });
 
-globalStyle(`${viewSelector} .mantine-SegmentedControl-root`, {
-  height: '100%',
-  backgroundColor: paletteAlpha.navyLight20,
-  border: 'none',
-});
 
-globalStyle(`${viewSelector} .mantine-SegmentedControl-item`, {
+
+globalStyle(`  .mantine-SegmentedControl-item`, {
   padding: '8px 16px',
   fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)',
   fontWeight: 600,
   transition: 'all 200ms ease',
   color: palette.creamDark,
 });
+globalStyle(` .mantine-SegmentedControl-label`, {
+  color: `${palette.creamDark} !important`,
+});
+globalStyle(` .mantine-SegmentedControl-label[data-active]`, {
+  color: `${palette.white} !important`,
+});
+globalStyle(` .mantine-SegmentedControl-indicator`, {
+  background: `${paletteAlpha.ice18} !important`,
+})
+globalStyle(` .mantine-SegmentedControl-control[data-active]`, {
 
-globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]`, {
-  backgroundColor: palette.navyDark,
-  color: palette.goldenYellow,
+  backgroundColor: palette.burgundy,
+  borderRadius: `5px `,
+  color: palette.white,
+
 });
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]:hover`, {

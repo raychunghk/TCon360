@@ -70,6 +70,8 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ calendarRef, customTitl
       <div className={calendarStyles.headerCenterSection}>
         <SegmentedControl
           value={view}
+
+          radius={`md`}
           onChange={viewChangeHandle}
           data={[
             { label: 'Month', value: 'dayGridMonth' },
