@@ -58,6 +58,15 @@ export const colorTokens = {
   white: '#FFFFFF',
   roseLight: '#FDEFF0',
 
+  // Status Colors
+  dustySage: '#8DA399', // Muted green-grey, neutral "peacekeeper" for Approved/Submitted statuses
+
+  // Background Variants
+  champagneSilk: '#F2E8DF', // Warmer Pearl variant for Vacation day backgrounds
+
+  // Text Colors
+  electricSlate: '#475569', // Bridge between Navy and Grey for secondary text
+
   spruce: '#267A6F',
   spruceLight: '#44A69A',
   spruceDark: '#1A544C',
