@@ -7,7 +7,7 @@ const calendarBorderRadiusmore = '17px';
 
 export const calendarContainer = style({
   //background: `${palette.iceLight} !important`,
-  padding: '8px',
+  padding: '0',
   //borderRadius: calendarBorderRadius,
   //boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
   height: '100%',
@@ -38,12 +38,18 @@ export const calendarTheme = style({
  * only apply when they are inside our specific calendar component.
  */
 
+// Hide FullCalendar's default toolbar (we render our own CalendarHeader)
+globalStyle(`${calendarTheme} .fc-header-toolbar`, {
+  display: 'none',
+});
+
 // Main view container for rounded corners
 globalStyle(`${calendarTheme} .fc-view-harness`, {
   borderRadius: calendarBorderRadius,
   overflow: 'hidden',
   border: `1px solid ${palette.ice.darker}`,
   boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+  margin: '3px',
 });
 
 globalStyle(`${calendarTheme} .fc-scrollgrid`, {
@@ -407,12 +413,12 @@ export const customHeaderContainer = style({
 export const monthYearText = style({
   fontWeight: 700,
   color: palette.navyDarker,
-  fontSize: 'clamp(1.25rem, 2.5vw, 1.5rem)',
-  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+  fontSize: 'clamp(1.1rem, 2.2vw, 1.35rem)',
   letterSpacing: '-0.02em',
+  textAlign: 'left',
   '@media': {
     '(max-width: 768px)': {
-      fontSize: 'clamp(1rem, 3vw, 1.25rem)',
+      fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
     },
   },
 });
@@ -420,19 +426,20 @@ export const monthYearText = style({
 export const chargeableBadge = style({
   display: 'inline-flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  padding: '4px 16px',
-  borderRadius: '5px',
+  justifyContent: 'flex-start',
+  padding: '2px 10px',
+  borderRadius: '4px',
   backgroundColor: palette.pearl.dark,
-  boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2)`,
-  border: `2px solid ${palette.ice.darker}`,
-  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)',
+  border: `1px solid ${palette.ice.darker}`,
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  fontSize: 'clamp(0.75rem, 1.3vw, 0.85rem)',
   fontWeight: 500,
+  color: palette.slate,
   whiteSpace: 'nowrap',
   '@media': {
     '(max-width: 768px)': {
-      padding: '3px 12px',
-      fontSize: '0.75rem',
+      padding: '2px 8px',
+      fontSize: '0.7rem',
     },
   },
 });
@@ -453,9 +460,7 @@ export const calendarHeaderWrapper = style({
   alignItems: 'center',
   height: '70px',
   padding: '0 16px',
-  backgroundColor: palette.white,
-  borderBottom: `1px solid ${palette.ice.darker}`,
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+  backgroundColor: 'transparent',
   '@media': {
     '(max-width: 768px)': {
       padding: '0 8px',
@@ -468,66 +473,92 @@ export const calendarHeaderWrapper = style({
 export const headerLeftSection = style({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
-  flexShrink: 0,
+  gap: '12px',
+  flexShrink: 1,
+  minWidth: 0,
+  '@media': {
+    '(max-width: 768px)': {
+      gap: '8px',
+    },
+  },
+});
+
+export const titleContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  justifyContent: 'center',
+  gap: '2px',
+  minWidth: 0,
 });
 
 export const headerCenterSection = style({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '4px',
-  flex: 1,
-  textAlign: 'center',
-  '@media': {
-    '(max-width: 768px)': {
-      gap: '2px',
-    },
-  },
-});
-
-export const headerRightCenterSection = style({
-  display: 'flex',
   alignItems: 'center',
   flexShrink: 0,
-  '@media': {
-    '(max-width: 768px)': {
-      display: 'none', // Hide on mobile to save space
-    },
-  },
 });
 
 export const headerRightmostSection = style({
   display: 'flex',
   alignItems: 'center',
+  gap: '12px',
   flexShrink: 0,
+  '@media': {
+    '(max-width: 768px)': {
+      gap: '8px',
+    },
+  },
+});
+
+export const buttonGroup = style({
+  display: 'flex',
+  gap: 0,
+  borderRadius: '6px',
+  overflow: 'hidden',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+});
+
+globalStyle(`${buttonGroup} > *`, {
+  borderRadius: '0',
+});
+
+globalStyle(`${buttonGroup} > *:first-child`, {
+  borderTopLeftRadius: '6px',
+  borderBottomLeftRadius: '6px',
+});
+
+globalStyle(`${buttonGroup} > *:last-child`, {
+  borderTopRightRadius: '6px',
+  borderBottomRightRadius: '6px',
 });
 
 // Button styles
 export const navButton = style({
   backgroundColor: `${palette.navyDark} !important`,
   border: `1px solid ${palette.navyDark}`,
-  borderRadius: '6px',
-  padding: '8px 12px',
-  minWidth: '44px',
+  borderRadius: '0',
+  padding: 0,
+  width: '34px',
+  minWidth: '34px',
   height: '36px',
-  color: 'white !important',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: `${palette.goldenYellow} !important`,
   transition: 'all 200ms ease',
   cursor: 'pointer',
+  boxShadow: 'none',
   ':hover': {
-    backgroundColor: `${palette.navy} !important`,
-    borderColor: palette.navy,
-    transform: 'translateY(-1px)',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.20)',
+    backgroundColor: `${palette.navyDarker} !important`,
+    borderColor: palette.navyDarker,
   },
   ':active': {
-    transform: 'translateY(0)',
+    transform: 'none',
   },
   '@media': {
     '(max-width: 768px)': {
-      padding: '6px 8px',
-      minWidth: '36px',
+      width: '30px',
+      minWidth: '30px',
       height: '32px',
     },
   },
@@ -536,7 +567,7 @@ export const navButton = style({
 export const todayButton = style({
   backgroundColor: `${palette.burgundy} !important`,
   border: `1px solid ${palette.burgundy}`,
-  borderRadius: '6px',
+  borderRadius: '0',
   padding: '8px 16px',
   height: '36px',
   color: 'white !important',
@@ -544,14 +575,13 @@ export const todayButton = style({
   fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
   transition: 'all 200ms ease',
   cursor: 'pointer',
+  boxShadow: 'none',
   ':hover': {
     backgroundColor: `${palette.burgundyLight} !important`,
     borderColor: palette.burgundyLight,
-    transform: 'translateY(-1px)',
-    boxShadow: '0 4px 8px rgba(122, 38, 49, 0.30)',
   },
   ':active': {
-    transform: 'translateY(0)',
+    transform: 'none',
   },
   '@media': {
     '(max-width: 768px)': {
@@ -564,9 +594,13 @@ export const todayButton = style({
 
 export const viewSelector = style({
   height: '36px',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  borderRadius: '6px',
+  minWidth: '160px',
   '@media': {
     '(max-width: 768px)': {
-      display: 'none',
+      height: '32px',
+      minWidth: '132px',
     },
   },
 });
@@ -593,6 +627,16 @@ globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]:hover`,
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-item:not([data-active]):hover`, {
   backgroundColor: palette.ice.light,
+});
+
+// Override icon colors for nav buttons
+globalStyle(`${navButton} svg`, {
+  color: `${palette.goldenYellow} !important`,
+  fill: 'currentColor',
+});
+
+globalStyle(`${buttonGroup} .mantine-Button-section`, {
+  color: `${palette.goldenYellow} !important`,
 });
 
 // Responsive adjustments for header
