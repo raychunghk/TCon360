@@ -20,6 +20,7 @@ import * as calendarStyles from './FrontPageCalendar.css';
 import { handleSelectAllow } from './calendar.util';
 import CustomView from './customeView';
 import { getTheme } from '@/styles/themes';
+import CalendarHeader from './CalendarHeader';
 
 // Apply modern theme by default
 const currentTheme = getTheme('modern');
@@ -34,8 +35,6 @@ const FrontPageCalendar = () => {
   const [hasCalendar, setHasCalendar] = useState(true);
   // Refs
   const calendarRef = useRef<FullCalendar | null>(null);
-  const calendarThemeRef = useRef<HTMLDivElement>(null);
-  const customHeaderRef = useRef<HTMLDivElement>(null);
 
   // Performance monitoring for API calls
   const fetchCountRef = useRef<number>(0);
@@ -98,26 +97,6 @@ const FrontPageCalendar = () => {
       setCalendarRef({ calendarRef });
     }
   }, [calendarRef.current]);
-
-  // Effect to inject and update custom header in FullCalendar toolbar
-  useEffect(() => {
-    if (!calendarThemeRef.current || !customHeaderRef.current) {
-      return;
-    }
-
-    const toolbarTitleEl = calendarThemeRef.current.querySelector('.fc-toolbar-title');
-
-    if (!toolbarTitleEl) {
-      return;
-    }
-
-    // Clear existing content and append our custom header
-    toolbarTitleEl.innerHTML = '';
-    toolbarTitleEl.appendChild(customHeaderRef.current);
-
-    // Ensure the header is visible when in the toolbar
-    customHeaderRef.current.style.display = 'flex';
-  }, [currentCalendarDate, chargeableDays]);
 
   const fetchEvents = useCallback(async () => {
     fetchCountRef.current += 1;
@@ -249,6 +228,12 @@ const FrontPageCalendar = () => {
 
   const handleOpenAdminPage = () => {
     router.push('/admin?tab=calendarManagement');
+  };
+
+  const handleAddAppointment = () => {
+    setFormType('create');
+    setLeaveRequestId(0);
+    setDrawerOpen();
   };
 
   const handleDeleteEvent = async () => {
@@ -421,20 +406,15 @@ const FrontPageCalendar = () => {
         </Drawer>
       )}
       <div className={calendarStyles.calendarContainer}>
-        <div ref={calendarThemeRef} className={calendarStyles.calendarTheme}>
-          {/* Custom Header Component (injected into FullCalendar toolbar) */}
-          <div ref={customHeaderRef} className={calendarStyles.customHeaderContainer} style={{ display: 'none' }}>
-            {currentCalendarDate && (
-              <>
-                <span className={calendarStyles.monthYearText}>
-                  {format(currentCalendarDate, 'MMMM yyyy')}
-                </span>
-                <div className={calendarStyles.chargeableBadge}>
-                  Chargeable days: <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
-                </div>
-              </>
-            )}
-          </div>
+        <div className={calendarStyles.calendarTheme}>
+          <CalendarHeader
+            calendarRef={calendarRef}
+            activeStaff={activeStaff}
+            customTitle={customTitle}
+            chargeableDays={chargeableDays}
+            currentCalendarDate={currentCalendarDate}
+            onAddAppointment={handleAddAppointment}
+          />
 
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
@@ -444,11 +424,7 @@ const FrontPageCalendar = () => {
             expandRows={true}
             initialView="dayGridMonth"
             ref={calendarRef}
-            headerToolbar={{
-              center: 'title',
-              start: 'dayGridMonth,cv',
-              end: 'prev,next today',
-            }}
+            headerToolbar={false}
             eventClick={fnEventclick}
             events={calendarEvents}
             selectable={true}
