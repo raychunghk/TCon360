@@ -25,7 +25,7 @@ function MyCard({
         inheritPadding={!!headerClassName}
         mah={headerClassName ? undefined : 60}
         p={headerClassName ? undefined : 8}
-        ta={headerClassName ? 'left' : 'center'}
+        ta={'center'}
       >
         <Text
           inherit={!!headerClassName}

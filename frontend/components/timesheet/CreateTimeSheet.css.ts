@@ -162,7 +162,7 @@ export const submitButton = style({
   width: '70%',
   padding: '12px',
   backgroundColor: `${palette.burgundy}!important`,
-
+  margin: `0 auto`,
   color: palette.white,
   border: 'none',
   borderRadius: '10px',

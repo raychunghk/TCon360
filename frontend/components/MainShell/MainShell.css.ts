@@ -28,18 +28,17 @@ export const MainShell = style({
   background: `${palette.ice.light} !important`
 })
 export const header = style({
-  display: 'flex',
+
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '12px 20px',
-  height: 60,
+
   background: `linear-gradient(90deg, ${palette.burgundyDarker} 0%, ${palette.burgundyDark} 55%, ${palette.navyDarker} 100%)`,
-  borderBottomStyle: 'none',
+
   color: 'rgba(255, 255, 255, 0.92)',
   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   borderBottom: '1px solid rgba(255,255,255,0.1)',
-  position: 'sticky',
-  top: 0,
+
   zIndex: 1000, // Header below footer (9999), above main content
 });
 
@@ -203,12 +202,12 @@ export const logoLink = style({
 });
 // Footer container
 export const footer = style({
-  height: footerheight,
+
   backgroundColor: palette.ice.light,
   color: palette.navyDarker,
   borderTop: `1px solid ${palette.ice.darker}`,
   zIndex: 9999,
-  position: 'relative',
+
   alignItems: 'center', // horizontal
   justifyContent: 'center', // vertical
 

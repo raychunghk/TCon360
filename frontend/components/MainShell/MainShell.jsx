@@ -28,7 +28,6 @@ import { useShallow } from 'zustand/react/shallow';
 import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
-import SignOutButton from './SignOutButton';
 export function MainShell({ children, contentpadding = '10px' }) {
   const theme = useMantineTheme();
   const { siteTitle } = useUIStore();
@@ -130,17 +129,23 @@ export function MainShell({ children, contentpadding = '10px' }) {
   return (
     <> 
     <AppShell
-      header={{ height: 70 }}
-      footer={{ height: 35 }}
+      header={{ height: 60, zIndex: 1000}}
+      footer={{ height: 35,zIndex:9999 }}
       navbar={{
         width: navbarwidth,
         breakpoint: 'sm',
         collapsed: { mobile: !opened },
+        zIndex:1,
+        
       }}
       padding="md"
       className={classes.MainShell}
+       transitionDuration={500}
+      transitionTimingFunction="ease"
     >
-      <AppShell.Header className={classes.header}>
+      <AppShell.Header 
+ 
+      className={classes.header}>
        
         <Group justify="space-between" className={classes.headerInner}>
           <Group>
@@ -201,14 +206,14 @@ export function MainShell({ children, contentpadding = '10px' }) {
         </Group>
       </AppShell.Header>
 
-      {activeUser && <AppShellNavBar opened={opened} handleSignout={handleSignout} />}
 
+        {activeUser && <AppShellNavBar opened={opened} handleSignout={handleSignout} />}
       <AppShell.Main>
         <LoadingOverlay
           visible={MainshellOverlayVisible}
           zIndex={1000}
           overlayProps={{ radius: 'sm', blur: 2 }}
-        />
+          />
         {children}
       </AppShell.Main>
 
