@@ -34,6 +34,8 @@ const FrontPageCalendar = () => {
   const [hasCalendar, setHasCalendar] = useState(true);
   // Refs
   const calendarRef = useRef<FullCalendar | null>(null);
+  const calendarThemeRef = useRef<HTMLDivElement>(null);
+  const customHeaderRef = useRef<HTMLDivElement>(null);
 
   // Performance monitoring for API calls
   const fetchCountRef = useRef<number>(0);
@@ -49,6 +51,7 @@ const FrontPageCalendar = () => {
     timesheetDefaultDate,
     calendarEvents,
     setChargeableDays,
+    chargeableDays,
     setLeaveRequestId,
     leaveRequestId,
     activeStaff,
@@ -95,6 +98,27 @@ const FrontPageCalendar = () => {
       setCalendarRef({ calendarRef });
     }
   }, [calendarRef.current]);
+
+  // Effect to inject and update custom header in FullCalendar toolbar
+  useEffect(() => {
+    if (!calendarThemeRef.current || !customHeaderRef.current) {
+      return;
+    }
+
+    const toolbarTitleEl = calendarThemeRef.current.querySelector('.fc-toolbar-title');
+
+    if (!toolbarTitleEl) {
+      return;
+    }
+
+    // Clear existing content and append our custom header
+    toolbarTitleEl.innerHTML = '';
+    toolbarTitleEl.appendChild(customHeaderRef.current);
+
+    // Ensure the header is visible when in the toolbar
+    customHeaderRef.current.style.display = 'flex';
+  }, [currentCalendarDate, chargeableDays]);
+
   const fetchEvents = useCallback(async () => {
     fetchCountRef.current += 1;
     const now = Date.now();
@@ -397,7 +421,21 @@ const FrontPageCalendar = () => {
         </Drawer>
       )}
       <div className={calendarStyles.calendarContainer}>
-        <div className={calendarStyles.calendarTheme}>
+        <div ref={calendarThemeRef} className={calendarStyles.calendarTheme}>
+          {/* Custom Header Component (injected into FullCalendar toolbar) */}
+          <div ref={customHeaderRef} className={calendarStyles.customHeaderContainer} style={{ display: 'none' }}>
+            {currentCalendarDate && (
+              <>
+                <span className={calendarStyles.monthYearText}>
+                  {format(currentCalendarDate, 'MMMM yyyy')}
+                </span>
+                <div className={calendarStyles.chargeableBadge}>
+                  Chargeable days: <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
+                </div>
+              </>
+            )}
+          </div>
+
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, listPlugin, timeGridPlugin]}
             aspectRatio={2.3}
@@ -411,7 +449,6 @@ const FrontPageCalendar = () => {
               start: 'dayGridMonth,cv',
               end: 'prev,next today',
             }}
-            titleFormat={() => customTitle}
             eventClick={fnEventclick}
             events={calendarEvents}
             selectable={true}
