@@ -485,10 +485,10 @@ export const headerLeftSection = style({
 
 export const titleContainer = style({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  justifyContent: 'center',
-  gap: '2px',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  gap: '8px',
   minWidth: 0,
 });
 
@@ -607,22 +607,25 @@ export const viewSelector = style({
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-root`, {
   height: '100%',
+  backgroundColor: paletteAlpha.navyLight20,
+  border: 'none',
 });
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-item`, {
   padding: '8px 16px',
-  fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
-  fontWeight: 500,
+  fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)',
+  fontWeight: 600,
   transition: 'all 200ms ease',
+  color: palette.creamDark,
 });
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]`, {
-  backgroundColor: palette.burgundy,
-  color: 'white',
+  backgroundColor: palette.navyDark,
+  color: palette.goldenYellow,
 });
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]:hover`, {
-  backgroundColor: palette.burgundyLight,
+  backgroundColor: palette.navyDarker,
 });
 
 globalStyle(`${viewSelector} .mantine-SegmentedControl-item:not([data-active]):hover`, {
