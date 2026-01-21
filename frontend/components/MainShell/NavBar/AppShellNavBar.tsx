@@ -1,6 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/prop-types */
 import { AppShell, Box, Divider, Flex, Text, Title } from '@mantine/core';
+import Image from 'next/image';
 
 import useStore from '@/components/stores/zstore.ts';
 import CreateTimesheetPage from '@/components/timesheet/CreateTimeSheet';
@@ -11,7 +12,7 @@ import * as classes from './AppShellNavBar.css';
 import MainLinks from './mainlinks';
 
 export default function AppShellNavBar({ opened, handleSignout }) {
-  const { navbarwidth } = useStore();
+  const { navbarwidth, basepath } = useStore();
 
   return (
     <AppShell.Navbar
@@ -23,12 +24,23 @@ export default function AppShellNavBar({ opened, handleSignout }) {
       <Flex direction="column" gap="lg" h="100%">
         {/* TCon360 Branding Header */}
         <Box className={classes.brandingWrapper}>
-          <Title order={2} className={classes.brandingTitle}>
-            TCon<span className={classes.goldAccent}>360</span>
-          </Title>
-          <Text className={classes.brandingSubtitle}>
-            Timesheet Management
-          </Text>
+          <Flex align="center" gap="xs">
+            <Image
+              src={`${basepath}/favicon.svg`}
+              alt="Tcon360"
+              width={30}
+              height={30}
+              className={classes.brandingIcon}
+            />
+            <Box>
+              <Title order={2} className={classes.brandingTitle}>
+                TCon<span className={classes.goldAccent}>360</span>
+              </Title>
+              <Text className={classes.brandingSubtitle}>
+                Timesheet Management
+              </Text>
+            </Box>
+          </Flex>
         </Box>
 
         <Divider my={4} className={classes.divider} />

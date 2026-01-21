@@ -12,10 +12,13 @@ export const navbar = style({
 });
 
 export const brandingWrapper = style({
-  textAlign: 'center',
+  textAlign: 'left',
   padding: '3px 0',
+});
 
-
+export const brandingIcon = style({
+  borderRadius: '4px',
+  flexShrink: 0,
 });
 
 export const brandingTitle = style({
