@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
-import { Button, ButtonGroup, Group } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight, IconPlus } from '@tabler/icons-react';
-import { format } from 'date-fns';
-import FullCalendar from '@fullcalendar/react';
-import * as calendarStyles from './FrontPageCalendar.css';
 import { palette } from '@/styles/palette';
+import FullCalendar from '@fullcalendar/react';
+import { Button, ButtonGroup, Group } from '@mantine/core';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { format } from 'date-fns';
+import React from 'react';
+import * as calendarStyles from './FrontPageCalendar.css';
 
 interface CalendarHeaderProps {
   calendarRef: React.RefObject<FullCalendar | null>;
@@ -57,53 +57,20 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
     >
       {/* Left Navigation Group */}
       <Group gap="xs">
-        <ButtonGroup>
-          <Button
-            variant="filled"
-            onClick={handlePrev}
-            className="btn-theme text-white f-12"
-            leftSection={<IconChevronLeft size={16} />}
-            style={{ backgroundColor: palette.navyDark }}
-          >
-            Prev
-          </Button>
-          <Button
-            variant="filled"
-            onClick={handleToday}
-            className="btn-theme text-white f-12"
-            style={{ backgroundColor: palette.navyDark }}
-          >
-            Today
-          </Button>
-          <Button
-            variant="filled"
-            onClick={handleNext}
-            className="btn-theme text-white f-12"
-            rightSection={<IconChevronRight size={16} />}
-            style={{ backgroundColor: palette.navyDark }}
-          >
-            Next
-          </Button>
-        </ButtonGroup>
-      </Group>
-
-      {/* Center Title Group */}
-      <div className={calendarStyles.customHeaderContainer}>
-        {currentCalendarDate && (
-          <>
-            <span className={calendarStyles.monthYearText}>
-              {format(currentCalendarDate, 'MMMM yyyy')}
-            </span>
-            <div className={calendarStyles.chargeableBadge}>
-              Chargeable days:{' '}
-              <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Right Action Group */}
-      <Group gap="xs">
+        {/* Center Title Group */}
+        <div className={calendarStyles.customHeaderContainer}>
+          {currentCalendarDate && (
+            <>
+              <span className={calendarStyles.monthYearText}>
+                {format(currentCalendarDate, 'MMMM yyyy')}
+              </span>
+              <div className={calendarStyles.chargeableBadge}>
+                Chargeable days:{' '}
+                <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
+              </div>
+            </>
+          )}
+        </div>
         <ButtonGroup>
           <Button
             variant="filled"
@@ -122,15 +89,41 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             Vacations
           </Button>
         </ButtonGroup>
+
+      </Group>
+
+
+
+      {/* Right Action Group */}
+      <Group gap="xs"> <ButtonGroup>
         <Button
           variant="filled"
-          onClick={onAddAppointment}
-          leftSection={<IconPlus size={16} />}
+          onClick={handlePrev}
           className="btn-theme text-white f-12"
-          style={{ backgroundColor: palette.burgundy }}
+          leftSection={<IconChevronLeft size={16} />}
+          style={{ backgroundColor: palette.navyDark }}
         >
-          Add Appointment
+
         </Button>
+        <Button
+          variant="filled"
+          onClick={handleToday}
+          className="btn-theme text-white f-12"
+          style={{ backgroundColor: palette.navyDark }}
+        >
+          Today
+        </Button>
+        <Button
+          variant="filled"
+          onClick={handleNext}
+          className="btn-theme text-white f-12"
+          rightSection={<IconChevronRight size={16} />}
+          style={{ backgroundColor: palette.navyDark }}
+        >
+
+        </Button>
+      </ButtonGroup>
+
       </Group>
     </div>
   );
