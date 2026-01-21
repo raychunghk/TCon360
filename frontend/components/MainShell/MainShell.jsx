@@ -3,24 +3,16 @@
 import { bauthClient } from '@/app/lib/bauthclient';
 import useUIStore from '@/components/stores/useUIStore';
 import useStore from '@/components/stores/zstore.ts';
-import { palette } from '@/styles/palette';
 import {
   AppShell,
-  Burger,
-  Button,
   Center,
-  Group,
   LoadingOverlay,
   Text,
-  Title,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core';
 import '@mantine/core/styles/Button.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.layer.css';
-import { IconLogin } from '@tabler/icons-react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useCallback, useEffect, useState } from 'react';
@@ -129,7 +121,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
   return (
     <>
     <AppShell
-      header={{ height: 60, zIndex: 1000}}
+      
       footer={{ height: 35,zIndex:9999 }}
       navbar={{
         width: navbarwidth,
@@ -138,12 +130,13 @@ export function MainShell({ children, contentpadding = '10px' }) {
         zIndex:1,
 
       }}
+      layout='alt'
       padding="md"
       className={classes.MainShell}
        transitionDuration={500}
       transitionTimingFunction="ease"
     >
-      <AppShell.Header
+      {/* <AppShell.Header
 
       className={classes.header}>
 
@@ -166,7 +159,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
               />
             </Link>
             <Title ta="center" mt={5} component="div" fz={{ base: 18, sm: 20, md: 28 }} className={classes.headerTitle}>
-              {/* <Text fw={"300"} inherit span className={classes.welcomeText}>Welcome to {' '}</Text> */}
+       
 
                 {siteTitle} - Timesheet and Vacations manager
 
@@ -175,7 +168,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
           <Group gap="xs">
             {activeUser && isAuthenticated ? (
               <>
-                {/* HeaderPopover moved to absolute position */}
+                { }
               </>
             ) : (
               <>
@@ -204,7 +197,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
             )}
           </Group>
         </Group>
-      </AppShell.Header>
+      </AppShell.Header> */}
 
       {/* HeaderPopover positioned absolutely in top-right corner */}
       {activeUser && isAuthenticated && (
