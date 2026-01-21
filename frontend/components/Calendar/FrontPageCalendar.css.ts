@@ -564,32 +564,35 @@ export const todayButton = style({
 
 export const viewSelector = style({
   height: '36px',
-  selectors: {
-    '& .mantine-SegmentedControl-root': {
-      height: '100%',
-    },
-    '& .mantine-SegmentedControl-item': {
-      padding: '8px 16px',
-      fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
-      fontWeight: 500,
-      transition: 'all 200ms ease',
-    },
-    '& .mantine-SegmentedControl-item[data-active]': {
-      backgroundColor: palette.burgundy,
-      color: 'white',
-    },
-    '& .mantine-SegmentedControl-item[data-active]:hover': {
-      backgroundColor: palette.burgundyLight,
-    },
-    '& .mantine-SegmentedControl-item:not([data-active]):hover': {
-      backgroundColor: palette.ice.light,
-    },
-  },
   '@media': {
     '(max-width: 768px)': {
       display: 'none',
     },
   },
+});
+
+globalStyle(`${viewSelector} .mantine-SegmentedControl-root`, {
+  height: '100%',
+});
+
+globalStyle(`${viewSelector} .mantine-SegmentedControl-item`, {
+  padding: '8px 16px',
+  fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
+  fontWeight: 500,
+  transition: 'all 200ms ease',
+});
+
+globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]`, {
+  backgroundColor: palette.burgundy,
+  color: 'white',
+});
+
+globalStyle(`${viewSelector} .mantine-SegmentedControl-item[data-active]:hover`, {
+  backgroundColor: palette.burgundyLight,
+});
+
+globalStyle(`${viewSelector} .mantine-SegmentedControl-item:not([data-active]):hover`, {
+  backgroundColor: palette.ice.light,
 });
 
 // Responsive adjustments for header
