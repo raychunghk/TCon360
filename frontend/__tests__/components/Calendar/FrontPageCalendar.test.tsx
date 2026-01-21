@@ -46,6 +46,7 @@ describe('FrontPageCalendar - API Call Optimization', () => {
       timesheetDefaultDate: null,
       calendarEvents: [],
       setChargeableDays: jest.fn(),
+      chargeableDays: 21,
       setLeaveRequestId: jest.fn(),
       leaveRequestId: null,
       activeStaff: { id: 1, name: 'Test Staff' },

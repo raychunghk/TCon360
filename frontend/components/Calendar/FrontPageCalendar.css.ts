@@ -383,3 +383,57 @@ globalStyle('.fc-daygrid-day.fc-day-sun .fc-event-title, .fc-daygrid-day.fc-day-
 globalStyle(`${calendarTheme} .fc .fc-event-title`, {
   textWrap: `auto`,
 });
+
+// ============================================
+// CUSTOM HEADER STYLES
+// ============================================
+
+export const customHeaderContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+  height: '100%',
+  '@media': {
+    '(max-width: 768px)': {
+      gap: '12px',
+    },
+  },
+});
+
+export const monthYearText = style({
+  fontWeight: 700,
+  color: palette.navyDarker,
+  fontSize: 'clamp(1.25rem, 2.5vw, 1.5rem)',
+  textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+  letterSpacing: '-0.02em',
+  '@media': {
+    '(max-width: 768px)': {
+      fontSize: 'clamp(1rem, 3vw, 1.25rem)',
+    },
+  },
+});
+
+export const chargeableBadge = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '4px 16px',
+  borderRadius: '9999px',
+  backgroundColor: palette.pearl.dark,
+  border: `2px solid ${palette.burgundy}`,
+  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)',
+  fontWeight: 500,
+  whiteSpace: 'nowrap',
+  '@media': {
+    '(max-width: 768px)': {
+      padding: '3px 12px',
+      fontSize: '0.75rem',
+    },
+  },
+});
+
+export const chargeableValue = style({
+  fontWeight: 700,
+  color: palette.navyDarker,
+  marginLeft: '4px',
+});
