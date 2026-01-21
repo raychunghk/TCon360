@@ -442,3 +442,162 @@ export const chargeableValue = style({
   color: palette.navyDarker,
   marginLeft: '4px',
 });
+
+// ============================================
+// CUSTOM CALENDAR HEADER STYLES (70px height)
+// ============================================
+
+export const calendarHeaderWrapper = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  height: '70px',
+  padding: '0 16px',
+  backgroundColor: palette.white,
+  borderBottom: `1px solid ${palette.ice.darker}`,
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+  '@media': {
+    '(max-width: 768px)': {
+      padding: '0 8px',
+      height: '70px',
+    },
+  },
+});
+
+// Layout sections
+export const headerLeftSection = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  flexShrink: 0,
+});
+
+export const headerCenterSection = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '4px',
+  flex: 1,
+  textAlign: 'center',
+  '@media': {
+    '(max-width: 768px)': {
+      gap: '2px',
+    },
+  },
+});
+
+export const headerRightCenterSection = style({
+  display: 'flex',
+  alignItems: 'center',
+  flexShrink: 0,
+  '@media': {
+    '(max-width: 768px)': {
+      display: 'none', // Hide on mobile to save space
+    },
+  },
+});
+
+export const headerRightmostSection = style({
+  display: 'flex',
+  alignItems: 'center',
+  flexShrink: 0,
+});
+
+// Button styles
+export const navButton = style({
+  backgroundColor: `${palette.navyDark} !important`,
+  border: `1px solid ${palette.navyDark}`,
+  borderRadius: '6px',
+  padding: '8px 12px',
+  minWidth: '44px',
+  height: '36px',
+  color: 'white !important',
+  transition: 'all 200ms ease',
+  cursor: 'pointer',
+  ':hover': {
+    backgroundColor: `${palette.navy} !important`,
+    borderColor: palette.navy,
+    transform: 'translateY(-1px)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.20)',
+  },
+  ':active': {
+    transform: 'translateY(0)',
+  },
+  '@media': {
+    '(max-width: 768px)': {
+      padding: '6px 8px',
+      minWidth: '36px',
+      height: '32px',
+    },
+  },
+});
+
+export const todayButton = style({
+  backgroundColor: `${palette.burgundy} !important`,
+  border: `1px solid ${palette.burgundy}`,
+  borderRadius: '6px',
+  padding: '8px 16px',
+  height: '36px',
+  color: 'white !important',
+  fontWeight: 600,
+  fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
+  transition: 'all 200ms ease',
+  cursor: 'pointer',
+  ':hover': {
+    backgroundColor: `${palette.burgundyLight} !important`,
+    borderColor: palette.burgundyLight,
+    transform: 'translateY(-1px)',
+    boxShadow: '0 4px 8px rgba(122, 38, 49, 0.30)',
+  },
+  ':active': {
+    transform: 'translateY(0)',
+  },
+  '@media': {
+    '(max-width: 768px)': {
+      padding: '6px 12px',
+      height: '32px',
+      fontSize: '0.75rem',
+    },
+  },
+});
+
+export const viewSelector = style({
+  height: '36px',
+  selectors: {
+    '& .mantine-SegmentedControl-root': {
+      height: '100%',
+    },
+    '& .mantine-SegmentedControl-item': {
+      padding: '8px 16px',
+      fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)',
+      fontWeight: 500,
+      transition: 'all 200ms ease',
+    },
+    '& .mantine-SegmentedControl-item[data-active]': {
+      backgroundColor: palette.burgundy,
+      color: 'white',
+    },
+    '& .mantine-SegmentedControl-item[data-active]:hover': {
+      backgroundColor: palette.burgundyLight,
+    },
+    '& .mantine-SegmentedControl-item:not([data-active]):hover': {
+      backgroundColor: palette.ice.light,
+    },
+  },
+  '@media': {
+    '(max-width: 768px)': {
+      display: 'none',
+    },
+  },
+});
+
+// Responsive adjustments for header
+globalStyle(`@media (max-width: 768px) ${headerCenterSection} .${monthYearText}`, {
+  fontSize: 'clamp(1rem, 4vw, 1.1rem)',
+});
+
+globalStyle(`@media (max-width: 768px) ${headerCenterSection} .${chargeableBadge}`, {
+  padding: '2px 8px',
+  fontSize: 'clamp(0.7rem, 2vw, 0.8rem)',
+});

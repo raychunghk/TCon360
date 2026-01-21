@@ -2,11 +2,12 @@
 
 import { palette } from '@/styles/palette';
 import FullCalendar from '@fullcalendar/react';
-import { Button, ButtonGroup, Group } from '@mantine/core';
+import { Button, SegmentedControl } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { format } from 'date-fns';
 import React from 'react';
 import * as calendarStyles from './FrontPageCalendar.css';
+import HeaderPopover from '@/components/MainShell/LayoutHeader/HeaderPopover';
 
 interface CalendarHeaderProps {
   calendarRef: React.RefObject<FullCalendar | null>;
@@ -35,96 +36,74 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
     calendarRef.current?.getApi().today();
   };
 
-  const handleMonthView = () => {
-    calendarRef.current?.getApi().changeView('dayGridMonth');
+  const handleViewChange = (value: string) => {
+    calendarRef.current?.getApi().changeView(value);
   };
 
-  const handleCustomView = () => {
-    calendarRef.current?.getApi().changeView('cv');
-  };
+  // Get current view type for SegmentedControl
+  const currentView = calendarRef.current?.getApi().view.type || 'dayGridMonth';
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px 0',
-        marginBottom: '10px',
-        flexWrap: 'wrap',
-        gap: '10px',
-      }}
-    >
-      {/* Left Navigation Group */}
-      <Group gap="xs">
-        {/* Center Title Group */}
-        <div className={calendarStyles.customHeaderContainer}>
-          {currentCalendarDate && (
-            <>
-              <span className={calendarStyles.monthYearText}>
-                {format(currentCalendarDate, 'MMMM yyyy')}
-              </span>
-              <div className={calendarStyles.chargeableBadge}>
-                Chargeable days:{' '}
-                <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
-              </div>
-            </>
-          )}
-        </div>
-        <ButtonGroup>
-          <Button
-            variant="filled"
-            onClick={handleMonthView}
-            className="btn-theme text-white f-12"
-            style={{ backgroundColor: palette.navyDark }}
-          >
-            Month
-          </Button>
-          <Button
-            variant="filled"
-            onClick={handleCustomView}
-            className="btn-theme text-white f-12"
-            style={{ backgroundColor: palette.navyDark }}
-          >
-            Vacations
-          </Button>
-        </ButtonGroup>
-
-      </Group>
-
-
-
-      {/* Right Action Group */}
-      <Group gap="xs"> <ButtonGroup>
+    <div className={calendarStyles.calendarHeaderWrapper}>
+      {/* Left section: Navigation buttons */}
+      <div className={calendarStyles.headerLeftSection}>
         <Button
           variant="filled"
           onClick={handlePrev}
-          className="btn-theme text-white f-12"
+          className={calendarStyles.navButton}
           leftSection={<IconChevronLeft size={16} />}
-          style={{ backgroundColor: palette.navyDark }}
-        >
-
-        </Button>
+          aria-label="Previous month"
+        />
         <Button
           variant="filled"
           onClick={handleToday}
-          className="btn-theme text-white f-12"
-          style={{ backgroundColor: palette.navyDark }}
+          className={calendarStyles.todayButton}
+          aria-label="Go to today"
         >
           Today
         </Button>
         <Button
           variant="filled"
           onClick={handleNext}
-          className="btn-theme text-white f-12"
+          className={calendarStyles.navButton}
           rightSection={<IconChevronRight size={16} />}
-          style={{ backgroundColor: palette.navyDark }}
-        >
+          aria-label="Next month"
+        />
+      </div>
 
-        </Button>
-      </ButtonGroup>
+      {/* Center section: Month/Year title with chargeable days */}
+      <div className={calendarStyles.headerCenterSection}>
+        {currentCalendarDate && (
+          <>
+            <span className={calendarStyles.monthYearText}>
+              {format(currentCalendarDate, 'MMMM yyyy')}
+            </span>
+            <div className={calendarStyles.chargeableBadge}>
+              Chargeable days:{' '}
+              <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
+            </div>
+          </>
+        )}
+      </div>
 
-      </Group>
+      {/* Right-Center section: View selector */}
+      <div className={calendarStyles.headerRightCenterSection}>
+        <SegmentedControl
+          value={currentView === 'cv' ? 'cv' : 'dayGridMonth'}
+          onChange={handleViewChange}
+          data={[
+            { label: 'Month', value: 'dayGridMonth' },
+            { label: 'Vacation', value: 'cv' },
+          ]}
+          className={calendarStyles.viewSelector}
+          size="sm"
+        />
+      </div>
+
+      {/* Rightmost section: Profile button */}
+      <div className={calendarStyles.headerRightmostSection}>
+        <HeaderPopover />
+      </div>
     </div>
   );
 };
