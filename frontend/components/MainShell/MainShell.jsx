@@ -127,7 +127,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
   });
 
   return (
-    <> 
+    <>
     <AppShell
       header={{ height: 60, zIndex: 1000}}
       footer={{ height: 35,zIndex:9999 }}
@@ -136,17 +136,17 @@ export function MainShell({ children, contentpadding = '10px' }) {
         breakpoint: 'sm',
         collapsed: { mobile: !opened },
         zIndex:1,
-        
+
       }}
       padding="md"
       className={classes.MainShell}
        transitionDuration={500}
       transitionTimingFunction="ease"
     >
-      <AppShell.Header 
- 
+      <AppShell.Header
+
       className={classes.header}>
-       
+
         <Group justify="space-between" className={classes.headerInner}>
           <Group>
             <Burger
@@ -167,15 +167,15 @@ export function MainShell({ children, contentpadding = '10px' }) {
             </Link>
             <Title ta="center" mt={5} component="div" fz={{ base: 18, sm: 20, md: 28 }} className={classes.headerTitle}>
               {/* <Text fw={"300"} inherit span className={classes.welcomeText}>Welcome to {' '}</Text> */}
-              
+
                 {siteTitle} - Timesheet and Vacations manager
-    
+
             </Title>
           </Group>
           <Group gap="xs">
             {activeUser && isAuthenticated ? (
               <>
-                <HeaderPopover />
+                {/* HeaderPopover moved to absolute position */}
               </>
             ) : (
               <>
@@ -206,6 +206,20 @@ export function MainShell({ children, contentpadding = '10px' }) {
         </Group>
       </AppShell.Header>
 
+      {/* HeaderPopover positioned absolutely in top-right corner */}
+      {activeUser && isAuthenticated && (
+        <div style={{
+          position: 'absolute',
+          top: '70px',
+          right: '20px',
+          zIndex: 1001,
+          pointerEvents: 'none'
+        }}>
+          <div style={{ pointerEvents: 'auto' }}>
+            <HeaderPopover />
+          </div>
+        </div>
+      )}
 
         {activeUser && <AppShellNavBar opened={opened} handleSignout={handleSignout} />}
       <AppShell.Main>

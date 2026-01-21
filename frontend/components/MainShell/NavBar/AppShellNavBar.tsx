@@ -1,5 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { AppShell, Box, Divider, Flex } from '@mantine/core';
+/* eslint-disable react/prop-types */
+import { AppShell, Box, Divider, Flex, Text, Title } from '@mantine/core';
 
 import useStore from '@/components/stores/zstore.ts';
 import CreateTimesheetPage from '@/components/timesheet/CreateTimeSheet';
@@ -20,6 +21,18 @@ export default function AppShellNavBar({ opened, handleSignout }) {
       className={classes.navbar}
     >
       <Flex direction="column" gap="lg" h="100%">
+        {/* TCon360 Branding Header */}
+        <Box className={classes.brandingWrapper}>
+          <Title order={2} className={classes.brandingTitle}>
+            TCon<span className={classes.goldAccent}>360</span>
+          </Title>
+          <Text className={classes.brandingSubtitle}>
+            Timesheet Management
+          </Text>
+        </Box>
+
+        <Divider my={4} className={classes.divider} />
+
         <Box className={classes.createTimesheetWrapper}>
           <CreateTimesheetPage pickersize="xs" cardWidth={SIDEBAR_COMPONENT_WIDTH_NUMBER} />
         </Box>
