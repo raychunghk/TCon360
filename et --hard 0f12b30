@@ -1,0 +1,46 @@
+[33mcommit 0f12b30fb423095a4dd9e469b5fa639ebc6f7dd5[m[33m ([m[1;31morigin/fix/client-use-zustand-basepath-remove-config[m[33m)[m
+Author: cto-new[bot] <140088366+cto-new[bot]@users.noreply.github.com>
+Date:   Mon Jan 19 13:31:00 2026 +0000
+
+    fix(client): remove server-side config import and use basepath from Zustand
+    
+    Fix a runtime error caused by accessing server-side environment variables in client components by removing imports of the config library and reading basepath from the existing Zustand store (useStore). This ensures client code uses client-safe state for image URLs and avoids server-only globals.
+    
+    - Remove config imports from client components
+    - Replace config.prefix with basepath from Zustand (useStore)
+    - LoginBody.tsx reads basepath from store and applies to login background
+    - Signup page uses basepath from Zustand
+    - No breaking changes; aligns client code with server-only config usage
+
+[33mcommit 50d42ae846c7c448ba39b3b129664b9f5878bc5f[m
+Merge: 4b55fdf ca0a8f6
+Author: cto-new[bot] <140088366+cto-new[bot]@users.noreply.github.com>
+Date:   Mon Jan 19 13:17:18 2026 +0000
+
+    merge: fix Turbopack loader import errors and --no-turbo flag
+    
+    - Convert turbopack-loader.ts to .js with CommonJS require()
+    - Update package.json scripts: --no-turbo → --webpack
+    - Remove wrapper components (LoginBodyWrapper, signup/wrapper)
+    - Inline config.prefix usage in login/signup pages
+
+[33mcommit 4b55fdf6d49721e1fc2c8b1d16b955ba72036a9b[m
+Merge: 52f2106 9f7c6c3
+Author: raychunghk <mannchung@gmail.com>
+Date:   Mon Jan 19 19:17:18 2026 +0800
+
+    Merge pull request #27 from raychunghk/fix/login-remove-server-env-access
+    
+    Fix login env access by server wrapper and CSS variables
+
+[33mcommit 9f7c6c32713b256e5c089130e0beffcd22112986[m[33m ([m[1;31morigin/fix/login-remove-server-env-access[m[33m)[m
+Author: cto-new[bot] <140088366+cto-new[bot]@users.noreply.github.com>
+Date:   Mon Jan 19 10:07:50 2026 +0000
+
+    fix(login): prevent server-side env var access on client by using server wrapper and CSS vars
+
+[33mcommit ca0a8f638cb0aae02d8abdbcfcbfa46f0432c754[m[33m ([m[1;31morigin/fix/turbopack-loader-commonjs-compile-js[m[33m)[m
+Author: cto-new[bot] <140088366+cto-new[bot]@users.noreply.github.com>
+Date:   Mon Jan 19 09:48:28 2026 +0000
+
+    fix(loader/turbopack): convert to CommonJS loader to fix vanilla-extract Turbopack import
