@@ -11,6 +11,33 @@ export const navbar = style({
   zIndex: 100, // Navbar below header/footer
 });
 
+export const brandingWrapper = style({
+  textAlign: 'center',
+  padding: '8px 0',
+  borderBottom: `1px solid ${paletteAlpha.navyLight55}`,
+  marginBottom: '8px',
+});
+
+export const brandingTitle = style({
+  fontSize: '1.25rem',
+  fontWeight: 700,
+  color: 'white',
+  margin: 0,
+  lineHeight: 1.2,
+});
+
+export const goldAccent = style({
+  color: 'rgb(205, 139, 36)',
+  fontWeight: 800,
+});
+
+export const brandingSubtitle = style({
+  fontSize: '0.75rem',
+  color: 'rgba(255, 255, 255, 0.75)',
+  marginTop: '2px',
+  fontWeight: 400,
+});
+
 export const divider = style({
   borderColor: palette.amberLight,
   margin: '4px 0',
