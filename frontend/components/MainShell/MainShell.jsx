@@ -17,7 +17,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { destroyCookie, parseCookies } from 'nookies';
 import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import HeaderPopover from './LayoutHeader/HeaderPopover';
 import * as classes from './MainShell.css';
 import AppShellNavBar from './NavBar/AppShellNavBar';
 export function MainShell({ children, contentpadding = '10px' }) {
@@ -199,20 +198,7 @@ export function MainShell({ children, contentpadding = '10px' }) {
         </Group>
       </AppShell.Header> */}
 
-      {/* HeaderPopover positioned absolutely in top-right corner */}
-      {activeUser && isAuthenticated && (
-        <div style={{
-          position: 'absolute',
-          top: '70px',
-          right: '20px',
-          zIndex: 1001,
-          pointerEvents: 'none'
-        }}>
-          <div style={{ pointerEvents: 'auto' }}>
-            <HeaderPopover />
-          </div>
-        </div>
-      )}
+    
 
         {activeUser && <AppShellNavBar opened={opened} handleSignout={handleSignout} />}
       <AppShell.Main>
