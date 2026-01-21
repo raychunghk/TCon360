@@ -13,9 +13,9 @@ export const navbar = style({
 
 export const brandingWrapper = style({
   textAlign: 'center',
-  padding: '8px 0',
-  borderBottom: `1px solid ${paletteAlpha.navyLight55}`,
-  marginBottom: '8px',
+  padding: '3px 0',
+
+
 });
 
 export const brandingTitle = style({
