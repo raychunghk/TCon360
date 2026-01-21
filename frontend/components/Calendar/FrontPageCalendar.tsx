@@ -230,12 +230,6 @@ const FrontPageCalendar = () => {
     router.push('/admin?tab=calendarManagement');
   };
 
-  const handleAddAppointment = () => {
-    setFormType('create');
-    setLeaveRequestId(0);
-    setDrawerOpen();
-  };
-
   const handleDeleteEvent = async () => {
     try {
       setIsEventUpdated(true);
@@ -409,11 +403,8 @@ const FrontPageCalendar = () => {
         <div className={calendarStyles.calendarTheme}>
           <CalendarHeader
             calendarRef={calendarRef}
-            activeStaff={activeStaff}
             customTitle={customTitle}
             chargeableDays={chargeableDays}
-            currentCalendarDate={currentCalendarDate}
-            onAddAppointment={handleAddAppointment}
           />
 
           <FullCalendar
@@ -424,7 +415,6 @@ const FrontPageCalendar = () => {
             expandRows={true}
             initialView="dayGridMonth"
             ref={calendarRef}
-            headerToolbar={false}
             eventClick={fnEventclick}
             events={calendarEvents}
             selectable={true}

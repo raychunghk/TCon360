@@ -1,96 +1,76 @@
 'use client';
 
-import { palette } from '@/styles/palette';
+import HeaderPopover from '@/components/MainShell/LayoutHeader/HeaderPopover';
 import FullCalendar from '@fullcalendar/react';
 import { Button, SegmentedControl } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
-import { format } from 'date-fns';
 import React from 'react';
 import * as calendarStyles from './FrontPageCalendar.css';
-import HeaderPopover from '@/components/MainShell/LayoutHeader/HeaderPopover';
+
+type CalendarViewType = 'dayGridMonth' | 'cv';
 
 interface CalendarHeaderProps {
   calendarRef: React.RefObject<FullCalendar | null>;
-  activeStaff: any;
   customTitle: string;
   chargeableDays: number;
-  currentCalendarDate: Date | null;
-  onAddAppointment: () => void;
 }
 
-const CalendarHeader: React.FC<CalendarHeaderProps> = ({
-  calendarRef,
-  chargeableDays,
-  currentCalendarDate,
-  onAddAppointment,
-}) => {
-  const handlePrev = () => {
+const CalendarHeader: React.FC<CalendarHeaderProps> = ({ calendarRef, customTitle, chargeableDays }) => {
+  const [view, setView] = React.useState<CalendarViewType>('dayGridMonth');
+
+  React.useEffect(() => {
+    const api = calendarRef.current?.getApi();
+    if (!api) return;
+
+    setView(api.view.type === 'cv' ? 'cv' : 'dayGridMonth');
+  }, [calendarRef, customTitle]);
+
+  const monthYear = React.useMemo(() => {
+    if (!customTitle) return '';
+
+    const lower = customTitle.toLowerCase();
+    const idxChargeable = lower.indexOf(' chargeable');
+    if (idxChargeable !== -1) return customTitle.slice(0, idxChargeable);
+
+    const idxChargable = lower.indexOf(' chargable');
+    if (idxChargable !== -1) return customTitle.slice(0, idxChargable);
+
+    return customTitle;
+  }, [customTitle]);
+
+  const prevHandle = () => {
     calendarRef.current?.getApi().prev();
   };
 
-  const handleNext = () => {
+  const nextHandle = () => {
     calendarRef.current?.getApi().next();
   };
 
-  const handleToday = () => {
+  const todayHandle = () => {
     calendarRef.current?.getApi().today();
   };
 
-  const handleViewChange = (value: string) => {
-    calendarRef.current?.getApi().changeView(value);
+  const viewChangeHandle = (nextView: string) => {
+    const next = (nextView === 'cv' ? 'cv' : 'dayGridMonth') as CalendarViewType;
+    setView(next);
+    calendarRef.current?.getApi().changeView(next);
   };
-
-  // Get current view type for SegmentedControl
-  const currentView = calendarRef.current?.getApi().view.type || 'dayGridMonth';
 
   return (
     <div className={calendarStyles.calendarHeaderWrapper}>
-      {/* Left section: Navigation buttons */}
       <div className={calendarStyles.headerLeftSection}>
-        <Button
-          variant="filled"
-          onClick={handlePrev}
-          className={calendarStyles.navButton}
-          leftSection={<IconChevronLeft size={16} />}
-          aria-label="Previous month"
-        />
-        <Button
-          variant="filled"
-          onClick={handleToday}
-          className={calendarStyles.todayButton}
-          aria-label="Go to today"
-        >
-          Today
-        </Button>
-        <Button
-          variant="filled"
-          onClick={handleNext}
-          className={calendarStyles.navButton}
-          rightSection={<IconChevronRight size={16} />}
-          aria-label="Next month"
-        />
+        <div className={calendarStyles.titleContainer}>
+          <span className={calendarStyles.monthYearText}>{monthYear}</span>
+          <div className={calendarStyles.chargeableBadge}>
+            Chargeable days: <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
+          </div>
+        </div>
       </div>
 
-      {/* Center section: Month/Year title with chargeable days */}
       <div className={calendarStyles.headerCenterSection}>
-        {currentCalendarDate && (
-          <>
-            <span className={calendarStyles.monthYearText}>
-              {format(currentCalendarDate, 'MMMM yyyy')}
-            </span>
-            <div className={calendarStyles.chargeableBadge}>
-              Chargeable days:{' '}
-              <span className={calendarStyles.chargeableValue}>{chargeableDays}</span>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Right-Center section: View selector */}
-      <div className={calendarStyles.headerRightCenterSection}>
         <SegmentedControl
-          value={currentView === 'cv' ? 'cv' : 'dayGridMonth'}
-          onChange={handleViewChange}
+          value={view}
+          onChange={viewChangeHandle}
           data={[
             { label: 'Month', value: 'dayGridMonth' },
             { label: 'Vacation', value: 'cv' },
@@ -100,9 +80,29 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         />
       </div>
 
-      {/* Rightmost section: Profile button */}
       <div className={calendarStyles.headerRightmostSection}>
         <HeaderPopover />
+        <div className={calendarStyles.buttonGroup}>
+          <Button
+            variant="filled"
+            onClick={prevHandle}
+            className={calendarStyles.navButton}
+            aria-label="Previous month"
+          >
+            <IconChevronLeft size={16} />
+          </Button>
+          <Button
+            variant="filled"
+            onClick={todayHandle}
+            className={calendarStyles.todayButton}
+            aria-label="Go to today"
+          >
+            Today
+          </Button>
+          <Button variant="filled" onClick={nextHandle} className={calendarStyles.navButton} aria-label="Next month">
+            <IconChevronRight size={16} />
+          </Button>
+        </div>
       </div>
     </div>
   );
