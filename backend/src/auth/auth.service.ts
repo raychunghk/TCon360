@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { signupUserDTO } from '../models/customDTOs.js';
+import { signupUserDTO, GoogleAuthDto } from '../models/customDTOs.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { BaseService } from '../shared/base.service.js';
 import { StaffService } from '../staff/service/staff.service.js';
@@ -170,6 +170,75 @@ export class AuthService extends BaseService {
       return { token, user: userWithDetails };
     } catch (error) {
       console.log('error', error);
+      throw error;
+    }
+  }
+
+  async handleGoogleAuth(googleData: GoogleAuthDto) {
+    const { id: googleId, email, name, picture, email_verified } = googleData;
+
+    try {
+      // Check if user exists by email
+      const existingUser = await this.prisma.user.findFirst({
+        where: {
+          email
+        },
+        include: {
+          viewStaff: true,
+        }
+      });
+
+      let user;
+      if (existingUser) {
+        // Update existing user with Google account info
+        user = await this.prisma.user.update({
+          where: { id: existingUser.id },
+          data: {
+            name: name || existingUser.name,
+            image: picture || existingUser.image,
+            emailVerified: email_verified ? new Date() : existingUser.emailVerified,
+          },
+          include: {
+            viewStaff: true,
+          }
+        });
+      } else {
+        // Create new user with Google account
+        user = await this.prisma.user.create({
+          data: {
+            email,
+            username: email.split('@')[0], // Use email prefix as username
+            name,
+            image: picture,
+            emailVerified: email_verified ? new Date() : null,
+            userStatus: 'active',
+          },
+          include: {
+            viewStaff: true,
+          }
+        });
+      }
+
+      // Fetch full user details (including contracts) regardless
+      const userWithDetails = await this.usersService.getUserWithStaffAndContract(user.id);
+
+      // Build JWT payload
+      const payload = {
+        sub: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        staff: user.viewStaff,
+      };
+
+      const token = this.jwtService.sign(payload);
+      console.log(`Google auth token generated:`, token);
+      const decoded = this.jwtService.verify(token);
+      console.log('Google auth decoded token in nest.js', decoded);
+
+      return { token, user: userWithDetails };
+    } catch (error) {
+      console.log('Google auth error', error);
       throw error;
     }
   }

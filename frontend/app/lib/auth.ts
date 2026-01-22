@@ -5,6 +5,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { credentials } from 'better-auth-credentials-plugin';
 import { customSession, username } from 'better-auth/plugins';
+import { createAuthMiddleware } from 'better-auth/plugins';
 import z from 'zod/v3';
 import { prisma } from './prisma';
 import { customSignInResponsePlugin } from './plugin/customSignInResponsePlugin';
@@ -70,6 +71,7 @@ export const auth = betterAuth({
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID || 'placeholder',
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'placeholder',
+            autoSignUp: false, // Disable automatic user creation for Google
         },
     },
     user: {
@@ -240,6 +242,90 @@ export const auth = betterAuth({
                 //  nestJwt,
             };
         }),
+        {
+            id: 'custom-social-handler',
+            hooks: {
+                after: [
+                    {
+                        matcher: (ctx) => ctx.path === '/sign-in/social',
+                        handler: createAuthMiddleware(async (ctx) => {
+                            const { provider, profile } = ctx.context.socialAuth;
+
+                            if (provider === 'google' && profile) {
+                                logAuth('Intercepting Google social login', { profile });
+
+                                // Send Google profile to backend instead of using prismaAdapter
+                                const backendGoogleUrl = `http://localhost:${config.backendport}/api/auth/google-callback`;
+
+                                try {
+                                    const nestResponse = await fetch(backendGoogleUrl, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            id: profile.id,
+                                            email: profile.email,
+                                            name: profile.name,
+                                            picture: profile.picture,
+                                            email_verified: profile.email_verified,
+                                        }),
+                                    });
+
+                                    if (!nestResponse.ok) {
+                                        const errorData = await nestResponse.json().catch(() => ({}));
+                                        console.error('[Google Social Callback] Nest.js authentication failed', {
+                                            status: nestResponse.status,
+                                            errorData,
+                                        });
+                                        return null;
+                                    }
+
+                                    const nestData = await nestResponse.json();
+                                    console.log('[Google Social Callback] Full Nest.js response:', {
+                                        rawResponse: JSON.stringify(nestData, null, 2),
+                                    });
+
+                                    const nestJwt = nestData.accessToken;
+                                    if (!nestJwt) {
+                                        console.error('[Google Social Callback] No accessToken in Nest.js response');
+                                        return null;
+                                    }
+
+                                    const userFromNest = nestData.user;
+                                    const tokenMaxAge = nestData.tokenMaxAge;
+
+                                    console.log('[Google Social Callback] Extracted user data from Nest.js:', {
+                                        userData: userFromNest,
+                                        tokenMaxAge,
+                                    });
+
+                                    const betterAuthUser = {
+                                        id: userFromNest.id,
+                                        email: userFromNest.email,
+                                        name: userFromNest.name,
+                                        image: userFromNest.image || null,
+                                        staff: userFromNest.staff || [],
+                                        tokenMaxAge,
+                                        nestJwt: nestJwt,
+                                    };
+
+                                    console.log('[Google Social Callback] Returning user to Better Auth:', betterAuthUser);
+                                    return betterAuthUser;
+
+                                } catch (error) {
+                                    console.error('[Google Social Callback] Unexpected error during authentication:', {
+                                        message: error instanceof Error ? error.message : String(error),
+                                    });
+                                    return null;
+                                }
+                            }
+
+                            // Fallback: return the original response if conditions are not met
+                            return ctx.context.returned;
+                        }),
+                    },
+                ],
+            },
+        },
     ],
     basePath: '/api/bauth',
     debug: true,
