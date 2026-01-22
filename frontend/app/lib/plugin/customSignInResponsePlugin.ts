@@ -21,7 +21,7 @@ export const customSignInResponsePlugin = (): BetterAuthPlugin => ({
                             JSON.stringify(original, null, 2)
                         );
                         const rtnObj = ctx.json({
-                            ...original,
+                            ...(original as any),
                             extUser,
                             session: {
                                 expiresAt: newSession?.session.expiresAt ?? null,
@@ -29,6 +29,35 @@ export const customSignInResponsePlugin = (): BetterAuthPlugin => ({
                             },
                         });
                         console.log(`Login Return object`, rtnObj)
+                        return rtnObj;
+                    }
+
+                    // Fallback: return the original response if conditions are not met
+                    return ctx.context.returned;
+                }),
+            },
+            {
+                matcher: (ctx) => ctx.path === "/sign-in/social",
+                handler: createAuthMiddleware(async (ctx) => {
+                    if (ctx.context.returned && !ctx.context.error) {
+                        const original = ctx.context.returned;
+                        const newSession = ctx.context.newSession;
+
+                        const extUser = newSession?.user;
+
+                        console.log(
+                            '[Plugin] Intercepted Social Response:',
+                            JSON.stringify(original, null, 2)
+                        );
+                        const rtnObj = ctx.json({
+                            ...(original as any),
+                            extUser,
+                            session: {
+                                expiresAt: newSession?.session.expiresAt ?? null,
+                                createdAt: newSession?.session.createdAt ?? null,
+                            },
+                        });
+                        console.log(`Social Login Return object`, rtnObj)
                         return rtnObj;
                     }
 

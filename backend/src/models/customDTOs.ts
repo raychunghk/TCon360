@@ -76,3 +76,11 @@ export class signupUserDTO {
   };
   staffId: number | null;
 }
+
+export class GoogleAuthDto {
+  id: string; // Google ID
+  email: string;
+  name: string;
+  picture?: string;
+  email_verified?: boolean;
+}

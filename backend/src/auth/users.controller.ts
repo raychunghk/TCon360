@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { signupUserDTO } from '../models/customDTOs.js';
+import { signupUserDTO, GoogleAuthDto } from '../models/customDTOs.js';
 import { AuthService } from './auth.service.js';
 import { UsersService } from './users.service.js';
 
@@ -160,4 +160,24 @@ export class UsersController {
     console.log(user);
     return user;
   }
-}
+
+  @Post('auth/google-callback')
+  async handleGoogleAuth(@Body() googleData: GoogleAuthDto) {
+    try {
+      const { token, user } = await this.authService.handleGoogleAuth(googleData);
+
+      const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000; // seconds
+
+      console.log('Google auth successful, token max age (seconds):', tokenMaxAge);
+
+      return {
+        accessToken: token,
+        user,
+        tokenMaxAge,
+      };
+    } catch (error) {
+      Logger.error('Google auth error', error);
+      throw new HttpException('Google authentication failed', HttpStatus.UNAUTHORIZED);
+    }
+  }
+  }
