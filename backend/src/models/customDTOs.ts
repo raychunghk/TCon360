@@ -59,7 +59,7 @@ export class UpdateStaffDto {
 }
 export class signupUserDTO {
   email: string;
-  password: string;
+  password?: string;
   username: string;
   staff: {
     StaffName: string;

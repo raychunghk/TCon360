@@ -2,9 +2,11 @@
 // src/app/lib/auth.ts
 import { config } from '@tcon360/config';
 import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { credentials } from 'better-auth-credentials-plugin';
 import { customSession, username } from 'better-auth/plugins';
 import z from 'zod/v3';
+import { prisma } from './prisma';
 import { customSignInResponsePlugin } from './plugin/customSignInResponsePlugin';
 
 export const myCustomSchema = z.object({
@@ -50,7 +52,9 @@ logAuth('🎯 FINAL basePath that BetterAuth will register', {
 // BetterAuth configuration (headless JWT mode)
 // ──────────────────────────────────────────────────────────────
 export const auth = betterAuth({
-    database: null,
+    database: prismaAdapter(prisma, {
+        provider: "sqlite",
+    }),
 
     advanced: {
         disableCSRFCheck: true,
@@ -62,6 +66,12 @@ export const auth = betterAuth({
         "http://*.dev.example.com",
     ],
     secret: process.env.JWT_SECRET!,
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID || 'placeholder',
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'placeholder',
+        },
+    },
     user: {
         additionalFields: {
             role: { type: "string" },

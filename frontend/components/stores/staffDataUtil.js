@@ -24,11 +24,11 @@ export async function fetchStaffData(get, set) {
         });
         if ([200, 201].includes(response.status)) {
             const userData = response.data;
-            const staffMember = userData.staff[0];
-            const activeContracts = staffMember.contracts.filter((contract) => contract.IsActive);
+            const staffMember = userData.staff?.[0];
+            const activeContracts = staffMember ? staffMember.contracts.filter((contract) => contract.IsActive) : [];
             set({
                 activeUser: userData,
-                activeStaff: staffMember,
+                activeStaff: staffMember || null,
                 activeContract: activeContracts.length > 0 ? activeContracts[0] : null,
                 isAuthenticated: true,
                 status: 'authenticated',

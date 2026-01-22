@@ -13,15 +13,18 @@ import {
   Button,
   Checkbox,
   Container,
+  Divider,
   LoadingOverlay,
   Paper,
   PasswordInput,
+  Stack,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
+import { IconBrandGoogle } from '@tabler/icons-react';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 //import { signIn } from 'better-auth/react';
 import { parseCookies, setCookie } from 'nookies';
@@ -269,6 +272,21 @@ export default function LoginBody(props: any) {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    open();
+    try {
+      await signIn.social({
+        provider: 'google',
+        callbackURL: `${window.location.origin}${basepath}`,
+      });
+    } catch (error) {
+      console.error('Google login failed:', error);
+      setLoginStatus('Google login failed.');
+    } finally {
+      close();
+    }
+  };
+
 
   const handleSignupClick = () => {
     router.push('/signup');
@@ -321,6 +339,21 @@ export default function LoginBody(props: any) {
             Login
           </Button>
         </form>
+
+        <Divider label="Or continue with" labelPosition="center" my="lg" />
+
+        <Stack>
+          <Button
+            leftSection={<IconBrandGoogle size={16} />}
+            variant="default"
+            color="gray"
+            fullWidth
+            onClick={handleGoogleLogin}
+          >
+            Google
+          </Button>
+        </Stack>
+
         <Text ta="center" mt="md">
           Don't have an account?{' '}
           <Anchor<'a'> href="#" fw={700} onClick={handleSignupClick}>
