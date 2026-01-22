@@ -55,6 +55,7 @@ model User {
   username      String?     @unique
   name          String?
   email         String?     @unique
+  googleId      String?     @unique
   emailVerified DateTime?
   image         String?
   password      String?

@@ -2,12 +2,9 @@
 // src/app/lib/auth.ts
 import { config } from '@tcon360/config';
 import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { credentials } from 'better-auth-credentials-plugin';
-import { customSession, username } from 'better-auth/plugins';
-import { createAuthMiddleware } from 'better-auth/plugins';
+import { createAuthMiddleware, customSession, username } from 'better-auth/plugins';
 import z from 'zod/v3';
-import { prisma } from './prisma';
 import { customSignInResponsePlugin } from './plugin/customSignInResponsePlugin';
 
 export const myCustomSchema = z.object({
@@ -53,10 +50,6 @@ logAuth('🎯 FINAL basePath that BetterAuth will register', {
 // BetterAuth configuration (headless JWT mode)
 // ──────────────────────────────────────────────────────────────
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
-        provider: "sqlite",
-    }),
-
     advanced: {
         disableCSRFCheck: true,
     },
@@ -69,8 +62,8 @@ export const auth = betterAuth({
     secret: process.env.JWT_SECRET!,
     socialProviders: {
         google: {
-            clientId: process.env.GOOGLE_CLIENT_ID || 'placeholder',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'placeholder',
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             autoSignUp: false, // Disable automatic user creation for Google
         },
     },
@@ -254,19 +247,17 @@ export const auth = betterAuth({
                             if (provider === 'google' && profile) {
                                 logAuth('Intercepting Google social login', { profile });
 
-                                // Send Google profile to backend instead of using prismaAdapter
-                                const backendGoogleUrl = `http://localhost:${config.backendport}/api/auth/google-callback`;
+                                const backendGoogleUrl = `http://localhost:${config.backendport}/api/auth/google-signup`;
 
                                 try {
                                     const nestResponse = await fetch(backendGoogleUrl, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({
-                                            id: profile.id,
+                                            googleId: profile.id,
                                             email: profile.email,
                                             name: profile.name,
                                             picture: profile.picture,
-                                            email_verified: profile.email_verified,
                                         }),
                                     });
 
@@ -293,11 +284,6 @@ export const auth = betterAuth({
                                     const userFromNest = nestData.user;
                                     const tokenMaxAge = nestData.tokenMaxAge;
 
-                                    console.log('[Google Social Callback] Extracted user data from Nest.js:', {
-                                        userData: userFromNest,
-                                        tokenMaxAge,
-                                    });
-
                                     const betterAuthUser = {
                                         id: userFromNest.id,
                                         email: userFromNest.email,
@@ -305,11 +291,14 @@ export const auth = betterAuth({
                                         image: userFromNest.image || null,
                                         staff: userFromNest.staff || [],
                                         tokenMaxAge,
-                                        nestJwt: nestJwt,
+                                        nestJwt,
                                     };
 
-                                    console.log('[Google Social Callback] Returning user to Better Auth:', betterAuthUser);
-                                    return betterAuthUser;
+                                    if (ctx.context.newSession) {
+                                        (ctx.context.newSession as any).user = betterAuthUser;
+                                    }
+
+                                    return ctx.context.returned;
 
                                 } catch (error) {
                                     console.error('[Google Social Callback] Unexpected error during authentication:', {

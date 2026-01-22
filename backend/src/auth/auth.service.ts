@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { signupUserDTO, GoogleAuthDto } from '../models/customDTOs.js';
+import { GoogleAuthDto, GoogleSignupDto, signupUserDTO } from '../models/customDTOs.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { BaseService } from '../shared/base.service.js';
 import { StaffService } from '../staff/service/staff.service.js';
@@ -39,9 +39,9 @@ export class AuthService extends BaseService {
     console.log('signup payload', payload);
     const { email, password, username, staff } = payload;
 
-    const hashedPassword = password ? await argon2.hash(password, {
-      type: argon2.argon2id,
-    }) : undefined;
+    const hashedPassword = password
+      ? await argon2.hash(password, { type: argon2.argon2id })
+      : null;
 
     try {
       // Use upsert to handle both new registrations and onboarding of social login users
@@ -49,12 +49,12 @@ export class AuthService extends BaseService {
         where: { email },
         update: {
           username: username || undefined,
-          password: hashedPassword,
+          ...(hashedPassword ? { password: hashedPassword } : {}),
           name: staff.StaffName,
         },
         create: {
           email,
-          password: hashedPassword || '', // Fallback for safety if somehow missing
+          ...(hashedPassword ? { password: hashedPassword } : {}),
           username,
           name: staff.StaffName,
           userStatus: 'active',
@@ -144,6 +144,10 @@ export class AuthService extends BaseService {
         throw new Error('Invalid credentials');
       }
 
+      if (!user.password) {
+        throw new Error('Invalid credentials');
+      }
+
       const isPasswordValid = await argon2.verify(user.password, password);
       if (!isPasswordValid) {
         throw new Error('Invalid credentials');
@@ -174,72 +178,136 @@ export class AuthService extends BaseService {
     }
   }
 
-  async handleGoogleAuth(googleData: GoogleAuthDto) {
-    const { id: googleId, email, name, picture, email_verified } = googleData;
+  private async buildUniqueUsernameFromEmail(email: string): Promise<string | null> {
+    const base = (email.split('@')[0] || 'user').replace(/[^a-zA-Z0-9_]/g, '');
+    let candidate = base || 'user';
+
+    for (let i = 0; i < 25; i++) {
+      const exists = await this.prisma.user.findFirst({ where: { username: candidate } });
+      if (!exists) return candidate;
+      candidate = `${base}${i + 1}`;
+    }
+
+    return null;
+  }
+
+  async handleGoogleSignup(googleData: GoogleSignupDto) {
+    const { googleId, email, name, picture, staff } = googleData;
 
     try {
-      // Check if user exists by email
       const existingUser = await this.prisma.user.findFirst({
         where: {
-          email
+          OR: [{ email }, { googleId }],
         },
-        include: {
-          viewStaff: true,
-        }
       });
 
-      let user;
-      if (existingUser) {
-        // Update existing user with Google account info
-        user = await this.prisma.user.update({
-          where: { id: existingUser.id },
-          data: {
-            name: name || existingUser.name,
-            image: picture || existingUser.image,
-            emailVerified: email_verified ? new Date() : existingUser.emailVerified,
-          },
-          include: {
-            viewStaff: true,
-          }
-        });
-      } else {
-        // Create new user with Google account
-        user = await this.prisma.user.create({
-          data: {
-            email,
-            username: email.split('@')[0], // Use email prefix as username
-            name,
-            image: picture,
-            emailVerified: email_verified ? new Date() : null,
-            userStatus: 'active',
-          },
-          include: {
-            viewStaff: true,
-          }
-        });
+      const username = existingUser?.username ?? (await this.buildUniqueUsernameFromEmail(email));
+
+      let user = existingUser
+        ? await this.prisma.user.update({
+            where: { id: existingUser.id },
+            data: {
+              email,
+              googleId,
+              ...(username ? { username } : {}),
+              name: name || existingUser.name,
+              image: picture || existingUser.image,
+              ...(existingUser.password === '' ? { password: null } : {}),
+            },
+          })
+        : await this.prisma.user.create({
+            data: {
+              email,
+              googleId,
+              ...(username ? { username } : {}),
+              name,
+              image: picture,
+              password: null,
+              userStatus: 'active',
+            },
+          });
+
+      if (staff) {
+        const staffExists = await this.prisma.staff.findFirst({ where: { userId: user.id } });
+
+        if (!staffExists) {
+          const staffRecord = await this.prisma.staff.create({
+            data: {
+              StaffName: staff.StaffName,
+              AgentName: staff.AgentName,
+              StaffCategory: staff.StaffCategory,
+              Department: staff.Department,
+              PostUnit: staff.PostUnit,
+              ManagerName: staff.ManagerName,
+              ManagerTitle: staff.ManagerTitle,
+              ManagerEmail: staff.ManagerEmail,
+              userId: user.id,
+            },
+          });
+
+          await this.prisma.user.update({
+            where: { id: user.id },
+            data: { staffId: staffRecord.id },
+          });
+
+          await this.prisma.staffContract.create({
+            data: {
+              ContractStartDate: new Date(staff.ContractStartDate),
+              ContractEndDate: new Date(staff.ContractEndDate),
+              AnnualLeave: staff.AnnualLeave,
+              IsActive: true,
+              staffId: staffRecord.id,
+            },
+          });
+
+          user = await this.prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+        }
       }
 
-      // Fetch full user details (including contracts) regardless
       const userWithDetails = await this.usersService.getUserWithStaffAndContract(user.id);
 
-      // Build JWT payload
+      const userWithViewStaff = await this.prisma.user.findUnique({
+        where: { id: user.id },
+        include: { viewStaff: true },
+      });
+
       const payload = {
         sub: user.id,
         username: user.username,
         name: user.name,
         email: user.email,
-        staff: user.viewStaff,
+        staff: userWithViewStaff?.viewStaff ?? [],
       };
 
-      const token = this.jwtService.sign(payload);
-      console.log(`Google auth token generated:`, token);
-      const decoded = this.jwtService.verify(token);
-      console.log('Google auth decoded token in nest.js', decoded);
+      const token = this.generateToken(payload);
 
       return { token, user: userWithDetails };
     } catch (error) {
-      console.log('Google auth error', error);
+      console.log('Google signup error', error);
       throw error;
     }
+  }
+
+  // Backward compatible alias (existing route: POST /api/auth/google-callback)
+  async handleGoogleAuth(googleData: GoogleAuthDto) {
+    const { id: googleId, email, name, picture, email_verified } = googleData;
+
+    const result = await this.handleGoogleSignup({
+      googleId,
+      email,
+      name,
+      picture,
+    });
+
+    if (email_verified) {
+      await this.prisma.user.update({
+        where: { id: result.user.id },
+        data: { emailVerified: new Date() },
+      });
+      const refreshedUser = await this.usersService.getUserWithStaffAndContract(result.user.id);
+      return { token: result.token, user: refreshedUser };
+    }
+
+    return result;
   }
 }

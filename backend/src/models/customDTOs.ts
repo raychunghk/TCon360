@@ -57,26 +57,37 @@ export class UpdateStaffDto {
   @IsInt()
   contractId?: number | null;
 }
+export interface SignupStaffDto {
+  StaffName: string;
+  AgentName: string;
+  StaffCategory: string;
+  Department: string;
+  PostUnit: string;
+  ManagerName: string;
+  ManagerTitle: string;
+  ManagerEmail: string;
+  ContractStartDate: string;
+  ContractEndDate: string;
+  AnnualLeave: number;
+}
+
 export class signupUserDTO {
   email: string;
   password?: string;
   username: string;
-  staff: {
-    StaffName: string;
-    AgentName: string;
-    StaffCategory: string;
-    Department: string;
-    PostUnit: string;
-    ManagerName: string;
-    ManagerTitle: string;
-    ManagerEmail: string;
-    ContractStartDate: string;
-    ContractEndDate: string;
-    AnnualLeave: number;
-  };
+  staff: SignupStaffDto;
   staffId: number | null;
 }
 
+export class GoogleSignupDto {
+  googleId: string;
+  email: string;
+  name: string;
+  picture?: string;
+  staff?: SignupStaffDto;
+}
+
+// Backward compatible payload used by the existing /api/auth/google-callback endpoint
 export class GoogleAuthDto {
   id: string; // Google ID
   email: string;
