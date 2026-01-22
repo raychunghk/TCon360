@@ -280,7 +280,7 @@ export default function LoginBody(props: any) {
       className={classes.wrapper}
       style={
         {
-          '--login-bg-image': `url('${basepath ?? ''}/images/loginbg1.webp')`,
+          '--login-bg-image': `url('${basepath ?? ''}/images/loginbg8.jpg')`,
         } as CSSProperties
       }
     >
