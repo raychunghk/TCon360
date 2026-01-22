@@ -96,19 +96,49 @@ export class UsersController {
         user.username,
         user.email,
       );
+
+      // If user exists, check if they have a staff record.
+      // If they don't have staff data, we treat this as onboarding (allow signup to proceed)
       if (existingUser) {
-        // Username or email already exists, return an error response
-        return {
-          statusCode: 400,
-          message: 'Username or email already exists',
-        };
+        const fullUser = await this.usersService.findUserByIdentifier(user.email);
+        if (fullUser && fullUser.staffId) {
+          return {
+            statusCode: 400,
+            message: 'Username or email already exists',
+          };
+        }
       }
       const newUser = await this.authService.signUp(user);
-      const accessToken = await this.authService.login(
-        user.username,
-        user.password,
-      );
-      return { accessToken };
+
+      // If password is provided, perform regular login.
+      // If not (social onboarding), we still need to return an access token.
+      let loginResult;
+      if (user.password) {
+        loginResult = await this.authService.login(
+          user.username,
+          user.password,
+        );
+      } else {
+        // Social onboarding case - we already trust the user at this point
+        // Fetch the user again to make sure we have everything
+        const userWithDetails = await this.usersService.getUserWithStaffAndContract(newUser.id);
+        // Generate token manually or via a special method
+        // For now, let's assume we can use a simplified payload
+        const payload = {
+          sub: newUser.id,
+          username: newUser.username,
+          name: newUser.name,
+          email: newUser.email,
+        };
+        const token = this.authService.generateToken(payload);
+        loginResult = { token, user: userWithDetails };
+      }
+
+      return {
+        accessToken: loginResult.token,
+        user: loginResult.user,
+        tokenMaxAge: parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000,
+      };
     } catch (error) {
       Logger.error('Signup error', error);
       console.log(error);

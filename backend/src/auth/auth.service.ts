@@ -31,55 +31,68 @@ export class AuthService extends BaseService {
     return this.jwtService.verify(token);
   }
 
+  generateToken(payload: any): string {
+    return this.jwtService.sign(payload);
+  }
+
   async signUp(payload: signupUserDTO): Promise<User> {
     console.log('signup payload', payload);
     const { email, password, username, staff } = payload;
 
-    const hashedPassword = await argon2.hash(password, {
+    const hashedPassword = password ? await argon2.hash(password, {
       type: argon2.argon2id,
-    });
+    }) : undefined;
 
     try {
-      const createdUserWithStaff = await this.prisma.user.create({
-        data: {
-          email,
+      // Use upsert to handle both new registrations and onboarding of social login users
+      const user = await this.prisma.user.upsert({
+        where: { email },
+        update: {
+          username: username || undefined,
           password: hashedPassword,
+          name: staff.StaffName,
+        },
+        create: {
+          email,
+          password: hashedPassword || '', // Fallback for safety if somehow missing
           username,
           name: staff.StaffName,
-          staff: {
-            create: {
-              StaffName: staff.StaffName,
-              AgentName: staff.AgentName,
-              StaffCategory: staff.StaffCategory,
-              Department: staff.Department,
-              PostUnit: staff.PostUnit,
-              ManagerName: staff.ManagerName,
-              ManagerTitle: staff.ManagerTitle,
-              ManagerEmail: staff.ManagerEmail,
-            },
-          },
+          userStatus: 'active',
         },
-        include: {
-          staff: true,
+      });
+
+      // Create staff record
+      const staffRecord = await this.prisma.staff.create({
+        data: {
+          StaffName: staff.StaffName,
+          AgentName: staff.AgentName,
+          StaffCategory: staff.StaffCategory,
+          Department: staff.Department,
+          PostUnit: staff.PostUnit,
+          ManagerName: staff.ManagerName,
+          ManagerTitle: staff.ManagerTitle,
+          ManagerEmail: staff.ManagerEmail,
+          userId: user.id,
         },
+      });
+
+      // Update user with staffId
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { staffId: staffRecord.id },
       });
 
       const contractStartDate = new Date(staff.ContractStartDate);
       const contractEndDate = new Date(staff.ContractEndDate);
 
-      const createdStaffContract = await this.prisma.staffContract.create({
+      await this.prisma.staffContract.create({
         data: {
           ContractStartDate: contractStartDate,
           ContractEndDate: contractEndDate,
           AnnualLeave: staff.AnnualLeave,
           IsActive: true,
-          staffId: createdUserWithStaff.staff[0].id,
+          staffId: staffRecord.id,
         },
-      });
-
-      const updatedUser = await this.prisma.user.update({
-        where: { id: createdUserWithStaff.id },
-        data: { staffId: createdUserWithStaff.staff[0].id },
       });
 
       const userWithStaff = await this.prisma.user.findFirst({
@@ -91,7 +104,7 @@ export class AuthService extends BaseService {
             },
           },
         },
-        where: { username: updatedUser.username },
+        where: { id: user.id },
       });
 
       return userWithStaff;

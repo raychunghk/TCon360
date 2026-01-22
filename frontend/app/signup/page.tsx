@@ -1,12 +1,14 @@
 'use client';
 import { default as useRouter } from '@/components/useCustRouter';
 import { CSSProperties, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import * as classes from '@/styles/login.css';
 import {
   Anchor,
   Button,
   Container,
+  Divider,
   Grid,
   Group,
   LoadingOverlay,
@@ -14,6 +16,7 @@ import {
   NumberInput,
   Paper,
   PasswordInput,
+  Stack,
   Stepper,
   Text,
   TextInput,
@@ -34,8 +37,9 @@ import {
 import { DatePickerInput } from '@mantine/dates';
 import { getHotkeyHandler, useHotkeys } from '@mantine/hooks';
 
-import { IconX } from '@tabler/icons-react';
+import { IconBrandGoogle, IconX } from '@tabler/icons-react';
 import axios from 'axios';
+import { signIn } from '@/app/lib/bauthclient';
 
 import { usePublicHolidays } from '@/components/hooks/usePublicHolidays';
 import useUIStore from '@/components/stores/useUIStore';
@@ -86,7 +90,21 @@ export default function SignupPage() {
   const datePickerRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const { siteTitle } = useUIStore();
-  const { authOverlayVisible, setAuthOverlayVisible, basepath } = useStore();
+  const { authOverlayVisible, setAuthOverlayVisible, basepath, activeUser } = useStore();
+  const searchParams = useSearchParams();
+  const onboarding = searchParams.get('onboarding') === 'true';
+
+  useEffect(() => {
+    if (onboarding && activeUser) {
+      setActive(1);
+      form.setValues({
+        ...form.values,
+        email: activeUser.email || '',
+        username: activeUser.username || activeUser.name || '',
+        StaffName: activeUser.name || '',
+      });
+    }
+  }, [onboarding, activeUser]);
   const mainpage = '/';
 
   // In nextStep
@@ -178,6 +196,21 @@ export default function SignupPage() {
       }
     },
   });
+
+  const handleGoogleSignup = async () => {
+    setAuthOverlayVisible(true);
+    try {
+      await signIn.social({
+        provider: 'google',
+        callbackURL: `${window.location.origin}${basepath}`,
+      });
+    } catch (error) {
+      console.error('Google signup failed:', error);
+      setsignUpError('Google signup failed.');
+    } finally {
+      setAuthOverlayVisible(false);
+    }
+  };
 
   const handleInputChange = (event) => {
     console.log(`handle input change`, formValues);
@@ -364,6 +397,20 @@ export default function SignupPage() {
                       {errorMessage}
                     </Notification>
                   )}
+
+                  <Divider label="Or continue with" labelPosition="center" my="lg" />
+
+                  <Stack>
+                    <Button
+                      leftSection={<IconBrandGoogle size={16} />}
+                      variant="default"
+                      color="gray"
+                      fullWidth
+                      onClick={handleGoogleSignup}
+                    >
+                      Google
+                    </Button>
+                  </Stack>
                 </Paper>
               </Stepper.Step>
               {publicHolidays && <Stepper.Step label="Second step" description="T-contract Staff Details">

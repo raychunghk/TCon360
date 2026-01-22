@@ -82,11 +82,19 @@ export function MainShell({ children, contentpadding = '10px' }) {
     if (
       !activeUser &&
       !pathname.startsWith('/auth/login') &&
-      !pathname.startsWith('/auth/signup')
+      !pathname.startsWith('/auth/signup') &&
+      !pathname.startsWith('/signup')
     ) {
       fetchStaffData();
     }
   }, [status, activeUser, pathname, setMainshellOverlayVisible, fetchStaffData]);
+
+  useEffect(() => {
+    if (isAuthenticated && activeUser && !activeStaff && !pathname.startsWith('/signup')) {
+      console.log('MainShell: Missing staff data, redirecting to onboarding');
+      router.push('/signup?onboarding=true');
+    }
+  }, [isAuthenticated, activeUser, activeStaff, pathname, router]);
 
   if (status === 'loading') {
     console.log('MainShell: Rendering loading state', { pathname });
