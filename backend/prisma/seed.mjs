@@ -7,7 +7,8 @@ import getEvents from './ics.mjs';
 // Make sure you have the right CORS settings if needed
 import privatedata from './privatedata.mjs';
 
-const adapter = new PrismaBetterSqlite3({ url: 'file:./TCon360.db' });
+const databaseUrl = process.env.DATABASE_URL || 'file:./prisma/TCon360.db';
+const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 async function main() {
   await gencalendar();
@@ -15,13 +16,13 @@ async function main() {
   await createViewIfNotExists();
   await genStaffInfo();
 }
-function createViewIfNotExists() {
-  createViewCalendarIfNotExists();
-  createViewEventsIfNotExists();
-  //createViewUserDetailIfNotExists();
-  createViewUserRole();
-  createViewStaff();
+async function createViewIfNotExists() {
+  await createViewCalendarIfNotExists();
+  await createViewEventsIfNotExists();
+  await createViewUserRole();
+  await createViewStaff();
 }
+
 async function createView(viewname, createViewSQL) {
   try {
     await prisma.$queryRaw(Prisma.sql`
@@ -30,51 +31,64 @@ async function createView(viewname, createViewSQL) {
 
     await prisma.$queryRaw(Prisma.sql`
       CREATE VIEW ${Prisma.raw(viewname)} AS
-    
-        ${Prisma.raw(createViewSQL)} 
+
+        ${Prisma.raw(createViewSQL)}
     `);
 
     console.log(`View ${viewname} created successfully!`);
   } catch (error) {
     console.error(error);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 async function createViewCalendarIfNotExists() {
   const viewname = 'viewCalendarTimeSheet';
   const createViewSQL = `
       SELECT
-        ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS ID,
+        CAST(ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS INTEGER) AS ID,
         C.CalendarDate AS CalendarDate,
-        CASE
-          WHEN typeof(C.CalendarDate) IN ('integer', 'real') THEN date(C.CalendarDate / 1000.0, 'unixepoch')
-          ELSE date(C.CalendarDate)
-        END AS CalendarDateStr,
+        CAST(
+          CASE
+            WHEN typeof(C.CalendarDate) IN ('integer', 'real') THEN date(C.CalendarDate / 1000.0, 'unixepoch')
+            ELSE date(C.CalendarDate)
+          END
+          AS TEXT
+        ) AS CalendarDateStr,
         C.WeekDayName,
         C.Year,
         C.Month,
-        CASE
-          WHEN C.WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN 0
-          WHEN V.ChargeableDay > 0 THEN V.ChargeableDay
-          ELSE 0
-        END AS VacationChargable,
-        CASE
-          WHEN C.WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN 1
-          ELSE 0
-        END AS PublicHolidayChargable,
-        CASE
-          WHEN C.WeekDayName LIKE 'S%' THEN C.WeekDayName
-          WHEN PH.Summary IS NOT NULL THEN PH.Summary
-          WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
-          ELSE NULL
-        END AS HolidaySummary,
-        V.LeaveRequestId,
-        LR.staffId,
-        CASE
-          WHEN LR.contractId IS NULL THEN 0
-          ELSE LR.contractId
-        END AS contractId
+        CAST(
+          CASE
+            WHEN C.WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN 0
+            WHEN V.ChargeableDay > 0 THEN V.ChargeableDay
+            ELSE 0
+          END
+          AS REAL
+        ) AS VacationChargable,
+        CAST(
+          CASE
+            WHEN C.WeekDayName LIKE 'S%' OR PH.Summary IS NOT NULL THEN 1
+            ELSE 0
+          END
+          AS REAL
+        ) AS PublicHolidayChargable,
+        CAST(
+          CASE
+            WHEN C.WeekDayName LIKE 'S%' THEN C.WeekDayName
+            WHEN PH.Summary IS NOT NULL THEN PH.Summary
+            WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
+            ELSE NULL
+          END
+          AS TEXT
+        ) AS HolidaySummary,
+        CAST(V.LeaveRequestId AS INTEGER) AS LeaveRequestId,
+        CAST(LR.staffId AS INTEGER) AS staffId,
+        CAST(
+          CASE
+            WHEN LR.contractId IS NULL THEN 0
+            ELSE LR.contractId
+          END
+          AS INTEGER
+        ) AS contractId
       FROM CalendarMaster C
       LEFT JOIN CalendarVacation V ON (
         CASE
@@ -152,52 +166,70 @@ async function createViewEventsIfNotExists() {
   const viewname = 'viewEvents';
   const createViewSQL = `
     SELECT
-      ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS ID,
+      CAST(ROW_NUMBER() OVER (ORDER BY C.CalendarDate) AS INTEGER) AS ID,
       C.CalendarDate AS leavePeriodStart,
       LR.leavePeriodEnd,
-      CASE
-        WHEN typeof(C.CalendarDate) IN ('integer', 'real') THEN STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(C.CalendarDate / 1000.0, 'unixepoch'))
-        ELSE STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(C.CalendarDate))
-      END AS StartDateStr,
+      CAST(
+        CASE
+          WHEN typeof(C.CalendarDate) IN ('integer', 'real') THEN STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(C.CalendarDate / 1000.0, 'unixepoch'))
+          ELSE STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(C.CalendarDate))
+        END
+        AS TEXT
+      ) AS StartDateStr,
       C.WeekDayName,
       C.Year,
       C.Month,
-      CASE
-        WHEN C.WeekDayName LIKE 'S%' THEN C.WeekDayName
-        WHEN PH.Summary IS NOT NULL THEN PH.Summary
-        WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
-        ELSE NULL
-      END AS HolidaySummary,
-      CASE
-        WHEN C.WeekDayName LIKE 'S%' THEN 'weekend'
-        WHEN PH.Summary IS NOT NULL THEN 'publicholiday'
-        WHEN LR.id IS NOT NULL THEN COALESCE(LR.leaveType, 'vacation')
-        ELSE NULL
-      END AS eventType,
-      CASE
-        WHEN LR.leavePeriodEnd IS NULL THEN NULL
-        WHEN typeof(LR.leavePeriodEnd) IN ('integer', 'real') THEN STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.leavePeriodEnd / 1000.0, 'unixepoch'))
-        ELSE STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.leavePeriodEnd))
-      END AS EndDateStr,
+      CAST(
+        CASE
+          WHEN C.WeekDayName LIKE 'S%' THEN C.WeekDayName
+          WHEN PH.Summary IS NOT NULL THEN PH.Summary
+          WHEN LR.leavePurpose IS NOT NULL THEN LR.leavePurpose
+          ELSE NULL
+        END
+        AS TEXT
+      ) AS HolidaySummary,
+      CAST(
+        CASE
+          WHEN C.WeekDayName LIKE 'S%' THEN 'weekend'
+          WHEN PH.Summary IS NOT NULL THEN 'publicholiday'
+          WHEN LR.id IS NOT NULL THEN COALESCE(LR.leaveType, 'vacation')
+          ELSE NULL
+        END
+        AS TEXT
+      ) AS eventType,
+      CAST(
+        CASE
+          WHEN LR.leavePeriodEnd IS NULL THEN NULL
+          WHEN typeof(LR.leavePeriodEnd) IN ('integer', 'real') THEN STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.leavePeriodEnd / 1000.0, 'unixepoch'))
+          ELSE STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.leavePeriodEnd))
+        END
+        AS TEXT
+      ) AS EndDateStr,
       LR.dateOfReturn,
-      CASE
-        WHEN LR.dateOfReturn IS NULL THEN NULL
-        WHEN typeof(LR.dateOfReturn) IN ('integer', 'real') THEN STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.dateOfReturn / 1000.0, 'unixepoch'))
-        ELSE STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.dateOfReturn))
-      END AS ReturnDateStr,
+      CAST(
+        CASE
+          WHEN LR.dateOfReturn IS NULL THEN NULL
+          WHEN typeof(LR.dateOfReturn) IN ('integer', 'real') THEN STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.dateOfReturn / 1000.0, 'unixepoch'))
+          ELSE STRFTIME('%Y-%m-%d %H:%M:%S', DATETIME(LR.dateOfReturn))
+        END
+        AS TEXT
+      ) AS ReturnDateStr,
       LR.AMPMStart,
       LR.AMPMEnd,
-      LR.staffId,
+      CAST(LR.staffId AS INTEGER) AS staffId,
       LR.leaveType,
-      LR.id AS LeaveRequestId,
-      CASE
-        WHEN LR.leaveDays IS NOT NULL THEN LR.leaveDays
-        WHEN C.WeekDayName LIKE 'S%' THEN 1
-        WHEN PH.Summary IS NOT NULL THEN 1
-        ELSE NULL
-      END AS leaveDays,
-      LR.contractId,
-      COALESCE(LR.IsArchived, 0) AS IsArchived
+      CAST(LR.id AS INTEGER) AS LeaveRequestId,
+      CAST(
+        CASE
+          WHEN LR.leaveDays IS NOT NULL THEN LR.leaveDays
+          WHEN C.WeekDayName LIKE 'S%' THEN 1
+          WHEN PH.Summary IS NOT NULL THEN 1
+          ELSE NULL
+        END
+        AS REAL
+      ) AS leaveDays,
+      CAST(LR.contractId AS INTEGER) AS contractId,
+      CAST(COALESCE(LR.IsArchived, 0) AS INTEGER) AS IsArchived
     FROM CalendarMaster C
     LEFT JOIN PublicHoliday PH ON (
       CASE
@@ -368,7 +400,7 @@ async function gencalendar() {
     console.log(
       `date: ${datenow}, weekname: ${weekdayname}, month: ${month}, year : ${year}, timestamp: ${ts}`,
     );
-    const calendar = await prisma.CalendarMaster.create({
+    const calendar = await prisma.calendarMaster.create({
       data: {
         CalendarDate: datenow,
         WeekDayName: weekdayname,
