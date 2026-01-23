@@ -18,7 +18,7 @@ async function main() {
 function createViewIfNotExists() {
   createViewCalendarIfNotExists();
   createViewEventsIfNotExists();
-  createViewUserDetailIfNotExists();
+  //createViewUserDetailIfNotExists();
   createViewUserRole();
   createViewStaff();
 }
