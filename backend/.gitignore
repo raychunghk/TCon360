@@ -54,3 +54,7 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# SQLite / Prisma local DB backups & dumps (keep locally, not in git)
+data-backup-*.sql
+prisma/*.before-*
