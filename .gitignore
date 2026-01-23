@@ -11,3 +11,4 @@ backend/timesheet/T26TimeSheet_ChungWaiMan_*.xlsx
 
 # Local safety backups (do not commit)
 backend/prisma/*.db.backup-iso-migration-*
+backend/prisma/TCon360.db.backup2026jan23

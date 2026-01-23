@@ -18,10 +18,10 @@
     "build:all": "pnpm run build --recursive"
   },
   "dependencies": {
-    "@fastify/http-proxy": "^11.3.0",
-    "concurrently": "^9.2.0",
-    "fastify": "^5.4.0",
-    "fs-extra": "^11.3.0",
+    "@fastify/http-proxy": "^11.4.1",
+    "concurrently": "^9.2.1",
+    "fastify": "^5.7.1",
+    "fs-extra": "^11.3.3",
     "http-proxy": "^1.18.1",
     "node-netstat": "^1.9.0",
     "nookies": "^2.5.2"
@@ -29,7 +29,7 @@
   "packageManager": "pnpm@10.25.0",
   "devDependencies": {
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-prettier": "^5.5.5",
     "prettier": "3.6.2"
   }
 }

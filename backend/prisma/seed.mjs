@@ -147,39 +147,6 @@ ORDER BY sc.ContractStartDate
     `;
   await createView(viewname, createViewSQL);
 }
-async function createViewUserDetailIfNotExists() {
-  const viewname = 'viewUserDetail';
-  const createViewSQL = `
-    SELECT
-        u.id AS userId,
-        u.username,
-        u.name,
-        u.email,
-        u.roleId,
-        u.userStatus,
-        u.staffId,
-        r.name AS roleName,
-        s.StaffName,
-        s.AgentName,
-        s.StaffCategory,
-        s.Department,
-        s.PostUnit,
-        s.ManagerName,
-        s.ManagerTitle,
-        s.ManagerEmail,
-        s.ContractStartDate,
-        s.ContractEndDate,
-        s.AnnualLeave
-        
-      FROM
-        User u
-      JOIN
-        Role r ON u.roleId = r.id
-      JOIN
-        Staff s ON u.staffId = s.id;
-    `;
-  await createView(viewname, createViewSQL);
-}
 
 async function createViewEventsIfNotExists() {
   const viewname = 'viewEvents';
