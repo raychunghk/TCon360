@@ -3,19 +3,37 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import argon2 from 'argon2';
 import path from 'path';
 import getEvents from './ics.mjs';
-// Get ICS text however you like, example below
-// Make sure you have the right CORS settings if needed
 import privatedata from './privatedata.mjs';
 
 const databaseUrl = process.env.DATABASE_URL || 'file:./prisma/TCon360.db';
+console.log(`database Url:`, databaseUrl);
+
 const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
 const prisma = new PrismaClient({ adapter });
+
+// Helper function to create ISO string representing local time (recommended Option B)
+function toLocalDateTimeString(date) {
+  // This preserves the local time components and formats them as ISO string
+  // The resulting string will look like "2026-01-23T14:26:58.000Z"
+  // but represents the actual local time (HKT), not UTC midnight
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+}
+
 async function main() {
   await gencalendar();
-  await genholiday();
-  await createViewIfNotExists();
-  await genStaffInfo();
+  // await genholiday();
+  // await createViewIfNotExists();
+  // await genStaffInfo();
 }
+
 async function createViewIfNotExists() {
   await createViewCalendarIfNotExists();
   await createViewEventsIfNotExists();
@@ -31,7 +49,6 @@ async function createView(viewname, createViewSQL) {
 
     await prisma.$queryRaw(Prisma.sql`
       CREATE VIEW ${Prisma.raw(viewname)} AS
-
         ${Prisma.raw(createViewSQL)}
     `);
 
@@ -40,6 +57,7 @@ async function createView(viewname, createViewSQL) {
     console.error(error);
   }
 }
+
 async function createViewCalendarIfNotExists() {
   const viewname = 'viewCalendarTimeSheet';
   const createViewSQL = `
@@ -117,6 +135,7 @@ async function createViewCalendarIfNotExists() {
   `;
   await createView(viewname, createViewSQL);
 }
+
 async function createViewUserRole() {
   const viewname = 'viewUserRole';
   const createViewSQL = `
@@ -263,72 +282,54 @@ async function genholiday() {
   const __dirname = path.resolve();
   console.log(__dirname);
   let _path = path.join(__dirname, './prisma/tc.ics');
-  //let _path = path.join('/config/workspace/vm/js/NxTime/prisma/tc.ics')
   console.log(_path);
   const evt = getEvents(_path);
-  //return new Date(dateval.getTime() - dateval.getTimezoneOffset() * 60000).toISOString()
+
   try {
     for (const e of evt) {
-      const calendar = await prisma.publicHoliday.create({
+      await prisma.publicHoliday.create({
         data: {
-          StartDate: e.StartDate,
-          EndDate: e.EndDate,
+          StartDate: toLocalDateTimeString(e.StartDate),
+          EndDate: toLocalDateTimeString(e.EndDate),
           Summary: e.Summary,
         },
       });
-      //  console.log(e.StartDate)
     }
+    console.log('Public holidays imported successfully');
   } catch (error) {
-    console.log(error);
+    console.error('Error importing holidays:', error);
   }
 }
 
-async function genContract() { }
 async function genStaffInfo() {
-  /*
-  id            Int            @id @default(autoincrement())
-  StaffName     String
-  AgentName     String
-  StaffCategory String
-  Department    String
-  PostUnit      String
-  ManagerName   String
-  ManagerTitle  String
-  ManagerEmail  String
-  user          User?          @relation(fields: [userId], references: [id])
-  userId        String?        @unique
-  leaveRequests LeaveRequest[]
-  */
   try {
     const hashedPassword = await argon2.hash('admin', {
       type: argon2.argon2id,
     });
-    const user = {
-      username: 'tcon360',
-      name: 'Ray Chung',
-      email: 'mannchung@gmail.com',
-      password: hashedPassword,
-      roleId: 0,
-    };
-    const role = {
-      id: 0,
-      name: 'admin',
-    };
-    const role2 = {
-      id: 1,
-      name: 'staff',
-    };
-    const _role = await prisma.role.create({
-      data: role,
-    });
-    const _role2 = await prisma.role.create({
-      data: role2,
-    });
-    const u = await prisma.user.create({
-      data: user,
+
+    const roleAdmin = await prisma.role.upsert({
+      where: { id: 0 },
+      update: {},
+      create: { id: 0, name: 'admin' },
     });
 
-    const stf = await prisma.staff.create({
+    const roleStaff = await prisma.role.upsert({
+      where: { id: 1 },
+      update: {},
+      create: { id: 1, name: 'staff' },
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        username: 'tcon360',
+        name: 'Ray Chung',
+        email: 'mannchung@gmail.com',
+        password: hashedPassword,
+        roleId: 0,
+      },
+    });
+
+    const staff = await prisma.staff.create({
       data: {
         StaffName: privatedata.StaffName,
         AgentName: privatedata.AgentName,
@@ -338,86 +339,80 @@ async function genStaffInfo() {
         ManagerName: privatedata.ManagerName,
         ManagerEmail: privatedata.ManagerEmail,
         ManagerTitle: privatedata.ManagerTitle,
-        user: { connect: { id: u.id } },
+        user: { connect: { id: user.id } },
         contracts: {
           create: [
             {
-              ContractStartDate: new Date(2023, 3, 1),
-              ContractEndDate: new Date(2024, 2, 31),
+              ContractStartDate: toLocalDateTimeString(new Date(2023, 3, 1)),
+              ContractEndDate: toLocalDateTimeString(new Date(2024, 2, 31, 23, 59, 59)),
               AnnualLeave: 12,
               IsActive: true,
             },
           ],
         },
       },
-      include: {
-        contracts: true,
-      },
+      include: { contracts: true },
     });
-    // Update the user's staffId with the new staff's id
-    await prisma.user.update({
-      where: { id: u.id },
-      data: { staffId: stf.id },
-    });
-    // const contract = await prisma.staffContract.create({
-    //   data: {
-    //     ContractStartDate: new Date(2023, 3, 1),
-    //     ContractEndDate: new Date(2024, 2, 31),
-    //     AnnualLeave: 12,
-    //     staff: { connect: { id: stf.id } },
-    //   },
-    // });
 
-    // await prisma.staff.update({
-    //   where: { id: stf.id },
-    //   data: { activeContractId: contract.id },
-    // });
-    console.log(stf);
+    // Update user with staffId
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { staffId: staff.id },
+    });
+
+    console.log('Staff and user created successfully:', staff);
   } catch (error) {
-    console.log(error);
+    console.error('Error creating staff info:', error);
   }
 }
+
 async function gencalendar() {
-  // let startdate: Date = new Date("January 1, 2023");
-  let locale = 'en-US';
-  var startyear = 2022;
-  var endyear = startyear / 1 + 4;
+  const locale = 'en-US';
+  const startYear = new Date().getFullYear() - 2;
+  const endYear = new Date().getFullYear() + 2;
 
-  var currentdate = new Date('12/31/2022');
-  var datenow = new Date(currentdate);
-  var enddate = new Date(`12/31/${endyear}`);
-
-  console.log(enddate);
-  while (currentdate < enddate) {
-    //while (false) {
-    datenow.setDate(currentdate.getDate() + 1);
-    datenow.toLocaleDateString();
-    let weekdayname = datenow.toLocaleDateString(locale, { weekday: 'long' });
-    let year = datenow.getUTCFullYear();
-    let month = datenow.getUTCMonth() + 1;
-    let ts = datenow.getTime() / 1000;
-
+  let currentDate = new Date(`${startYear}-01-01`);
+  const endDate = new Date(`${endYear}-12-31`);
+  await prisma.$executeRaw`
+   Delete from CalendarMaster
+  `;
+  while (currentDate <= endDate) {
+    const date = new Date(currentDate);
+    const weekdayName = date.toLocaleDateString(locale, { weekday: 'long' });
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const ts = date.getTime() / 1000;
     console.log(
-      `date: ${datenow}, weekname: ${weekdayname}, month: ${month}, year : ${year}, timestamp: ${ts}`,
+      `date: ${date}, weekname: ${weekdayName}, month: ${month}, year : ${year}, timestamp: ${ts}`,
     );
-    const calendar = await prisma.calendarMaster.create({
+    await prisma.calendarMaster.create({
       data: {
-        CalendarDate: datenow,
-        WeekDayName: weekdayname,
+        CalendarDate: toLocalDateTimeString(date),
+        WeekDayName: weekdayName,
         Year: year,
         Month: month,
       },
     });
-    currentdate = datenow;
+
+    currentDate.setDate(currentDate.getDate() + 1);
   }
+
+  await prisma.$executeRaw`
+    UPDATE CalendarMaster
+    SET CalendarDate = REPLACE(CalendarDate, '+00:00', 'Z')
+    WHERE CalendarDate LIKE '%+00:00'
+  `;
+
+  console.log('Calendar master populated successfully');
 }
 
 main()
   .then(async () => {
     await prisma.$disconnect();
+    console.log('Database operations completed successfully');
   })
   .catch(async (e) => {
-    console.error(e);
+    console.error('Error in main execution:', e);
     await prisma.$disconnect();
     process.exit(1);
   });

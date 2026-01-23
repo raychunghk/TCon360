@@ -153,7 +153,7 @@ model Verification {
 }
 
 view viewCalendarTimeSheet {
-  ID                     Int      @id
+  ID                     Int     
   CalendarDate           DateTime
   CalendarDateStr        String?
   WeekDayName            String?
@@ -168,7 +168,7 @@ view viewCalendarTimeSheet {
 }
 
 view viewEvents {
-  ID               Int      @id
+  ID               Int     
   leavePeriodStart DateTime
   leavePeriodEnd   DateTime?
   StartDateStr     String

@@ -133,8 +133,9 @@ export async function middleware(request: NextRequest) {
       const nestToken = request.cookies.get('token')?.value;
 
       if (!nestToken) {
-        logMiddleware('No NestJS token found in cookies – redirecting to login');
         const loginUrl = new URL(`${config.basepath}/auth/login`, request.url);
+        logMiddleware('No NestJS token found in cookies – redirecting to login', loginUrl);
+
         return NextResponse.redirect(loginUrl);
       }
 
