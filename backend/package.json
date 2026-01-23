@@ -10,7 +10,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "nest start",
-    "start:dev": " DATABASE_URL='file:./prisma/TCon360.db' NEXTAUTH_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789'  JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=12000000  nest start --watch ",
+    "start:dev": "DATABASE_URL='file:./prisma/TCon360.db' NEXTAUTH_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=12000000 nest start --watch",
     "build": "prisma generate && nest build",
     "build2": "DATABASE_URL='file:./TCon360.db' JWT_SECRET='aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789' TOKEN_MAX_AGE=1200000 pnpm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

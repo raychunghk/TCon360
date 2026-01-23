@@ -22,7 +22,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
       finalDbUrl = process.env.DATABASE_URL;
       this.logger.log(`Using DATABASE_URL from environment: ${finalDbUrl}`);
     } else {
-      // Fallback: Construct relative URL matching prisma.config.js (./prisma/TCon360.db relative to prisma/ folder)
+      // Fallback: Construct relative URL matching prisma.config.ts (./prisma/TCon360.db relative to backend/ root)
       // This avoids absolute path issues with varying cwd
       finalDbUrl = 'file:./prisma/TCon360.db';
 
