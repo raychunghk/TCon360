@@ -3,7 +3,7 @@
 import { config } from '@tcon360/config';
 import { betterAuth } from 'better-auth';
 import { credentials } from 'better-auth-credentials-plugin';
-import { createAuthMiddleware, customSession, username } from 'better-auth/plugins';
+import { customSession, username } from 'better-auth/plugins';
 import z from 'zod/v3';
 import { customSignInResponsePlugin } from './plugin/customSignInResponsePlugin';
 
@@ -241,90 +241,64 @@ export const auth = betterAuth({
                 //  nestJwt,
             };
         }),
-        {
-            id: 'custom-social-handler',
-            hooks: {
-                after: [
-                    {
-                        matcher: (ctx) => ctx.path === '/sign-in/social',
-                        handler: createAuthMiddleware(async (ctx) => {
-                            const { provider, profile } = ctx.context.socialAuth;
-
-                            if (provider === 'google' && profile) {
-                                logAuth('Intercepting Google social login', { profile });
-
-                                const backendGoogleUrl = `http://localhost:${config.backendport}/api/auth/google-signup`;
-
-                                try {
-                                    const nestResponse = await fetch(backendGoogleUrl, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({
-                                            googleId: profile.id,
-                                            email: profile.email,
-                                            name: profile.name,
-                                            picture: profile.picture,
-                                        }),
-                                    });
-
-                                    if (!nestResponse.ok) {
-                                        const errorData = await nestResponse.json().catch(() => ({}));
-                                        console.error('[Google Social Callback] Nest.js authentication failed', {
-                                            status: nestResponse.status,
-                                            errorData,
-                                        });
-                                        return null;
-                                    }
-
-                                    const nestData = await nestResponse.json();
-                                    console.log('[Google Social Callback] Full Nest.js response:', {
-                                        rawResponse: JSON.stringify(nestData, null, 2),
-                                    });
-
-                                    const nestJwt = nestData.accessToken;
-                                    if (!nestJwt) {
-                                        console.error('[Google Social Callback] No accessToken in Nest.js response');
-                                        return null;
-                                    }
-
-                                    const userFromNest = nestData.user;
-                                    const tokenMaxAge = nestData.tokenMaxAge;
-
-                                    const betterAuthUser = {
-                                        id: userFromNest.id,
-                                        email: userFromNest.email,
-                                        name: userFromNest.name,
-                                        image: userFromNest.image || null,
-                                        staff: userFromNest.staff || [],
-                                        tokenMaxAge,
-                                        nestJwt,
-                                    };
-
-                                    if (ctx.context.newSession) {
-                                        (ctx.context.newSession as any).user = betterAuthUser;
-                                    }
-
-                                    return ctx.context.returned;
-
-                                } catch (error) {
-                                    console.error('[Google Social Callback] Unexpected error during authentication:', {
-                                        message: error instanceof Error ? error.message : String(error),
-                                    });
-                                    return null;
-                                }
-                            }
-
-                            // Fallback: return the original response if conditions are not met
-                            return ctx.context.returned;
-                        }),
-                    },
-                ],
-            },
-        },
     ],
     basePath: '/api/bauth',
     debug: true,
     callbacks: {
+        async signIn({ user, account, profile }) {
+            // This callback handles ALL sign-in types: credentials, social, etc.
+            // For social logins: account will contain provider info
+            
+            logAuth('signIn callback triggered', { 
+                hasUser: !!user,
+                hasAccount: !!account,
+                accountProvider: account?.provider,
+                hasProfile: !!profile,
+            });
+            
+            // Handle Google social login
+            if (account?.provider === 'google' && profile) {
+                logAuth('Google social login detected', { 
+                    profile: {
+                        email: profile.email,
+                        name: profile.name,
+                        image: profile.image,
+                    }
+                });
+                
+                // Call backend with Google profile
+                try {
+                    const response = await fetch(`http://localhost:${config.backendport}/api/auth/google-signup`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            googleId: profile.id || user.id,
+                            email: profile.email || user.email,
+                            name: profile.name || user.name,
+                            picture: profile.image,
+                        }),
+                    });
+                    
+                    if (!response.ok) {
+                        logAuth('Google signup backend failed', { status: response.status });
+                        return false;
+                    }
+                    
+                    const data = await response.json();
+                    logAuth('Google signup backend success', { accessToken: !!data.accessToken });
+                    
+                    // The backend will handle creating/updating the user
+                    // Better-Auth will handle the session creation automatically
+                    return true;
+                } catch (error) {
+                    logAuth('Error calling Google signup backend', { error: error.message });
+                    return false;
+                }
+            }
+            
+            // For credentials login or other providers, allow normal flow
+            return true;
+        },
         async session({ session }) {
             const now = new Date();
             const expiresAt = session.session?.expiresAt ? new Date(session.session.expiresAt) : null;
@@ -353,6 +327,8 @@ logAuth('✅ BetterAuth configuration completed and ready', {
     cookie_name: 'session_token',
     plugins: ['username', 'customSignInResponsePlugin', 'customSession'],
     'BetterAuth API routes will be available at': computedBasePath + '/*',
+    'signIn callback': 'Handles all sign-in types including Google OAuth',
+    'socialHandlers': 'Removed problematic middleware, using signIn callback instead',
 });
 
 export type Auth = typeof auth;
