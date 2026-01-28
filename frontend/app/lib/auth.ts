@@ -21,6 +21,11 @@ const logAuth = (description: string, details: any = {}) => {
     console.log(`\n[BetterAuth][${timestamp}] ${description}`, JSON.stringify(details, null, 2));
 };
 const _tokenExpiration = Number(process.env.TOKEN_MAX_AGE) || 30 * 24 * 60 * 60
+const google = {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    autoSignUp: false, // Disable automatic user creation for Google
+}
 logAuth('🚀 BetterAuth is initializing...', {
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || '(not set)',
@@ -36,6 +41,7 @@ logAuth('🚀 BetterAuth is initializing...', {
         feprefix: config.feprefix,
         useReverseProxy: config.useReverseProxy,
     },
+    google
 });
 
 const computedBasePath = '/api/bauth';
@@ -65,7 +71,7 @@ export const auth = betterAuth({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             autoSignUp: false, // Disable automatic user creation for Google
-        },
+        }
     },
     user: {
         additionalFields: {
