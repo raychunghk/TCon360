@@ -7,7 +7,9 @@ import { signIn } from '@/app/lib/bauthclient';
 import useStore from '@/components/stores/zstore.ts';
 import { default as useRouter } from '@/components/useCustRouter';
 import { siteTitle } from '@/components/util/label';
+import { useRippleEffect } from '@/components/hooks/useRippleEffect';
 import * as classes from '@/styles/login.css';
+import * as rippleClasses from '@/styles/ripple.css';
 import {
   Anchor,
   Button,
@@ -76,6 +78,7 @@ export default function LoginBody(props: any) {
   const [identifier, setIdentifier] = useState('');
   const [loginStatus, setLoginStatus] = useState('');
   const [visible, { open, close }] = useDisclosure(false);
+  const handleRipple = useRippleEffect(rippleClasses.ripple);
 
   let clientLoginInitiatedTime: number | null = null;
 
@@ -335,7 +338,14 @@ export default function LoginBody(props: any) {
             onChange={(event) => setPassword(event.target.value)}
           />
           <Checkbox label="Keep me logged in" mt="xl" size="md" />
-          <Button type="submit" fullWidth mt="xl" size="md">
+          <Button
+            type="submit"
+            fullWidth
+            mt="xl"
+            size="md"
+            onClick={handleRipple}
+            className={`${rippleClasses.rippleContainer} ${rippleClasses.rippleActive}`}
+          >
             Login
           </Button>
         </form>
@@ -348,7 +358,11 @@ export default function LoginBody(props: any) {
             variant="default"
             color="gray"
             fullWidth
-            onClick={handleGoogleLogin}
+            onClick={(event) => {
+              handleRipple(event);
+              handleGoogleLogin();
+            }}
+            className={`${rippleClasses.rippleContainer} ${rippleClasses.rippleActive}`}
           >
             Google
           </Button>
