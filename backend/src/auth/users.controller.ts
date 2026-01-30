@@ -34,12 +34,11 @@ export class UsersController {
     private usersService: UsersService,
   ) { }
 
-  //@HttpCode(200)
-  //@UseGuards(LocalAuthGuard)
   @Post('user/login')
   async login(
     @Body() loginDto: LoginDto,
   ): Promise<{ accessToken: string; user: any; tokenMaxAge: number }> {
+    Logger.log(`Login attempt for user: ${loginDto.identifier}`, 'UsersController');
     try {
       const { identifier, password, excludeViewStaff } = loginDto;
 
@@ -52,15 +51,14 @@ export class UsersController {
 
       const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000; // seconds
 
-      console.log('In login controller, token max age (seconds):', tokenMaxAge);
-
+      Logger.log(`Login successful for user: ${user.email}`, 'UsersController');
       return {
         accessToken: token,
         user,
         tokenMaxAge,
       };
     } catch (error) {
-      Logger.error('Login error', error);
+      Logger.error(`Login failed for user: ${loginDto.identifier}`, error.stack, 'UsersController');
       throw new HttpException('Login failed', HttpStatus.UNAUTHORIZED);
     }
   }
@@ -76,7 +74,7 @@ export class UsersController {
         return { message: 'ok' };
       }
     } catch (error) {
-      Logger.error('Validation error', error);
+      Logger.error(`Validation error for username: ${data.username}, email: ${data.email}`, error.stack, 'UsersController');
       throw new HttpException(
         'An error occurred during validation',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -84,14 +82,10 @@ export class UsersController {
     }
   }
   @Post('user/signup')
-  //async signUp(@Request() req) {
   async signUp(@Body() user: signupUserDTO) {
-    //const user = req.body;
-
+    Logger.log(`Signup attempt for email: ${user.email}`, 'UsersController');
     try {
-      console.log('signup here');
-      console.log(user);
-      //  const usercreate =   Prisma.UserCreateInput
+      Logger.debug(`Signup data: ${JSON.stringify(user)}`, 'UsersController');
       const existingUser = await this.authService.userExists(
         user.username,
         user.email,
@@ -140,8 +134,7 @@ export class UsersController {
         tokenMaxAge: parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000,
       };
     } catch (error) {
-      Logger.error('Signup error', error);
-      console.log(error);
+      Logger.error(`Signup error for email: ${user.email}`, error.stack, 'UsersController');
 
       throw new HttpException(
         'An error occurred',
@@ -157,44 +150,49 @@ export class UsersController {
   async getMyUser(@Req() req) {
     const userId = req.user.id;
     const user = await this.usersService.getUserWithStaffAndContract(userId);
-    console.log(user);
+    Logger.debug(`Fetched user details for ID: ${userId}`, 'UsersController');
     return user;
   }
 
-  @Post('auth/google-signup')
+  @Post('user/google-signup')
   async handleGoogleSignup(@Body() googleData: GoogleSignupDto) {
+    Logger.log('Handling Google signup request...', 'UsersController');
+    // Avoid logging the entire googleData object in production if it contains sensitive info.
+    // For debugging, you can log specific, non-sensitive fields.
+    Logger.debug(`Received data for email: ${googleData.email}`, 'UsersController');
     try {
       const { token, user } = await this.authService.handleGoogleSignup(googleData);
 
       const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000; // seconds
 
+      Logger.log(`Google signup successful for user: ${user.email}`, 'UsersController');
       return {
         accessToken: token,
         user,
         tokenMaxAge,
       };
     } catch (error) {
-      Logger.error('Google signup error', error);
+      Logger.error(`Google signup failed for email: ${googleData.email}`, error.stack, 'UsersController');
       throw new HttpException('Google signup failed', HttpStatus.UNAUTHORIZED);
     }
   }
 
-  @Post('auth/google-callback')
+  @Post('user/google-callback')
   async handleGoogleAuth(@Body() googleData: GoogleAuthDto) {
+    Logger.log(`Handling Google auth request for email: ${googleData.email}`, 'UsersController');
     try {
       const { token, user } = await this.authService.handleGoogleAuth(googleData);
 
       const tokenMaxAge = parseInt(process.env.TOKEN_MAX_AGE || '0', 10) / 1000; // seconds
 
-      console.log('Google auth successful, token max age (seconds):', tokenMaxAge);
-
+      Logger.log(`Google auth successful for user: ${user.email}`, 'UsersController');
       return {
         accessToken: token,
         user,
         tokenMaxAge,
       };
     } catch (error) {
-      Logger.error('Google auth error', error);
+      Logger.error(`Google auth failed for email: ${googleData.email}`, error.stack, 'UsersController');
       throw new HttpException('Google authentication failed', HttpStatus.UNAUTHORIZED);
     }
   }
