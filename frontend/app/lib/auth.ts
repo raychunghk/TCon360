@@ -26,6 +26,7 @@ const computedBasePath = '/api/bauth';
 
 logAuth('🚀 BetterAuth is initializing...', {
     NODE_ENV: process.env.NODE_ENV,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || '(not set)',
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || '(not set)',
     NEXTAUTH_SECRET_set: !!process.env.NEXTAUTH_SECRET,
     JWT_SECRET_set: !!process.env.JWT_SECRET,
@@ -47,6 +48,7 @@ logAuth('🚀 BetterAuth is initializing...', {
 // BetterAuth configuration (headless JWT mode)
 // ──────────────────────────────────────────────────────────────
 export const auth = betterAuth({
+    baseURL: process.env.BETTER_AUTH_URL || 'https://code2.raygor.cc/absproxy/3000',
     advanced: {
         disableCSRFCheck: true,
     },
