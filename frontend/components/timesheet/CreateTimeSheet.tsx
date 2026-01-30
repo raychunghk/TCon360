@@ -1,6 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 'use client';
 
+import { useRippleEffect } from '@/components/hooks/useRippleEffect';
 import useStore from '@/components/stores/zstore';
 import {
   Button,
@@ -20,6 +21,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import MyCard from '../MyCard';
 import * as classes from './CreateTimeSheet.css';
+import * as rippleClasses from '@/styles/ripple.css';
 import './MonthPickerGlobalStyles.css';
 
 interface CreateTimesheetPageProps {
@@ -77,6 +79,7 @@ export default function CreateTimesheetPage({
   const [fileid, setFileid] = useState<string | null>(null);
 
   const { handleSubmit } = useForm();
+  const handleRipple = useRippleEffect(rippleClasses.ripple);
 
   // Store values
   const {
@@ -242,6 +245,8 @@ export default function CreateTimesheetPage({
                     target="_blank"
                     leftSection={<IconTableExport size="1rem" />}
                     href={`${basepath}/api/staff/download/${fileid}`}
+                    onClick={handleRipple}
+                    className={`${rippleClasses.rippleContainer} ${rippleClasses.rippleActive}`}
                   >
                     Download TimeSheet
                   </Button>
@@ -257,7 +262,8 @@ export default function CreateTimesheetPage({
               loading={submitting}
               disabled={submitting}
               radius="md"
-              className={classes.submitButton}
+              onClick={handleRipple}
+              className={`${classes.submitButton} ${rippleClasses.rippleContainer} ${rippleClasses.rippleActive}`}
             >
               {submitting ? 'Submitting...' : 'Submit'}
             </Button>
@@ -279,7 +285,14 @@ export default function CreateTimesheetPage({
           <Modal.Body>
             <Text mt="md">Timesheet record created successfully!</Text>
             <Center>
-              <Button mt="md" onClick={handleModalClose}>
+              <Button
+                mt="md"
+                onClick={(event) => {
+                  handleRipple(event);
+                  handleModalClose();
+                }}
+                className={`${rippleClasses.rippleContainer} ${rippleClasses.rippleActive}`}
+              >
                 Ok
               </Button>
             </Center>
