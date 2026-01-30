@@ -12,6 +12,34 @@ import { NextRequest, NextResponse } from "next/server";
 
 const handler = toNextJsHandler(auth);
 
+/**
+ * Reconstruct request URL from X-Forwarded headers for social login routes.
+ * This fixes redirect_uri_mismatch issues when behind a reverse proxy.
+ * Only applies to social provider routes - credential routes are untouched.
+ */
+function reconstructUrlForSocial(request: NextRequest): NextRequest {
+    const pathname = request.nextUrl.pathname;
+
+    // Only reconstruct for social routes (OAuth callback and social sign-in initiation)
+    // MUST NOT affect credential login at /api/bauth/sign-in/credentials
+    if (!pathname.includes('callback') && !pathname.includes('sign-in/social')) {
+        return request; // Return unchanged for credential routes
+    }
+
+    const proto = request.headers.get('x-forwarded-proto') || 'https';
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'localhost';
+    const port = request.headers.get('x-forwarded-port');
+
+    // Reconstruct the full URL with correct origin
+    const url = new URL(request.url);
+    url.protocol = proto + ':';
+    url.hostname = host;
+    url.port = port || '';
+
+    // Create new request with reconstructed URL
+    return new NextRequest(url, request);
+}
+
 // Single unified handler for all methods
 //export const { GET, POST } = handler;
 
@@ -22,9 +50,17 @@ const logRoute = (description: string, details: any = {}) => {
 };
 
 export async function GET(request: NextRequest) {
-    logRoute('GET request received', { url: request.url });
+    // Reconstruct URL for social routes to fix redirect_uri_mismatch behind reverse proxy
+    const reconstructedRequest = reconstructUrlForSocial(request);
+
+    logRoute('GET request received', {
+        originalUrl: request.url,
+        reconstructedUrl: reconstructedRequest.url,
+        pathname: request.nextUrl.pathname
+    });
+
     try {
-        const response = await handler.GET(request);
+        const response = await handler.GET(reconstructedRequest);
         logRoute('GET handled successfully', { status: response.status });
         return response;
     } catch (error: any) {
@@ -34,7 +70,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    const cloned = request.clone();
+    // Reconstruct URL for social routes to fix redirect_uri_mismatch behind reverse proxy
+    const reconstructedRequest = reconstructUrlForSocial(request);
+
+    const cloned = reconstructedRequest.clone();
     let bodyPreview = "Not JSON or already consumed";
     try {
         const json = await cloned.json();
@@ -42,12 +81,14 @@ export async function POST(request: NextRequest) {
     } catch { }
 
     logRoute('POST request received', {
-        url: request.url,
+        originalUrl: request.url,
+        reconstructedUrl: reconstructedRequest.url,
+        pathname: request.nextUrl.pathname,
         bodyPreview,
     });
 
     try {
-        const response = await handler.POST(request);
+        const response = await handler.POST(reconstructedRequest);
         logRoute('POST handled successfully', { status: response.status });
         return response;
     } catch (error: any) {
