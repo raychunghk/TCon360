@@ -39,6 +39,7 @@ export const customSignInResponsePlugin = (): BetterAuthPlugin => ({
             {
                 matcher: (ctx) => ctx.path === "/sign-in/social",
                 handler: createAuthMiddleware(async (ctx) => {
+                    console.log(`sign-in social header`, ctx.headers)
                     if (ctx.context.returned && !ctx.context.error) {
                         const original = ctx.context.returned;
                         const newSession = ctx.context.newSession;
