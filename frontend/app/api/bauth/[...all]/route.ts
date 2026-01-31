@@ -89,6 +89,50 @@ export async function POST(request: NextRequest) {
 
     try {
         const response = await handler.POST(reconstructedRequest);
+        
+        // Intercept OAuth redirect response to fix redirect_uri
+        if (request.nextUrl.pathname.includes('sign-in/social') && response.status === 200) {
+            try {
+                const body = await response.clone().json();
+                
+                // Check if this is a Google OAuth redirect
+                if (body.url && body.url.includes('accounts.google.com')) {
+                    // Reconstruct the correct proxy origin from X-Forwarded headers
+                    const proto = request.headers.get('x-forwarded-proto') || 'https';
+                    const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'localhost';
+                    const port = request.headers.get('x-forwarded-port');
+                    
+                    // Only include port if it's not standard (80/443)
+                    const portString = port && port !== '80' && port !== '443' ? `:${port}` : '';
+                    const correctOrigin = `${proto}://${host}${portString}`;
+                    
+                    // Parse the OAuth URL and replace redirect_uri
+                    const originalUrl = new URL(body.url);
+                    const newRedirectUri = `${correctOrigin}/api/bauth/callback/google`;
+                    originalUrl.searchParams.set('redirect_uri', newRedirectUri);
+                    
+                    logRoute('Rewriting Google OAuth redirect_uri', {
+                        originalRedirectUri: body.url.match(/redirect_uri=([^&]+)/)?.[1],
+                        newRedirectUri,
+                        xForwardedHeaders: {
+                            proto,
+                            host,
+                            port
+                        }
+                    });
+                    
+                    // Return modified response with corrected redirect_uri
+                    return NextResponse.json({
+                        ...body,
+                        url: originalUrl.toString()
+                    });
+                }
+            } catch (jsonError: any) {
+                // Response wasn't JSON or couldn't be parsed, continue with original response
+                logRoute('Could not parse response as JSON, returning original', { error: jsonError.message });
+            }
+        }
+        
         logRoute('POST handled successfully', { status: response.status });
         return response;
     } catch (error: any) {
