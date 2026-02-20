@@ -6,6 +6,7 @@ import { credentials } from 'better-auth-credentials-plugin';
 import { customSession, username } from 'better-auth/plugins';
 import z from 'zod/v3';
 import { customSignInResponsePlugin } from './plugin/customSignInResponsePlugin';
+import { logAuthInit } from './auth-logger';
 
 export const myCustomSchema = z.object({
     username: z.string().min(1),
@@ -14,50 +15,56 @@ export const myCustomSchema = z.object({
 });
 
 // ──────────────────────────────────────────────────────────────
-// Comprehensive logging – will show you everything at startup
+// Parse TRUSTED_ORIGINS from environment variable
 // ──────────────────────────────────────────────────────────────
-const logAuth = (description: string, details: object = {}) => {
-    const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
-    console.log(`\n[BetterAuth][${timestamp}] ${description}`, JSON.stringify(details, null, 2));
+const parseTrustedOrigins = (): string[] => {
+    const envOrigins = process.env.TRUSTED_ORIGINS;
+    if (!envOrigins) {
+        return [
+            "*.raygor.cc",
+            "localhost",
+            "http://localhost:3000",
+            "https://*.example.com",
+            "http://*.dev.example.com",
+        ];
+    }
+
+    // Split by comma and trim whitespace
+    return envOrigins.split(',')
+        .map(origin => origin.trim())
+        .filter(origin => origin.length > 0);
 };
 
 const tokenExpiration = Number(process.env.TOKEN_MAX_AGE) || 30 * 24 * 60 * 60; // 30 days in seconds
 const computedBasePath = '/api/bauth';
 
-logAuth('🚀 BetterAuth is initializing...', {
-    NODE_ENV: process.env.NODE_ENV,
-    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || '(not set)',
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL || '(not set)',
-    NEXTAUTH_SECRET_set: !!process.env.NEXTAUTH_SECRET,
-    JWT_SECRET_set: !!process.env.JWT_SECRET,
-    TOKEN_MAX_AGE: process.env.TOKEN_MAX_AGE,
-    tokenExpirationInSeconds: tokenExpiration,
-    computedBasePath,
-    tcon360Config: {
-        basepath: config.basepath,
-        prefix: config.prefix,
-        ...config
-    },
-    googleProvider: {
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
-    }
+// Determine if we should use proxy headers
+const useProxyHeaders = !process.env.BETTER_AUTH_URL;
+const baseURL = process.env.BETTER_AUTH_URL || undefined;
+const trustedOrigins = parseTrustedOrigins();
+
+// ──────────────────────────────────────────────────────────────
+// Log initialization configuration
+// ──────────────────────────────────────────────────────────────
+logAuthInit({
+    proxyHeadersEnabled: useProxyHeaders,
+    baseURL,
+    trustedOrigins,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    basePath: computedBasePath,
 });
 
 // ──────────────────────────────────────────────────────────────
 // BetterAuth configuration (headless JWT mode)
 // ──────────────────────────────────────────────────────────────
 export const auth = betterAuth({
-    baseURL: 'http://localhost:3000',
+    baseURL: baseURL, // Will be undefined if not set, triggering auto-detection from X-Forwarded headers
     advanced: {
         disableCSRFCheck: true,
+        trustedProxyHeaders: useProxyHeaders, // Enable auto-detection from X-Forwarded headers
     },
-    trustedOrigins: [
-        "*.raygor.cc",
-        "localhost",
-        "https://*.example.com",
-        "http://*.dev.example.com",
-    ],
+    trustedOrigins: trustedOrigins,
     secret: process.env.JWT_SECRET!,
     socialProviders: {
         google: {
@@ -310,10 +317,22 @@ export const auth = betterAuth({
 // ──────────────────────────────────────────────────────────────
 // FINAL CONFIRMATION LOG
 // ──────────────────────────────────────────────────────────────
+const logAuth = (description: string, details: object = {}) => {
+    const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
+    console.log(`\n[BetterAuth][${timestamp}] ${description}`, JSON.stringify(details, null, 2));
+};
+
 logAuth('✅ BetterAuth configuration completed and ready', {
     computedBasePath,
     session_strategy: 'jwt',
     cookie_name: 'session_token',
+    baseURL: baseURL || '(auto-detect from X-Forwarded headers)',
+    trustedProxyHeaders: useProxyHeaders,
+    trustedOrigins: trustedOrigins,
+    googleProvider: {
+        clientId: process.env.GOOGLE_CLIENT_ID ? '(set)' : '(not set)',
+        clientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    },
     plugins: ['username', 'customSignInResponsePlugin', 'customSession'],
     'BetterAuth API routes will be available at': computedBasePath + '/*',
     'signIn callback': 'Handles all sign-in types including Google OAuth',

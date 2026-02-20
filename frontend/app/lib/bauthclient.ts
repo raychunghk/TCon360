@@ -5,14 +5,40 @@ import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { username } from "better-auth/plugins";
 import { createAuthClient } from "better-auth/react";
 import { auth, myCustomSchema } from "./auth";
+import { createOAuthLog } from "./auth-logger";
+
 interface MyUser extends User {
     token?: string;
     extUser: unknown;
     tokenMaxAge: number;
 
 }
+
+// Determine the base URL for client-side requests
+// Use BETTER_AUTH_URL if set, otherwise use current origin
+const getClientBaseURL = (): string => {
+    if (typeof window === 'undefined') {
+        return '/api/bauth';
+    }
+
+    const envBaseURL = process.env.BETTER_AUTH_URL;
+    if (envBaseURL) {
+        return envBaseURL + '/api/bauth';
+    }
+
+    // Auto-detect from current origin (works with reverse proxy)
+    const origin = window.location.origin;
+    createOAuthLog('Client initialized', {
+        origin,
+        basePath: `${origin}/api/bauth`,
+        'Using env var': !!envBaseURL,
+    });
+
+    return `${origin}/api/bauth`;
+};
+
 export const bauthClient = createAuthClient({
-    basePath: "/absproxy/3000/api/bauth",
+    baseURL: getClientBaseURL(),
     plugins: [
 
         username(),
