@@ -5,8 +5,10 @@ import { env } from '@tcon360/config';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { StaffService } from '../staff/service/staff.service.js';
 import { AuthService } from './auth.service.js';
+import { GoogleStrategy } from './google.strategy.js';
 import { JwtStrategy } from './jwt.strategy.js';
 import { LocalStrategy } from './local.strategy.js';
+import { GoogleOAuthController } from './google-oauth.controller.js';
 import { UsersController } from './users.controller.js';
 import { UsersService } from './users.service.js';
 
@@ -37,11 +39,12 @@ console.log('🔐 [AuthModule] Initializing JwtModule with options:\r\n', {
     PassportModule,
     JwtModule.register(jwtModuleOptions),
   ],
-  controllers: [UsersController],
+  controllers: [UsersController, GoogleOAuthController],
   providers: [
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    GoogleStrategy,
     UsersService,
     PrismaService,
     StaffService,

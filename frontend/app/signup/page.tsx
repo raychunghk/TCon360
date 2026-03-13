@@ -93,6 +93,11 @@ export default function SignupPage() {
   const { authOverlayVisible, setAuthOverlayVisible, basepath, activeUser } = useStore();
   const searchParams = useSearchParams();
   const onboarding = searchParams.get('onboarding') === 'true';
+  
+  // Check for Google OAuth token
+  const googleToken = searchParams.get('googleToken');
+  const googleEmail = searchParams.get('email');
+  const googleName = searchParams.get('name');
 
   useEffect(() => {
     if (onboarding && activeUser) {
@@ -105,11 +110,31 @@ export default function SignupPage() {
       });
     }
   }, [onboarding, activeUser]);
+
+  // Handle Google OAuth signup flow
+  useEffect(() => {
+    if (googleToken && googleEmail && googleName) {
+      // Pre-fill form with Google data
+      setEmail(googleEmail);
+      form.setValues({
+        ...form.values,
+        email: googleEmail,
+        username: googleEmail.split('@')[0] || '', // Use email prefix as username
+        StaffName: googleName,
+      });
+      
+      // Skip to Step 2 (Staff Details) - skip login details
+      setActive(1);
+    } else {
+      // For regular signup, start at step 0
+      setActive(0);
+    }
+  }, [googleToken, googleEmail, googleName]);
   const mainpage = '/';
 
   // In nextStep
   const nextStep = async () => {
-    if (active === 0) {
+    if (active === 0 && !googleToken) {
       const isValid = await validateStep0(form.values.username, form.values.email);
       if (!isValid) return;
     }
@@ -134,15 +159,19 @@ export default function SignupPage() {
     initialValues: { ...formValues, username, password, email },
     validate: (values) => {
       if (active === 0) {
-        const rtn = {
+        const rtn: any = {
           username:
             values.username.trim().length < 6
               ? 'Username must include at least 6 characters'
               : null,
-          password:
-            values.password.length < 5 ? 'Password must include at least 6 characters' : null,
           email: /^\S+@\S+$/.test(values.email) ? null : 'Invalid email',
         };
+        
+        // Only validate password if not using Google OAuth
+        if (!googleToken) {
+          rtn.password = values.password.length < 5 ? 'Password must include at least 6 characters' : null;
+        }
+        
         return rtn;
       } else if (active === 1) {
         const errors: Partial<iStaffModel> = {};
@@ -200,10 +229,8 @@ export default function SignupPage() {
   const handleGoogleSignup = async () => {
     setAuthOverlayVisible(true);
     try {
-      await signIn.social({
-        provider: 'google',
-        callbackURL: `${window.location.origin}${basepath}`,
-      });
+      // Redirect to NestJS Google OAuth initiation endpoint
+      window.location.href = '/api/gauth/initiate';
     } catch (error) {
       console.error('Google signup failed:', error);
       setsignUpError('Google signup failed.');
@@ -224,13 +251,34 @@ export default function SignupPage() {
     const { email, password, username, ...staff } = form;
     setFormValues({ ...staff });
     try {
+      // Include googleToken in request if present
+      const payload: any = { email, password, username, staff };
+      if (googleToken) {
+        payload.googleToken = googleToken;
+      }
+
       const response = await fetch(`${basepath}/api/user/signup`, {
         method: 'POST',
-        body: JSON.stringify({ email, password, username, staff }),
+        body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
-        await handleLoginSuccess(response);
+        const data = await response.json();
+        
+        // For Google OAuth signup, establish Better-Auth session using credentials plugin
+        if (googleToken && data.accessToken) {
+          await signIn.credentials({
+            email: data.user.email,
+            username: data.user.username,
+            password: '', // Empty password for Google signup
+            provider: 'google-complete',
+            token: data.accessToken, // NestJS JWT token
+          });
+          router.push('/');
+        } else {
+          // Regular signup with password
+          await handleLoginSuccess(response);
+        }
       } else if (response.status === 400) {
         const data = await response.json();
         setsignUpError(data.message || 'Username or email already exists');
@@ -329,63 +377,70 @@ export default function SignupPage() {
                   <Title order={2}  >
                     Enter login details
                   </Title>
-                  <Grid pb={10} pt={10}>
-                    {[
-                      {
-                        component: TextInput,
-                        label: 'Email Address',
-                        placeholder: 'username@department.gov.hk',
-                        value: email,
-                        onChange: (event: { target: { value: SetStateAction<string> } }) =>
-                          setEmail(event.target.value),
-                        name: 'email',
-                      },
-                      {
-                        component: TextInput,
-                        label: 'User Name',
-                        placeholder: 'User Name',
-                        value: username,
-                        onChange: (event) => setUsername(event.target.value),
-                        name: 'username',
-                      },
-                      {
-                        component: PasswordInput,
-                        label: 'Password',
-                        placeholder: 'Your Password',
-                        value: password,
-                        onChange: (event) => setPassword(event.target.value),
-                        name: 'password',
-                      },
-                    ].map((field, index) => {
-                      const InputComponent = field.component;
-                      const autoFocus = active === 0 && index === 0;
-                      return (
-                        <Grid.Col span={6} key={field.name}>
-                          <InputComponent
-                            label={field.label}
-                            placeholder={field.placeholder}
-                            size="md"
-                            value={field.value}
-                            //   onChange={field.onChange}
-                            onKeyDown={(event) => {
-                              getHotkeyHandler(hotkeyConfig)(event);
-                              handleTabKey(event, 0, 2);
-                            }}
-                            {...form.getInputProps(field.name, {
-                              onChange: (event) => {
-                                field.onChange(event);
-                                // Additional onChange logic if needed
-                              }
-                            })}
-                            ref={(ref) => {
-                              inputRefs.current[index] = ref;
-                            }}
-                            autoFocus={autoFocus}
-                          />
-                        </Grid.Col>
-                      );
-                    })}
-                  </Grid>
+                  {googleToken ? (
+                    // Google OAuth signup - show read-only email
+                    <Text mt="md">
+                      Email: <strong>{email}</strong> (from Google)
+                    </Text>
+                  ) : (
+                    <Grid pb={10} pt={10}>
+                      {[
+                        {
+                          component: TextInput,
+                          label: 'Email Address',
+                          placeholder: 'username@department.gov.hk',
+                          value: email,
+                          onChange: (event: { target: { value: SetStateAction<string> } }) =>
+                            setEmail(event.target.value),
+                          name: 'email',
+                        },
+                        {
+                          component: TextInput,
+                          label: 'User Name',
+                          placeholder: 'User Name',
+                          value: username,
+                          onChange: (event) => setUsername(event.target.value),
+                          name: 'username',
+                        },
+                        {
+                          component: PasswordInput,
+                          label: 'Password',
+                          placeholder: 'Your Password',
+                          value: password,
+                          onChange: (event) => setPassword(event.target.value),
+                          name: 'password',
+                        },
+                      ].map((field, index) => {
+                        const InputComponent = field.component;
+                        const autoFocus = active === 0 && index === 0;
+                        return (
+                          <Grid.Col span={6} key={field.name}>
+                            <InputComponent
+                              label={field.label}
+                              placeholder={field.placeholder}
+                              size="md"
+                              value={field.value}
+                              //   onChange={field.onChange}
+                              onKeyDown={(event) => {
+                                getHotkeyHandler(hotkeyConfig)(event);
+                                handleTabKey(event, 0, 2);
+                              }}
+                              {...form.getInputProps(field.name, {
+                                onChange: (event) => {
+                                  field.onChange(event);
+                                  // Additional onChange logic if needed
+                                }
+                              })}
+                              ref={(ref) => {
+                                inputRefs.current[index] = ref;
+                              }}
+                              autoFocus={autoFocus}
+                            />
+                          </Grid.Col>
+                        );
+                      })}
+                    </Grid>
+                  )}
 
                   {errorMessage && (
                     <Notification

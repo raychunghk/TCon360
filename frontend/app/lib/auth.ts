@@ -109,27 +109,17 @@ export const auth = betterAuth({
         username({ minUsernameLength: 5 }),
         customSignInResponsePlugin(), // Imported from separate file
         credentials({
-            autoSignUp: true,
-            path: "/sign-in/credentials",
-            inputSchema: myCustomSchema,
-            async callback(ctx, parsed) {
-                const { email, username, password } = parsed;
-                const identifier = email || username;
+        autoSignUp: true,
+        path: "/sign-in/credentials",
+        inputSchema: myCustomSchema,
+        async callback(ctx, parsed) {
+            const { email, username, password, provider, token } = parsed;
 
-                if (!identifier || !password) {
-                    logAuth("[Credentials Callback] Missing identifier or password", { parsed });
-                    return null;
-                }
-
-                logAuth("[Credentials Callback] Starting authentication", {
-                    identifier,
-                    hasPassword: !!password, // Don't log the password itself
-                    timestamp: new Date().toISOString(),
-                });
-
-                const decodeJwt = (token: string) => {
+            // Handle Google OAuth completion (after signup with staff data)
+            if (provider === 'google-complete' && token) {
+                const decodeJwt = (jwtToken: string) => {
                     try {
-                        const base64Url = token.split('.')[1];
+                        const base64Url = jwtToken.split('.')[1];
                         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
                         const jsonPayload = decodeURIComponent(
                             atob(base64)
@@ -139,90 +129,144 @@ export const auth = betterAuth({
                         );
                         return JSON.parse(jsonPayload);
                     } catch (e) {
-                        logAuth("[Credentials Callback] JWT decode failed", { error: e.message });
+                        logAuth("[Credentials Callback - Google Complete] JWT decode failed", { error: e.message });
                         return null;
                     }
                 };
 
+                const decoded = decodeJwt(token);
+                if (!decoded?.sub) {
+                    logAuth("[Credentials Callback - Google Complete] Invalid token");
+                    return null;
+                }
+
+                logAuth("[Credentials Callback - Google Complete] Processing Google OAuth signup completion", {
+                    userId: decoded.sub,
+                    email: decoded.email,
+                    name: decoded.name,
+                });
+
+                return {
+                    id: decoded.sub,
+                    email: decoded.email,
+                    name: decoded.name,
+                    image: decoded.picture || null,
+                    staff: decoded.staff || [],
+                    nestJwt: token,
+                    tokenMaxAge: decoded.tokenMaxAge,
+                };
+            }
+
+            // Regular email/password login
+            const identifier = email || username;
+
+            if (!identifier || !password) {
+                logAuth("[Credentials Callback] Missing identifier or password", { parsed });
+                return null;
+            }
+
+            logAuth("[Credentials Callback] Starting authentication", {
+                identifier,
+                hasPassword: !!password, // Don't log the password itself
+                timestamp: new Date().toISOString(),
+            });
+
+            const decodeJwt = (token: string) => {
                 try {
-                    // Inside your credentials plugin callback
-                    const backendLoginUrl = `http://localhost:${config.backendport}/api/user/login`;
+                    const base64Url = token.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const jsonPayload = decodeURIComponent(
+                        atob(base64)
+                            .split('')
+                            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                            .join('')
+                    );
+                    return JSON.parse(jsonPayload);
+                } catch (e) {
+                    logAuth("[Credentials Callback] JWT decode failed", { error: e.message });
+                    return null;
+                }
+            };
 
-                    logAuth("[Credentials Callback] Sending request to Nest.js", {
-                        url: backendLoginUrl,
-                        body: {
-                            identifier,
-                            password: "****",
-                            excludeViewStaff: true   // ← NEW: tell NestJS to slim the JWT
-                        },
-                    });
+            try {
+                // Inside your credentials plugin callback
+                const backendLoginUrl = `http://localhost:${config.backendport}/api/user/login`;
 
-                    const nestResponse = await fetch(backendLoginUrl, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            identifier,
-                            password,
-                            excludeViewStaff: true   // ← send the flag
-                        }),
-                    });
+                logAuth("[Credentials Callback] Sending request to Nest.js", {
+                    url: backendLoginUrl,
+                    body: {
+                        identifier,
+                        password: "****",
+                        excludeViewStaff: true   // ← NEW: tell NestJS to slim the JWT
+                    },
+                });
 
-                    logAuth("[Credentials Callback] Nest.js response status", { status: nestResponse.status });
+                const nestResponse = await fetch(backendLoginUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        identifier,
+                        password,
+                        excludeViewStaff: true   // ← send the flag
+                    }),
+                });
 
-                    if (!nestResponse.ok) {
-                        const errorData = await nestResponse.json().catch(() => ({}));
-                        logAuth("[Credentials Callback] Nest.js authentication failed", {
-                            status: nestResponse.status,
-                            errorData,
-                        });
-                        return null;
-                    }
+                logAuth("[Credentials Callback] Nest.js response status", { status: nestResponse.status });
 
-                    const nestData = await nestResponse.json();
-                    logAuth("[Credentials Callback] Full Nest.js response", {
-                        rawResponse: JSON.stringify(nestData, null, 2),
-                    });
-
-                    const nestJwt = nestData.accessToken;
-                    if (!nestJwt) {
-                        logAuth("[Credentials Callback] No accessToken in Nest.js response");
-                        return null;
-                    }
-
-                    logAuth("[Credentials Callback] Nest.js JWT received", { token: nestJwt.substring(0, 50) + "..." });
-
-                    const userFromNest = nestData.user || decodeJwt(nestJwt) || {};
-                    const tokenMaxAge = nestData.tokenMaxAge;
-
-                    logAuth("[Credentials Callback] Extracted user data from Nest.js", {
-                        source: nestData.user ? 'user object' : 'jwt',
-                        fromJwt: !!userFromNest.sub || !!userFromNest.id,
-                        userData: userFromNest,
-                        tokenMaxAge,
-                    });
-
-                    const betterAuthUser = {
-                        id: userFromNest.id,
-                        email: userFromNest.email,
-                        name: userFromNest.name,
-                        image: userFromNest.image || null,
-                        staff: userFromNest.staff || [],
-                        tokenMaxAge,
-                        nestJwt,
-                    };
-
-                    logAuth("[Credentials Callback] Returning user to Better Auth", betterAuthUser);
-                    return betterAuthUser;
-
-                } catch (error) {
-                    const errorMessage = error instanceof Error ? error.message : String(error);
-                    logAuth("[Credentials Callback] Unexpected error during authentication", {
-                        error: errorMessage,
-                        stack: error instanceof Error ? error.stack : undefined,
+                if (!nestResponse.ok) {
+                    const errorData = await nestResponse.json().catch(() => ({}));
+                    logAuth("[Credentials Callback] Nest.js authentication failed", {
+                        status: nestResponse.status,
+                        errorData,
                     });
                     return null;
                 }
-            },
+
+                const nestData = await nestResponse.json();
+                logAuth("[Credentials Callback] Full Nest.js response", {
+                    rawResponse: JSON.stringify(nestData, null, 2),
+                });
+
+                const nestJwt = nestData.accessToken;
+                if (!nestJwt) {
+                    logAuth("[Credentials Callback] No accessToken in Nest.js response");
+                    return null;
+                }
+
+                logAuth("[Credentials Callback] Nest.js JWT received", { token: nestJwt.substring(0, 50) + "..." });
+
+                const userFromNest = nestData.user || decodeJwt(nestJwt) || {};
+                const tokenMaxAge = nestData.tokenMaxAge;
+
+                logAuth("[Credentials Callback] Extracted user data from Nest.js", {
+                    source: nestData.user ? 'user object' : 'jwt',
+                    fromJwt: !!userFromNest.sub || !!userFromNest.id,
+                    userData: userFromNest,
+                    tokenMaxAge,
+                });
+
+                const betterAuthUser = {
+                    id: userFromNest.id,
+                    email: userFromNest.email,
+                    name: userFromNest.name,
+                    image: userFromNest.image || null,
+                    staff: userFromNest.staff || [],
+                    tokenMaxAge,
+                    nestJwt,
+                };
+
+                logAuth("[Credentials Callback] Returning user to Better Auth", betterAuthUser);
+                return betterAuthUser;
+
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                logAuth("[Credentials Callback] Unexpected error during authentication", {
+                    error: errorMessage,
+                    stack: error instanceof Error ? error.stack : undefined,
+                });
+                return null;
+            }
+        },
         }),
         customSession(async (session) => {
             const now = new Date();
