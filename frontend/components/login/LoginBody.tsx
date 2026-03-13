@@ -275,10 +275,8 @@ export default function LoginBody(props: any) {
   const handleGoogleLogin = async () => {
     open();
     try {
-      await signIn.social({
-        provider: 'google',
-        callbackURL: `${window.location.origin}${basepath}`,
-      });
+      // For login, redirect to NestJS Google OAuth initiation endpoint
+      window.location.href = '/api/gauth/initiate?mode=login';
     } catch (error) {
       console.error('Google login failed:', error);
       setLoginStatus('Google login failed.');

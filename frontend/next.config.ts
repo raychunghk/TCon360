@@ -131,6 +131,15 @@ const nextConfig: NextConfig = {
         source: '/absproxy/:port([0-9]+)/api/betterhealth/:path*',
         destination: '/api/betterhealth/:path*',
       },
+      // Google OAuth API (NestJS)
+      {
+        source: '/api/gauth/:path*',
+        destination: `http://127.0.0.1:${BACKEND_PORT}/api/gauth/:path*`,
+      },
+      {
+        source: '/absproxy/:port([0-9]+)/api/gauth/:path*',
+        destination: `http://127.0.0.1:${BACKEND_PORT}/api/gauth/:path*`,
+      },
       // Backend API proxy
       {
         source: '/absproxy/:port([0-9]+)/api/:path*',

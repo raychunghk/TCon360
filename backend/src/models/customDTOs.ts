@@ -77,6 +77,7 @@ export class signupUserDTO {
   username: string;
   staff: SignupStaffDto;
   staffId: number | null;
+  googleToken?: string;  // One-time token from Google OAuth
 }
 
 export class GoogleSignupDto {

@@ -113,7 +113,7 @@ export class UsersController {
           user.password,
         );
       } else {
-        // Social onboarding case - we already trust the user at this point
+        // Social onboarding case (Google OAuth signup)
         // Fetch the user again to make sure we have everything
         const userWithDetails = await this.usersService.getUserWithStaffAndContract(newUser.id);
         // Generate token manually or via a special method
@@ -135,6 +135,15 @@ export class UsersController {
       };
     } catch (error) {
       Logger.error(`Signup error for email: ${user.email}`, error.stack, 'UsersController');
+
+      // Check if it's a Google token error
+      if (error.message === 'Invalid or expired Google token' || 
+          error.message === 'Email mismatch between token and form') {
+        throw new HttpException(
+          error.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       throw new HttpException(
         'An error occurred',

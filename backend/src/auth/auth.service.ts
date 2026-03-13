@@ -35,10 +35,60 @@ export class AuthService extends BaseService {
     return this.jwtService.sign(payload);
   }
 
+  generateSignupToken(profile: { googleId: string; email: string; name: string; picture?: string }): string {
+    const payload = {
+      googleId: profile.googleId,
+      email: profile.email,
+      name: profile.name,
+      picture: profile.picture,
+    };
+    
+    // Token expires in 10 minutes (600 seconds)
+    return this.jwtService.sign(payload, { expiresIn: '10m' });
+  }
+
+  verifySignupToken(token: string): { googleId: string; email: string; name: string; picture?: string } | null {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return {
+        googleId: decoded.googleId,
+        email: decoded.email,
+        name: decoded.name,
+        picture: decoded.picture,
+      };
+    } catch (error) {
+      console.error('Failed to verify signup token:', error);
+      return null;
+    }
+  }
+
   async signUp(payload: signupUserDTO): Promise<User> {
     console.log('signup payload', payload);
-    const { email, password, username, staff } = payload;
+    const { email, password, username, staff, googleToken } = payload;
 
+    // Handle Google OAuth signup with one-time token
+    if (googleToken) {
+      const googleProfile = this.verifySignupToken(googleToken);
+      if (!googleProfile) {
+        throw new Error('Invalid or expired Google token');
+      }
+
+      // Verify that the email matches
+      if (googleProfile.email !== email) {
+        throw new Error('Email mismatch between token and form');
+      }
+
+      // Complete Google signup with staff data
+      return this.handleGoogleSignup({
+        googleId: googleProfile.googleId,
+        email: googleProfile.email,
+        name: googleProfile.name,
+        picture: googleProfile.picture,
+        staff,
+      });
+    }
+
+    // Regular email/password signup (existing logic)
     const hashedPassword = password
       ? await argon2.hash(password, { type: argon2.argon2id })
       : null;
