@@ -1,0 +1,261 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/app/lib/auth.ts
+import { config } from '@tcon360/config';
+import { betterAuth } from 'better-auth';
+import { credentials } from 'better-auth-credentials-plugin';
+import { customSession, username } from 'better-auth/plugins';
+import z from 'zod/v3';
+import { logAuthInit } from './auth-logger';
+import { customSignInResponsePlugin } from './plugin/customSignInResponsePlugin';
+
+// ──────────────────────────────────────────────────────────────
+// UTILS & HELPERS
+// ──────────────────────────────────────────────────────────────
+
+export const myCustomSchema = z.object({
+    username: z.string().min(1),
+    password: z.string().min(1),
+    email: z.string().min(1),
+});
+
+const logAuth = (description: string, details: object = {}) => {
+    const timestamp = new Date().toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
+    console.log(`\n[BetterAuth][${timestamp}] ${description}`, JSON.stringify(details, null, 2));
+};
+
+const decodeJwt = (token: string) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        return JSON.parse(jsonPayload);
+    } catch (e: any) {
+        logAuth("[JWT Decoder] Decode failed", { error: e.message });
+        return null;
+    }
+};
+
+/**
+ * REUSABLE BACKEND SYNC LOGIC
+ * Reuses the exact logic from your original credentials callback
+ */
+const syncWithNestJS = async (payload: {
+    type: 'credentials' | 'google',
+    data: any
+}) => {
+    const isGoogle = payload.type === 'google';
+    const endpoint = isGoogle ? '/api/user/google-signup' : '/api/user/login';
+    const backendLoginUrl = `http://localhost:${config.backendport}${endpoint}`;
+
+    logAuth(`[Backend Sync] Sending request to Nest.js (${payload.type})`, {
+        url: backendLoginUrl,
+        body: isGoogle ? payload.data : { ...payload.data, password: "****" },
+    });
+
+    const response = await fetch(backendLoginUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload.data),
+    });
+
+    logAuth("[Backend Sync] Nest.js response status", { status: response.status });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        logAuth("[Backend Sync] Nest.js authentication failed", { status: response.status, errorData });
+        return null;
+    }
+
+    const nestData = await response.json();
+    const nestJwt = nestData.accessToken;
+
+    if (!nestJwt) {
+        logAuth("[Backend Sync] No accessToken in Nest.js response");
+        return null;
+    }
+
+    const userFromNest = nestData.user || decodeJwt(nestJwt) || {};
+
+    return {
+        id: userFromNest.id,
+        email: userFromNest.email,
+        name: userFromNest.name,
+        image: userFromNest.image || userFromNest.picture || null,
+        staff: userFromNest.staff || [],
+        tokenMaxAge: nestData.tokenMaxAge,
+        nestJwt: nestJwt,
+    };
+};
+
+// ──────────────────────────────────────────────────────────────
+// CONFIGURATION PARSING
+// ──────────────────────────────────────────────────────────────
+
+const parseTrustedOrigins = (): string[] => {
+    const envOrigins = process.env.TRUSTED_ORIGINS;
+    if (!envOrigins) {
+        return ["*.raygor.cc", "localhost", "http://localhost:3000", "https://*.example.com", "http://*.dev.example.com"];
+    }
+    return envOrigins.split(',').map(origin => origin.trim()).filter(origin => origin.length > 0);
+};
+
+const tokenExpiration = Number(process.env.TOKEN_MAX_AGE) || 30 * 24 * 60 * 60;
+const computedBasePath = '/api/bauth';
+const useProxyHeaders = !process.env.BETTER_AUTH_URL;
+const baseURL = process.env.BETTER_AUTH_URL || undefined;
+const trustedOrigins = parseTrustedOrigins();
+
+logAuthInit({
+    proxyHeadersEnabled: useProxyHeaders,
+    baseURL,
+    trustedOrigins,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    basePath: computedBasePath,
+});
+
+// ──────────────────────────────────────────────────────────────
+// BETTER AUTH INSTANCE
+// ──────────────────────────────────────────────────────────────
+
+export const auth = betterAuth({
+    baseURL: 'https://code2.raygor.cc/',
+    basePath: '/api/bauth',
+    advanced: {
+        disableCSRFCheck: true,
+        trustedProxyHeaders: useProxyHeaders,
+    },
+    trustedOrigins: trustedOrigins,
+    secret: process.env.JWT_SECRET!,
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            redirectURI: 'https://code2.raygor.cc/absproxy/3000/api/bauth/callback/google'
+        }
+    },
+    user: {
+        additionalFields: {
+            role: { type: "string" },
+            staff: { type: "json" },
+            tkn: { type: "string" },
+            nestJwt: { type: "string" },
+            username: { type: "string" },
+            tokenMaxAge: { type: "number" },
+        },
+    },
+    emailAndPassword: { enabled: false },
+    session: {
+        strategy: 'jwt',
+        expiresIn: tokenExpiration,
+        cookieCache: { enabled: true, maxAge: 60 * 60 }
+    },
+    cookies: {
+        sessionToken: {
+            name: 'session_token',
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            },
+        },
+    },
+    plugins: [
+        username({ minUsernameLength: 5 }),
+        customSignInResponsePlugin(),
+        // 1. Custom logic: Output log msg when google auth page comes back
+        {
+            id: "google-callback-logger",
+            hooks: {
+                before: [
+                    {
+                        matcher: (ctx) => ctx.path.includes("/callback/google"),
+                        handler: async (ctx) => {
+                            console.log("\n[Plugin] Google OAuth redirect detected: User has returned from Google.");
+                        }
+                    }
+                ]
+            }
+        },
+        credentials({
+            autoSignUp: true,
+            path: "/sign-in/credentials",
+            inputSchema: myCustomSchema,
+            async callback(ctx, parsed) {
+                const { email, username, password } = parsed;
+                const identifier = email || username;
+
+                if (!identifier || !password) return null;
+
+                // REUSE: Calling the helper with original logic
+                return await syncWithNestJS({
+                    type: 'credentials',
+                    data: { identifier, password, excludeViewStaff: true }
+                });
+            },
+        }),
+        customSession(async (session) => {
+            return session;
+        }),
+    ],
+
+    debug: true,
+    callbacks: {
+        async signIn({ user, account, profile }) {
+            // Handle Google social login
+            if (account?.provider === 'google' && profile) {
+                logAuth('Google social login detected - Syncing with NestJS');
+
+                // REUSE: Calling the helper with Google data
+                const backendUser = await syncWithNestJS({
+                    type: 'google',
+                    data: {
+                        googleId: profile.id || user.id,
+                        email: profile.email || user.email,
+                        name: profile.name || user.name,
+                        picture: profile.image,
+                    }
+                });
+
+                if (!backendUser) {
+                    logAuth('Google signup backend failed');
+                    return false;
+                }
+
+                // Map backend data to the user object so Better Auth persists it
+                Object.assign(user, backendUser);
+
+                logAuth('Google sync successful. Doing nothing else (allowing default flow).');
+                return true;
+            }
+
+            return true;
+        },
+        async session({ session }) {
+            const now = new Date();
+            const expiresAt = session.session?.expiresAt ? new Date(session.session.expiresAt) : null;
+
+            logAuth('Session callback triggered (server-side)', {
+                userId: session.user?.id,
+                expiresAt: session.session?.expiresAt,
+                isExpired: expiresAt ? expiresAt < now : true,
+            });
+
+            return session;
+        },
+    },
+});
+
+logAuth('✅ BetterAuth configuration completed and ready', {
+    computedBasePath,
+    session_strategy: 'jwt',
+    plugins: ['username', 'customSignInResponsePlugin', 'google-callback-logger', 'credentials', 'customSession'],
+});
+
+export type Auth = typeof auth;
