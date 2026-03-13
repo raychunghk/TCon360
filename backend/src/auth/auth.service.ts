@@ -62,7 +62,7 @@ export class AuthService extends BaseService {
     }
   }
 
-  async signUp(payload: signupUserDTO): Promise<User> {
+  async signUp(payload: signupUserDTO): Promise<any> {
     console.log('signup payload', payload);
     const { email, password, username, staff, googleToken } = payload;
 
