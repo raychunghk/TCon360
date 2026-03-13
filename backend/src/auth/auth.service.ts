@@ -79,13 +79,17 @@ export class AuthService extends BaseService {
       }
 
       // Complete Google signup with staff data
-      return this.handleGoogleSignup({
+      // handleGoogleSignup returns { token, user }, we need just the user
+      const result = await this.handleGoogleSignup({
         googleId: googleProfile.googleId,
         email: googleProfile.email,
         name: googleProfile.name,
         picture: googleProfile.picture,
         staff,
       });
+
+      // Return just the user to match the method signature
+      return result.user;
     }
 
     // Regular email/password signup (existing logic)
